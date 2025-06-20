@@ -1,0 +1,21 @@
+{
+    "profileData": {
+        "username": "elvi_ezra_",
+        "fullName": "Elvi Ezra",
+        "bio": "Greetings...",
+        "profilePic": "...",
+        "stats": {
+            "posts": 13,
+            "followers": "4.5K",
+            "following": 321
+        }
+    },
+    "postsData": [
+        { "id": "p1", "type": "video", "src": "..." },
+        { "id": "p2", "type": "image", "src": "..." }
+    ],
+    "reelsData": [],
+    "taggedData": [],
+    "highlightsData": [],
+    "privateContentData": []
+}
