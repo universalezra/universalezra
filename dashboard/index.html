@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary: #8e44ad; --accent: #00a8ff; --success: #2ecc71;
+            --danger: #e74c3c; --light: #ecf0f1; --dark: #1a1a2e;
+            --bg-main: #16213e; --bg-panel: rgba(26, 26, 46, 0.9);
+            --text-primary: #e0fbfc; --text-secondary: #98ded9;
+            --border-color: rgba(0, 168, 255, 0.3);
+        }
+        html[data-theme='light'] {
+            --primary: #3498db; --accent: #e67e22;
+            --bg-main: #ecf0f1; --bg-panel: rgba(255, 255, 255, 0.9);
+            --text-primary: #2c3e50; --text-secondary: #7f8c8d;
+            --border-color: rgba(52, 152, 219, 0.4);
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0;
+            overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-main); color: var(--text-primary);
+        }
+        #interactive-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; background-color: var(--bg-main);
+        }
+        .main-container {
+            position: relative; z-index: 1; width: 100%; height: 100%;
+            transition: all 0.5s ease-in-out;
+        }
+        #map-wrapper {
+            position: absolute; inset: 20px;
+            display: flex; justify-content: center; align-items: center;
+            transition: all 0.5s ease-in-out;
+        }
+        #map-container {
+            width: 100%; height: 100%; background: var(--bg-panel);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color); border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        #map { flex-grow: 1; background-color: #333; }
+        #locationInfo { padding: 10px; text-align: center; background: rgba(0,0,0,0.2); font-size: 0.9em; }
+        .lock-screen {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; gap: 15px; height: 100%;
+        }
+        .hidden { display: none !important; }
+        .panel {
+            position: fixed; background: var(--bg-panel); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); z-index: 1010;
+            box-shadow: 0 0 50px rgba(0,0,0,0.6);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            display: flex; flex-direction: column;
+        }
+        #editor-panel {
+            top: 0; left: 0; width: 100%; height: 100%;
+            transform: translateX(-100%);
+        }
+        #editor-panel.active { transform: translateX(0); }
+        #music-panel {
+            bottom: 0; left: 0; width: 100%; height: auto;
+            max-height: 50vh; border-top: 1px solid var(--border-color);
+            transform: translateY(100%); padding: 15px;
+        }
+        #music-panel.active { transform: translateY(0); }
+        #contribution-panel {
+            top: 0; right: 0; width: 400px; max-width: 90vw; height: 100%;
+            transform: translateX(100%); padding: 20px;
+        }
+        #contribution-panel.active { transform: translateX(0); }
+        .panel-close-btn {
+            position: absolute; top: 15px; right: 15px; background: none; border: none;
+            color: var(--text-primary); font-size: 1.5rem; cursor: pointer; z-index: 5;
+        }
+        .fab-container { position: fixed; z-index: 1000; }
+        .fab {
+            background: var(--primary); color: white; width: 55px; height: 55px;
+            border-radius: 50%; border: none; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        .fab:hover { background: var(--accent); transform: scale(1.1); }
+        #fab-editor { top: 20px; left: 20px; }
+        #fab-music { bottom: 20px; left: 50%; transform: translateX(-50%); }
+        #fab-contribution { top: 20px; right: 20px; }
+        #fab-layout, #fab-theme { bottom: 20px; }
+        #fab-layout { left: 20px; }
+        #fab-theme { right: 20px; }
+        #editor-panel { padding: 0; }
+        .editor-toolbar { display: flex; gap: 5px; padding: 10px; background: rgba(0,0,0,0.2); flex-wrap: wrap; }
+        .editor-toolbar button, .editor-toolbar select { background: var(--primary); color: white; border:none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+        .editor-main { display: flex; flex-grow: 1; height: calc(100% - 58px); }
+        .editor-code-area, .editor-preview-area { flex: 1; display: flex; flex-direction: column; }
+        .editor-panes { display: flex; flex-direction: column; flex-grow: 1; }
+        .editor-pane { display: flex; flex-direction: column; flex-grow: 1; }
+        .editor-pane label { background: #333; color: var(--accent); padding: 5px 10px; font-size: 0.8em; font-weight: bold;}
+        .editor-pane textarea { flex-grow: 1; background: #1e1e1e; color: #f8f8f2; border: none; resize: none; padding: 10px; font-family: 'Courier New', monospace; font-size: 14px; outline: none; }
+        #editor-preview { width: 100%; height: 100%; border: none; background: white; }
+        #video-player-widget {
+            position: fixed; bottom: 20px; right: 90px; z-index: 999;
+            width: 150px; height: 150px; border-radius: 10px;
+            overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            border: 2px solid var(--border-color);
+        }
+        #video-player-widget {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    border: 2px solid var(--border-color);
+}
+#video-player-widget video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.video-controls {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    background: rgba(0,0,0,0.5);
+    padding: 5px;
+    border-radius: 5px;
+}
+.video-controls button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+    .social-links {
+            position: fixed; top: 50%; right: 20px; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 15px; z-index: 999;
+        }
+        .social-links a { color: var(--text-primary); font-size: 1.5rem; transition: color 0.3s, transform 0.3s; }
+        .social-links a:hover { color: var(--accent); transform: scale(1.2); }
+        body.desktop-layout .main-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            grid-template-rows: 1fr;
+            gap: 20px; padding: 20px; height: 100vh;
+        }
+        body.desktop-layout #map-wrapper { position: static; }
+        body.desktop-layout .panel {
+            position: static; transform: none !important;
+            height: auto; width: auto; max-height: none;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color);
+            border-radius: 15px;
+        }
+        body.desktop-layout .panel-close-btn, 
+        body.desktop-layout .fab, 
+        body.desktop-layout .social-links { display: none; }
+        body.desktop-layout .desktop-fab-bar {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; display: flex; gap: 10px;
+            background: var(--bg-panel); padding: 10px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        /* Styling for the new private user button */
+#fab-private-user {
+    left: 20px; /* Position it on the left */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+}
+
+/* Styling for the private user panel */
+#private-user-panel {
+    top: 50%;
+    left: 50%;
+    width: 300px; /* Adjust width as needed */
+    max-width: 90vw;
+    height: auto; /* Adjust height based on content */
+    transform: translate(-50%, -50%) scale(0.8); /* Initially smaller and off-center */
+    opacity: 0;
+    pointer-events: none; /* Make it unclickable when not active */
+    border-radius: 15px;
+    padding: 10px; /* Add some padding to the panel */
+}
+
+#private-user-panel.active {
+    transform: translate(-50%, -50%) scale(1); /* Full size and centered when active */
+    opacity: 1;
+    pointer-events: all; /* Make it clickable when active */
+}
+
+/* Adjust desktop layout to hide the new FAB */
+body.desktop-layout #fab-private-user {
+    display: none;
+}
+
+/* Ensure desktop panel style for consistency */
+body.desktop-layout #private-user-panel {
+    position: static;
+    transform: none !important;
+    height: auto;
+    width: auto;
+    max-height: none;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    opacity: 1; /* Always visible in desktop layout if implemented as a static panel */
+    pointer-events: all;
+}
+/* dashboard.html -> di dalam tag <style> */
+
+/* Styling for the new Live Visitors FAB */
+#fab-live-visitors {
+    bottom: 20px; /* Atur posisi sesuai keinginan, contoh di kanan bawah */
+    right: 90px; /* Agar tidak tumpang tindih dengan fab-theme */
+}
+
+/* Styling for the Live Visitors panel */
+#live-visitors-panel {
+    top: 50%;
+    left: 50%;
+    width: 350px; /* Sesuaikan lebar */
+    max-width: 90vw;
+    height: 60vh; /* Sesuaikan tinggi */
+    transform: translate(-50%, -50%) scale(0.8); /* Awalnya lebih kecil dan tidak di tengah */
+    opacity: 0;
+    pointer-events: none; /* Tidak bisa diklik saat tidak aktif */
+    border-radius: 15px;
+    padding: 0; /* Padding sudah diatur di inner div */
+    display: flex; /* Untuk flexbox layout di dalamnya */
+    flex-direction: column;
+}
+
+#live-visitors-panel.active {
+    transform: translate(-50%, -50%) scale(1); /* Penuh dan di tengah saat aktif */
+    opacity: 1;
+    pointer-events: all; /* Bisa diklik saat aktif */
+}
+
+/* Adjust desktop layout to hide the new FAB */
+body.desktop-layout #fab-live-visitors {
+    display: none;
+}
+
+/* Ensure desktop panel style for consistency */
+body.desktop-layout #live-visitors-panel {
+    position: static;
+    transform: none !important;
+    height: auto;
+    width: auto;
+    max-height: none;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    opacity: 1; /* Selalu terlihat dalam tata letak desktop jika diimplementasikan sebagai panel statis */
+    pointer-events: all;
+}
+
+/* Styling for individual visitor list items */
+#visitor-list li {
+    background: rgba(0, 168, 255, 0.1); /* Warna latar belakang item */
+    border: 1px solid rgba(0, 168, 255, 0.2);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.9em;
+    color: var(--text-primary);
+}
+
+#visitor-list li strong {
+    color: var(--accent); /* Warna untuk label */
+}
+
+#visitor-list li span {
+    word-break: break-all; /* Agar teks panjang tidak keluar dari container */
+}
+    </style>
+</head>
+<body class=""> <canvas id="interactive-bg"></canvas> 
+    <div class="main-container">
+        <div id="map-wrapper">
+            <div id="map-container">
+                <div class="lock-screen" id="map-lock-screen">
+                    <i class="fas fa-satellite fa-3x fa-spin" style="--fa-animation-duration: 5s; color: var(--accent);"></i>
+                    <h3>REAL-TIME TRACKING SYSTEM</h3>
+                    <p style="margin:0; color:var(--text-secondary);">System is offline. Type secret code to activate.</p>
+                </div>
+                <div id="map" class="hidden"></div>
+                <div id="locationInfo" class="hidden">Initializing tracking...</div>
+            </div>
+        </div>
+        <div class="panel" id="contribution-panel-desktop" style="display: none;">
+             </div>
+    </div>
+    <div class="panel" id="editor-panel">
+        <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
+        <div class="editor-toolbar">
+            <button id="editor-run"><i class="fas fa-play"></i> Run</button>
+            <button id="editor-save"><i class="fas fa-save"></i> Save</button>
+            <button id="editor-load"><i class="fas fa-folder-open"></i> Load</button>
+            <button id="editor-new"><i class="fas fa-file"></i> New</button>
+            <button id="editor-add-media"><i class="fas fa-photo-video"></i> Add Media</button>
+        </div>
+        <div class="editor-main">
+            <div class="editor-code-area">
+                <div class="editor-panes">
+                    <div class="editor-pane">
+                        <label for="html-editor">HTML</label>
+                        <textarea id="html-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div class="editor-pane">
+                        <label for="css-editor">CSS</label>
+                        <textarea id="css-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div class="editor-pane">
+                        <label for="js-editor">JAVASCRIPT</label>
+                        <textarea id="js-editor" spellcheck="false"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="editor-preview-area">
+                 <iframe id="editor-preview"></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="panel" id="music-panel">
+        <button class="panel-close-btn" data-panel="music-panel"><i class="fas fa-times"></i></button>
+        <h4>Now Playing</h4>
+        <div id="music-player-content">
+            <h5 id="song-title">Select a song</h5>
+            <audio id="audio-player" controls loop style="width: 100%;"></audio>
+            <div id="playlist" style="max-height: 20vh; overflow-y: auto; margin-top: 10px;"></div>
+        </div>
+    </div>
+    <div class="panel" id="contribution-panel">
+        <button class="panel-close-btn" data-panel="contribution-panel"><i class="fas fa-times"></i></button>
+        <div id="contribution-content" style="display: flex; flex-direction: column; height: 100%;">
+            <h3 style="margin-top:20px;">Leave a Message</h3>
+            <div id="contribution-display" style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px;">
+                <p>Loading messages...</p>
+            </div>
+            <form id="contribution-form">
+                <textarea id="contribution-text" placeholder="Your message..." required style="width:100%; min-height: 80px; background:rgba(0,0,0,0.2); color:var(--text-primary); border:1px solid var(--border-color); border-radius:5px; padding:10px;"></textarea>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                    <input type="file" id="contribution-file" accept="image/*,video/*" style="color:var(--text-secondary);">
+                    <button type="submit" class="fab" style="position:static; width:45px; height:45px; font-size:1.1rem;"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <p id="contribution-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
+            </form>
+        </div>
+    </div>
+    <div class="fab-container" id="fab-private-user">
+    <button class="fab" title="Private User"><i class="fas fa-user-secret"></i></button>
+</div>
+<div class="panel" id="private-user-panel">
+    <button class="panel-close-btn" data-panel="private-user-panel"><i class="fas fa-times"></i></button>
+    <div style="padding: 20px; text-align: center;">
+        <h3 style="margin-bottom: 15px; color: var(--accent);">Private User</h3>
+        <p style="margin-bottom: 20px;">Masuk sebagai siapa?</p>
+        <input type="text" id="private-user-input" placeholder="Masukkan nama Anda..." style="width: 80%; padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); color: var(--text-primary); margin-bottom: 15px;">
+        <button id="private-user-submit" class="fab" style="position:static; width:auto; padding: 10px 20px; font-size:1rem;">Masuk</button>
+        <p id="private-user-message" style="margin-top: 15px; font-size: 0.9em;"></p>
+    </div>
+</div>
+<div class="fab-container" id="fab-live-visitors" style="display: none;">
+    <button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button>
+</div>
+<div class="panel" id="live-visitors-panel">
+    <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
+    <div style="padding: 20px; height: 100%; display: flex; flex-direction: column;">
+        <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Live Visitors</h3>
+        <div id="visitor-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
+            <p style="text-align: center; color: var(--text-secondary);">Loading visitors...</p>
+            <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0;">
+                </ul>
+        </div>
+        <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary);">
+            Last updated: <span id="last-updated-time">N/A</span>
+        </div>
+    </div>
+</div>
+    <div class="fab-container" id="fab-editor">
+        <button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button>
+    </div>
+    <div class="fab-container" id="fab-music">
+        <button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button>
+    </div>
+    <div class="fab-container" id="fab-contribution">
+        <button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button>
+    </div>
+    <div class="fab-container" id="fab-layout">
+        <button class="fab" title="Toggle Layout"><i class="fas fa-layer-group"></i></button>
+    </div>
+    <div class="fab-container" id="fab-theme">
+        <button class="fab" title="Toggle Theme"><i class="fas fa-sun"></i></button>
+    </div>
+    <div class="desktop-fab-bar" style="display:none;">
+         <button class="fab" id="desktop-layout-toggle" title="Toggle Layout" style="position:static;"><i class="fas fa-mobile-alt"></i></button>
+         <button class="fab" id="desktop-theme-toggle" title="Toggle Theme" style="position:static;"><i class="fas fa-sun"></i></button>
+    </div>
+    <div id="video-player-widget">
+        <video id="widget-video" loop src="video.mp4"></video>
+        <div class="video-controls">
+            <button id="video-play-pause"><i class="fas fa-play"></i></button>
+            <button id="video-mute"><i class="fas fa-volume-up"></i></button>
+        </div>
+    </div>
+    <div class="social-links">
+        <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://instagram.com/I_dont_care_now" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fab fa-github"></i></a>
+    </div>
+<script>
+const SECRET_CODE = "wherewe";
+const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
+const VISITOR_TRACKER_WORKER_URL = 'https://visitor-tracker-workerjs.ezvvel.workers.dev/';
+
+// --- START: Tambahan dan Perubahan Utama ---
+const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA
+const REFRESH_INTERVAL_MS = 5000; // Refresh data setiap 5 detik
+let visitorRefreshInterval; // Variabel untuk menyimpan ID interval agar bisa di-clear
+// --- END: Tambahan dan Perubahan Utama ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    initParticleBackground();
+    initSecretCodeListener();
+    initPanelControls();
+    initLayoutAndThemeToggles();
+    initVideoPlayer();
+    initEditor();
+    initMusicPlayer();
+    
+    // --- START: Perubahan trackVisitor ---
+    trackVisitor(); // Panggil fungsi ini untuk merekam kunjungan awal
+    // --- END: Perubahan trackVisitor ---
+
+    initPrivateUserAuth();
+
+    // --- START: Tambahan untuk mengecek login Ezra ---
+    checkEzraLoginAndShowVisitorsButton();
+    // --- END: Tambahan untuk mengecek login Ezra ---
+});
+
+function initParticleBackground() {
+    const canvas = document.getElementById('interactive-bg');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: null, y: null, radius: 150 };
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+    window.addEventListener('mousemove', (event) => {
+        mouse.x = event.x;
+        mouse.y = event.y;
+    });
+    class Particle {
+        constructor(x, y, dirX, dirY, size, color) {
+            this.x = x; this.y = y; this.dirX = dirX; this.dirY = dirY;
+            this.size = size; this.color = color;
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
+        update() {
+            if (this.x > canvas.width || this.x < 0) this.dirX = -this.dirX;
+            if (this.y > canvas.height || this.y < 0) this.dirY = -this.dirY;
+            this.x += this.dirX;
+            this.y += this.dirY;
+            this.draw();
+        }
+    }
+    function initParticles() {
+        particles = [];
+        let numParticles = (canvas.height * canvas.width) / 9000;
+        for (let i = 0; i < numParticles; i++) {
+            let size = Math.random() * 2 + 1;
+            let x = Math.random() * (innerWidth - size * 2);
+            let y = Math.random() * (innerHeight - size * 2);
+            let dirX = (Math.random() * .4) - .2;
+            let dirY = (Math.random() * .4) - .2;
+            let color = 'rgba(0, 168, 255, 0.8)';
+            particles.push(new Particle(x, y, dirX, dirY, size, color));
+        }
+    }
+    function connectParticles() {
+        for (let a = 0; a < particles.length; a++) {
+            for (let b = a; b < particles.length; b++) {
+                let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x))
+                             + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                if (distance < (canvas.width / 7) * (canvas.height / 7)) {
+                    let opacity = 1 - (distance / 20000);
+                    ctx.strokeStyle = `rgba(0, 168, 255, ${opacity})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[a].x, particles[a].y);
+                    ctx.lineTo(particles[b].x, particles[b].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+    function animateParticles() {
+        requestAnimationFrame(animateParticles);
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        particles.forEach(p => p.update());
+        connectParticles();
+    }
+    initParticles();
+    animateParticles();
+}
+
+let keySequence = [];
+function initSecretCodeListener() {
+    window.addEventListener('keydown', (e) => {
+        keySequence.push(e.key.toLowerCase());
+        keySequence = keySequence.slice(-SECRET_CODE.length);
+        if (keySequence.join('') === SECRET_CODE) {
+            unlockTrackingSystem();
+            keySequence = [];
+        }
+    });
+}
+
+function unlockTrackingSystem() {
+    const lockScreen = document.getElementById('map-lock-screen');
+    if (!lockScreen.classList.contains('hidden')) {
+        lockScreen.classList.add('hidden');
+        document.getElementById('map').classList.remove('hidden');
+        document.getElementById('locationInfo').classList.remove('hidden');
+        getLocation();
+        const info = document.getElementById('locationInfo');
+        info.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success);"></i> System Activated. Initializing tracker...`;
+    }
+}
+
+let map, marker;
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+            (pos) => initMap(pos.coords.latitude, pos.coords.longitude),
+            () => initMap(2.4633, 97.9158, true), // Fallback to Subulussalam
+            { enableHighAccuracy: true }
+        );
+    }
+}
+
+function initMap(lat, lon, isDefault = false) {
+    if (!map) {
+        map = L.map('map').setView([lat, lon], 13);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CartoDB'
+        }).addTo(map);
+        marker = L.marker([lat, lon]).addTo(map);
+    } else {
+        map.setView([lat, lon]);
+        marker.setLatLng([lat, lon]);
+    }
+    const locationInfoEl = document.getElementById('locationInfo');
+    if (isDefault) {
+        locationInfoEl.innerHTML = `Default Location: Subulussalam, Aceh`;
+    } else {
+        locationInfoEl.innerHTML = `Tracking... Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+    }
+}
+
+// --- START: Perubahan initPanelControls ---
+function initPanelControls() {
+    document.querySelectorAll('[data-panel]').forEach(button => {
+        button.addEventListener('click', () => {
+            const panelId = button.getAttribute('data-panel');
+            const panel = document.getElementById(panelId);
+
+            // Toggle active class for the clicked panel
+            panel.classList.toggle('active');
+
+            // Handle specific logic for Live Visitors Panel
+            if (panelId === 'live-visitors-panel') {
+                if (panel.classList.contains('active')) {
+                    fetchLiveVisitors(); // Ambil data saat panel dibuka
+                    visitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS); // Mulai refresh berkala
+                } else {
+                    clearInterval(visitorRefreshInterval); // Hentikan refresh saat panel ditutup
+                    const visitorList = document.getElementById('visitor-list');
+                    visitorList.innerHTML = ''; // Kosongkan daftar saat ditutup
+                }
+            } else { // Jika panel lain yang dibuka, pastikan Live Visitors Panel ditutup
+                const liveVisitorsPanel = document.getElementById('live-visitors-panel');
+                if (liveVisitorsPanel.classList.contains('active')) {
+                    liveVisitorsPanel.classList.remove('active');
+                    clearInterval(visitorRefreshInterval);
+                    document.getElementById('visitor-list').innerHTML = '';
+                }
+            }
+
+            // Handle specific logic for Contribution Panel
+            if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
+                fetchContributions();
+            }
+
+            // Close other panels when one opens (kecuali panel yang sedang dibuka)
+            document.querySelectorAll('.panel').forEach(otherPanel => {
+                if (otherPanel.id !== panelId) {
+                    otherPanel.classList.remove('active');
+                    // Tambahan: Pastikan interval refresh juga dihentikan jika panel Live Visitors ditutup oleh panel lain
+                    if (otherPanel.id === 'live-visitors-panel') {
+                        clearInterval(visitorRefreshInterval);
+                        document.getElementById('visitor-list').innerHTML = '';
+                    }
+                }
+            });
+        });
+    });
+
+    // Add event listener for the close buttons within panels
+    document.querySelectorAll('.panel-close-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const panelId = button.getAttribute('data-panel');
+            const panel = document.getElementById(panelId);
+            panel.classList.remove('active');
+
+            // Hentikan refresh saat panel Live Visitors ditutup via tombol close
+            if (panelId === 'live-visitors-panel') {
+                clearInterval(visitorRefreshInterval);
+                const visitorList = document.getElementById('visitor-list');
+                visitorList.innerHTML = ''; // Kosongkan daftar saat ditutup
+            }
+        });
+    });
+}
+// --- END: Perubahan initPanelControls ---
+
+// New function for private user authentication (kode Anda tidak berubah, tapi tetap saya sertakan untuk konteks)
+function initPrivateUserAuth() {
+    const privateUserFab = document.querySelector('#fab-private-user .fab');
+    const privateUserPanel = document.getElementById('private-user-panel');
+    const privateUserInput = document.getElementById('private-user-input');
+    const privateUserSubmit = document.getElementById('private-user-submit');
+    const privateUserMessage = document.getElementById('private-user-message');
+
+    privateUserFab.addEventListener('click', () => {
+        privateUserPanel.classList.toggle('active');
+        // Close other panels when private user panel opens
+        document.querySelectorAll('.panel').forEach(otherPanel => {
+            if (otherPanel.id !== 'private-user-panel') {
+                otherPanel.classList.remove('active');
+            }
+        });
+        privateUserInput.value = ''; // Clear input on open
+        privateUserMessage.textContent = ''; // Clear message on open
+    });
+
+    privateUserSubmit.addEventListener('click', async () => {
+        const username = privateUserInput.value.trim().toLowerCase();
+        if (username === '') {
+            privateUserMessage.style.color = 'var(--danger)';
+            privateUserMessage.textContent = 'Nama tidak boleh kosong!';
+            return;
+        }
+
+        privateUserMessage.style.color = 'var(--text-secondary)';
+        privateUserMessage.textContent = 'Memeriksa user...';
+
+        try {
+            const response = await fetch('https://private-user-auth.ezvvel.workers.dev/', { // Ganti dengan URL Cloudflare Worker Anda
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: username })
+            });
+
+            const data = await response.json();
+
+            if (data.authenticated) {
+                privateUserMessage.style.color = 'var(--success)';
+                privateUserMessage.textContent = 'User terautentikasi! Mengarahkan...';
+                setTimeout(() => {
+                    window.location.href = data.redirectUrl;
+                }, 1000);
+            } else {
+                privateUserMessage.style.color = 'var(--danger)';
+                privateUserMessage.textContent = 'User tidak ada';
+            }
+        } catch (error) {
+            console.error('Error during authentication:', error);
+            privateUserMessage.style.color = 'var(--danger)';
+            privateUserMessage.textContent = 'Terjadi kesalahan saat otentikasi.';
+        }
+    });
+}
+
+function initLayoutAndThemeToggles() {
+    const layoutBtn = document.querySelector('#fab-layout .fab');
+    const themeBtn = document.querySelector('#fab-theme .fab');
+    const desktopLayoutBtn = document.getElementById('desktop-layout-toggle');
+    const desktopThemeBtn = document.getElementById('desktop-theme-toggle');
+    const toggleLayout = () => document.body.classList.toggle('desktop-layout');
+    const toggleTheme = () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        document.querySelectorAll('#fab-theme i, #desktop-theme-toggle i').forEach(i => {
+            i.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        });
+    };
+    layoutBtn.addEventListener('click', toggleLayout);
+    desktopLayoutBtn.addEventListener('click', toggleLayout);
+    themeBtn.addEventListener('click', toggleTheme);
+    desktopThemeBtn.addEventListener('click', toggleTheme);
+}
+
+function initVideoPlayer() {
+    const video = document.getElementById('widget-video');
+    const playBtn = document.getElementById('video-play-pause');
+    const muteBtn = document.getElementById('video-mute');
+
+    playBtn.addEventListener('click', () => {
+        if (video.paused) {
+            video.play();
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            video.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    });
+    muteBtn.addEventListener('click', () => {
+        video.muted = !video.muted;
+        muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    });
+}
+
+function initMusicPlayer() {
+    const player = document.getElementById('audio-player');
+    const playlistEl = document.getElementById('playlist');
+    const songTitleEl = document.getElementById('song-title');
+    const songs = [
+        { name: "Where We Are", url: "where-we-are.mp3" },
+        { name: "Wish You Were Here", url: "wish-you-were-here.mp3" },
+        { name: "ghost to you", url: "ghost-to-you.mp3" },
+    ];
+    songs.forEach((song, index) => {
+        const item = document.createElement('div');
+        item.textContent = song.name;
+        item.style.cursor = 'pointer';
+        item.style.padding = '8px';
+        item.onclick = () => {
+            player.src = song.url;
+            songTitleEl.textContent = song.name;
+            player.play();
+        };
+        playlistEl.appendChild(item);
+    });
+}
+
+function initEditor() {
+    const htmlEditor = document.getElementById('html-editor');
+    const cssEditor = document.getElementById('css-editor');
+    const jsEditor = document.getElementById('js-editor');
+    const previewFrame = document.getElementById('editor-preview');
+    const runCode = () => {
+        const source = `
+            <html>
+                <head><style>${cssEditor.value}</style></head>
+                <body>${htmlEditor.value}<script>${jsEditor.value}<\/script></body>
+            </html>
+        `;
+        previewFrame.srcdoc = source;
+    };
+    const saveCode = () => {
+        localStorage.setItem('editor_html', htmlEditor.value);
+        localStorage.setItem('editor_css', cssEditor.value);
+        localStorage.setItem('editor_js', jsEditor.value);
+        alert('Code saved!');
+    };
+    const loadCode = () => {
+        htmlEditor.value = localStorage.getItem('editor_html') || '';
+        cssEditor.value = localStorage.getItem('editor_css') || '';
+        jsEditor.value = localStorage.getItem('editor_js') || '';
+        runCode();
+    };
+    const newDoc = () => {
+        htmlEditor.value = '<h1>Hello World</h1>';
+        cssEditor.value = 'h1 { color: blue; }';
+        jsEditor.value = 'console.log("Hello from JS!");';
+        runCode();
+    };
+    document.getElementById('editor-run').addEventListener('click', runCode);
+    document.getElementById('editor-save').addEventListener('click', saveCode);
+    document.getElementById('editor-load').addEventListener('click', loadCode);
+    document.getElementById('editor-new').addEventListener('click', newDoc);
+    document.getElementById('editor-add-media').addEventListener('click', () => {
+        htmlEditor.value += '\n<img src="path/to/image.jpg" alt="image" width="100">';
+    });
+    loadCode();
+}
+
+async function fetchContributions() {
+    const display = document.getElementById('contribution-display');
+    display.innerHTML = `<p>Loading...</p>`;
+    try {
+        const response = await fetch(CONTRIBUTIONS_WORKER_URL);
+        const contributions = await response.json();
+        if (contributions && contributions.length > 0) {
+            display.innerHTML = contributions.reverse().map(c => {
+                let mediaHTML = '';
+                if(c.fileUrl) {
+                    if(c.fileType.startsWith('image/')) {
+                        mediaHTML = `<img src="${c.fileUrl}" style="max-width:100%; border-radius:5px; margin-top:10px;">`;
+                    } else if(c.fileType.startsWith('video/')) {
+                           mediaHTML = `<video src="${c.fileUrl}" controls style="max-width:100%; border-radius:5px; margin-top:10px;"></video>`;
+                    }
+                }
+                return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;">
+                    <p style="margin:0;">${c.text}</p>${mediaHTML}
+                    <small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small>
+                </div>`;
+            }).join('');
+        } else {
+            display.innerHTML = `<p>Be the first to leave a message!</p>`;
+        }
+    } catch (e) {
+        display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`;
+    }
+}
+
+document.getElementById('contribution-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('contribution-status');
+    statusEl.textContent = 'Uploading...';
+    const formData = new FormData();
+    formData.append('text', document.getElementById('contribution-text').value);
+    const fileInput = document.getElementById('contribution-file');
+    if (fileInput.files.length > 0) {
+        formData.append('file', fileInput.files[0]);
+    }
+    try {
+        const response = await fetch(CONTRIBUTIONS_WORKER_URL, { method: 'POST', body: formData });
+        if (!response.ok) throw new Error('Upload failed');
+        statusEl.textContent = 'Message sent! Thank you.';
+        e.target.reset();
+        fetchContributions();
+    } catch (err) {
+        statusEl.textContent = `Error: ${err.message}`;
+    }
+});
+
+// --- START: Fungsi Baru untuk Mendapatkan Browser ID Unik ---
+function getBrowserId() {
+    let browserId = localStorage.getItem('unique_browser_id');
+    if (!browserId) {
+        browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now();
+        localStorage.setItem('unique_browser_id', browserId);
+    }
+    return browserId;
+}
+// --- END: Fungsi Baru ---
+
+// --- START: Modifikasi trackVisitor ---
+async function trackVisitor() {
+    try {
+        const browserId = getBrowserId(); // Dapatkan ID browser unik
+        let ipAddress = 'unknown'; // Default value
+
+        // Fetch IP address
+        try {
+            const ipResponse = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipResponse.json();
+            ipAddress = ipData.ip;
+        } catch (ipError) {
+            console.warn('Could not fetch IP address:', ipError);
+        }
+
+        const data = {
+            browserId: browserId,
+            ip: ipAddress,
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString()
+        };
+
+        // Mengirim data ke VISITOR_TRACKER_WORKER_URL (worker yang sudah ada untuk umum)
+        // Perhatikan `mode: 'no-cors'` jika worker di domain berbeda dan tidak perlu respons
+        fetch(VISITOR_TRACKER_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+            mode: 'no-cors' // Sesuaikan jika worker di domain yang sama atau perlu respons
+        }).catch(e => console.error("Error sending to general visitor tracker:", e));
+
+        // Mengirim data ke LIVE_VISITORS_WORKER_URL (worker baru untuk live view)
+        // Penting: Pastikan CORS di worker ini diatur dengan benar jika domain berbeda.
+        // Jika Anda ingin melihat error atau respons, hapus 'no-cors' dan pastikan Worker merespons dengan header CORS yang benar.
+        fetch(LIVE_VISITORS_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+            // mode: 'no-cors' // Hapus ini jika ingin melihat respons/error dari worker
+        }).catch(e => console.error("Error sending to live visitors worker:", e));
+
+    } catch(e) {
+        console.error('Error in trackVisitor:', e);
+    }
+}
+// --- END: Modifikasi trackVisitor ---
+
+// --- START: Fungsi Baru untuk Mengecek Login Ezra dan Menampilkan Tombol ---
+function checkEzraLoginAndShowVisitorsButton() {
+    const isEzra = localStorage.getItem('isEzraLoggedIn');
+    const fabLiveVisitors = document.getElementById('fab-live-visitors');
+
+    if (isEzra === 'true') {
+        fabLiveVisitors.style.display = 'block'; // Tampilkan FAB jika Ezra login
+    } else {
+        fabLiveVisitors.style.display = 'none'; // Pastikan tersembunyi jika bukan Ezra
+    }
+}
+// --- END: Fungsi Baru ---
+
+// --- START: Fungsi Baru untuk Mengambil dan Menampilkan Pengunjung Live ---
+async function fetchLiveVisitors() {
+    const visitorList = document.getElementById('visitor-list');
+    const lastUpdatedTime = document.getElementById('last-updated-time');
+    
+    // Tampilkan pesan loading jika list kosong atau pertama kali fetch
+    if (!visitorList.innerHTML.trim()) {
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors...</li>'; 
+    }
+    
+    try {
+        // Mengirim GET request ke Cloudflare Worker dengan parameter query
+        const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true'); 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const visitors = await response.json();
+
+        if (visitors && visitors.length > 0) {
+            visitorList.innerHTML = visitors.map(visitor => {
+                const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                    day: '2-digit', month: '2-digit', year: 'numeric'
+                });
+                return `
+                    <li>
+                        <strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}...</span><br>
+                        <strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br>
+                        <strong>Waktu:</strong> <span>${timestamp}</span>
+                    </li>
+                `;
+            }).join('');
+        } else {
+            visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No visitors online.</li>';
+        }
+        lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID'); // Update waktu terakhir refresh
+
+    } catch (error) {
+        console.error('Error fetching live visitors:', error);
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed to load visitors.</li>';
+        lastUpdatedTime.textContent = 'Error';
+    }
+}
+// --- END: Fungsi Baru ---</script>
+</body>
+</html>
