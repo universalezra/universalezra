@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1200"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ezra's Personal Site</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -10,32 +10,43 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* --- General Variables & Base Styles --- */
+        /* --- General Variables & Base Styles (Adapted from elvi.css & enhanced for themes) --- */
         :root {
-            --primary: #8e44ad;
-            --accent: #00a8ff;
+            --primary: #00ff88; /* From elvi.css */
+            --primary-dark: #00cc6a; /* From elvi.css */
+            --accent: #00a8ff; /* Original, kept for specific highlights */
             --success: #2ecc71;
             --danger: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #1a1a2e;
-            --bg-main: #000; /* Black background */
-            --bg-panel: rgba(26, 26, 46, 0.95);
-            --text-primary: #ecf0f1;
-            --text-secondary: #bdc3c7;
-            --border-color: #34495e;
-            --input-bg: rgba(0, 0, 0, 0.3);
-            --button-hover-bg: rgba(255, 255, 255, 0.1);
-            --header-height: 60px; /* Define header height */
+            --warning: #ffcc00; /* From elvi.css */
+            --dark: #0a0a12; /* From elvi.css */
+            --darker: #050508; /* From elvi.css */
+
+            /* Dark Theme Specific */
+            --bg-main: radial-gradient(circle at center, #0a0a20, #000000); /* From elvi.css */
+            --bg-panel: rgba(10, 10, 18, 0.8); /* Adapted from elvi.css login-form background */
+            --text-primary: #e0e0e0; /* From elvi.css */
+            --text-secondary: #a0a0a0; /* From elvi.css */
+            --border-color: rgba(0, 255, 136, 0.2); /* Adapted from elvi.css login-form border */
+            --input-bg: rgba(0, 0, 0, 0.5); /* From elvi.css form-group input */
+            --button-hover-bg: rgba(0, 255, 136, 0.1); /* Adapted from elvi.css auth-btn:hover */
+
+            --border-radius: 8px; /* From elvi.css */
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* From elvi.css */
+            --transition: all .3s ease; /* From elvi.css */
+            --header-height: 60px;
         }
 
         [data-theme="light"] {
-            --bg-main: #f0f2f5;
-            --bg-panel: rgba(255, 255, 255, 0.95);
-            --text-primary: #34495e;
-            --text-secondary: #7f8c8d;
-            --border-color: #bdc3c7;
-            --input-bg: rgba(255, 255, 255, 0.7);
-            --button-hover-bg: rgba(0, 0, 0, 0.05);
+            --bg-main: #f0f2f5; /* Lighter background for theme difference */
+            --bg-panel: rgba(255, 255, 255, 0.95); /* White panel background */
+            --text-primary: #34495e; /* Darker text */
+            --text-secondary: #7f8c8d; /* Muted text */
+            --border-color: #bdc3c7; /* Light border */
+            --input-bg: rgba(255, 255, 255, 0.7); /* Lighter input background */
+            --button-hover-bg: rgba(0, 0, 0, 0.05); /* Subtle hover for light theme */
+            --primary: #3498db; /* A different primary for light theme */
+            --primary-dark: #2980b9; /* A different primary-dark for light theme */
+            --accent: #e67e22; /* Different accent */
         }
 
         * {
@@ -46,41 +57,84 @@
 
         html, body {
             height: 100%;
-            overflow: hidden; /* Prevent scroll on body to manage custom scrolling for panels */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-main); /* Solid black background */
+            background: var(--bg-main);
             color: var(--text-primary);
+            font-family: 'Courier New', Courier, monospace; /* From elvi.css */
+            line-height: 1.6; /* From elvi.css */
             display: flex;
             flex-direction: column;
             transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh; /* Ensure body takes full height */
         }
 
         button {
             cursor: pointer;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            background-color: var(--primary);
-            color: var(--light);
-            transition: background-color 0.3s ease;
+            padding: .75rem 1.5rem; /* From elvi.css auth-btn */
+            border: 1px solid var(--primary); /* From elvi.css auth-btn */
+            border-radius: var(--border-radius); /* From elvi.css */
+            background: rgba(0, 0, 0, 0.3); /* From elvi.css auth-btn */
+            color: var(--primary); /* From elvi.css auth-btn */
+            font-family: inherit; /* From elvi.css auth-btn */
+            font-size: .9rem; /* From elvi.css auth-btn */
+            transition: var(--transition); /* From elvi.css */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem; /* From elvi.css auth-btn */
         }
 
-        button:hover {
-            background-color: var(--accent);
+        button:hover:not(:disabled) {
+            background: var(--button-hover-bg); /* Adapted for general buttons */
+            box-shadow: 0 0 10px var(--primary); /* From elvi.css auth-btn:hover */
+            transform: translateY(-2px); /* From elvi.css auth-btn:hover */
+        }
+
+        button:disabled {
+            opacity: .5; /* From elvi.css auth-btn:disabled */
+            cursor: not-allowed; /* From elvi.css auth-btn:disabled */
+            border-color: var(--text-secondary); /* From elvi.css auth-btn:disabled */
+        }
+
+        /* Primary button style */
+        button.primary-btn { /* Custom class for primary style */
+            background: var(--primary); /* From elvi.css auth-btn.primary */
+            color: var(--dark); /* From elvi.css auth-btn.primary */
+            font-weight: bold;
+        }
+
+        button.primary-btn:hover:not(:disabled) {
+            background: var(--primary-dark); /* From elvi.css auth-btn.primary:hover */
+            box-shadow: 0 0 15px var(--primary); /* From elvi.css auth-btn.primary:hover */
+            animation: buttonPulse 1s infinite; /* From elvi.css auth-btn.primary:hover */
+        }
+
+        @keyframes buttonPulse { /* From elvi.css */
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
         }
 
         input, textarea {
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            background-color: var(--input-bg);
+            padding: .75rem 1rem; /* From elvi.css form-group input */
+            background: var(--input-bg); /* From elvi.css form-group input */
+            border: 1px solid var(--border-color); /* From elvi.css form-group input */
+            border-radius: var(--border-radius); /* From elvi.css */
             color: var(--text-primary);
             width: 100%;
             margin-bottom: 10px;
             resize: vertical;
+            font-family: inherit; /* From elvi.css form-group input */
+            transition: var(--transition); /* From elvi.css */
+        }
+
+        input:focus, textarea:focus {
+            outline: none; /* From elvi.css form-group input:focus */
+            border-color: var(--primary); /* From elvi.css form-group input:focus */
+            box-shadow: 0 0 10px var(--primary); /* From elvi.css form-group input:focus */
         }
 
         a {
@@ -96,13 +150,13 @@
         header {
             width: 100%;
             height: var(--header-height);
-            background-color: rgba(0, 0, 0, 0.7); /* Slightly transparent black */
+            background-color: var(--bg-panel); /* Use panel background for header */
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            z-index: 1000; /* Ensure header is on top */
+            box-shadow: var(--box-shadow); /* From elvi.css */
+            z-index: 1000;
         }
 
         header .logo {
@@ -118,54 +172,60 @@
 
         header .header-controls button {
             background: none;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-color); /* Use general border color */
             color: var(--text-primary);
             padding: 8px 12px;
-            border-radius: 5px;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
+            border-radius: var(--border-radius); /* From elvi.css */
+            transition: var(--transition);
         }
 
         header .header-controls button:hover {
             background-color: var(--button-hover-bg);
-            border-color: var(--accent);
+            border-color: var(--primary); /* Use primary for hover border */
         }
 
         /* --- Main Content Area (Layout: Header + Wide Content) --- */
         .main-content {
-            flex-grow: 1; /* Occupy remaining vertical space */
+            flex-grow: 1;
             display: flex;
-            justify-content: center; /* Center content horizontally */
-            align-items: flex-start; /* Align content to top vertically */
+            justify-content: center;
+            align-items: flex-start;
             padding: 20px;
-            overflow-y: auto; /* Allow scrolling for main content if it overflows */
-            /* Removed max-width to let it expand */
-            margin: 0 auto; /* Center main content block */
+            overflow-y: auto;
+            margin: 0 auto;
+            width: 100%; /* Ensure it can take full width */
         }
 
         .main-content-wrapper {
             display: grid;
-            /* Force more columns for horizontal feel */
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* More horizontal columns, flexible */
             gap: 20px;
-            width: 100%; /* Take full width of main-content */
-            min-width: 1160px; /* Ensure a minimum width to force desktop-like scroll */
+            width: 100%;
+            min-width: 1200px; /* Ensure minimum width for desktop feel */
+            max-width: 1600px; /* Optional: cap max width for very large screens */
         }
 
         /* --- Panel Styles (Re-used for general panels) --- */
         .panel {
             background-color: var(--bg-panel);
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border-radius: var(--border-radius); /* From elvi.css */
+            box-shadow: var(--box-shadow); /* From elvi.css */
             padding: 20px;
             backdrop-filter: blur(5px);
             border: 1px solid var(--border-color);
-            position: relative; /* For close button positioning */
+            position: relative;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Hide overflow by default for panels */
+            overflow: hidden;
+            animation: fadeIn .5s ease; /* From elvi.css */
         }
         .panel.hidden {
             display: none;
+        }
+
+        @keyframes fadeIn { /* From elvi.css */
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .panel-header {
@@ -188,7 +248,7 @@
             color: var(--text-secondary);
             font-size: 1.2em;
             cursor: pointer;
-            transition: color 0.2s ease;
+            transition: var(--transition);
         }
 
         .panel .close-btn:hover {
@@ -197,11 +257,11 @@
 
         /* --- Specific Panel Overrides --- */
         #code-editor-panel {
-            min-height: 400px; /* Make editor panel larger */
+            min-height: 400px;
         }
         #code-editor-panel textarea {
-            flex-grow: 1; /* Make textarea fill available space */
-            font-family: 'Fira Code', 'Cascadia Code', monospace; /* Monospaced font for code */
+            flex-grow: 1;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
             font-size: 0.9em;
             white-space: pre;
             word-wrap: normal;
@@ -209,12 +269,16 @@
         }
         #code-preview {
             width: 100%;
-            height: 200px; /* Fixed height for preview */
+            height: 200px;
             border: 1px solid var(--border-color);
-            background-color: var(--light); /* Light background for preview */
-            border-radius: 5px;
+            background-color: var(--darker); /* Darker background for code preview in dark theme */
+            border-radius: var(--border-radius);
             margin-top: 10px;
         }
+        [data-theme="light"] #code-preview {
+            background-color: var(--light); /* Use light for preview in light theme */
+        }
+
 
         #music-player-panel .audio-controls {
             display: flex;
@@ -232,19 +296,20 @@
             max-height: 150px;
             overflow-y: auto;
             border: 1px solid var(--border-color);
-            border-radius: 5px;
+            border-radius: var(--border-radius);
         }
         #playlist-items li {
             padding: 8px 10px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: var(--transition);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         #playlist-items li.active {
             background-color: var(--primary);
-            color: var(--light);
+            color: var(--dark); /* Text color from elvi.css for active primary buttons */
+            font-weight: bold;
         }
         #playlist-items li:hover {
             background-color: var(--button-hover-bg);
@@ -260,6 +325,7 @@
         }
         #contribute-panel button {
             align-self: flex-end;
+            margin-top: 10px;
         }
         #contribute-message {
             margin-top: 10px;
@@ -271,7 +337,7 @@
         /* Live Visitors Panel */
         #live-visitors-panel {
             min-height: 300px;
-            display: none; /* Default to hidden, shown only for Ezra */
+            /* display: none; Handled by JS based on Ezra login */
         }
         #live-visitors-panel ul {
             list-style: none;
@@ -279,7 +345,7 @@
             max-height: 200px;
             overflow-y: auto;
             border: 1px solid var(--border-color);
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             margin-bottom: 10px;
         }
         #live-visitors-panel ul li {
@@ -299,7 +365,7 @@
             margin-top: 10px;
         }
 
-        /* --- Floating Action Buttons (FABs) - Kept for mobile convenience if desired --- */
+        /* --- Floating Action Buttons (FABs) --- */
         .fab-container {
             position: fixed;
             bottom: 20px;
@@ -307,27 +373,28 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            z-index: 999; /* Below header, above other elements */
+            z-index: 999;
         }
 
         .fab {
-            background-color: var(--primary);
-            color: var(--light);
-            border: none;
+            background: rgba(0,0,0,.3); /* From elvi.css auth-btn */
+            border: 1px solid var(--primary); /* From elvi.css auth-btn */
+            color: var(--primary); /* From elvi.css auth-btn */
             border-radius: 50%;
             width: 50px;
             height: 50px;
             font-size: 1.5em;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--box-shadow); /* From elvi.css */
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: var(--transition);
         }
 
         .fab:hover {
-            background-color: var(--accent);
+            background-color: var(--button-hover-bg);
             transform: scale(1.05);
+            box-shadow: 0 0 10px var(--primary); /* From elvi.css auth-btn:hover */
         }
 
         /* --- Social Links (Fixed position) --- */
@@ -343,7 +410,7 @@
         .social-links a {
             color: var(--text-primary);
             font-size: 1.8em;
-            transition: color 0.2s ease, transform 0.2s ease;
+            transition: var(--transition);
         }
 
         .social-links a:hover {
@@ -362,9 +429,14 @@
             padding: 30px;
             z-index: 1001;
             text-align: center;
+            background: rgba(10,10,18,.95); /* Slightly less transparent */
+            border: 1px solid rgba(0,255,136,.2); /* From elvi.css login-form border */
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
         #private-user-panel h3 {
             margin-bottom: 20px;
+            color: var(--primary);
         }
         #private-user-panel input {
             margin-bottom: 15px;
@@ -381,12 +453,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.98); /* Almost black, slightly transparent */
-            z-index: 1002; /* Above all other elements */
+            background-color: rgba(0, 0, 0, 0.98);
+            z-index: 1002;
             display: flex;
             flex-direction: column;
             padding: 20px;
-            overflow-y: auto; /* Allow scrolling within this panel */
+            overflow-y: auto;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             visibility: hidden;
             opacity: 0;
@@ -397,21 +469,23 @@
         }
 
         #ezra-panel .panel-header {
-            justify-content: flex-end; /* Logout button only */
+            justify-content: flex-end;
             margin-bottom: 20px;
         }
         #ezra-panel .panel-header h3 {
-            flex-grow: 1; /* Take remaining space */
+            flex-grow: 1;
             text-align: center;
-            color: var(--accent);
+            color: var(--primary); /* Changed to primary from accent */
             font-size: 2em;
         }
         #ezra-panel .logout-btn {
             background-color: var(--danger);
-            color: var(--light);
+            color: var(--light); /* Ensure it's light text on danger background */
+            border-color: var(--danger);
         }
         #ezra-panel .logout-btn:hover {
             background-color: #c0392b;
+            box-shadow: 0 0 15px var(--danger);
         }
 
         #ezra-gallery-container {
@@ -420,16 +494,16 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             padding: 20px;
-            background-color: rgba(26, 26, 46, 0.8); /* Slightly lighter background for gallery area */
-            border-radius: 8px;
+            background-color: rgba(10, 10, 18, 0.8); /* Adapted from elvi.css dark */
+            border-radius: var(--border-radius);
             overflow-y: auto;
             margin-bottom: 20px;
         }
 
         .gallery-item {
             background-color: var(--bg-panel);
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             overflow: hidden;
             position: relative;
             display: flex;
@@ -484,13 +558,13 @@
         .gallery-item-controls button {
             background: none;
             border: none;
-            color: var(--light);
+            color: var(--text-primary); /* Changed to text-primary for controls */
             font-size: 1em;
             padding: 5px;
         }
 
         .gallery-item-controls button:hover {
-            color: var(--accent);
+            color: var(--accent); /* Kept accent for specific icon hover */
             background-color: rgba(255, 255, 255, 0.1);
         }
 
@@ -501,11 +575,11 @@
             gap: 15px;
             background-color: var(--bg-panel);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             margin-top: 20px;
         }
         #ezra-content-form h4 {
-            color: var(--accent);
+            color: var(--primary); /* Changed to primary */
             margin-bottom: 10px;
         }
         #ezra-content-form .form-row {
@@ -536,7 +610,8 @@
             <button id="show-code-editor">Code Editor</button>
             <button id="show-music-player">Music Player</button>
             <button id="show-contribute">Contribute</button>
-            <button id="show-live-visitors" class="hidden">Live Visitors</button> <button id="show-private-user"><i class="fas fa-user-secret"></i></button>
+            <button id="show-live-visitors" class="hidden">Live Visitors</button>
+            <button id="show-private-user"><i class="fas fa-user-secret"></i></button>
         </div>
     </header>
 
@@ -548,7 +623,7 @@
                     <button class="close-btn"><i class="fas fa-times"></i></button>
                 </div>
                 <textarea id="unified-editor" spellcheck="false" placeholder="Tulis HTML, CSS, dan JavaScript Anda di sini..."></textarea>
-                <button id="run-code">Run Code</button>
+                <button id="run-code" class="primary-btn">Run Code</button>
                 <h4>Preview:</h4>
                 <iframe id="code-preview" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
             </div>
@@ -579,7 +654,7 @@
                 <form id="contribute-form">
                     <input type="text" id="contributor-name" placeholder="Nama Anda (opsional)">
                     <textarea id="contribute-text" placeholder="Tulis pesan Anda di sini..." required></textarea>
-                    <button type="submit">Kirim Pesan</button>
+                    <button type="submit" class="primary-btn">Kirim Pesan</button>
                 </form>
                 <p id="contribute-message"></p>
             </div>
@@ -608,14 +683,16 @@
         <button class="fab" id="fab-code-editor" aria-label="Open Code Editor"><i class="fas fa-code"></i></button>
         <button class="fab" id="fab-music-player" aria-label="Open Music Player"><i class="fas fa-music"></i></button>
         <button class="fab" id="fab-contribute" aria-label="Contribute Message"><i class="fas fa-comment-dots"></i></button>
-        <button class="fab hidden" id="fab-live-visitors" aria-label="Live Visitors"><i class="fas fa-eye"></i></button> <button class="fab" id="fab-private-user" aria-label="Private User Access"><i class="fas fa-user-secret"></i></button>
+        <button class="fab hidden" id="fab-live-visitors" aria-label="Live Visitors"><i class="fas fa-eye"></i></button>
+        <button class="fab" id="fab-private-user" aria-label="Private User Access"><i class="fas fa-user-secret"></i></button>
     </div>
 
     <div class="social-links">
         <a href="https://wa.me/yourwhatsappnumber" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="https://instagram.com/yourinstagram" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         <a href="https://github.com/yourgithub" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-        <a href="#" aria-label="Bible Link"><i class="fas fa-book-bible"></i></a> </div>
+        <a href="#" aria-label="Bible Link"><i class="fas fa-book-bible"></i></a>
+    </div>
 
     <div id="private-user-panel" class="panel hidden">
         <div class="panel-header">
@@ -623,16 +700,16 @@
             <button class="close-btn" data-target="private-user-panel"><i class="fas fa-times"></i></button>
         </div>
         <input type="text" id="private-user-input" placeholder="Masukkan Username Pribadi">
-        <button id="private-user-submit">Login</button>
+        <button id="private-user-submit" class="primary-btn">Login</button>
         <p id="private-user-message" style="color: var(--danger); margin-top: 10px;"></p>
     </div>
 
     <div id="ezra-panel" class="panel hidden">
         <div class="panel-header">
             <h3>Ezra's Private Space</h3>
-            <button class="logout-btn" id="ezra-logout-btn">Logout</button>
+            <button class="logout-btn primary-btn" id="ezra-logout-btn">Logout</button>
         </div>
-        
+
         <div id="ezra-gallery-container">
             <p id="ezra-gallery-status" style="color: var(--text-secondary); text-align: center;">Loading content...</p>
         </div>
@@ -645,7 +722,7 @@
                 <input type="file" id="gallery-item-media" accept="image/*,video/*">
             </div>
             <textarea id="gallery-item-description" placeholder="Deskripsi Konten" rows="3" required></textarea>
-            <button type="submit" id="submit-gallery-item">Tambah Konten Baru</button>
+            <button type="submit" id="submit-gallery-item" class="primary-btn">Tambah Konten Baru</button>
             <p id="ezra-form-status" class="message-status"></p>
         </form>
     </div>
@@ -663,21 +740,21 @@
         const showCodeEditorBtn = document.getElementById('show-code-editor');
         const showMusicPlayerBtn = document.getElementById('show-music-player');
         const showContributeBtn = document.getElementById('show-contribute');
-        const showLiveVisitorsBtn = document.getElementById('show-live-visitors'); // Live Visitors button
+        const showLiveVisitorsBtn = document.getElementById('show-live-visitors');
         const showPrivateUserBtn = document.getElementById('show-private-user');
 
         // Panel toggles (FABs)
         const fabCodeEditorBtn = document.getElementById('fab-code-editor');
         const fabMusicPlayerBtn = document.getElementById('fab-music-player');
         const fabContributeBtn = document.getElementById('fab-contribute');
-        const fabLiveVisitorsBtn = document.getElementById('fab-live-visitors'); // FAB for Live Visitors
+        const fabLiveVisitorsBtn = document.getElementById('fab-live-visitors');
         const fabPrivateUserBtn = document.getElementById('fab-private-user');
 
         // Panels
         const codeEditorPanel = document.getElementById('code-editor-panel');
         const musicPlayerPanel = document.getElementById('music-player-panel');
         const contributePanel = document.getElementById('contribute-panel');
-        const liveVisitorsPanel = document.getElementById('live-visitors-panel'); // Live Visitors panel
+        const liveVisitorsPanel = document.getElementById('live-visitors-panel');
         const privateUserPanel = document.getElementById('private-user-panel');
         const ezraPanel = document.getElementById('ezra-panel');
 
@@ -741,7 +818,6 @@
 
         runCodeBtn.addEventListener('click', () => {
             const code = unifiedEditor.value;
-            // The sandbox attribute is important for security!
             codePreview.srcdoc = code;
         });
 
@@ -789,7 +865,7 @@
                 let newIndex;
                 do {
                     newIndex = Math.floor(Math.random() * playlist.length);
-                } while (newIndex === currentTrackIndex && playlist.length > 1); // Avoid playing same song twice in a row if only 2 songs
+                } while (newIndex === currentTrackIndex && playlist.length > 1);
                 loadTrack(newIndex);
             } else {
                 currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
@@ -805,14 +881,14 @@
         function toggleShuffle() {
             isShuffling = !isShuffling;
             shuffleBtn.classList.toggle('active', isShuffling);
-            shuffleBtn.style.color = isShuffling ? 'var(--accent)' : 'var(--light)';
+            shuffleBtn.style.color = isShuffling ? 'var(--primary)' : 'var(--text-primary)'; // Use primary for active
         }
 
         function toggleRepeat() {
             isRepeating = !isRepeating;
             musicAudio.loop = isRepeating;
             repeatBtn.classList.toggle('active', isRepeating);
-            repeatBtn.style.color = isRepeating ? 'var(--accent)' : 'var(--light)';
+            repeatBtn.style.color = isRepeating ? 'var(--primary)' : 'var(--text-primary)'; // Use primary for active
         }
 
         function updatePlaylistUI() {
@@ -903,7 +979,6 @@
             lastUpdatedTime.textContent = 'Memuat...';
 
             try {
-                // Assuming your Cloudflare Worker has a /get_visitors endpoint
                 const response = await fetch(`${CLOUDFLARE_WORKER_URL}/get_visitors`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -1047,7 +1122,6 @@
 
         async function editEzraItem(id) {
             ezraFormStatus.textContent = '';
-            // Fetch item data or find it in current loaded data
             try {
                 const response = await fetch(`${CLOUDFLARE_WORKER_URL}/ezra-content?id=${id}`);
                 if (!response.ok) throw new Error('Failed to fetch item for editing');
@@ -1057,7 +1131,6 @@
                 galleryItemTitleInput.value = itemToEdit.title;
                 galleryItemDescriptionInput.value = itemToEdit.description;
                 submitGalleryItemBtn.textContent = 'Update Konten';
-                // Media input cannot be pre-filled for security, user has to re-upload if needed
                 galleryItemMediaInput.value = '';
                 ezraFormStatus.textContent = 'Mode Edit: Upload media baru jika ingin mengganti.';
                 ezraFormStatus.style.color = 'var(--text-secondary)';
@@ -1100,7 +1173,7 @@
             ezraFormStatus.textContent = 'Mengirim konten...';
             ezraFormStatus.style.color = 'var(--text-secondary)';
 
-            const id = editItemIdInput.value || `item-${Date.now()}`; // Generate new ID if not editing
+            const id = editItemIdInput.value || `item-${Date.now()}`;
             const title = galleryItemTitleInput.value.trim();
             const description = galleryItemDescriptionInput.value.trim();
             const mediaFile = galleryItemMediaInput.files[0];
@@ -1112,7 +1185,6 @@
                 return;
             }
 
-            // Only require media file for new additions, not for edits without new media
             if (!mediaFile && !isEditing) {
                  ezraFormStatus.textContent = 'Pilih file media untuk konten baru!';
                  ezraFormStatus.style.color = 'var(--danger)';
@@ -1128,12 +1200,12 @@
                 formData.append('media', mediaFile);
                 formData.append('type', mediaFile.type.startsWith('image/') ? 'image' : 'video');
             } else if (isEditing) {
-                 formData.append('noMediaChange', 'true'); // Flag to worker: keep existing media
+                 formData.append('noMediaChange', 'true');
             }
 
             try {
                 const method = isEditing ? 'PUT' : 'POST';
-                const url = `${CLOUDFLARE_WORKER_URL}/ezra-content`; 
+                const url = `${CLOUDFLARE_WORKER_URL}/ezra-content`;
 
                 const response = await fetch(url, {
                     method: method,
@@ -1144,7 +1216,7 @@
                     ezraFormStatus.textContent = `Konten berhasil ${isEditing ? 'diperbarui' : 'ditambahkan'}!`;
                     ezraFormStatus.style.color = 'var(--success)';
                     resetEzraForm();
-                    loadEzraContent(); // Reload gallery
+                    loadEzraContent();
                 } else {
                     const errorData = await response.json();
                     throw new Error(errorData.message || `Gagal ${isEditing ? 'memperbarui' : 'menambahkan'} konten.`);
