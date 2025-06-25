@@ -2,6 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ezra's Personal Site</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -63,11 +64,10 @@
             padding: 0;
         }
 
-        html {
-            /* Perubahan utama untuk tampilan horizontal */
-            min-width: 1024px; /* Lebar minimum konten */
-            overflow-x: auto; /* Memungkinkan scrolling horizontal */
-            height: 100%;
+        html, body {
+            height: 100%; /* Make sure html and body take full viewport height */
+            width: 100%;
+            overflow-x: hidden; /* Prevent horizontal scroll on body */
         }
 
         body {
@@ -167,6 +167,7 @@
             padding: 0 20px;
             box-shadow: var(--box-shadow); /* From elvi.css */
             z-index: 1000;
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
 
         header .logo {
@@ -175,30 +176,27 @@
             color: var(--primary); /* Base color, will be overridden by JS for rainbow */
         }
 
-        /* --- Main Content Area (Layout: Header + Wide Content) --- */
+        /* --- Main Content Area (Layout: Header + Responsive Content) --- */
         .main-content {
             flex-grow: 1;
-            display: block; /* Change to block to allow horizontal scrolling of its children */
             padding: 20px;
-            overflow-y: auto; /* Izinkan scrolling vertikal di dalam area konten */
-            min-height: calc(100vh - var(--header-height)); /* Pastikan mengisi sisa tinggi */
-            width: fit-content; /* Biarkan konten menentukan lebar */
-            min-width: 100%; /* Pastikan setidaknya selebar viewport */
+            overflow-y: auto; /* Allow vertical scrolling within the content area */
+            width: 100%; /* Take full width of parent */
+            display: flex; /* Use flex for direct children (the wrapper) */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center content horizontally if it's narrower than main-content */
         }
 
         .main-content-wrapper {
-            display: flex; /* Menggunakan flexbox untuk layout horizontal */
-            flex-wrap: nowrap; /* Mencegah wrap ke bawah */
+            display: flex; /* Use flexbox for panel arrangement */
+            flex-direction: column; /* Stack panels vertically by default for mobile-first */
             gap: 20px;
-            padding-bottom: 20px; /* Ruang di bawah panel */
-            width: fit-content; /* Ensure wrapper expands to contain all panels */
-            min-width: 100%; /* Ensure it takes at least 100% width if content is less */
+            width: 100%; /* Take full width */
+            max-width: 600px; /* Max width for panels for better readability on large screens */
         }
 
         /* --- Panel Styles (Re-used for general panels) --- */
         .panel {
-            flex-shrink: 0; /* Penting: mencegah panel menyusut */
-            width: 380px; /* Lebar tetap untuk setiap panel */
             background-color: var(--bg-panel);
             border-radius: var(--border-radius); /* From elvi.css */
             box-shadow: var(--box-shadow); /* From elvi.css */
@@ -210,7 +208,8 @@
             flex-direction: column;
             overflow: hidden;
             animation: fadeIn .5s ease; /* From elvi.css */
-            min-height: 400px; /* Minimal tinggi panel */
+            min-height: 300px; /* Minimal tinggi panel */
+            width: 100%; /* Panels take full width of their parent (main-content-wrapper) */
         }
         .panel.hidden {
             display: none;
@@ -409,9 +408,11 @@
             transform: scale(1.05);
             box-shadow: 0 0 10px var(--primary); /* From elvi.css auth-btn:hover */
         }
-        .fab.hidden {
-            display: none;
+        /* Hidden class for elements that should not be visible */
+        .hidden {
+            display: none !important; /* Use !important to override other display properties */
         }
+
 
         /* --- Social Links (Fixed position) --- */
         .social-links {
@@ -508,7 +509,7 @@
         #ezra-gallery-container {
             flex-grow: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid for gallery */
             gap: 20px;
             padding: 20px;
             background-color: rgba(10, 10, 18, 0.8); /* Adapted from elvi.css dark */
@@ -615,6 +616,7 @@
         }
         #ezra-content-form .form-row {
             display: flex;
+            flex-direction: column; /* Stack inputs vertically for small screens */
             gap: 10px;
         }
         #ezra-content-form .form-row input, #ezra-content-form .form-row textarea {
@@ -657,6 +659,41 @@
             font-weight: bold;
             color: var(--primary); /* Highlight the age in primary color */
             font-size: 1.1em;
+        }
+
+        /* --- Media Queries for Larger Screens (Desktop View) --- */
+        @media (min-width: 768px) {
+            .main-content-wrapper {
+                flex-direction: row; /* Arrange panels horizontally on wider screens */
+                flex-wrap: wrap; /* Allow panels to wrap to the next row */
+                justify-content: center; /* Center panels if there aren't enough to fill a row */
+                max-width: 1200px; /* Wider max-width for desktop */
+            }
+
+            .panel {
+                width: calc(50% - 10px); /* Two panels per row with gap */
+                /* Adjust min-heights or allow content to define height for better flow */
+            }
+            /* Override for specific panels if they should be wider/narrower */
+            #code-editor-panel, #music-player-panel, #contribute-panel, #live-visitors-panel {
+                min-width: 380px; /* Ensure a minimum width for readability */
+                max-width: 45%; /* Flexible maximum width */
+            }
+
+            #ezra-content-form .form-row {
+                flex-direction: row; /* Arrange inputs horizontally on larger screens */
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-content-wrapper {
+                max-width: 100%; /* Allow full width utilization */
+                justify-content: flex-start; /* Align panels to the start */
+            }
+            .panel {
+                width: 380px; /* Fixed width for desktop as per original request interpretation for *panels* */
+                flex-shrink: 0; /* Prevent shrinking */
+            }
         }
     </style>
 </head>
@@ -728,6 +765,7 @@
             </div>
         </div>
     </main>
+
     <div class="website-age-container">
         <p>Website Age:</p>
         <p id="website-age">loading</p>
@@ -738,7 +776,7 @@
         <button class="fab" id="fab-code-editor" aria-label="Open Code Editor"><i class="fas fa-code"></i></button>
         <button class="fab" id="fab-music-player" aria-label="Open Music Player"><i class="fas fa-music"></i></button>
         <button class="fab" id="fab-contribute" aria-label="Contribute Message"><i class="fas fa-comment-dots"></i></button>
-        <button class="fab hidden" id="fab-live-visitors" aria-label="Live Visitors"><i class="fas fa-eye"></i></button>
+        <button class="fab" id="fab-live-visitors" aria-label="Live Visitors"><i class="fas fa-eye"></i></button>
         <button class="fab" id="fab-private-user" aria-label="Private User Access"><i class="fas fa-user-secret"></i></button>
     </div>
 
@@ -893,10 +931,16 @@
             fetchContributorMessages(); // Muat pesan saat panel dibuka
         });
 
-        // Logic for Live Visitors panel visibility based on Ezra login
+        // Live Visitors panel click handler
         fabLiveVisitorsBtn.addEventListener('click', () => {
-            showPanel(liveVisitorsPanel);
-            fetchLiveVisitors(); // Refresh visitors when panel is shown
+            // Only show if Ezra is logged in. This check is also in checkEzraLoginAndShowVisitorsButton
+            if (localStorage.getItem('isEzraLoggedIn') === 'true') {
+                showPanel(liveVisitorsPanel);
+                fetchLiveVisitors(); // Refresh visitors when panel is shown
+            } else {
+                // This scenario shouldn't happen if the button is properly hidden
+                console.warn("Attempted to open Live Visitors without Ezra login.");
+            }
         });
 
         fabPrivateUserBtn.addEventListener('click', () => showPanel(privateUserPanel));
@@ -1130,7 +1174,7 @@
                 console.error('Error tracking visitor:', error);
             }
         }
-        trackVisitor(); // Call on page load
+        trackVisitor(); // Call on page load for all visitors
 
         async function fetchLiveVisitors() {
             visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Memuat pengunjung...</li>';
@@ -1199,16 +1243,20 @@
         const submitGalleryItemBtn = document.getElementById('submit-gallery-item');
         const ezraFormStatus = document.getElementById('ezra-form-status');
 
-        // Fungsi Baru untuk Mengecek Login Ezra dan Menampilkan Tombol
+        // Fungsi untuk mengecek login Ezra dan menampilkan/menyembunyikan tombol Live Visitors
         function checkEzraLoginAndShowVisitorsButton() {
             const isEzra = localStorage.getItem('isEzraLoggedIn');
             if (isEzra === 'true') {
                 fabLiveVisitorsBtn.classList.remove('hidden'); // Tampilkan FAB jika Ezra login
             } else {
                 fabLiveVisitorsBtn.classList.add('hidden'); // Pastikan tersembunyi jika bukan Ezra
+                // If the panel is open when logging out, hide it
+                if (!liveVisitorsPanel.classList.contains('hidden')) {
+                    liveVisitorsPanel.classList.add('hidden');
+                }
             }
         }
-        checkEzraLoginAndShowVisitorsButton(); // Panggil saat startup
+        checkEzraLoginAndShowVisitorsButton(); // Panggil saat startup untuk mengatur visibilitas awal
 
         privateUserSubmitBtn.addEventListener('click', async () => {
             const username = privateUserInput.value.trim();
@@ -1228,7 +1276,7 @@
                         localStorage.setItem('isEzraLoggedIn', 'true');
                         privateUserPanel.classList.add('hidden');
                         ezraPanel.classList.add('active'); // Show Ezra Panel
-                        checkEzraLoginAndShowVisitorsButton(); // Update visibility after login
+                        checkEzraLoginAndShowVisitorsButton(); // Update FAB visibility
                         loadEzraContent(); // Load content when Ezra logs in
                         privateUserMessage.textContent = ''; // Clear previous messages
                     } else {
@@ -1248,8 +1296,9 @@
         ezraLogoutBtn.addEventListener('click', () => {
             localStorage.removeItem('isEzraLoggedIn');
             ezraPanel.classList.remove('active'); // Hide Ezra Panel
-            liveVisitorsPanel.classList.add('hidden'); // Hide Live Visitors Panel if open
-            checkEzraLoginAndShowVisitorsButton(); // Update visibility after logout
+            // Hide any other panels that might be open after logout, if desired
+            [codeEditorPanel, musicPlayerPanel, contributePanel, liveVisitorsPanel, privateUserPanel].forEach(p => p.classList.add('hidden'));
+            checkEzraLoginAndShowVisitorsButton(); // Update FAB visibility (will hide Live Visitors FAB)
             privateUserInput.value = ''; // Clear input
             resetEzraForm(); // Reset form
             ezraGalleryContainer.innerHTML = '<p id="ezra-gallery-status" style="color: var(--text-secondary); text-align: center;">Loading content...</p>'; // Clear gallery
@@ -1510,6 +1559,9 @@
 
         // Perbarui setiap detik
         setInterval(updateWebsiteAge, 1000);
+
+        // Initial check for Ezra login on page load
+        checkEzraLoginAndShowVisitorsButton();
     </script>
 </body>
 </html>
