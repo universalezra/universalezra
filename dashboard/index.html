@@ -56,9 +56,9 @@
         }
 
         html {
-            /* This is the key change: force horizontal width and enable scrolling */
-            min-width: 1200px; /* Minimum width for the entire page to mimic desktop */
-            overflow-x: auto; /* Allow horizontal scrolling */
+            /* Perubahan utama untuk tampilan horizontal */
+            min-width: 1200px; /* Lebar minimum konten */
+            overflow-x: auto; /* Memungkinkan scrolling horizontal */
             height: 100%;
         }
 
@@ -71,7 +71,6 @@
             flex-direction: column;
             transition: background-color 0.3s ease, color 0.3s ease;
             min-height: 100vh; /* Ensure body takes full height */
-            /* Do NOT set overflow-x: hidden here, it would prevent scrolling */
         }
 
         button {
@@ -169,45 +168,33 @@
         }
 
         header .header-controls {
-            display: flex;
-            gap: 15px;
-        }
-
-        header .header-controls button {
-            background: none;
-            border: 1px solid var(--border-color); /* Use general border color */
-            color: var(--text-primary);
-            padding: 8px 12px;
-            border-radius: var(--border-radius); /* From elvi.css */
-            transition: var(--transition);
-        }
-
-        header .header-controls button:hover {
-            background-color: var(--button-hover-bg);
-            border-color: var(--primary); /* Use primary for hover border */
+            display: none; /* Dihapus sesuai permintaan */
         }
 
         /* --- Main Content Area (Layout: Header + Wide Content) --- */
         .main-content {
             flex-grow: 1;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start; /* Konten dimulai dari kiri */
             align-items: flex-start;
             padding: 20px;
-            overflow-y: auto; /* Allow vertical scrolling within content area */
-            width: 100%;
-            /* min-width and max-width removed from here to allow html min-width to take effect */
+            overflow-y: auto; /* Izinkan scrolling vertikal di dalam area konten */
+            min-height: calc(100vh - var(--header-height)); /* Pastikan mengisi sisa tinggi */
+            width: fit-content; /* Biarkan konten menentukan lebar */
+            min-width: 100%; /* Pastikan setidaknya selebar viewport */
         }
 
         .main-content-wrapper {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* More horizontal columns, flexible */
+            display: flex; /* Menggunakan flexbox untuk layout horizontal */
+            flex-wrap: nowrap; /* Mencegah wrap ke bawah */
             gap: 20px;
-            width: 100%; /* Ensure it fills the available width from the html min-width */
+            padding-bottom: 20px; /* Ruang di bawah panel */
         }
 
         /* --- Panel Styles (Re-used for general panels) --- */
         .panel {
+            flex-shrink: 0; /* Penting: mencegah panel menyusut */
+            width: 380px; /* Lebar tetap untuk setiap panel */
             background-color: var(--bg-panel);
             border-radius: var(--border-radius); /* From elvi.css */
             box-shadow: var(--box-shadow); /* From elvi.css */
@@ -219,6 +206,7 @@
             flex-direction: column;
             overflow: hidden;
             animation: fadeIn .5s ease; /* From elvi.css */
+            min-height: 400px; /* Minimal tinggi panel */
         }
         .panel.hidden {
             display: none;
@@ -257,9 +245,6 @@
         }
 
         /* --- Specific Panel Overrides --- */
-        #code-editor-panel {
-            min-height: 400px;
-        }
         #code-editor-panel textarea {
             flex-grow: 1;
             font-family: 'Fira Code', 'Cascadia Code', monospace;
@@ -320,9 +305,11 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            flex-grow: 1; /* Agar form mengisi ruang */
         }
         #contribute-panel textarea {
             min-height: 80px;
+            flex-grow: 1;
         }
         #contribute-panel button {
             align-self: flex-end;
@@ -334,11 +321,32 @@
             color: var(--text-secondary);
             text-align: center;
         }
+        #contributor-messages-list {
+            list-style: none;
+            padding: 0;
+            max-height: 180px; /* Cukup tinggi untuk scroll */
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+        }
+        #contributor-messages-list li {
+            padding: 8px 10px;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 0.9em;
+        }
+        #contributor-messages-list li:last-child {
+            border-bottom: none;
+        }
+        #contributor-messages-list .message-meta {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
 
         /* Live Visitors Panel */
         #live-visitors-panel {
             min-height: 300px;
-            /* display: none; Handled by JS based on Ezra login */
         }
         #live-visitors-panel ul {
             list-style: none;
@@ -404,6 +412,7 @@
             bottom: 20px;
             left: 20px;
             display: flex;
+            flex-direction: column; /* Ubah ke kolom untuk menghemat ruang horizontal */
             gap: 15px;
             z-index: 999;
         }
@@ -512,12 +521,24 @@
             border: 1px solid var(--border-color);
         }
 
-        .gallery-item img, .gallery-item video {
+        .gallery-item img, .gallery-item video, .gallery-item .document-preview {
             width: 100%;
             height: 200px;
             object-fit: cover;
             display: block;
+            background-color: var(--darker);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
         }
+        .gallery-item .document-preview {
+            border: 1px dashed var(--border-color);
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
 
         .gallery-item-info {
             padding: 15px;
@@ -632,25 +653,17 @@
 </head>
 <body>
     <header>
-        <div class="logo">Ezra's DevLog</div>
+        <div class="logo" id="rainbow-logo">Ezra's DevLog</div>
         <div class="header-controls">
-            <button id="theme-toggle">
-                <i class="fas fa-sun"></i> / <i class="fas fa-moon"></i>
-            </button>
-            <button id="show-code-editor">Code Editor</button>
-            <button id="show-music-player">Music Player</button>
-            <button id="show-contribute">Contribute</button>
-            <button id="show-live-visitors" class="hidden">Live Visitors</button>
-            <button id="show-private-user"><i class="fas fa-user-secret"></i></button>
-        </div>
+            </div>
     </header>
 
     <main class="main-content">
         <div class="main-content-wrapper">
-            <div id="code-editor-panel" class="panel">
+            <div id="code-editor-panel" class="panel hidden">
                 <div class="panel-header">
                     <h3>Code Editor</h3>
-                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    <button class="close-btn" data-target="code-editor-panel"><i class="fas fa-times"></i></button>
                 </div>
                 <textarea id="unified-editor" spellcheck="false" placeholder="Tulis HTML, CSS, dan JavaScript Anda di sini..."></textarea>
                 <button id="run-code" class="primary-btn">Run Code</button>
@@ -658,10 +671,10 @@
                 <iframe id="code-preview" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
             </div>
 
-            <div id="music-player-panel" class="panel">
+            <div id="music-player-panel" class="panel hidden">
                 <div class="panel-header">
                     <h3>Music Player</h3>
-                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    <button class="close-btn" data-target="music-player-panel"><i class="fas fa-times"></i></button>
                 </div>
                 <audio id="music-audio" controls></audio>
                 <div class="audio-controls">
@@ -676,10 +689,10 @@
                     </ul>
             </div>
 
-            <div id="contribute-panel" class="panel">
+            <div id="contribute-panel" class="panel hidden">
                 <div class="panel-header">
                     <h3>Kontribusi Pesan</h3>
-                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    <button class="close-btn" data-target="contribute-panel"><i class="fas fa-times"></i></button>
                 </div>
                 <form id="contribute-form">
                     <input type="text" id="contributor-name" placeholder="Nama Anda (opsional)">
@@ -687,12 +700,16 @@
                     <button type="submit" class="primary-btn">Kirim Pesan</button>
                 </form>
                 <p id="contribute-message"></p>
+                <h4>Pesan Terkini:</h4>
+                <ul id="contributor-messages-list">
+                    <li>Memuat pesan...</li>
+                </ul>
             </div>
 
             <div id="live-visitors-panel" class="panel hidden">
                 <div class="panel-header">
                     <h3>Live Visitors</h3>
-                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    <button class="close-btn" data-target="live-visitors-panel"><i class="fas fa-times"></i></button>
                 </div>
                 <ul id="visitor-list">
                     <li>Loading visitors...</li>
@@ -708,8 +725,8 @@
         </div>
     </main>
     <div class="website-age-container">
-    <p>Website Age:</p>
-    <p id="website-age">loading</p>
+        <p>Website Age:</p>
+        <p id="website-age">loading</p>
     </div>
 
     <div class="fab-container">
@@ -753,7 +770,7 @@
             <input type="hidden" id="edit-item-id">
             <div class="form-row">
                 <input type="text" id="gallery-item-title" placeholder="Judul Konten" required>
-                <input type="file" id="gallery-item-media" accept="image/*,video/*">
+                <input type="file" id="gallery-item-media" accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
             </div>
             <textarea id="gallery-item-description" placeholder="Deskripsi Konten" rows="3" required></textarea>
             <button type="submit" id="submit-gallery-item" class="primary-btn">Tambah Konten Baru</button>
@@ -762,22 +779,18 @@
     </div>
 
     <script>
-        // --- CONSTANTS ---
-        const CLOUDFLARE_WORKER_URL = 'https://forever.universalezra.workers.dev'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA!
+        // --- KONSTANTA ---
+        const CLOUDFLARE_WORKER_URL = 'https://forever.universalezra.workers.dev/'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA!
+        const GITHUB_REPO_OWNER = 'universalezra'; // GANTI DENGAN USERNAME GITHUB ANDA!
+        const GITHUB_REPO_NAME = 'universalezra';     // GANTI DENGAN NAMA REPO GITHUB ANDA (misal: "ezra-gallery-media")!
+        const GITHUB_BRANCH = 'main';                   // GANTI DENGAN NAMA BRANCH REPO ANDA!
 
         // --- DOM ELEMENTS ---
         const body = document.body;
-        const themeToggle = document.getElementById('theme-toggle');
-        const fabThemeToggle = document.getElementById('fab-theme-toggle');
-
-        // Panel toggles (header buttons)
-        const showCodeEditorBtn = document.getElementById('show-code-editor');
-        const showMusicPlayerBtn = document.getElementById('show-music-player');
-        const showContributeBtn = document.getElementById('show-contribute');
-        const showLiveVisitorsBtn = document.getElementById('show-live-visitors');
-        const showPrivateUserBtn = document.getElementById('show-private-user');
+        const rainbowLogo = document.getElementById('rainbow-logo');
 
         // Panel toggles (FABs)
+        const fabThemeToggle = document.getElementById('fab-theme-toggle');
         const fabCodeEditorBtn = document.getElementById('fab-code-editor');
         const fabMusicPlayerBtn = document.getElementById('fab-music-player');
         const fabContributeBtn = document.getElementById('fab-contribute');
@@ -794,11 +807,28 @@
 
         // Close buttons
         document.querySelectorAll('.panel .close-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const targetPanelId = button.dataset.target || button.closest('.panel').id;
+            button.addEventListener('click', (e) => {
+                const targetPanelId = e.currentTarget.dataset.target || e.currentTarget.closest('.panel').id;
                 document.getElementById(targetPanelId).classList.add('hidden');
             });
         });
+
+        // --- RAINBOW TEXT LOGIC ---
+        const rainbowColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3']; // Red, Orange, Yellow, Green, Blue, Indigo, Violet
+
+        function applyRainbowEffect(element) {
+            const text = element.textContent;
+            element.innerHTML = ''; // Clear existing content
+
+            text.split('').forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.style.color = rainbowColors[index % rainbowColors.length];
+                element.appendChild(span);
+            });
+        }
+        applyRainbowEffect(rainbowLogo);
+
 
         // --- THEME TOGGLE ---
         function toggleTheme() {
@@ -808,7 +838,6 @@
                 body.dataset.theme = 'dark';
             }
         }
-        themeToggle.addEventListener('click', toggleTheme);
         fabThemeToggle.addEventListener('click', toggleTheme);
 
         // --- PANEL MANAGEMENT (General) ---
@@ -822,26 +851,19 @@
             panel.classList.remove('hidden');
         }
 
-        showCodeEditorBtn.addEventListener('click', () => showPanel(codeEditorPanel));
         fabCodeEditorBtn.addEventListener('click', () => showPanel(codeEditorPanel));
-
-        showMusicPlayerBtn.addEventListener('click', () => showPanel(musicPlayerPanel));
         fabMusicPlayerBtn.addEventListener('click', () => showPanel(musicPlayerPanel));
-
-        showContributeBtn.addEventListener('click', () => showPanel(contributePanel));
-        fabContributeBtn.addEventListener('click', () => showPanel(contributePanel));
+        fabContributeBtn.addEventListener('click', () => {
+            showPanel(contributePanel);
+            fetchContributorMessages(); // Muat pesan saat panel dibuka
+        });
 
         // Logic for Live Visitors panel visibility based on Ezra login
-        showLiveVisitorsBtn.addEventListener('click', () => {
-            showPanel(liveVisitorsPanel);
-            fetchLiveVisitors(); // Refresh visitors when panel is shown
-        });
         fabLiveVisitorsBtn.addEventListener('click', () => {
             showPanel(liveVisitorsPanel);
             fetchLiveVisitors(); // Refresh visitors when panel is shown
         });
 
-        showPrivateUserBtn.addEventListener('click', () => showPanel(privateUserPanel));
         fabPrivateUserBtn.addEventListener('click', () => showPanel(privateUserPanel));
 
 
@@ -963,6 +985,39 @@
         const contributorNameInput = document.getElementById('contributor-name');
         const contributeTextInput = document.getElementById('contribute-text');
         const contributeMessage = document.getElementById('contribute-message');
+        const contributorMessagesList = document.getElementById('contributor-messages-list');
+
+        async function fetchContributorMessages() {
+            contributorMessagesList.innerHTML = '<li>Memuat pesan...</li>';
+            try {
+                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/contributions`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const messages = await response.json();
+                if (messages && messages.length > 0) {
+                    messages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Urutkan terbaru dulu
+                    contributorMessagesList.innerHTML = messages.map(msg => {
+                        const date = new Date(msg.timestamp).toLocaleString('id-ID', {
+                            year: 'numeric', month: 'long', day: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                        });
+                        return `
+                            <li>
+                                <strong>Nama:</strong> ${msg.name || 'Anonim'}<br>
+                                <strong>Pesan:</strong> ${msg.text}<br>
+                                <div class="message-meta">Tanggal: ${date}</div>
+                            </li>
+                        `;
+                    }).join('');
+                } else {
+                    contributorMessagesList.innerHTML = '<li>Belum ada pesan kontribusi.</li>';
+                }
+            } catch (error) {
+                console.error('Error fetching contributions:', error);
+                contributorMessagesList.innerHTML = `<li style="color: var(--danger);">Gagal memuat pesan: ${error.message}</li>`;
+            }
+        }
 
         contributeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -979,12 +1034,12 @@
             }
 
             try {
-                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/contribute`, {
+                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/contributions`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ name, text }),
+                    body: JSON.stringify({ name, text, timestamp: new Date().toISOString() }),
                 });
 
                 if (response.ok) {
@@ -992,6 +1047,7 @@
                     contributeMessage.style.color = 'var(--success)';
                     contributorNameInput.value = '';
                     contributeTextInput.value = '';
+                    fetchContributorMessages(); // Muat ulang pesan setelah berhasil kirim
                 } else {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Gagal mengirim pesan.');
@@ -1008,12 +1064,36 @@
         const refreshVisitorsBtn = document.getElementById('refresh-visitors-btn');
         const lastUpdatedTime = document.getElementById('last-updated-time');
 
+        // Fungsi untuk melacak pengunjung secara otomatis saat halaman dimuat
+        async function trackVisitor() {
+            let browserId = localStorage.getItem('browserId');
+            if (!browserId) {
+                browserId = 'browser-' + Date.now() + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('browserId', browserId);
+            }
+
+            try {
+                // Mengirim PUT request untuk memperbarui atau menambahkan pengunjung
+                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/visitors`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ browserId: browserId, timestamp: new Date().toISOString() })
+                });
+                if (!response.ok) {
+                    console.error('Failed to track visitor:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error tracking visitor:', error);
+            }
+        }
+        trackVisitor(); // Panggil saat load
+
         async function fetchLiveVisitors() {
             visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Memuat pengunjung...</li>';
             lastUpdatedTime.textContent = 'Memuat...';
 
             try {
-                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/get_visitors`);
+                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/visitors`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -1063,24 +1143,56 @@
         const submitGalleryItemBtn = document.getElementById('submit-gallery-item');
         const ezraFormStatus = document.getElementById('ezra-form-status');
 
-        privateUserSubmitBtn.addEventListener('click', () => {
-            const username = privateUserInput.value.trim().toLowerCase();
-            if (username === 'ezra') {
-                privateUserPanel.classList.add('hidden');
-                ezraPanel.classList.add('active'); // Show Ezra Panel
-                showLiveVisitorsBtn.classList.remove('hidden'); // Show Live Visitors button in header
-                fabLiveVisitorsBtn.classList.remove('hidden'); // Show Live Visitors FAB
-                loadEzraContent(); // Load content when Ezra logs in
-                privateUserMessage.textContent = ''; // Clear previous messages
+        // Memeriksa status login Ezra saat halaman dimuat
+        function checkEzraLoginAndShowVisitorsButton() {
+            const isEzra = localStorage.getItem('isEzraLoggedIn');
+            if (isEzra === 'true') {
+                fabLiveVisitorsBtn.classList.remove('hidden');
             } else {
-                privateUserMessage.textContent = 'Username tidak dikenal.';
+                fabLiveVisitorsBtn.classList.add('hidden');
+            }
+        }
+        checkEzraLoginAndShowVisitorsButton(); // Panggil saat startup
+
+        privateUserSubmitBtn.addEventListener('click', async () => {
+            const username = privateUserInput.value.trim();
+            privateUserMessage.textContent = 'Memverifikasi...';
+            privateUserMessage.style.color = 'var(--text-secondary)';
+
+            try {
+                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.authenticated) {
+                        localStorage.setItem('isEzraLoggedIn', 'true');
+                        privateUserPanel.classList.add('hidden');
+                        ezraPanel.classList.add('active'); // Show Ezra Panel
+                        fabLiveVisitorsBtn.classList.remove('hidden'); // Show Live Visitors FAB
+                        loadEzraContent(); // Load content when Ezra logs in
+                        privateUserMessage.textContent = ''; // Clear previous messages
+                    } else {
+                        privateUserMessage.textContent = 'Username tidak dikenal.';
+                        privateUserMessage.style.color = 'var(--danger)';
+                    }
+                } else {
+                    throw new Error('Server error during authentication.');
+                }
+            } catch (error) {
+                console.error('Authentication error:', error);
+                privateUserMessage.textContent = `Gagal login: ${error.message}`;
+                privateUserMessage.style.color = 'var(--danger)';
             }
         });
 
         ezraLogoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('isEzraLoggedIn');
             ezraPanel.classList.remove('active'); // Hide Ezra Panel
             liveVisitorsPanel.classList.add('hidden'); // Hide Live Visitors Panel if open
-            showLiveVisitorsBtn.classList.add('hidden'); // Hide Live Visitors button in header
             fabLiveVisitorsBtn.classList.add('hidden'); // Hide Live Visitors FAB
             privateUserInput.value = ''; // Clear input
             resetEzraForm(); // Reset form
@@ -1106,11 +1218,28 @@
                         galleryItem.dataset.id = item.id;
 
                         let mediaHtml = '';
-                        if (item.type === 'image') {
-                            mediaHtml = `<img src="${item.mediaUrl}" alt="${item.title}">`;
-                        } else if (item.type === 'video') {
-                            mediaHtml = `<video controls src="${item.mediaUrl}"></video>`;
+                        let fileIcon = '';
+                        if (item.type && item.mediaUrl) { // Pastikan type dan mediaUrl ada
+                            if (item.type.startsWith('image/')) {
+                                mediaHtml = `<img src="${item.mediaUrl}" alt="${item.title}">`;
+                            } else if (item.type.startsWith('video/')) {
+                                mediaHtml = `<video controls src="${item.mediaUrl}"></video>`;
+                            } else if (item.type === 'application/pdf') {
+                                fileIcon = '<i class="fas fa-file-pdf"></i>';
+                            } else if (item.type.includes('wordprocessingml') || item.type.includes('msword')) {
+                                fileIcon = '<i class="fas fa-file-word"></i>';
+                            } else {
+                                fileIcon = '<i class="fas fa-file"></i>'; // Default for other docs
+                            }
+
+                            if (fileIcon) {
+                                mediaHtml = `<div class="document-preview">${fileIcon} <br> ${item.mediaUrl.split('/').pop()}</div>`;
+                            }
+                        } else {
+                            // Jika tidak ada mediaUrl (misal, hanya deskripsi teks)
+                            mediaHtml = `<div class="document-preview"><i class="fas fa-info-circle"></i> No Media</div>`;
                         }
+
 
                         galleryItem.innerHTML = `
                             ${mediaHtml}
@@ -1157,7 +1286,7 @@
         async function editEzraItem(id) {
             ezraFormStatus.textContent = '';
             try {
-                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/ezra-content?id=${id}`);
+                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/ezra-content/${id}`); // Endpoint GET by ID
                 if (!response.ok) throw new Error('Failed to fetch item for editing');
                 const itemToEdit = await response.json();
 
@@ -1165,8 +1294,8 @@
                 galleryItemTitleInput.value = itemToEdit.title;
                 galleryItemDescriptionInput.value = itemToEdit.description;
                 submitGalleryItemBtn.textContent = 'Update Konten';
-                galleryItemMediaInput.value = '';
-                ezraFormStatus.textContent = 'Mode Edit: Upload media baru jika ingin mengganti.';
+                galleryItemMediaInput.value = ''; // Clear file input, user can choose new file
+                ezraFormStatus.textContent = 'Mode Edit: Upload media baru jika ingin mengganti file yang ada.';
                 ezraFormStatus.style.color = 'var(--text-secondary)';
 
             } catch (error) {
@@ -1177,14 +1306,14 @@
         }
 
         async function deleteEzraItem(id) {
-            if (!confirm('Apakah Anda yakin ingin menghapus konten ini?')) {
+            if (!confirm('Apakah Anda yakin ingin menghapus konten ini? Ini akan menghapus file media juga.')) {
                 return;
             }
             ezraFormStatus.textContent = 'Menghapus konten...';
             ezraFormStatus.style.color = 'var(--text-secondary)';
 
             try {
-                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/ezra-content?id=${id}`, {
+                const response = await fetch(`${CLOUDFLARE_WORKER_URL}/ezra-content/${id}`, {
                     method: 'DELETE',
                 });
                 if (response.ok) {
@@ -1219,10 +1348,10 @@
                 return;
             }
 
-            if (!mediaFile && !isEditing) {
-                 ezraFormStatus.textContent = 'Pilih file media untuk konten baru!';
-                 ezraFormStatus.style.color = 'var(--danger)';
-                 return;
+            if (!mediaFile && !isEditing) { // Media file is only required for new items
+                ezraFormStatus.textContent = 'Pilih file media untuk konten baru!';
+                ezraFormStatus.style.color = 'var(--danger)';
+                return;
             }
 
             const formData = new FormData();
@@ -1232,9 +1361,9 @@
             formData.append('date', new Date().toISOString());
             if (mediaFile) {
                 formData.append('media', mediaFile);
-                formData.append('type', mediaFile.type.startsWith('image/') ? 'image' : 'video');
+                formData.append('type', mediaFile.type);
             } else if (isEditing) {
-                 formData.append('noMediaChange', 'true');
+                formData.append('noMediaChange', 'true'); // Flag to worker if media is not being updated
             }
 
             try {
@@ -1262,54 +1391,51 @@
             }
         });
         // --- WEBSITE AGE FEATURE ---
-// Ganti dengan tanggal dan waktu peluncuran website Anda!
-// Format: YYYY, MM-1, DD, HH, MM, SS
-// Contoh: 1 Januari 2023, 10:00:00 -> new Date(2023, 0, 1, 10, 0, 0);
-const launchDate = new Date(2025, 5, 25, 0, 0, 0); // Contoh: 1 Januari 2023, 00:00:00
+        const launchDate = new Date(2025, 5, 25, 0, 0, 0); // Format: Tahun, Bulan-1, Tanggal, Jam, Menit, Detik
 
-const websiteAgeElement = document.getElementById('website-age');
+        const websiteAgeElement = document.getElementById('website-age');
 
-function updateWebsiteAge() {
-    const now = new Date();
-    const diff = now.getTime() - launchDate.getTime(); // Selisih dalam milidetik
+        function updateWebsiteAge() {
+            const now = new Date();
+            const diff = now.getTime() - launchDate.getTime(); // Selisih dalam milidetik
 
-    if (diff < 0) {
-        websiteAgeElement.textContent = "Website belum diluncurkan!";
-        return;
-    }
+            if (diff < 0) {
+                websiteAgeElement.textContent = "Website belum diluncurkan!";
+                return;
+            }
 
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
 
-    const years = Math.floor(days / 365.25); // Perhitungkan tahun kabisat
-    const remainingDaysAfterYears = days % 365.25;
+            const years = Math.floor(days / 365.25); // Perhitungkan tahun kabisat
+            const remainingDaysAfterYears = days % 365.25;
 
-    const months = Math.floor(remainingDaysAfterYears / 30.44); // Rata-rata hari per bulan
-    const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
+            const months = Math.floor(remainingDaysAfterYears / 30.44); // Rata-rata hari per bulan
+            const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
 
 
-    const displaySeconds = seconds % 60;
-    const displayMinutes = minutes % 60;
-    const displayHours = hours % 24;
+            const displaySeconds = seconds % 60;
+            const displayMinutes = minutes % 60;
+            const displayHours = hours % 24;
 
-    let ageString = "";
-    if (years > 0) ageString += `${years} tahun `;
-    if (months > 0) ageString += `${months} bulan `;
-    if (remainingDaysAfterMonths > 0) ageString += `${remainingDaysAfterMonths} hari `;
-    if (displayHours > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0)) ageString += `${displayHours} jam `; // Selalu tampilkan jam jika belum ada hari/bulan/tahun
-    if (displayMinutes > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0 && displayHours === 0)) ageString += `${displayMinutes} menit `; // Selalu tampilkan menit jika belum ada jam/hari/bulan/tahun
-    ageString += `${displaySeconds} detik`;
+            let ageString = "";
+            if (years > 0) ageString += `${years} tahun `;
+            if (months > 0) ageString += `${months} bulan `;
+            if (remainingDaysAfterMonths > 0) ageString += `${Math.floor(remainingDaysAfterMonths)} hari `;
+            if (displayHours > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0)) ageString += `${displayHours} jam `; // Selalu tampilkan jam jika belum ada hari/bulan/tahun
+            if (displayMinutes > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0 && displayHours === 0)) ageString += `${displayMinutes} menit `; // Selalu tampilkan menit jika belum ada jam/hari/bulan/tahun
+            ageString += `${displaySeconds} detik`;
 
-    websiteAgeElement.textContent = ageString.trim();
-}
+            websiteAgeElement.textContent = ageString.trim();
+        }
 
-// Panggil fungsi sekali saat load
-updateWebsiteAge();
+        // Panggil fungsi sekali saat load
+        updateWebsiteAge();
 
-// Perbarui setiap detik
-setInterval(updateWebsiteAge, 1000);
+        // Perbarui setiap detik
+        setInterval(updateWebsiteAge, 1000);
     </script>
 </body>
 </html>
