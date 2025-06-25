@@ -55,9 +55,9 @@
             padding: 0;
         }
 
+        /* --- Perubahan Utama untuk Tampilan Horizontal --- */
         html {
-            /* Perubahan utama untuk tampilan horizontal */
-            min-width: 1200px; /* Lebar minimum konten */
+            min-width: 1024px; /* Lebar minimum konten yang dipaksa */
             overflow-x: auto; /* Memungkinkan scrolling horizontal */
             height: 100%;
         }
@@ -65,78 +65,79 @@
         body {
             background: var(--bg-main);
             color: var(--text-primary);
-            font-family: 'Courier New', Courier, monospace; /* From elvi.css */
-            line-height: 1.6; /* From elvi.css */
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.6;
             display: flex;
             flex-direction: column;
             transition: background-color 0.3s ease, color 0.3s ease;
-            min-height: 100vh; /* Ensure body takes full height */
+            min-height: 100vh; /* Memastikan body mengambil seluruh tinggi viewport */
+            width: fit-content; /* Biarkan body menyesuaikan lebar konten anak */
         }
 
         button {
             cursor: pointer;
-            padding: .75rem 1.5rem; /* From elvi.css auth-btn */
-            border: 1px solid var(--primary); /* From elvi.css auth-btn */
-            border-radius: var(--border-radius); /* From elvi.css */
-            background: rgba(0, 0, 0, 0.3); /* From elvi.css auth-btn */
-            color: var(--primary); /* From elvi.css auth-btn */
-            font-family: inherit; /* From elvi.css auth-btn */
-            font-size: .9rem; /* From elvi.css auth-btn */
-            transition: var(--transition); /* From elvi.css */
+            padding: .75rem 1.5rem;
+            border: 1px solid var(--primary);
+            border-radius: var(--border-radius);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--primary);
+            font-family: inherit;
+            font-size: .9rem;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: .5rem; /* From elvi.css auth-btn */
+            gap: .5rem;
         }
 
         button:hover:not(:disabled) {
-            background: var(--button-hover-bg); /* Adapted for general buttons */
-            box-shadow: 0 0 10px var(--primary); /* From elvi.css auth-btn:hover */
-            transform: translateY(-2px); /* From elvi.css auth-btn:hover */
+            background: var(--button-hover-bg);
+            box-shadow: 0 0 10px var(--primary);
+            transform: translateY(-2px);
         }
 
         button:disabled {
-            opacity: .5; /* From elvi.css auth-btn:disabled */
-            cursor: not-allowed; /* From elvi.css auth-btn:disabled */
-            border-color: var(--text-secondary); /* From elvi.css auth-btn:disabled */
+            opacity: .5;
+            cursor: not-allowed;
+            border-color: var(--text-secondary);
         }
 
         /* Primary button style */
-        button.primary-btn { /* Custom class for primary style */
-            background: var(--primary); /* From elvi.css auth-btn.primary */
-            color: var(--dark); /* From elvi.css auth-btn.primary */
+        button.primary-btn {
+            background: var(--primary);
+            color: var(--dark);
             font-weight: bold;
         }
 
         button.primary-btn:hover:not(:disabled) {
-            background: var(--primary-dark); /* From elvi.css auth-btn.primary:hover */
-            box-shadow: 0 0 15px var(--primary); /* From elvi.css auth-btn.primary:hover */
-            animation: buttonPulse 1s infinite; /* From elvi.css auth-btn.primary:hover */
+            background: var(--primary-dark);
+            box-shadow: 0 0 15px var(--primary);
+            animation: buttonPulse 1s infinite;
         }
 
-        @keyframes buttonPulse { /* From elvi.css */
+        @keyframes buttonPulse {
             0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
         }
 
         input, textarea {
-            padding: .75rem 1rem; /* From elvi.css form-group input */
-            background: var(--input-bg); /* From elvi.css form-group input */
-            border: 1px solid var(--border-color); /* From elvi.css form-group input */
-            border-radius: var(--border-radius); /* From elvi.css */
+            padding: .75rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
             color: var(--text-primary);
             width: 100%;
             margin-bottom: 10px;
             resize: vertical;
-            font-family: inherit; /* From elvi.css form-group input */
-            transition: var(--transition); /* From elvi.css */
+            font-family: inherit;
+            transition: var(--transition);
         }
 
         input:focus, textarea:focus {
-            outline: none; /* From elvi.css form-group input:focus */
-            border-color: var(--primary); /* From elvi.css form-group input:focus */
-            box-shadow: 0 0 10px var(--primary); /* From elvi.css form-group input:focus */
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
         }
 
         a {
@@ -150,21 +151,21 @@
 
         /* --- Header --- */
         header {
-            width: 100%;
+            width: 100%; /* Lebar header akan mengikuti lebar konten total */
             height: var(--header-height);
-            background-color: var(--bg-panel); /* Use panel background for header */
+            background-color: var(--bg-panel);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 20px;
-            box-shadow: var(--box-shadow); /* From elvi.css */
+            box-shadow: var(--box-shadow);
             z-index: 1000;
         }
 
         header .logo {
             font-size: 1.8em;
             font-weight: bold;
-            color: var(--primary);
+            color: var(--primary); /* Warna dasar, akan di-override oleh JS untuk rainbow */
         }
 
         header .header-controls {
@@ -180,8 +181,7 @@
             padding: 20px;
             overflow-y: auto; /* Izinkan scrolling vertikal di dalam area konten */
             min-height: calc(100vh - var(--header-height)); /* Pastikan mengisi sisa tinggi */
-            width: fit-content; /* Biarkan konten menentukan lebar */
-            min-width: 100%; /* Pastikan setidaknya selebar viewport */
+            /* Perubahan: tidak perlu min-width 100% di sini, karena sudah di handle di html */
         }
 
         .main-content-wrapper {
@@ -189,6 +189,7 @@
             flex-wrap: nowrap; /* Mencegah wrap ke bawah */
             gap: 20px;
             padding-bottom: 20px; /* Ruang di bawah panel */
+            width: fit-content; /* Memaksa wrapper untuk menyesuaikan lebar anak-anaknya */
         }
 
         /* --- Panel Styles (Re-used for general panels) --- */
@@ -196,8 +197,8 @@
             flex-shrink: 0; /* Penting: mencegah panel menyusut */
             width: 380px; /* Lebar tetap untuk setiap panel */
             background-color: var(--bg-panel);
-            border-radius: var(--border-radius); /* From elvi.css */
-            box-shadow: var(--box-shadow); /* From elvi.css */
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             padding: 20px;
             backdrop-filter: blur(5px);
             border: 1px solid var(--border-color);
@@ -205,14 +206,14 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            animation: fadeIn .5s ease; /* From elvi.css */
+            animation: fadeIn .5s ease;
             min-height: 400px; /* Minimal tinggi panel */
         }
         .panel.hidden {
             display: none;
         }
 
-        @keyframes fadeIn { /* From elvi.css */
+        @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
@@ -227,7 +228,7 @@
         }
 
         .panel-header h3 {
-            color: var(--primary);
+            color: var(--primary); /* Akan di-override oleh JS untuk rainbow */
             font-size: 1.4em;
         }
 
@@ -257,12 +258,12 @@
             width: 100%;
             height: 200px;
             border: 1px solid var(--border-color);
-            background-color: var(--darker); /* Darker background for code preview in dark theme */
+            background-color: var(--darker);
             border-radius: var(--border-radius);
             margin-top: 10px;
         }
         [data-theme="light"] #code-preview {
-            background-color: var(--light); /* Use light for preview in light theme */
+            background-color: var(--light);
         }
 
 
@@ -294,7 +295,7 @@
         }
         #playlist-items li.active {
             background-color: var(--primary);
-            color: var(--dark); /* Text color from elvi.css for active primary buttons */
+            color: var(--dark);
             font-weight: bold;
         }
         #playlist-items li:hover {
@@ -305,7 +306,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            flex-grow: 1; /* Agar form mengisi ruang */
+            flex-grow: 1;
         }
         #contribute-panel textarea {
             min-height: 80px;
@@ -324,7 +325,7 @@
         #contributor-messages-list {
             list-style: none;
             padding: 0;
-            max-height: 180px; /* Cukup tinggi untuk scroll */
+            max-height: 180px;
             overflow-y: auto;
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
@@ -386,14 +387,14 @@
         }
 
         .fab {
-            background: rgba(0,0,0,.3); /* From elvi.css auth-btn */
-            border: 1px solid var(--primary); /* From elvi.css auth-btn */
-            color: var(--primary); /* From elvi.css auth-btn */
+            background: rgba(0,0,0,.3);
+            border: 1px solid var(--primary);
+            color: var(--primary);
             border-radius: 50%;
             width: 50px;
             height: 50px;
             font-size: 1.5em;
-            box-shadow: var(--box-shadow); /* From elvi.css */
+            box-shadow: var(--box-shadow);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -403,7 +404,7 @@
         .fab:hover {
             background-color: var(--button-hover-bg);
             transform: scale(1.05);
-            box-shadow: 0 0 10px var(--primary); /* From elvi.css auth-btn:hover */
+            box-shadow: 0 0 10px var(--primary);
         }
 
         /* --- Social Links (Fixed position) --- */
@@ -412,7 +413,7 @@
             bottom: 20px;
             left: 20px;
             display: flex;
-            flex-direction: column; /* Ubah ke kolom untuk menghemat ruang horizontal */
+            flex-direction: column;
             gap: 15px;
             z-index: 999;
         }
@@ -439,8 +440,8 @@
             padding: 30px;
             z-index: 1001;
             text-align: center;
-            background: rgba(10,10,18,.95); /* Slightly less transparent */
-            border: 1px solid rgba(0,255,136,.2); /* From elvi.css login-form border */
+            background: rgba(10,10,18,.95);
+            border: 1px solid rgba(0,255,136,.2);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
         }
@@ -485,12 +486,12 @@
         #ezra-panel .panel-header h3 {
             flex-grow: 1;
             text-align: center;
-            color: var(--primary); /* Changed to primary from accent */
+            color: var(--primary);
             font-size: 2em;
         }
         #ezra-panel .logout-btn {
             background-color: var(--danger);
-            color: var(--text-primary); /* Ensure it's light text on danger background */
+            color: var(--text-primary);
             border-color: var(--danger);
         }
         #ezra-panel .logout-btn:hover {
@@ -504,7 +505,7 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             padding: 20px;
-            background-color: rgba(10, 10, 18, 0.8); /* Adapted from elvi.css dark */
+            background-color: rgba(10, 10, 18, 0.8);
             border-radius: var(--border-radius);
             overflow-y: auto;
             margin-bottom: 20px;
@@ -537,6 +538,8 @@
             border: 1px dashed var(--border-color);
             padding: 10px;
             box-sizing: border-box;
+            word-break: break-all; /* Memastikan teks panjang tidak overflow */
+            text-align: center;
         }
 
 
@@ -580,13 +583,13 @@
         .gallery-item-controls button {
             background: none;
             border: none;
-            color: var(--text-primary); /* Changed to text-primary for controls */
+            color: var(--text-primary);
             font-size: 1em;
             padding: 5px;
         }
 
         .gallery-item-controls button:hover {
-            color: var(--accent); /* Kept accent for specific icon hover */
+            color: var(--accent);
             background-color: rgba(255, 255, 255, 0.1);
         }
 
@@ -601,7 +604,7 @@
             margin-top: 20px;
         }
         #ezra-content-form h4 {
-            color: var(--primary); /* Changed to primary */
+            color: var(--primary);
             margin-bottom: 10px;
         }
         #ezra-content-form .form-row {
@@ -621,34 +624,39 @@
             margin-top: 10px;
         }
         /* Styling for Website Age Feature */
-.website-age-container {
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    padding: 15px 20px;
-    margin-top: 20px; /* Adjust as needed */
-    text-align: center;
-    color: var(--text-primary);
-    font-size: 0.9em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    width: fit-content; /* Adjust width as needed */
-    margin-left: auto;
-    margin-right: auto;
-}
+        .website-age-container {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 15px 20px;
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 0.9em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-.website-age-container p:first-child {
-    color: var(--text-secondary);
-}
+        .website-age-container p:first-child {
+            color: var(--text-secondary);
+        }
 
-#website-age {
-    font-weight: bold;
-    color: var(--primary); /* Highlight the age in primary color */
-    font-size: 1.1em;
-}
+        #website-age {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1em;
+        }
+
+        /* Rainbow text */
+        .rainbow-text span {
+            display: inline-block; /* Penting agar span tidak memecah kata */
+        }
     </style>
 </head>
 <body>
@@ -662,18 +670,18 @@
         <div class="main-content-wrapper">
             <div id="code-editor-panel" class="panel hidden">
                 <div class="panel-header">
-                    <h3>Code Editor</h3>
+                    <h3 class="rainbow-text">Code Editor</h3>
                     <button class="close-btn" data-target="code-editor-panel"><i class="fas fa-times"></i></button>
                 </div>
                 <textarea id="unified-editor" spellcheck="false" placeholder="Tulis HTML, CSS, dan JavaScript Anda di sini..."></textarea>
                 <button id="run-code" class="primary-btn">Run Code</button>
-                <h4>Preview:</h4>
+                <h4 class="rainbow-text">Preview:</h4>
                 <iframe id="code-preview" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
             </div>
 
             <div id="music-player-panel" class="panel hidden">
                 <div class="panel-header">
-                    <h3>Music Player</h3>
+                    <h3 class="rainbow-text">Music Player</h3>
                     <button class="close-btn" data-target="music-player-panel"><i class="fas fa-times"></i></button>
                 </div>
                 <audio id="music-audio" controls></audio>
@@ -684,14 +692,14 @@
                     <button id="shuffle-btn"><i class="fas fa-random"></i></button>
                     <button id="repeat-btn"><i class="fas fa-redo"></i></button>
                 </div>
-                <h4>Playlist:</h4>
+                <h4 class="rainbow-text">Playlist:</h4>
                 <ul id="playlist-items">
                     </ul>
             </div>
 
             <div id="contribute-panel" class="panel hidden">
                 <div class="panel-header">
-                    <h3>Kontribusi Pesan</h3>
+                    <h3 class="rainbow-text">Kontribusi Pesan</h3>
                     <button class="close-btn" data-target="contribute-panel"><i class="fas fa-times"></i></button>
                 </div>
                 <form id="contribute-form">
@@ -700,7 +708,7 @@
                     <button type="submit" class="primary-btn">Kirim Pesan</button>
                 </form>
                 <p id="contribute-message"></p>
-                <h4>Pesan Terkini:</h4>
+                <h4 class="rainbow-text">Pesan Terkini:</h4>
                 <ul id="contributor-messages-list">
                     <li>Memuat pesan...</li>
                 </ul>
@@ -708,7 +716,7 @@
 
             <div id="live-visitors-panel" class="panel hidden">
                 <div class="panel-header">
-                    <h3>Live Visitors</h3>
+                    <h3 class="rainbow-text">Live Visitors</h3>
                     <button class="close-btn" data-target="live-visitors-panel"><i class="fas fa-times"></i></button>
                 </div>
                 <ul id="visitor-list">
@@ -725,8 +733,8 @@
         </div>
     </main>
     <div class="website-age-container">
-        <p>Website Age:</p>
-        <p id="website-age">loading</p>
+        <p class="rainbow-text">Website Age:</p>
+        <p id="website-age" class="rainbow-text">loading</p>
     </div>
 
     <div class="fab-container">
@@ -734,7 +742,7 @@
         <button class="fab" id="fab-code-editor" aria-label="Open Code Editor"><i class="fas fa-code"></i></button>
         <button class="fab" id="fab-music-player" aria-label="Open Music Player"><i class="fas fa-music"></i></button>
         <button class="fab" id="fab-contribute" aria-label="Contribute Message"><i class="fas fa-comment-dots"></i></button>
-        <button class="fab hidden" id="fab-live-visitors" aria-label="Live Visitors"><i class="fas fa-eye"></i></button>
+        <button class="fab" id="fab-live-visitors" aria-label="Live Visitors" style="display: none;"><i class="fas fa-eye"></i></button>
         <button class="fab" id="fab-private-user" aria-label="Private User Access"><i class="fas fa-user-secret"></i></button>
     </div>
 
@@ -747,7 +755,7 @@
 
     <div id="private-user-panel" class="panel hidden">
         <div class="panel-header">
-            <h3>Login</h3>
+            <h3 class="rainbow-text">Login</h3>
             <button class="close-btn" data-target="private-user-panel"><i class="fas fa-times"></i></button>
         </div>
         <input type="text" id="private-user-input" placeholder="Masukkan Username Pribadi">
@@ -757,7 +765,7 @@
 
     <div id="ezra-panel" class="panel hidden">
         <div class="panel-header">
-            <h3>Ezra's Private Space</h3>
+            <h3 class="rainbow-text">Ezra's Private Space</h3>
             <button class="logout-btn primary-btn" id="ezra-logout-btn">Logout</button>
         </div>
 
@@ -766,7 +774,7 @@
         </div>
 
         <form id="ezra-content-form">
-            <h4>Tambah / Edit Konten</h4>
+            <h4 class="rainbow-text">Tambah / Edit Konten</h4>
             <input type="hidden" id="edit-item-id">
             <div class="form-row">
                 <input type="text" id="gallery-item-title" placeholder="Judul Konten" required>
@@ -787,7 +795,7 @@
 
         // --- DOM ELEMENTS ---
         const body = document.body;
-        const rainbowLogo = document.getElementById('rainbow-logo');
+        const rainbowElements = document.querySelectorAll('.rainbow-text, header .logo'); // Target elemen untuk efek pelangi
 
         // Panel toggles (FABs)
         const fabThemeToggle = document.getElementById('fab-theme-toggle');
@@ -814,20 +822,22 @@
         });
 
         // --- RAINBOW TEXT LOGIC ---
-        const rainbowColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3']; // Red, Orange, Yellow, Green, Blue, Indigo, Violet
+        // Penambahan lebih banyak warna untuk variasi acak
+        const allRainbowColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '#4B0082', '#9400D3', '#FF00FF', '#00FF88', '#FFD700', '#ADFF2F']; // Lebih banyak warna pelangi dan sejenisnya
 
         function applyRainbowEffect(element) {
             const text = element.textContent;
             element.innerHTML = ''; // Clear existing content
 
-            text.split('').forEach((char, index) => {
+            text.split('').forEach((char) => {
                 const span = document.createElement('span');
                 span.textContent = char;
-                span.style.color = rainbowColors[index % rainbowColors.length];
+                span.style.color = allRainbowColors[Math.floor(Math.random() * allRainbowColors.length)]; // Warna acak
                 element.appendChild(span);
             });
         }
-        applyRainbowEffect(rainbowLogo);
+        // Terapkan efek pelangi pada semua elemen yang ditargetkan
+        rainbowElements.forEach(applyRainbowEffect);
 
 
         // --- THEME TOGGLE ---
@@ -842,9 +852,9 @@
 
         // --- PANEL MANAGEMENT (General) ---
         function showPanel(panel) {
-            // Hide all other main panels if they are not Ezra panel
+            // Sembunyikan semua panel utama lainnya (kecuali Ezra panel yang full-screen)
             [codeEditorPanel, musicPlayerPanel, contributePanel, liveVisitorsPanel, privateUserPanel].forEach(p => {
-                if (p !== panel && p !== ezraPanel) {
+                if (p !== panel) { // Jangan sembunyikan panel yang akan ditampilkan
                     p.classList.add('hidden');
                 }
             });
@@ -937,14 +947,14 @@
         function toggleShuffle() {
             isShuffling = !isShuffling;
             shuffleBtn.classList.toggle('active', isShuffling);
-            shuffleBtn.style.color = isShuffling ? 'var(--primary)' : 'var(--text-primary)'; // Use primary for active
+            shuffleBtn.style.color = isShuffling ? 'var(--primary)' : 'var(--text-primary)';
         }
 
         function toggleRepeat() {
             isRepeating = !isRepeating;
             musicAudio.loop = isRepeating;
             repeatBtn.classList.toggle('active', isRepeating);
-            repeatBtn.style.color = isRepeating ? 'var(--primary)' : 'var(--text-primary)'; // Use primary for active
+            repeatBtn.style.color = isRepeating ? 'var(--primary)' : 'var(--text-primary)';
         }
 
         function updatePlaylistUI() {
@@ -1000,18 +1010,21 @@
                     contributorMessagesList.innerHTML = messages.map(msg => {
                         const date = new Date(msg.timestamp).toLocaleString('id-ID', {
                             year: 'numeric', month: 'long', day: 'numeric',
-                            hour: '2-digit', minute: '2-digit'
+                            hour: '2-digit', minute: '2-digit', second: '2-digit'
                         });
                         return `
                             <li>
-                                <strong>Nama:</strong> ${msg.name || 'Anonim'}<br>
-                                <strong>Pesan:</strong> ${msg.text}<br>
+                                <strong class="rainbow-text">Nama:</strong> <span class="rainbow-text">${msg.name || 'Anonim'}</span><br>
+                                <strong class="rainbow-text">Pesan:</strong> <span class="rainbow-text">${msg.text}</span><br>
                                 <div class="message-meta">Tanggal: ${date}</div>
                             </li>
                         `;
                     }).join('');
+                    // Terapkan efek pelangi pada pesan baru
+                    contributorMessagesList.querySelectorAll('.rainbow-text').forEach(applyRainbowEffect);
                 } else {
-                    contributorMessagesList.innerHTML = '<li>Belum ada pesan kontribusi.</li>';
+                    contributorMessagesList.innerHTML = '<li class="rainbow-text">Belum ada pesan kontribusi.</li>';
+                    applyRainbowEffect(contributorMessagesList.querySelector('li.rainbow-text'));
                 }
             } catch (error) {
                 console.error('Error fetching contributions:', error);
@@ -1047,7 +1060,7 @@
                     contributeMessage.style.color = 'var(--success)';
                     contributorNameInput.value = '';
                     contributeTextInput.value = '';
-                    fetchContributorMessages(); // Muat ulang pesan setelah berhasil kirim
+                    await fetchContributorMessages(); // Muat ulang pesan setelah berhasil kirim
                 } else {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Gagal mengirim pesan.');
@@ -1072,12 +1085,21 @@
                 localStorage.setItem('browserId', browserId);
             }
 
+            let ipAddress = 'N/A';
+            try {
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                ipAddress = ipData.ip;
+            } catch (ipError) {
+                console.warn('Failed to fetch IP address from ipify.org:', ipError);
+            }
+
             try {
                 // Mengirim PUT request untuk memperbarui atau menambahkan pengunjung
                 const response = await fetch(`${CLOUDFLARE_WORKER_URL}/visitors`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ browserId: browserId, timestamp: new Date().toISOString() })
+                    body: JSON.stringify({ browserId: browserId, ip: ipAddress, timestamp: new Date().toISOString() })
                 });
                 if (!response.ok) {
                     console.error('Failed to track visitor:', await response.text());
@@ -1100,21 +1122,33 @@
                 const visitors = await response.json();
 
                 if (visitors && visitors.length > 0) {
-                    visitorList.innerHTML = visitors.map(visitor => {
-                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
-                            hour: '2-digit', minute: '2-digit', second: '2-digit',
-                            day: '2-digit', month: '2-digit', year: 'numeric'
-                        });
-                        return `
-                            <li>
-                                <strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}...</span><br>
-                                <strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br>
-                                <strong>Waktu:</strong> <span>${timestamp}</span>
-                            </li>
-                        `;
-                    }).join('');
+                    // Filter pengunjung yang aktif dalam 24 jam terakhir (1 hari)
+                    const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+                    const activeVisitors = visitors.filter(v => new Date(v.timestamp).getTime() > oneDayAgo);
+
+                    if (activeVisitors.length > 0) {
+                        visitorList.innerHTML = activeVisitors.map(visitor => {
+                            const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
+                                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                                day: '2-digit', month: '2-digit', year: 'numeric'
+                            });
+                            return `
+                                <li>
+                                    <strong class="rainbow-text">ID:</strong> <span class="rainbow-text">${visitor.browserId.substring(0, 10)}...</span><br>
+                                    <strong class="rainbow-text">IP:</strong> <span class="rainbow-text">${visitor.ip || 'N/A'}</span><br>
+                                    <strong class="rainbow-text">Waktu:</strong> <span class="rainbow-text">${timestamp}</span>
+                                </li>
+                            `;
+                        }).join('');
+                        // Terapkan efek pelangi pada elemen baru
+                        visitorList.querySelectorAll('.rainbow-text').forEach(applyRainbowEffect);
+                    } else {
+                         visitorList.innerHTML = '<li class="rainbow-text" style="text-align: center; color: var(--text-secondary);">Tidak ada pengunjung online.</li>';
+                         applyRainbowEffect(visitorList.querySelector('li.rainbow-text'));
+                    }
                 } else {
-                    visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Tidak ada pengunjung online.</li>';
+                    visitorList.innerHTML = '<li class="rainbow-text" style="text-align: center; color: var(--text-secondary);">Tidak ada pengunjung online.</li>';
+                    applyRainbowEffect(visitorList.querySelector('li.rainbow-text'));
                 }
                 lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
 
@@ -1143,13 +1177,13 @@
         const submitGalleryItemBtn = document.getElementById('submit-gallery-item');
         const ezraFormStatus = document.getElementById('ezra-form-status');
 
-        // Memeriksa status login Ezra saat halaman dimuat
+        // Fungsi Baru untuk Mengecek Login Ezra dan Menampilkan Tombol
         function checkEzraLoginAndShowVisitorsButton() {
             const isEzra = localStorage.getItem('isEzraLoggedIn');
             if (isEzra === 'true') {
-                fabLiveVisitorsBtn.classList.remove('hidden');
+                fabLiveVisitorsBtn.style.display = 'flex'; // Tampilkan FAB jika Ezra login (pakai flex karena FAB adalah flex item)
             } else {
-                fabLiveVisitorsBtn.classList.add('hidden');
+                fabLiveVisitorsBtn.style.display = 'none'; // Pastikan tersembunyi jika bukan Ezra
             }
         }
         checkEzraLoginAndShowVisitorsButton(); // Panggil saat startup
@@ -1172,7 +1206,7 @@
                         localStorage.setItem('isEzraLoggedIn', 'true');
                         privateUserPanel.classList.add('hidden');
                         ezraPanel.classList.add('active'); // Show Ezra Panel
-                        fabLiveVisitorsBtn.classList.remove('hidden'); // Show Live Visitors FAB
+                        checkEzraLoginAndShowVisitorsButton(); // Update FAB visibility
                         loadEzraContent(); // Load content when Ezra logs in
                         privateUserMessage.textContent = ''; // Clear previous messages
                     } else {
@@ -1193,7 +1227,7 @@
             localStorage.removeItem('isEzraLoggedIn');
             ezraPanel.classList.remove('active'); // Hide Ezra Panel
             liveVisitorsPanel.classList.add('hidden'); // Hide Live Visitors Panel if open
-            fabLiveVisitorsBtn.classList.add('hidden'); // Hide Live Visitors FAB
+            checkEzraLoginAndShowVisitorsButton(); // Hide Live Visitors FAB
             privateUserInput.value = ''; // Clear input
             resetEzraForm(); // Reset form
             ezraGalleryContainer.innerHTML = '<p id="ezra-gallery-status" style="color: var(--text-secondary); text-align: center;">Loading content...</p>'; // Clear gallery
@@ -1219,14 +1253,14 @@
 
                         let mediaHtml = '';
                         let fileIcon = '';
-                        if (item.type && item.mediaUrl) { // Pastikan type dan mediaUrl ada
-                            if (item.type.startsWith('image/')) {
+                        if (item.mediaUrl) { // Cek apakah ada mediaUrl
+                            if (item.type && item.type.startsWith('image/')) {
                                 mediaHtml = `<img src="${item.mediaUrl}" alt="${item.title}">`;
-                            } else if (item.type.startsWith('video/')) {
+                            } else if (item.type && item.type.startsWith('video/')) {
                                 mediaHtml = `<video controls src="${item.mediaUrl}"></video>`;
                             } else if (item.type === 'application/pdf') {
                                 fileIcon = '<i class="fas fa-file-pdf"></i>';
-                            } else if (item.type.includes('wordprocessingml') || item.type.includes('msword')) {
+                            } else if (item.type && (item.type.includes('wordprocessingml') || item.type.includes('msword'))) {
                                 fileIcon = '<i class="fas fa-file-word"></i>';
                             } else {
                                 fileIcon = '<i class="fas fa-file"></i>'; // Default for other docs
@@ -1236,16 +1270,16 @@
                                 mediaHtml = `<div class="document-preview">${fileIcon} <br> ${item.mediaUrl.split('/').pop()}</div>`;
                             }
                         } else {
-                            // Jika tidak ada mediaUrl (misal, hanya deskripsi teks)
-                            mediaHtml = `<div class="document-preview"><i class="fas fa-info-circle"></i> No Media</div>`;
+                            // Jika tidak ada mediaUrl (misal, hanya deskripsi teks atau media gagal upload)
+                            mediaHtml = `<div class="document-preview"><i class="fas fa-info-circle"></i> No Media Available</div>`;
                         }
 
 
                         galleryItem.innerHTML = `
                             ${mediaHtml}
                             <div class="gallery-item-info">
-                                <h4 contenteditable="false">${item.title}</h4>
-                                <p contenteditable="false">${item.description}</p>
+                                <h4 class="rainbow-text">${item.title}</h4>
+                                <p class="rainbow-text">${item.description}</p>
                                 <small>${new Date(item.date).toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</small>
                             </div>
                             <div class="gallery-item-controls">
@@ -1256,6 +1290,10 @@
                         ezraGalleryContainer.appendChild(galleryItem);
                     });
 
+                    // Terapkan efek pelangi pada elemen h4 dan p di galeri
+                    ezraGalleryContainer.querySelectorAll('.rainbow-text').forEach(applyRainbowEffect);
+
+
                     // Add event listeners for edit/delete after elements are added
                     document.querySelectorAll('.edit-item-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => editEzraItem(e.currentTarget.dataset.id));
@@ -1265,7 +1303,8 @@
                     });
                     ezraGalleryStatus.textContent = ''; // Clear status if content loaded
                 } else {
-                    ezraGalleryStatus.textContent = 'Belum ada konten. Tambahkan yang pertama!';
+                    ezraGalleryStatus.innerHTML = '<p class="rainbow-text">Belum ada konten. Tambahkan yang pertama!</p>';
+                    applyRainbowEffect(ezraGalleryStatus.querySelector('p.rainbow-text'));
                 }
             } catch (error) {
                 console.error('Error loading Ezra content:', error);
@@ -1424,8 +1463,8 @@
             if (years > 0) ageString += `${years} tahun `;
             if (months > 0) ageString += `${months} bulan `;
             if (remainingDaysAfterMonths > 0) ageString += `${Math.floor(remainingDaysAfterMonths)} hari `;
-            if (displayHours > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0)) ageString += `${displayHours} jam `; // Selalu tampilkan jam jika belum ada hari/bulan/tahun
-            if (displayMinutes > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0 && displayHours === 0)) ageString += `${displayMinutes} menit `; // Selalu tampilkan menit jika belum ada jam/hari/bulan/tahun
+            if (displayHours > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0)) ageString += `${displayHours} jam `;
+            if (displayMinutes > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0 && displayHours === 0)) ageString += `${displayMinutes} menit `;
             ageString += `${displaySeconds} detik`;
 
             websiteAgeElement.textContent = ageString.trim();
@@ -1436,6 +1475,11 @@
 
         // Perbarui setiap detik
         setInterval(updateWebsiteAge, 1000);
+
+        // Setelah semua DOM dimuat, terapkan efek pelangi pada elemen yang sudah ada
+        document.addEventListener('DOMContentLoaded', () => {
+             document.querySelectorAll('.rainbow-text, header .logo').forEach(applyRainbowEffect);
+        });
     </script>
 </body>
 </html>
