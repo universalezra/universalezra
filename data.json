@@ -1,21 +1,18 @@
-{
-    "profileData": {
-        "username": "elvi_ezra_",
-        "fullName": "Elvi Ezra",
-        "bio": "Greetings...",
-        "profilePic": "...",
-        "stats": {
-            "posts": 13,
-            "followers": "4.5K",
-            "following": 321
-        }
+[
+    {
+        "id": "unique-id-1",
+        "title": "Judul Postingan Pertama",
+        "description": "Deskripsi singkat tentang postingan ini.",
+        "mediaUrl": "https://raw.githubusercontent.com/your-username/your-repo-name/main/media/image1.jpg",
+        "type": "image",
+        "date": "2024-06-25T10:00:00Z"
     },
-    "postsData": [
-        { "id": "p1", "type": "video", "src": "..." },
-        { "id": "p2", "type": "image", "src": "..." }
-    ],
-    "reelsData": [],
-    "taggedData": [],
-    "highlightsData": [],
-    "privateContentData": []
-}
+    {
+        "id": "unique-id-2",
+        "title": "Video Pribadi",
+        "description": "Video keren tentang sesuatu.",
+        "mediaUrl": "https://raw.githubusercontent.com/your-username/your-repo-name/main/media/video1.mp4",
+        "type": "video",
+        "date": "2024-06-24T15:30:00Z"
+    }
+]
