@@ -599,6 +599,35 @@
             text-align: center;
             margin-top: 10px;
         }
+        /* Styling for Website Age Feature */
+.website-age-container {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 15px 20px;
+    margin-top: 20px; /* Adjust as needed */
+    text-align: center;
+    color: var(--text-primary);
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: fit-content; /* Adjust width as needed */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.website-age-container p:first-child {
+    color: var(--text-secondary);
+}
+
+#website-age {
+    font-weight: bold;
+    color: var(--primary); /* Highlight the age in primary color */
+    font-size: 1.1em;
+}
     </style>
 </head>
 <body>
@@ -678,6 +707,10 @@
             </div>
         </div>
     </main>
+    <div class="website-age-container">
+    <p>Website Age:</p>
+    <p id="website-age">loading</p>
+    </div>
 
     <div class="fab-container">
         <button class="fab" id="fab-theme-toggle" aria-label="Toggle Theme"><i class="fas fa-adjust"></i></button>
@@ -1228,6 +1261,55 @@
                 ezraFormStatus.style.color = 'var(--danger)';
             }
         });
+        // --- WEBSITE AGE FEATURE ---
+// Ganti dengan tanggal dan waktu peluncuran website Anda!
+// Format: YYYY, MM-1, DD, HH, MM, SS
+// Contoh: 1 Januari 2023, 10:00:00 -> new Date(2023, 0, 1, 10, 0, 0);
+const launchDate = new Date(2025, 6, 25, 0, 0, 0); // Contoh: 1 Januari 2023, 00:00:00
+
+const websiteAgeElement = document.getElementById('website-age');
+
+function updateWebsiteAge() {
+    const now = new Date();
+    const diff = now.getTime() - launchDate.getTime(); // Selisih dalam milidetik
+
+    if (diff < 0) {
+        websiteAgeElement.textContent = "Website belum diluncurkan!";
+        return;
+    }
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    const years = Math.floor(days / 365.25); // Perhitungkan tahun kabisat
+    const remainingDaysAfterYears = days % 365.25;
+
+    const months = Math.floor(remainingDaysAfterYears / 30.44); // Rata-rata hari per bulan
+    const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
+
+
+    const displaySeconds = seconds % 60;
+    const displayMinutes = minutes % 60;
+    const displayHours = hours % 24;
+
+    let ageString = "";
+    if (years > 0) ageString += `${years} tahun `;
+    if (months > 0) ageString += `${months} bulan `;
+    if (remainingDaysAfterMonths > 0) ageString += `${remainingDaysAfterMonths} hari `;
+    if (displayHours > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0)) ageString += `${displayHours} jam `; // Selalu tampilkan jam jika belum ada hari/bulan/tahun
+    if (displayMinutes > 0 || (years === 0 && months === 0 && remainingDaysAfterMonths === 0 && displayHours === 0)) ageString += `${displayMinutes} menit `; // Selalu tampilkan menit jika belum ada jam/hari/bulan/tahun
+    ageString += `${displaySeconds} detik`;
+
+    websiteAgeElement.textContent = ageString.trim();
+}
+
+// Panggil fungsi sekali saat load
+updateWebsiteAge();
+
+// Perbarui setiap detik
+setInterval(updateWebsiteAge, 1000);
     </script>
 </body>
 </html>
