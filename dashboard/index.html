@@ -65,7 +65,7 @@
 
         html {
             /* Perubahan utama untuk tampilan horizontal */
-            min-width: 712px; /* Lebar minimum konten */
+            min-width: 1024px; /* Lebar minimum konten */
             overflow-x: auto; /* Memungkinkan scrolling horizontal */
             height: 100%;
         }
@@ -785,7 +785,7 @@
     <script>
         // --- KONSTANTA ---
         const CLOUDFLARE_WORKER_URL = 'https://forever.universalezra.workers.dev'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA!
-        const GITHUB_RAW_CONTENT_BASE_URL = 'https://raw.githubusercontent.com/universalezra/universalezra/main/gallery-dashboard'; // Adjust if your repo structure is different
+        const GITHUB_RAW_CONTENT_BASE_URL = 'https://raw.githubusercontent.com/universalezra/universalezra/main/gallery-media'; // Adjust if your repo structure is different
 
         // --- DOM ELEMENTS ---
         const body = document.body;
@@ -1228,7 +1228,7 @@
                         localStorage.setItem('isEzraLoggedIn', 'true');
                         privateUserPanel.classList.add('hidden');
                         ezraPanel.classList.add('active'); // Show Ezra Panel
-                        fabLiveVisitorsBtn.classList.remove('hidden'); // Show Live Visitors FAB
+                        checkEzraLoginAndShowVisitorsButton(); // Update visibility after login
                         loadEzraContent(); // Load content when Ezra logs in
                         privateUserMessage.textContent = ''; // Clear previous messages
                     } else {
@@ -1249,7 +1249,7 @@
             localStorage.removeItem('isEzraLoggedIn');
             ezraPanel.classList.remove('active'); // Hide Ezra Panel
             liveVisitorsPanel.classList.add('hidden'); // Hide Live Visitors Panel if open
-            fabLiveVisitorsBtn.classList.add('hidden'); // Hide Live Visitors FAB
+            checkEzraLoginAndShowVisitorsButton(); // Update visibility after logout
             privateUserInput.value = ''; // Clear input
             resetEzraForm(); // Reset form
             ezraGalleryContainer.innerHTML = '<p id="ezra-gallery-status" style="color: var(--text-secondary); text-align: center;">Loading content...</p>'; // Clear gallery
