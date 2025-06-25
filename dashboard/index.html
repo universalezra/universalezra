@@ -55,9 +55,11 @@
             padding: 0;
         }
 
-        html, body {
+        html {
+            /* This is the key change: force horizontal width and enable scrolling */
+            min-width: 1200px; /* Minimum width for the entire page to mimic desktop */
+            overflow-x: auto; /* Allow horizontal scrolling */
             height: 100%;
-            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         body {
@@ -69,6 +71,7 @@
             flex-direction: column;
             transition: background-color 0.3s ease, color 0.3s ease;
             min-height: 100vh; /* Ensure body takes full height */
+            /* Do NOT set overflow-x: hidden here, it would prevent scrolling */
         }
 
         button {
@@ -191,18 +194,16 @@
             justify-content: center;
             align-items: flex-start;
             padding: 20px;
-            overflow-y: auto;
-            margin: 0 auto;
-            width: 100%; /* Ensure it can take full width */
+            overflow-y: auto; /* Allow vertical scrolling within content area */
+            width: 100%;
+            /* min-width and max-width removed from here to allow html min-width to take effect */
         }
 
         .main-content-wrapper {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* More horizontal columns, flexible */
             gap: 20px;
-            width: 100%;
-            min-width: 1200px; /* Ensure minimum width for desktop feel */
-            max-width: 1600px; /* Optional: cap max width for very large screens */
+            width: 100%; /* Ensure it fills the available width from the html min-width */
         }
 
         /* --- Panel Styles (Re-used for general panels) --- */
@@ -480,7 +481,7 @@
         }
         #ezra-panel .logout-btn {
             background-color: var(--danger);
-            color: var(--light); /* Ensure it's light text on danger background */
+            color: var(--text-primary); /* Ensure it's light text on danger background */
             border-color: var(--danger);
         }
         #ezra-panel .logout-btn:hover {
