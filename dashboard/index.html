@@ -266,8 +266,8 @@
             text-align: center; color: var(--text-muted); padding: 20px;
         }
 
-        /* Random Ditolak Cewek Text Panel */
-        #ditolak-cewek-text-panel {
+        /* Navigation Tips Panel */
+        #navigation-tips-panel {
             width: calc(100% - 50px); /* Span almost full width of main content */
             max-width: 1200px; /* Match main-content-wrapper max-width for consistency */
             background-color: var(--bg-dark);
@@ -276,21 +276,37 @@
             padding: 25px;
             backdrop-filter: blur(8px);
             border: 1px solid var(--border-color);
-            text-align: center;
-            font-size: 1.4em;
-            font-weight: bold;
-            color: var(--secondary-accent); /* Use a warning-like color */
+            text-align: left; /* Align text to left for readability of list */
+            font-size: 1em; /* Adjust font size for list */
+            color: var(--text-light); /* Standard text color */
             min-height: 120px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap; /* Allow text to wrap */
+            flex-direction: column; /* Stack header and content */
             margin-bottom: 25px; /* Space before other panels */
+        }
+        #navigation-tips-panel h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.8em;
             text-shadow: 0 0 10px rgba(0, 224, 255, 0.3);
         }
-        #ditolak-cewek-text-panel span {
-            display: inline-block; /* Essential for individual letter coloring */
+        #navigation-tips-panel #navigation-tips-content ol {
+            list-style-type: decimal; /* Numbered list */
+            margin-left: 20px; /* Indent for numbers */
+            padding-left: 0;
         }
+        #navigation-tips-panel #navigation-tips-content li {
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dotted rgba(255,255,255,0.1);
+            line-height: 1.5;
+            font-size: 1em;
+        }
+        #navigation-tips-panel #navigation-tips-content li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
 
         /* FAB & Social Links */
         .fab-container {
@@ -483,11 +499,20 @@
                 min-height: 300px;
                 padding: 20px;
             }
-            #ditolak-cewek-text-panel {
+            #navigation-tips-panel {
                 width: 95%;
-                font-size: 1.2em;
+                font-size: 0.9em; /* Adjust font size for mobile */
                 padding: 20px;
                 min-height: 100px;
+            }
+            #navigation-tips-panel h3 {
+                font-size: 1.5em;
+            }
+            #navigation-tips-panel #navigation-tips-content ol {
+                margin-left: 15px; /* Adjust indent for mobile */
+            }
+            #navigation-tips-panel #navigation-tips-content li {
+                font-size: 0.95em; /* Further adjust list item font size */
             }
             .fab-container {
                 bottom: 20px;
@@ -553,8 +578,10 @@
 
     <div class="dashboard-container">
         <main class="main-content">
-            <div id="ditolak-cewek-text-panel">
-                <span id="ditolak-cewek-output">Memuat kutipan inspiratif...</span>
+            <div id="navigation-tips-panel">
+                <h3><span class="rainbow-text-universal">Tips Membuat dan Memperbaiki Struktur Navigasi Website</span></h3>
+                <div id="navigation-tips-content">
+                    </div>
             </div>
 
             <div class="main-content-wrapper">
@@ -1005,7 +1032,8 @@
         const liveVisitorsPanel = document.getElementById('live-visitors-panel');
         const privateUserPanel = document.getElementById('private-user-panel');
         const ezraPanel = document.getElementById('ezra-panel');
-        const ditolakCewekOutput = document.getElementById('ditolak-cewek-output');
+        const navigationTipsPanel = document.getElementById('navigation-tips-panel');
+        const navigationTipsContent = document.getElementById('navigation-tips-content');
         const mainContentWrapper = document.querySelector('.main-content-wrapper');
 
         let activePanel = null; // Store active panel to avoid showing multiple at once
@@ -1074,7 +1102,7 @@
                 '#ezra-content-form h4 .rainbow-text-universal, ' +
                 '.gallery-item-info h4 .rainbow-text-universal, ' +
                 '#private-user-panel h3 .rainbow-text-universal, ' +
-                '#ditolak-cewek-output, ' + // Target the span directly
+                '#navigation-tips-panel h3 .rainbow-text-universal, ' + // New: Nav Tips Panel Title
                 '#website-age' // Target the paragraph directly
             ).forEach(element => {
                 applyRainbowEffectToElement(element);
@@ -1083,7 +1111,8 @@
             // Handle dynamically loaded list items (only specific spans, not all text)
             document.querySelectorAll(
                 '#contributor-messages-list li strong span, #contributor-messages-list li span:not(.message-meta), ' +
-                '#visitor-list li strong span, #visitor-list li span:nth-child(2)'
+                '#visitor-list li strong span, #visitor-list li span:nth-child(2), ' +
+                '#navigation-tips-content li' // Apply to each list item in nav tips
             ).forEach(element => {
                 applyRainbowEffectToElement(element);
             });
@@ -1784,31 +1813,37 @@
         updateWebsiteAge();
         setInterval(updateWebsiteAge, 1000);
 
-        // Random "Ditolak Cewek" Text Feature
-        const ditolakCewekQuotes = [
-            "Error 404: Cinta tidak ditemukan.",
-            "Dia bilang 'notifikasi mati', padahal hatinya yang mati rasa.",
-            "Server down, perasaanku hancur.",
-            "Firewall anti-jodoh aktif.",
-            "Mungkin koneksi hati kita terputus, atau memang belum terhubung.",
-            "Update cinta gagal, rollback ke status single.",
-            "Virus rindu menyerang, anti-virus cuek.",
-            "Password hatinya terlalu rumit untuk dipecahkan.",
-            "Log file penuh dengan penolakan.",
-            "Dia lebih suka mode incognito, tidak ingin terlihat denganku.",
-            "Backup hati gagal, semua data cinta hilang.",
-            "Bootloop perasaan, stuck di kenangan."
+        // Navigation Tips Feature
+        const navigationTips = [
+            "Rencanakan dengan Matang: Buatlah wireframe secermat mungkin untuk struktur website yang ramah pengguna.",
+            "Ketahui Standar Penggunaan dan Penempatan Elemen: Prioritaskan kemudahan pengguna daripada kebebasan kreativitas. Gunakan tanda yang standar dan familiar (mis. ikon garis tiga, titik tiga).",
+            "Gunakan Bahasa yang Digunakan oleh User: Sesuaikan bahasa navigasi dengan audiens Anda untuk kemudahan eksplorasi dan SEO.",
+            "Gunakan Menu Responsif: Pastikan menu Anda responsif agar pengguna tidak kabur, terutama di perangkat mobile.",
+            "Pemisahan Menu Navigasi dengan Elemen Lain: Gunakan white space, warna, atau perbedaan font untuk membedakan menu dari konten utama atau sidebar.",
+            "Buat Struktur yang Melebar (Sedatar Mungkin): Buat halaman sesederhana mungkin dan tautkan subkategori yang relevan agar pelanggan mudah mengeksplorasi.",
+            "Hindari Dropdown Menu (Jika Memungkinkan): Menu dropdown bisa membingungkan jika terlalu banyak tautan. Pertimbangkan struktur hirarki atau lokal sebagai gantinya."
         ];
 
-        function updateDitolakCewekText() {
-            const randomIndex = Math.floor(Math.random() * ditolakCewekQuotes.length);
-            const quote = ditolakCewekQuotes[randomIndex];
-            ditolakCewekOutput.textContent = quote;
-            applyRainbowEffectToElement(ditolakCewekOutput);
+        function displayNavigationTips() {
+            if (!navigationTipsContent) return;
+
+            navigationTipsContent.innerHTML = ''; // Clear existing content
+            const ol = document.createElement('ol');
+
+            navigationTips.forEach((tip, index) => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                li.classList.add('rainbow-text-universal'); // Apply rainbow to each list item
+                ol.appendChild(li);
+            });
+            navigationTipsContent.appendChild(ol);
+            // Re-apply rainbow effect specifically for these new elements
+            document.querySelectorAll('#navigation-tips-content li.rainbow-text-universal').forEach(el => {
+                applyRainbowEffectToElement(el);
+            });
         }
 
-        updateDitolakCewekText();
-        setInterval(updateDitolakCewekText, 10000); // Change quote every 10 seconds
+        displayNavigationTips(); // Call this function once on page load to display the tips
 
         // Initial check for Ezra login on page load
         checkEzraLoginAndShowVisitorsButton();
