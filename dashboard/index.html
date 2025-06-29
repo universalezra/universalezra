@@ -26,12 +26,23 @@
         * { box-sizing: border-box; }
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0;
-            overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg-main); color: var(--text-primary);
+            overflow: hidden;
+            /* Mengubah font-family untuk seluruh teks */
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-main);
+            /* Mengubah warna font utama menjadi hijau */
+            color: #00ff00;
         }
         #interactive-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; background-color: var(--bg-main);
+            z-index: 0;
+            /* Mengganti background particles dengan gambar */
+            background-image: url('January 17, 2025 at 5.10 AM.jpg'); /* Ganti dengan link gambar Anda */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(3px); /* Memberikan efek blur pada gambar background */
+            -webkit-filter: blur(3px);
         }
         .main-container {
             position: relative; z-index: 1; width: 100%; height: 100%;
@@ -44,7 +55,8 @@
         }
         .central-message {
             text-align: center;
-            color: var(--text-primary);
+            /* Mengubah warna font menjadi hijau */
+            color: #00ff00;
             font-size: 1.5em;
         }
         .central-message h3 {
@@ -52,16 +64,22 @@
             margin-bottom: 10px;
         }
         .central-message p {
-            color: var(--text-secondary);
+            /* Mengubah warna font menjadi hijau */
+            color: #00ff00;
             font-size: 0.8em;
         }
 
         .panel {
-            position: fixed; background: var(--bg-panel); backdrop-filter: blur(15px);
+            position: fixed;
+            /* Membuat panel menjadi lebih transparan */
+            background: rgba(26, 26, 46, 0.7); /* Lebih transparan */
+            backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px); z-index: 1010;
             box-shadow: 0 0 50px rgba(0,0,0,0.6);
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             display: flex; flex-direction: column;
+            /* Mengubah warna font panel menjadi hijau */
+            color: #00ff00;
         }
         #editor-panel {
             top: 0; left: 0; width: 100%; height: 100%;
@@ -101,11 +119,17 @@
         }
         .panel-close-btn {
             position: absolute; top: 15px; right: 15px; background: none; border: none;
-            color: var(--text-primary); font-size: 1.5rem; cursor: pointer; z-index: 5;
+            /* Mengubah warna font tombol menjadi hijau */
+            color: #00ff00;
+            font-size: 1.5rem; cursor: pointer; z-index: 5;
         }
         .fab-container { position: fixed; z-index: 1000; }
         .fab {
-            background: var(--primary); color: white; width: 55px; height: 55px;
+            /* Membuat tombol FAB lebih transparan */
+            background: rgba(142, 68, 173, 0.7); /* Lebih transparan */
+            /* Mengubah warna ikon FAB menjadi hijau */
+            color: #00ff00;
+            width: 55px; height: 55px;
             border-radius: 50%; border: none; cursor: pointer;
             display: flex; justify-content: center; align-items: center;
             font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -136,11 +160,17 @@
         /* EDITOR STYLES */
         #editor-panel { padding: 0; }
         .editor-toolbar {
-            display: flex; gap: 5px; padding: 10px; background: rgba(0,0,0,0.2);
+            display: flex; gap: 5px; padding: 10px;
+            /* Membuat toolbar editor lebih transparan */
+            background: rgba(0,0,0,0.5);
             flex-wrap: wrap; justify-content: flex-start;
         }
         .editor-toolbar button, .editor-toolbar select {
-            background: var(--primary); color: white; border:none;
+            /* Membuat tombol toolbar editor lebih transparan */
+            background: rgba(142, 68, 173, 0.7);
+            /* Mengubah warna font tombol toolbar menjadi hijau */
+            color: #00ff00;
+            border:none;
             padding: 8px 12px; border-radius: 5px; cursor: pointer;
         }
         .editor-toolbar button:hover, .editor-toolbar select:hover {
@@ -152,7 +182,11 @@
 
         /* Single editor textarea */
         #unified-code-editor {
-            flex-grow: 1; background: #1e1e1e; color: #f8f8f2; border: none;
+            flex-grow: 1;
+            background: #1e1e1e;
+            /* Mengubah warna font editor menjadi hijau */
+            color: #00ff00;
+            border: none;
             resize: none; padding: 10px; font-family: 'Courier New', monospace;
             font-size: 14px; outline: none; white-space: pre-wrap; word-wrap: break-word;
         }
@@ -185,6 +219,7 @@
             transform: translateX(-50%);
             display: flex;
             gap: 10px;
+            /* Membuat kontrol video lebih transparan */
             background: rgba(0,0,0,0.5);
             padding: 5px;
             border-radius: 5px;
@@ -192,7 +227,8 @@
         .video-controls button {
             background: none;
             border: none;
-            color: white;
+            /* Mengubah warna ikon kontrol video menjadi hijau */
+            color: #00ff00;
             font-size: 1rem;
             cursor: pointer;
         }
@@ -200,7 +236,11 @@
             position: fixed; top: 50%; right: 20px; transform: translateY(-50%);
             display: flex; flex-direction: column; gap: 15px; z-index: 999;
         }
-        .social-links a { color: var(--text-primary); font-size: 1.5rem; transition: color 0.3s, transform 0.3s; }
+        .social-links a {
+            /* Mengubah warna ikon sosial menjadi hijau */
+            color: #00ff00;
+            font-size: 1.5rem; transition: color 0.3s, transform 0.3s;
+        }
         .social-links a:hover { color: var(--accent); transform: scale(1.2); }
         
         /* Desktop Layout specific styles - adjusted */
@@ -237,7 +277,8 @@
             flex-direction: column;
             gap: 5px;
             font-size: 0.9em;
-            color: var(--text-primary);
+            /* Mengubah warna font list pengunjung menjadi hijau */
+            color: #00ff00;
         }
         #visitor-list li strong {
             color: var(--accent);
@@ -245,13 +286,17 @@
         #visitor-list li span {
             word-break: break-all;
         }
+        /* Mengubah warna font placeholder textarea */
+        textarea::placeholder {
+            color: rgba(0, 255, 0, 0.7); /* Warna hijau transparan */
+        }
     </style>
 </head>
-<body class=""> <canvas id="interactive-bg"></canvas>
+<body class="">
+    <div id="interactive-bg"></div>
     <div class="main-container">
         <div class="central-message">
-            <h3>Selamat Datang!</h3>
-            <p>Ini adalah website Anda. Anda bisa mengeditnya menggunakan Code Editor.</p>
+            <h3>Welcome 30 September 2024</h3>
         </div>
         <div class="panel" id="contribution-panel-desktop" style="display: none;">
              </div>
@@ -289,7 +334,7 @@
         <div id="contribution-content" style="display: flex; flex-direction: column; height: 100%;">
             <h3 style="margin-top:20px;">Leave a Message</h3>
             <div id="contribution-display" style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px;">
-                <p>Loading messages...</p>
+                <p>Loading messages</p>
             </div>
             <form id="contribution-form">
                 <textarea id="contribution-text" placeholder="Your message..." required style="width:100%; min-height: 80px; background:rgba(0,0,0,0.2); color:var(--text-primary); border:1px solid var(--border-color); border-radius:5px; padding:10px;"></textarea>
@@ -344,7 +389,7 @@ let visitorRefreshInterval;
 let isEzraLoggedIn = false; // Re-introduced for live visitor visibility control
 
 document.addEventListener('DOMContentLoaded', () => {
-    initParticleBackground();
+    // initParticleBackground(); // Menghapus inisialisasi partikel
     initPanelControls();
     initVideoPlayer();
     initEditor();
@@ -353,6 +398,8 @@ document.addEventListener('DOMContentLoaded', () => {
     checkEzraLoginAndShowVisitorsButton(); // Call this to control live visitor FAB visibility
 });
 
+// Menghapus fungsi initParticleBackground() karena sudah tidak digunakan
+/*
 function initParticleBackground() {
     const canvas = document.getElementById('interactive-bg');
     const ctx = canvas.getContext('2d');
@@ -426,6 +473,7 @@ function initParticleBackground() {
     initParticles();
     animateParticles();
 }
+*/
 
 function initPanelControls() {
     document.querySelectorAll('[data-panel]').forEach(button => {
@@ -522,7 +570,7 @@ function initMusicPlayer() {
     const playlistEl = document.getElementById('playlist');
     const songTitleEl = document.getElementById('song-title');
     const songs = [
-        { name: "Where We Are", url: "where-we-are.mp3" },
+        { name: "Life Goes On", url: "where-we-are.mp3" },
         { name: "Wish You Were Here", url: "wish-you-were-here.mp3" },
         { name: "ghost to you", url: "ghost-to-you.mp3" },
     ];
