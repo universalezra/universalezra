@@ -80,7 +80,7 @@
             transform: translateX(100%); padding: 20px;
         }
         #contribution-panel.active { transform: translateX(0); }
-        #live-visitors-panel, #backend-gallery-panel { /* Common styles for pop-up panels */
+        #live-visitors-panel {
             top: 50%;
             left: 50%;
             width: 350px;
@@ -94,7 +94,7 @@
             display: flex;
             flex-direction: column;
         }
-        #live-visitors-panel.active, #backend-gallery-panel.active {
+        #live-visitors-panel.active {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
             pointer-events: all;
@@ -128,12 +128,6 @@
         #fab-live-visitors { /* Moved to old music panel spot (bottom center) */
             bottom: 20px;
             left: 50%;
-            transform: translateX(-50%);
-        }
-        /* New FAB for Backend Gallery, position to be decided */
-        #fab-backend-gallery {
-            bottom: 20px; /* Aligned with Live Visitors */
-            left: calc(50% - 70px); /* To the left of Live Visitors */
             transform: translateX(-50%);
         }
         #fab-contribution { top: 20px; right: 20px; } /* Remains same */
@@ -233,7 +227,7 @@
             /* Keep desktop fabs as floating buttons */
         }
 
-        #visitor-list li, .gallery-item {
+        #visitor-list li {
             background: rgba(0, 168, 255, 0.1);
             border: 1px solid rgba(0, 168, 255, 0.2);
             border-radius: 8px;
@@ -245,34 +239,11 @@
             font-size: 0.9em;
             color: var(--text-primary);
         }
-        #visitor-list li strong, .gallery-item strong {
+        #visitor-list li strong {
             color: var(--accent);
         }
-        #visitor-list li span, .gallery-item span {
+        #visitor-list li span {
             word-break: break-all;
-        }
-        .gallery-item img, .gallery-item video, .gallery-item audio {
-            max-width: 100%; height: auto; border-radius: 5px; margin-top: 5px;
-        }
-        .gallery-item .media-container {
-            position: relative;
-            width: 100%;
-            height: 150px; /* Fixed height for small items */
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(0,0,0,0.1);
-            border-radius: 5px;
-            margin-top: 5px;
-        }
-        .gallery-item .media-container img,
-        .gallery-item .media-container video,
-        .gallery-item .media-container audio {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain; /* Fit without cropping */
-            display: block;
         }
     </style>
 </head>
@@ -322,8 +293,7 @@
             </div>
             <form id="contribution-form">
                 <textarea id="contribution-text" placeholder="Your message..." required style="width:100%; min-height: 80px; background:rgba(0,0,0,0.2); color:var(--text-primary); border:1px solid var(--border-color); border-radius:5px; padding:10px;"></textarea>
-                <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:10px;">
-                    <button type="submit" class="fab" style="position:static; width:45px; height:45px; font-size:1.1rem;"><i class="fas fa-paper-plane"></i></button>
+                <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:10px;"> <button type="submit" class="fab" style="position:static; width:45px; height:45px; font-size:1.1rem;"><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <p id="contribution-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
             </form>
@@ -345,29 +315,6 @@
             </div>
         </div>
     </div>
-
-    <div class="fab-container" id="fab-backend-gallery" style="display: none;"> <button class="fab" data-panel="backend-gallery-panel" title="My Moments"><i class="fas fa-images"></i></button>
-    </div>
-    <div class="panel" id="backend-gallery-panel">
-        <button class="panel-close-btn" data-panel="backend-gallery-panel"><i class="fas fa-times"></i></button>
-        <div style="padding: 20px; height: 100%; display: flex; flex-direction: column;">
-            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">My Life Moments Gallery</h3>
-            <div id="gallery-upload-form" style="margin-bottom: 20px; padding: 10px; border: 1px dashed var(--border-color); border-radius: 8px;">
-                <h4>Upload New Moment</h4>
-                <input type="text" id="gallery-description" placeholder="Description" style="width:100%; padding:8px; margin-bottom:10px; background:rgba(0,0,0,0.1); border:1px solid var(--border-color); color:var(--text-primary); border-radius:4px;">
-                <input type="file" id="gallery-file-input" accept="image/*,video/*,audio/*,application/pdf" style="width:100%; color:var(--text-secondary); margin-bottom:10px;">
-                <button id="gallery-upload-btn" class="fab" style="position:static; width:100px; height:40px; font-size:1rem;"><i class="fas fa-upload"></i> Upload</button>
-                <p id="gallery-upload-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
-            </div>
-            <div id="gallery-items-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
-                <p style="text-align: center; color: var(--text-secondary);">Loading moments...</p>
-                <div id="gallery-items" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
-                    </div>
-            </div>
-        </div>
-    </div>
-
-
     <div class="fab-container" id="fab-editor">
         <button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button>
     </div>
@@ -392,17 +339,9 @@
 <script>
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
 const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
-// New Worker URL for Gallery (replace with your deployed worker URL)
-const GALLERY_WORKER_URL = 'YOUR_GALLERY_WORKER_URL_HERE'; 
-
 const REFRESH_INTERVAL_MS = 5000;
 let visitorRefreshInterval;
-
-// BioVAuth Classes - START
-// (Paste your BioVAuth and SecuritySystem classes here)
-class BioVAuth{constructor(){this.env={WORKER_URL:'https://auth-logs.ezvvel.workers.dev/',RATE_LIMIT_WINDOW:300000,RATE_LIMIT_MAX_ATTEMPTS:5};this.elements={scanLine:document.getElementById('scanLine'),status:document.getElementById('status'),btnContainer:document.getElementById('btnContainer'),loginForm:document.getElementById('loginForm'),fallbackBtn:document.getElementById('fallbackBtn'),visitBtn:document.getElementById('visitBtn'),webauthnBtn:document.getElementById('webauthnBtn'),emailInput:document.getElementById('email'),passwordInput:document.getElementById('password'),submitLogin:document.getElementById('submitLogin'),loadingSpinner:document.getElementById('loadingSpinner'),errorMsg:document.getElementById('errorMsg'),ipDisplay:document.getElementById('ipDisplay'),togglePassword:document.querySelector('.toggle-password'),webauthnUnsupported:document.getElementById('webauthnUnsupported')};this.securityConfig={maxAttempts:3,blockDuration:300000,cookieName:'bioVAuthSecurity',localStorageKey:'isEzraLoggedIn'};this.state={webauthnSupported:false,clientInfo:{}};this.init();}async init(){this.startBiometricAnimation();await this.collectClientInfo();this.setupEventListeners();this.checkWebAuthnSupport();this.securitySystem=new SecuritySystem(this.securityConfig.maxAttempts,this.securityConfig.blockDuration,this.securityConfig.cookieName);}async collectClientInfo(){try{const controller=new AbortController();const id=setTimeout(()=>controller.abort(),3000);const ipResponse=await fetch('https://api.ipify.org?format=json',{signal:controller.signal});clearTimeout(id);if(!ipResponse.ok)throw new Error(`HTTP error! status: ${ipResponse.status}`);const ipData=await ipResponse.json();this.state.clientInfo={ip:ipData.ip,userAgent:navigator.userAgent,platform:navigator.platform,timestamp:new Date().toISOString(),screenResolution:`${window.screen.width}x${window.screen.height}`,language:navigator.language};this.elements.ipDisplay.textContent=`IP: ${ipData.ip} • ${navigator.platform}`;}catch(error){console.error('Error collecting client info:',error);this.state.clientInfo={ip:'unavailable',userAgent:navigator.userAgent,platform:navigator.platform||'unknown',timestamp:new Date().toISOString(),screenResolution:`${window.screen.width}x${window.screen.height}`,language:navigator.language||'unknown'};this.elements.ipDisplay.textContent='Network: Secure • Private';}}startBiometricAnimation(){this.elements.scanLine.style.opacity='1';this.updateStatus('Initializing security protocols','info');setTimeout(()=>{this.elements.scanLine.style.opacity='0';this.updateStatus('System ready','success');this.elements.btnContainer.style.display='flex';},2000);}updateStatus(message,type='info'){this.elements.status.textContent=message;this.elements.status.className='status';if(type)this.elements.status.classList.add(type);}setupEventListeners(){this.elements.fallbackBtn.addEventListener('click',()=>this.showLoginForm());this.elements.visitBtn.addEventListener('click',()=>window.location.href='dashboard');this.elements.webauthnBtn.addEventListener('click',()=>{if(this.state.webauthnSupported)this.initiateWebAuthn();else this.elements.webauthnUnsupported.style.display='block';});this.elements.loginForm.addEventListener('submit',async(e)=>{e.preventDefault();await this.handleLogin();});this.elements.togglePassword.addEventListener('click',()=>this.togglePasswordVisibility());}checkWebAuthnSupport(){if(!window.PublicKeyCredential){this.state.webauthnSupported=false;this.elements.webauthnBtn.disabled=true;this.elements.webauthnUnsupported.style.display='block';return;}PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(available=>{this.state.webauthnSupported=available;if(!available)this.elements.webauthnUnsupported.style.display='block';}).catch(()=>{this.state.webauthnSupported=false;this.elements.webauthnUnsupported.style.display='block';});}showLoginForm(){this.elements.btnContainer.style.display='none';this.elements.loginForm.style.display='block';this.elements.emailInput.focus();this.updateStatus('Enter your credentials','info');}async handleLogin(){if(this.securitySystem.isBlocked()){this.showBlockedMessage();return;}const username=this.elements.emailInput.value.trim().toLowerCase();const password=this.elements.passwordInput.value;if(!username||!password){this.showError('Please fill in all fields (username and password).');return;}this.setLoadingState(true);try{const response=await fetch(this.env.WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json','X-Client-IP':this.state.clientInfo.ip,'X-Client-UA':this.state.clientInfo.userAgent},body:JSON.stringify({username,password})});const responseData=await response.json();if(responseData.authenticated){localStorage.setItem(this.securityConfig.localStorageKey,'true');this.securitySystem.resetAttempts();this.updateStatus('Authentication successful! Redirecting...','success');window.location.href='dashboard';}else{this.handleFailedLogin(responseData.message||'Invalid username or password.');}}catch(error){console.error('Login error (network or worker response parsing issue):',error);this.showError('Login failed: network issue or server error. Please try again.');this.securitySystem.recordFailedAttempt();}finally{this.setLoadingState(false);}}handleSuccessfulLogin(){localStorage.setItem(this.securityConfig.localStorageKey,'true');this.securitySystem.resetAttempts();this.updateStatus('Authentication successful!','success');this.elements.errorMsg.textContent='';window.location.href='dashboard';}handleFailedLogin(errorMessage){this.securitySystem.recordFailedAttempt();const attemptsLeft=this.securitySystem.maxAttempts-this.securitySystem.attemptData.attempts;let displayMessage=errorMessage+(attemptsLeft>0?` (${attemptsLeft} ${attemptsLeft===1?'attempt':'attempts'} left)`:'');this.showError(displayMessage);if(this.securitySystem.isBlocked())this.showBlockedMessage();this.elements.passwordInput.value='';this.elements.passwordInput.focus();this.elements.loginForm.classList.add('shake');setTimeout(()=>this.elements.loginForm.classList.remove('shake'),500);}showBlockedMessage(){let remainingTime=this.securitySystem.getRemainingBlockTime();const updateCountdown=()=>{const minutes=Math.floor(remainingTime/60);const seconds=remainingTime%60;this.showError(`Too many attempts. Please wait ${minutes}m ${seconds}s.`);};this.setLoadingState(false);this.elements.submitLogin.disabled=true;updateCountdown();const countdownInterval=setInterval(()=>{remainingTime=this.securitySystem.getRemainingBlockTime();if(remainingTime<=0){clearInterval(countdownInterval);this.elements.errorMsg.textContent='';this.elements.submitLogin.disabled=false;return;}updateCountdown();},1000);}showError(message){this.elements.errorMsg.textContent=message;this.elements.errorMsg.style.display='block';setTimeout(()=>{if(this.elements.errorMsg.textContent===message)this.elements.errorMsg.style.display='none';},5000);}setLoadingState(isLoading){this.elements.submitLogin.disabled=isLoading;this.elements.loadingSpinner.style.display=isLoading?'inline-block':'none';this.elements.submitLogin.querySelector('.btn-text').textContent=isLoading?'Authenticating...':'Login';}togglePasswordVisibility(){const isPassword=this.elements.passwordInput.type==='password';this.elements.passwordInput.type=isPassword?'text':'password';this.elements.togglePassword.textContent=isPassword?'😌':'🙂';this.elements.togglePassword.setAttribute('aria-label',isPassword?'Hide password':'Show password');}initiateWebAuthn(){if(!this.state.webauthnSupported)return;this.updateStatus('Initiating biometric authentication...','info');setTimeout(()=>this.updateStatus('Please use your device biometric authenticator','info'),1000);}}class SecuritySystem{constructor(maxAttempts,blockDuration,cookieName){this.maxAttempts=maxAttempts;this.blockDuration=blockDuration;this.cookieName=cookieName;this.attemptData=this.loadAttemptData();}loadAttemptData(){try{const cookieData=this.getCookie(this.cookieName);const data=cookieData?JSON.parse(decodeURIComponent(cookieData)):this.getDefaultData();return this.validateData(data)?data:this.getDefaultData();}catch(e){console.error('Failed to parse cookie data:',e);return this.getDefaultData();}}getDefaultData(){return{attempts:0,lastAttempt:null,blockUntil:null};}validateData(data){return data&&typeof data==='object'&&'attempts'in data&&'lastAttempt'in data&&'blockUntil'in data;}saveAttemptData(){const expires=new Date();expires.setDate(expires.getDate()+1);const data=encodeURIComponent(JSON.stringify(this.attemptData));document.cookie=`${this.cookieName}=${data}; expires=${expires.toUTCString()}; path=/; SameSite=Strict; Secure`;}getCookie(name){return document.cookie.split(';').map(c=>c.trim()).find(c=>c.startsWith(name+'='))?.substring(name.length+1);}recordFailedAttempt(){const now=new Date();this.attemptData.attempts++;this.attemptData.lastAttempt=now.toISOString();if(this.attemptData.attempts>=this.maxAttempts){this.attemptData.blockUntil=new Date(now.getTime()+this.blockDuration).toISOString();}this.saveAttemptData();}resetAttempts(){this.attemptData=this.getDefaultData();this.saveAttemptData();}isBlocked(){if(!this.attemptData.blockUntil)return false;const blockUntil=new Date(this.attemptData.blockUntil);const now=new Date();if(now>blockUntil){this.resetAttempts();return false;}return true;}getRemainingBlockTime(){if(!this.isBlocked())return 0;return Math.round((new Date(this.attemptData.blockUntil)-new Date())/1000);}}
-// BioVAuth Classes - END
-
+let isEzraLoggedIn = false; // Re-introduced for live visitor visibility control
 
 document.addEventListener('DOMContentLoaded', () => {
     initParticleBackground();
@@ -411,85 +350,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initEditor();
     initMusicPlayer();
     trackVisitor();
-    new BioVAuth(); // Initialize BioVAuth to manage isEzraLoggedIn state
-
-    // Read isEzraLoggedIn state from localStorage managed by BioVAuth
-    const isEzraLoggedIn = localStorage.getItem('isEzraLoggedIn') === 'true';
-    checkEzraLoginAndShowVisitorsButton(isEzraLoggedIn); // Pass state
-    checkEzraLoginAndShowBackendGalleryButton(isEzraLoggedIn); // Pass state
+    checkEzraLoginAndShowVisitorsButton(); // Call this to control live visitor FAB visibility
 });
-
-function initPanelControls() {
-    document.querySelectorAll('[data-panel]').forEach(button => {
-        button.addEventListener('click', () => {
-            const panelId = button.getAttribute('data-panel');
-            const panel = document.getElementById(panelId);
-
-            panel.classList.toggle('active');
-
-            if (panelId === 'live-visitors-panel') {
-                if (panel.classList.contains('active')) {
-                    fetchLiveVisitors();
-                    visitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
-                } else {
-                    clearInterval(visitorRefreshInterval);
-                    const visitorList = document.getElementById('visitor-list');
-                    visitorList.innerHTML = '';
-                }
-            } else if (panelId === 'backend-gallery-panel') {
-                 if (panel.classList.contains('active')) {
-                    fetchGalleryContent(); // Load gallery content when opened
-                 }
-            }
-            
-            if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
-                fetchContributions();
-            }
-
-            // Close other panels (except for contribution panel if backend-gallery is opened)
-            document.querySelectorAll('.panel').forEach(otherPanel => {
-                if (otherPanel.id !== panelId) {
-                    otherPanel.classList.remove('active');
-                    if (otherPanel.id === 'live-visitors-panel') {
-                        clearInterval(visitorRefreshInterval);
-                        document.getElementById('visitor-list').innerHTML = '';
-                    }
-                }
-            });
-        });
-    });
-
-    document.querySelectorAll('.panel-close-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const panelId = button.getAttribute('data-panel');
-            const panel = document.getElementById(panelId);
-            panel.classList.remove('active');
-            if (panelId === 'live-visitors-panel') { // Clear interval if live visitors panel is closed
-                clearInterval(visitorRefreshInterval);
-                const visitorList = document.getElementById('visitor-list');
-                visitorList.innerHTML = '';
-            }
-        });
-    });
-}
-
-function checkEzraLoginAndShowVisitorsButton(isLoggedIn) {
-    const fabLiveVisitors = document.getElementById('fab-live-visitors');
-    if (isLoggedIn) {
-        fabLiveVisitors.style.display = 'flex';
-    } else {
-        fabLiveVisitors.style.display = 'none';
-    }
-}
-
-function checkEzraLoginAndShowBackendGalleryButton(isLoggedIn) {
-    const fabBackendGallery = document.getElementById('fab-backend-gallery');
-    if (isLoggedIn) {
-        fabBackendGallery.style.display = 'flex';
-    } else {
-        fabBackendGallery.style.display = 'none';
-    }
-}
 
 function initParticleBackground() {
     const canvas = document.getElementById('interactive-bg');
@@ -565,6 +427,75 @@ function initParticleBackground() {
     animateParticles();
 }
 
+function initPanelControls() {
+    document.querySelectorAll('[data-panel]').forEach(button => {
+        button.addEventListener('click', () => {
+            const panelId = button.getAttribute('data-panel');
+            const panel = document.getElementById(panelId);
+
+            panel.classList.toggle('active');
+
+            if (panelId === 'live-visitors-panel') {
+                if (panel.classList.contains('active')) {
+                    fetchLiveVisitors();
+                    visitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
+                } else {
+                    clearInterval(visitorRefreshInterval);
+                    const visitorList = document.getElementById('visitor-list');
+                    visitorList.innerHTML = '';
+                }
+            } else {
+                // Ensure live visitors panel is closed if another panel is opened
+                const liveVisitorsPanel = document.getElementById('live-visitors-panel');
+                if (liveVisitorsPanel && liveVisitorsPanel.classList.contains('active')) {
+                    liveVisitorsPanel.classList.remove('active');
+                    clearInterval(visitorRefreshInterval);
+                    document.getElementById('visitor-list').innerHTML = '';
+                }
+            }
+
+            if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
+                fetchContributions();
+            }
+
+            // Close other panels
+            document.querySelectorAll('.panel').forEach(otherPanel => {
+                if (otherPanel.id !== panelId) {
+                    otherPanel.classList.remove('active');
+                    if (otherPanel.id === 'live-visitors-panel') { // Redundant but safe check
+                        clearInterval(visitorRefreshInterval);
+                        document.getElementById('visitor-list').innerHTML = '';
+                    }
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.panel-close-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const panelId = button.getAttribute('data-panel');
+            const panel = document.getElementById(panelId);
+            panel.classList.remove('active');
+            if (panelId === 'live-visitors-panel') { // Clear interval if live visitors panel is closed
+                clearInterval(visitorRefreshInterval);
+                const visitorList = document.getElementById('visitor-list');
+                visitorList.innerHTML = '';
+            }
+        });
+    });
+}
+
+function checkEzraLoginAndShowVisitorsButton() {
+    const fabLiveVisitors = document.getElementById('fab-live-visitors');
+    if (isEzraLoggedIn) {
+        fabLiveVisitors.style.display = 'flex'; // Or 'block', depending on its default styling
+    } else {
+        fabLiveVisitors.style.display = 'none';
+    }
+}
+
+// Removed: initLayoutAndThemeToggles function entirely
+// since both layout toggle and theme toggle are removed.
 
 function initVideoPlayer() {
     const video = document.getElementById('widget-video');
@@ -889,97 +820,6 @@ async function fetchLiveVisitors() {
         lastUpdatedTime.textContent = 'Error';
     }
 }
-
-// --- Backend Gallery Functions ---
-async function fetchGalleryContent() {
-    const galleryItemsContainer = document.getElementById('gallery-items');
-    galleryItemsContainer.innerHTML = `<p style="text-align: center; color: var(--text-secondary);">Loading moments...</p>`;
-    if (GALLERY_WORKER_URL === 'YOUR_GALLERY_WORKER_URL_HERE') {
-        galleryItemsContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Please set your GALLERY_WORKER_URL_HERE in index.html to fetch content.</p>`;
-        return;
-    }
-    try {
-        const response = await fetch(GALLERY_WORKER_URL);
-        const items = await response.json();
-        if (items && items.length > 0) {
-            galleryItemsContainer.innerHTML = items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map(item => {
-                let mediaHtml = '';
-                const fileExtension = item.fileUrl.split('.').pop().toLowerCase();
-                if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
-                    mediaHtml = `<img src="${item.fileUrl}" alt="${item.description || 'Gallery image'}">`;
-                } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
-                    mediaHtml = `<video src="${item.fileUrl}" controls></video>`;
-                } else if (['mp3', 'wav', 'ogg'].includes(fileExtension)) {
-                    mediaHtml = `<audio src="${item.fileUrl}" controls></audio>`;
-                } else {
-                    mediaHtml = `<a href="${item.fileUrl}" target="_blank" style="color:var(--accent);"><i class="fas fa-file"></i> Download File</a>`;
-                }
-
-                return `
-                    <div class="gallery-item">
-                        <div class="media-container">
-                            ${mediaHtml}
-                        </div>
-                        <p style="margin: 5px 0;">${item.description || 'No description'}</p>
-                        <small style="color:var(--text-secondary);">${new Date(item.timestamp).toLocaleString()}</small>
-                    </div>
-                `;
-            }).join('');
-        } else {
-            galleryItemsContainer.innerHTML = `<p style="text-align: center; color: var(--text-secondary);">No moments uploaded yet.</p>`;
-        }
-    } catch (error) {
-        console.error('Error fetching gallery content:', error);
-        galleryItemsContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Failed to load moments.</p>`;
-    }
-}
-
-document.getElementById('gallery-upload-btn').addEventListener('click', async () => {
-    const description = document.getElementById('gallery-description').value;
-    const fileInput = document.getElementById('gallery-file-input');
-    const uploadStatus = document.getElementById('gallery-upload-status');
-
-    if (!fileInput.files.length) {
-        uploadStatus.textContent = 'Please select a file to upload.';
-        uploadStatus.style.color = 'var(--danger)';
-        return;
-    }
-    if (GALLERY_WORKER_URL === 'YOUR_GALLERY_WORKER_URL_HERE') {
-        uploadStatus.textContent = 'ERROR: Gallery Worker URL not set!';
-        uploadStatus.style.color = 'var(--danger)';
-        return;
-    }
-
-    uploadStatus.textContent = 'Uploading...';
-    uploadStatus.style.color = 'var(--text-secondary)';
-
-    const formData = new FormData();
-    formData.append('description', description);
-    formData.append('file', fileInput.files[0]);
-
-    try {
-        const response = await fetch(GALLERY_WORKER_URL, {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (response.ok) {
-            uploadStatus.textContent = 'Upload successful!';
-            uploadStatus.style.color = 'var(--success)';
-            document.getElementById('gallery-description').value = '';
-            fileInput.value = ''; // Clear file input
-            fetchGalleryContent(); // Refresh gallery
-        } else {
-            const errorText = await response.text();
-            throw new Error(`Upload failed: ${response.status} ${response.statusText} - ${errorText}`);
-        }
-    } catch (error) {
-        console.error('Gallery upload error:', error);
-        uploadStatus.textContent = `Upload failed: ${error.message}`;
-        uploadStatus.style.color = 'var(--danger)';
-    }
-});
-
 </script>
 </body>
 </html>
