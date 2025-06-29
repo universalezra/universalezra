@@ -294,13 +294,27 @@
         textarea::placeholder {
             color: rgba(0, 255, 0, 0.7); /* Warna hijau transparan */
         }
+
+        /* Styles for website age display */
+        #website-age-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8em; /* Very small text */
+            color: #00ff00; /* Green color */
+            z-index: 10; /* Ensure it's above other content but below panels */
+            background: none; /* No background */
+            padding: 0; /* No padding */
+            text-align: center;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
     </style>
 </head>
 <body class="">
     <div id="interactive-bg"></div>
     <div class="main-container">
         <div class="central-message">
-            <h3>30 September 2024</h3>
         </div>
         <div class="panel" id="contribution-panel-desktop" style="display: none;">
              </div>
@@ -386,6 +400,9 @@
     <div class="social-links"> <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="https://instagram.com/I_dont_care_now" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
         </div>
+
+    <div id="website-age-display"></div>
+
 <script>
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
 const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
@@ -401,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMusicPlayer();
     trackVisitor();
     checkEzraLoginAndShowVisitorsButton(); // Call this to control live visitor FAB visibility
+    initWebsiteAgeDisplay(); // Initialize website age display
 });
 function initPanelControls() {
     document.querySelectorAll('[data-panel]').forEach(button => {
@@ -794,6 +812,45 @@ async function fetchLiveVisitors() {
         visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed to load visitors.</li>';
         lastUpdatedTime.textContent = 'Error';
     }
+}
+
+function initWebsiteAgeDisplay() {
+    const websiteAgeDisplay = document.getElementById('website-age-display');
+    // Set your website's creation date here (Year, Month (0-11), Day, Hour, Minute, Second)
+    const creationDate = new Date(2025, 5, 25, 0, 0, 0); // Juneb25, 2025 at 05:10:00 AM
+
+    function updateWebsiteAge() {
+        const now = new Date();
+        const diff = now.getTime() - creationDate.getTime(); // Difference in milliseconds
+
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        
+        const years = Math.floor(days / 365.25); // Account for leap years
+        const remainingDaysAfterYears = Math.floor(days % 365.25);
+
+        const months = Math.floor(remainingDaysAfterYears / 30.44); // Average days in a month
+        const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
+
+        const displaySeconds = seconds % 60;
+        const displayMinutes = minutes % 60;
+        const displayHours = hours % 24;
+        
+        let ageString = '';
+        if (years > 0) ageString += `${years} T, `;
+        if (months > 0 || years > 0) ageString += `${months} B, `; // Show months if years exist or months themselves
+        ageString += `${remainingDaysAfterMonths} H, `;
+        ageString += `${displayHours.toString().padStart(2, '0')}:`;
+        ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
+        ageString += `${displaySeconds.toString().padStart(2, '0')}`;
+
+        websiteAgeDisplay.textContent = `Website Age: ${ageString}`;
+    }
+
+    updateWebsiteAge(); // Initial display
+    setInterval(updateWebsiteAge, 1000); // Update every second
 }
 </script>
 </body>
