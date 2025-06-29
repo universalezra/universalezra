@@ -79,6 +79,25 @@
             transform: translateX(100%); padding: 20px;
         }
         #contribution-panel.active { transform: translateX(0); }
+        #live-visitors-panel {
+            top: 50%;
+            left: 50%;
+            width: 350px;
+            max-width: 90vw;
+            height: 60vh;
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 15px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #live-visitors-panel.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
         .panel-close-btn {
             position: absolute; top: 15px; right: 15px; background: none; border: none;
             color: var(--text-primary); font-size: 1.5rem; cursor: pointer; z-index: 5;
@@ -95,15 +114,14 @@
         #fab-editor { top: 20px; left: 20px; }
         #fab-music { bottom: 20px; left: 50%; transform: translateX(-50%); }
         #fab-contribution { top: 20px; right: 20px; }
-        #fab-layout, #fab-theme { bottom: 20px; }
-        #fab-layout { left: 20px; }
-        #fab-theme { right: 20px; }
+        #fab-theme { bottom: 20px; right: 20px; }
+        #fab-live-visitors { bottom: 20px; right: 90px; }
 
-        /* EDITOR STYLES - MODIFIED FOR SINGLE EDITOR */
+        /* EDITOR STYLES */
         #editor-panel { padding: 0; }
         .editor-toolbar {
             display: flex; gap: 5px; padding: 10px; background: rgba(0,0,0,0.2);
-            flex-wrap: wrap; justify-content: flex-start; /* Align buttons to start */
+            flex-wrap: wrap; justify-content: flex-start;
         }
         .editor-toolbar button, .editor-toolbar select {
             background: var(--primary); color: white; border:none;
@@ -168,6 +186,8 @@
         }
         .social-links a { color: var(--text-primary); font-size: 1.5rem; transition: color 0.3s, transform 0.3s; }
         .social-links a:hover { color: var(--accent); transform: scale(1.2); }
+        
+        /* Desktop Layout specific styles - adjusted */
         body.desktop-layout .main-container {
             display: flex;
             justify-content: center;
@@ -181,45 +201,16 @@
             box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color);
             border-radius: 15px;
         }
-        body.desktop-layout .panel-close-btn, 
-        body.desktop-layout .fab, 
-        body.desktop-layout .social-links { display: none; }
-        /* Removed desktop-fab-bar related CSS */
+        body.desktop-layout .panel-close-btn { display: none; }
+        
+        /* Ensure FABs and Social Links are always visible, not hidden by desktop layout */
+        body.desktop-layout .fab-container, body.desktop-layout .social-links {
+            display: block; /* Override any desktop-layout specific hiding */
+        }
+        body.desktop-layout .fab {
+            /* Keep desktop fabs as floating buttons */
+        }
 
-        #live-visitors-panel {
-            top: 50%;
-            left: 50%;
-            width: 350px;
-            max-width: 90vw;
-            height: 60vh;
-            transform: translate(-50%, -50%) scale(0.8);
-            opacity: 0;
-            pointer-events: none;
-            border-radius: 15px;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        #live-visitors-panel.active {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            pointer-events: all;
-        }
-        body.desktop-layout #fab-live-visitors {
-            display: none;
-        }
-        body.desktop-layout #live-visitors-panel {
-            position: static;
-            transform: none !important;
-            height: auto;
-            width: auto;
-            max-height: none;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            opacity: 1;
-            pointer-events: all;
-        }
         #visitor-list li {
             background: rgba(0, 168, 255, 0.1);
             border: 1px solid rgba(0, 168, 255, 0.2);
@@ -320,9 +311,6 @@
     <div class="fab-container" id="fab-contribution">
         <button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button>
     </div>
-    <div class="fab-container" id="fab-layout">
-        <button class="fab" title="Toggle Layout"><i class="fas fa-layer-group"></i></button>
-    </div>
     <div class="fab-container" id="fab-theme">
         <button class="fab" title="Toggle Theme"><i class="fas fa-sun"></i></button>
     </div>
@@ -347,13 +335,13 @@ let visitorRefreshInterval;
 document.addEventListener('DOMContentLoaded', () => {
     initParticleBackground();
     initPanelControls();
-    initLayoutAndThemeToggles();
+    initLayoutAndThemeToggles(); // Tetap panggil untuk toggle tema
     initVideoPlayer();
     initEditor();
     initMusicPlayer();
     trackVisitor();
-    // Removed initPrivateUserAuth();
-    // Removed checkEzraLoginAndShowVisitorsButton();
+    // Removed: initPrivateUserAuth();
+    // Removed: checkEzraLoginAndShowVisitorsButton();
 });
 
 function initParticleBackground() {
@@ -448,6 +436,7 @@ function initPanelControls() {
                     visitorList.innerHTML = '';
                 }
             } else {
+                // Ensure live visitors panel is closed if another panel is opened
                 const liveVisitorsPanel = document.getElementById('live-visitors-panel');
                 if (liveVisitorsPanel && liveVisitorsPanel.classList.contains('active')) {
                     liveVisitorsPanel.classList.remove('active');
@@ -460,10 +449,11 @@ function initPanelControls() {
                 fetchContributions();
             }
 
+            // Close other panels
             document.querySelectorAll('.panel').forEach(otherPanel => {
                 if (otherPanel.id !== panelId) {
                     otherPanel.classList.remove('active');
-                    if (otherPanel.id === 'live-visitors-panel') {
+                    if (otherPanel.id === 'live-visitors-panel') { // Redundant but safe check
                         clearInterval(visitorRefreshInterval);
                         document.getElementById('visitor-list').innerHTML = '';
                     }
@@ -477,7 +467,7 @@ function initPanelControls() {
             const panelId = button.getAttribute('data-panel');
             const panel = document.getElementById(panelId);
             panel.classList.remove('active');
-            if (panelId === 'live-visitors-panel') {
+            if (panelId === 'live-visitors-panel') { // Clear interval if live visitors panel is closed
                 clearInterval(visitorRefreshInterval);
                 const visitorList = document.getElementById('visitor-list');
                 visitorList.innerHTML = '';
@@ -486,25 +476,21 @@ function initPanelControls() {
     });
 }
 
-// Removed initPrivateUserAuth function
+// Removed: initPrivateUserAuth function
+// Removed: checkEzraLoginAndShowVisitorsButton function
 
 function initLayoutAndThemeToggles() {
-    const layoutBtn = document.querySelector('#fab-layout .fab');
-    const themeBtn = document.querySelector('#fab-theme .fab');
-    // Removed desktopLayoutBtn and desktopThemeBtn declarations
-    const toggleLayout = () => document.body.classList.toggle('desktop-layout');
+    const themeBtn = document.querySelector('#fab-theme .fab'); // Only theme button remains
     const toggleTheme = () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
-        document.querySelectorAll('#fab-theme i').forEach(i => { // Removed #desktop-theme-toggle i
+        document.querySelectorAll('#fab-theme i').forEach(i => { // Adjusted selector
             i.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         });
     };
-    layoutBtn.addEventListener('click', toggleLayout);
-    // Removed desktopLayoutBtn.addEventListener('click', toggleLayout);
+    // Removed layoutBtn and desktopLayoutBtn event listeners and related logic
     themeBtn.addEventListener('click', toggleTheme);
-    // Removed desktopThemeBtn.addEventListener('click', toggleTheme);
 }
 
 function initVideoPlayer() {
@@ -799,8 +785,6 @@ async function trackVisitor() {
         console.error('Error in trackVisitor:', e);
     }
 }
-
-// Removed checkEzraLoginAndShowVisitorsButton function
 
 async function fetchLiveVisitors() {
     const visitorList = document.getElementById('visitor-list');
