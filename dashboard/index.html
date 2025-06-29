@@ -144,7 +144,12 @@
             left: 20px;
             transform: translateY(-50%);
         }
-        #fab-alkitab { /* New FAB for Alkitab, below music */
+        /* Swapped positions for Alkitab and Contribution FABs */
+        #fab-alkitab { /* Original #fab-alkitab, now at old #fab-contribution position */
+            top: 20px; 
+            right: 20px; 
+        }
+        #fab-contribution { /* Original #fab-contribution, now at old #fab-alkitab position */
             top: calc(50% + 70px); /* Music FAB height (55px) + 15px gap */
             left: 20px;
             transform: translateY(-50%);
@@ -154,7 +159,6 @@
             left: 50%;
             transform: translateX(-50%);
         }
-        #fab-contribution { top: 20px; right: 20px; } /* Remains same */
 
 
         /* EDITOR STYLES */
@@ -366,10 +370,11 @@
     <div class="fab-container" id="fab-music">
         <button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button>
     </div>
-    <div class="fab-container" id="fab-alkitab"> <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" class="fab" title="Alkitab"><i class="fas fa-book"></i></a>
-    </div>
-    <div class="fab-container" id="fab-contribution">
+    <div class="fab-container" id="fab-contribution"> 
         <button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button>
+    </div>
+    <div class="fab-container" id="fab-alkitab"> 
+        <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" class="fab" title="Alkitab"><i class="fas fa-book"></i></a>
     </div>
     <div id="video-player-widget">
         <video id="widget-video" loop src="video.mp4"></video>
