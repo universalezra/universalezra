@@ -1,1588 +1,1949 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Pribadi Ezra</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style id="dynamic-styles">
-        /* CSS Umum dan Default (Light Theme) */
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ezra's Command Center</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
         :root {
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --accent-color: #007bff;
-            --border-color: #e0e0e0;
-            --header-bg: #ffffff;
-            --nav-link-color: #555;
-            --nav-link-hover: #007bff;
-            --shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            --code-bg: #f5f5f5;
-            --code-border: #ddd;
-            --chat-bg-owner: #e6f7ff;
-            --chat-bg-visitor: #f0f0f0;
-            --audio-wave-color: #007bff;
+            --primary: #8e44ad;
+            --accent: #00a8ff;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a1a2e;
+            --bg-main: #16213e;
+            --bg-panel: rgba(26, 26, 46, 0.9);
+            --text-primary: #e0fbfc;
+            --text-secondary: #98ded9;
+            --border-color: rgba(0, 168, 255, 0.3);
+            --header-bg: rgba(0, 0, 0, 0.3);
+            --input-bg: rgba(0, 0, 0, 0.2);
         }
 
-        /* Dark Theme */
-        body.dark-mode {
-            --bg-color: #1a1a2e;
-            --card-bg: #16213e;
-            --text-color: #e0e0e0;
-            --accent-color: #0f4c75;
-            --border-color: #333;
-            --header-bg: #0f3460;
-            --nav-link-color: #ccc;
-            --nav-link-hover: #3e92cc;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            --code-bg: #222;
-            --code-border: #444;
-            --chat-bg-owner: #0f4c75;
-            --chat-bg-visitor: #2e3a51;
-            --audio-wave-color: #3e92cc;
+        html[data-theme='light'] {
+            --primary: #3498db;
+            --accent: #e67e22;
+            --bg-main: #e0fbfc; /* Lebih terang */
+            --bg-panel: rgba(255, 255, 255, 0.95); /* Lebih solid */
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border-color: rgba(52, 152, 219, 0.4);
+            --header-bg: rgba(200, 200, 200, 0.6);
+            --input-bg: rgba(255, 255, 255, 0.8);
         }
 
-        body {
-            font-family: 'Roboto', sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
 
-        #app-container {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        .view-section {
-            display: none; /* Default hidden, managed by JS */
-            flex-grow: 1;
-            padding: 20px;
-        }
-
-        /* Navigasi Samping / Sidebar */
-        .sidebar {
-            width: 250px;
-            background-color: var(--card-bg);
-            padding: 20px;
-            box-shadow: var(--shadow);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
-            position: sticky;
+        #interactive-bg {
+            position: fixed;
             top: 0;
-            height: 100vh;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-color: var(--bg-main);
         }
 
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            text-decoration: none;
-            color: var(--nav-link-color);
-            border-radius: 8px;
-            transition: background-color 0.2s, color 0.2s;
-            font-weight: 500;
-        }
-
-        .sidebar a i {
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        /* Header */
-        .header {
-            background-color: var(--header-bg);
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 1.8em;
-            color: var(--text-color);
-        }
-
-        .header .theme-switcher {
-            cursor: pointer;
-            font-size: 1.5em;
-            color: var(--text-color);
-            transition: color 0.2s;
-        }
-
-        .header .theme-switcher:hover {
-            color: var(--accent-color);
-        }
-
-        /* Konten Utama */
-        .main-content {
-            flex-grow: 1;
-            padding: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-content: flex-start; /* Penting untuk wrapping card */
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            padding: 20px;
-            flex: 1 1 calc(33.333% - 40px); /* 3 kartu per baris, disesuaikan dengan gap */
-            box-sizing: border-box;
-            min-width: 300px;
+        .main-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            transition: all 0.5s ease-in-out;
             display: flex;
             flex-direction: column;
-            gap: 15px;
         }
 
-        .card h2 {
-            margin-top: 0;
-            color: var(--accent-color);
-            font-size: 1.5em;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .card p {
-            line-height: 1.6;
-        }
-
-        .button-group {
+        #map-wrapper {
+            position: absolute;
+            inset: 20px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: auto; /* Push buttons to the bottom of the card */
-        }
-
-        .button-group a, .button-group button {
-            background-color: var(--accent-color);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            transition: all 0.5s ease-in-out;
+            border-radius: 15px; /* Added for consistency */
+            overflow: hidden; /* Added for consistency */
         }
 
-        .button-group a:hover, .button-group button:hover {
-            background-color: darken(var(--accent-color), 10%); /* Placeholder for CSS color functions */
-            filter: brightness(0.9);
-        }
-
-        .button-group a i, .button-group button i {
-            margin-right: 8px;
-        }
-
-        /* Code Editor */
-        #code-editor-container {
+        #map-container {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-panel);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            overflow: hidden;
         }
-        #html-code {
-            width: 100%;
-            height: 300px;
-            border: 1px solid var(--code-border);
-            background-color: var(--code-bg);
-            color: var(--text-color);
+
+        #map {
+            flex-grow: 1;
+            background-color: #333;
+        }
+
+        #locationInfo {
             padding: 10px;
-            font-family: 'Consolas', 'Monaco', monospace;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
             font-size: 0.9em;
-            resize: vertical;
-            border-radius: 8px;
         }
-        #code-preview {
-            width: 100%;
-            height: 400px;
-            border: 1px solid var(--code-border);
-            border-radius: 8px;
-            background-color: white; /* Always white for clarity */
-        }
-        .code-editor-controls {
+
+        .lock-screen {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 15px;
+            height: 100%;
         }
-        .code-editor-controls button {
-            background-color: var(--accent-color);
+
+        .hidden {
+            display: none !important;
+        }
+
+        .panel {
+            position: fixed;
+            background: var(--bg-panel);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 1010;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.6);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color); /* Added for consistency */
+            border-radius: 15px; /* Added for consistency */
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .panel.active {
+            transform: translateX(0) translateY(0) scale(1) !important;
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #editor-panel {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateX(-100%);
+        }
+
+        #music-panel {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            max-height: 50vh;
+            border-top: 1px solid var(--border-color);
+            transform: translateY(100%);
+            padding: 15px;
+        }
+        
+        #contribution-panel {
+            top: 0;
+            right: 0;
+            width: 400px;
+            max-width: 90vw;
+            height: 100%;
+            transform: translateX(100%);
+            padding: 20px;
+        }
+
+        #private-user-panel, #live-visitors-panel, #gallery-panel, #ezra-space-panel {
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            max-width: 500px;
+            height: auto;
+            max-height: 90vh;
+            transform: translate(-50%, -50%) scale(0.8);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Ensure content stays within panel */
+        }
+        
+        #live-visitors-panel {
+            max-width: 400px; /* Slightly wider for visitors */
+        }
+
+        .panel-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 5;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .panel-close-btn:hover {
+            color: var(--accent);
+            transform: rotate(90deg);
+        }
+
+        .fab-container {
+            position: fixed;
+            z-index: 1000;
+        }
+
+        .fab {
+            background: var(--primary);
             color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
             border: none;
             cursor: pointer;
-            transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: static; /* Override for desktop-fab-bar */
         }
-        .code-editor-controls button:hover {
-            filter: brightness(0.9);
+
+        .fab:hover {
+            background: var(--accent);
+            transform: scale(1.1);
         }
-        input[type="file"] {
-            display: none; /* Hide default input */
+
+        #fab-editor {
+            top: 20px;
+            left: 20px;
         }
-        .custom-file-upload {
-            background-color: #28a745; /* Green for upload */
+
+        #fab-music {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #fab-contribution {
+            top: 20px;
+            right: 20px;
+        }
+
+        #fab-layout,
+        #fab-theme {
+            bottom: 20px;
+        }
+
+        #fab-layout {
+            left: 20px;
+        }
+
+        #fab-theme {
+            right: 20px;
+        }
+
+        #fab-private-user {
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #fab-live-visitors {
+            bottom: 90px;
+            right: 20px;
+            display: none; /* Hidden by default, shown on Ezra login */
+        }
+
+        #fab-gallery {
+            bottom: 160px;
+            right: 20px;
+            display: none; /* Hidden by default, shown on Ezra login */
+        }
+
+        #fab-ezra-space {
+            bottom: 230px;
+            right: 20px;
+            display: none; /* Hidden by default, shown on Ezra login */
+        }
+
+        /* Editor Panel */
+        #editor-panel {
+            padding: 0;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+            background: var(--header-bg);
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .editor-toolbar button,
+        .editor-toolbar select {
+            background: var(--primary);
             color: white;
+            border: none;
             padding: 8px 12px;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            display: inline-block;
+            transition: background 0.3s ease;
         }
-        .custom-file-upload:hover {
-            filter: brightness(0.9);
+        .editor-toolbar button:hover,
+        .editor-toolbar select:hover {
+            background: var(--accent);
+        }
+
+        .editor-main {
+            display: flex;
+            flex-grow: 1;
+            height: calc(100% - 58px);
+            /* Adjust height based on toolbar height */
+        }
+
+        .editor-code-area,
+        .editor-preview-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-panes {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .editor-pane {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .editor-pane label {
+            background: var(--header-bg);
+            color: var(--accent);
+            padding: 5px 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .editor-pane textarea {
+            flex-grow: 1;
+            background: #1e1e1e;
+            color: #f8f8f2;
+            border: none;
+            resize: none;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+        }
+
+        #editor-preview {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+            flex-grow: 1;
         }
 
         /* Music Player */
-        #music-player-card {
-            flex-basis: 100%; /* Take full width */
-        }
-        .music-player-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .music-player-controls button {
-            background: none;
-            border: none;
-            font-size: 1.8em;
-            color: var(--accent-color);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .music-player-controls button:hover {
-            transform: scale(1.1);
-        }
-        #audio-progress-container {
-            flex-grow: 1;
-            height: 8px;
-            background-color: var(--border-color);
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative;
-        }
-        #audio-progress-bar {
-            height: 100%;
-            background-color: var(--accent-color);
-            width: 0%;
-            border-radius: 4px;
-        }
-        #audio-time {
-            font-size: 0.9em;
-            margin-left: 10px;
-            color: var(--text-color);
-        }
-        #volume-control {
-            width: 80px;
-        }
-        #music-visualizer canvas {
-            width: 100%;
-            height: 100px;
-            background-color: var(--code-bg);
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-        .audio-track-list {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 15px;
-        }
-        .audio-track-list div {
-            padding: 8px 0;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-        }
-        .audio-track-list div:hover {
-            background-color: var(--border-color);
-        }
-        .audio-track-list div.active-track {
-            background-color: var(--accent-color);
-            color: white;
-            border-radius: 4px;
-        }
-        .audio-track-list div i {
-            margin-right: 10px;
+        #music-panel h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
         }
 
-        /* Live Chat */
-        #chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 400px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        #chat-messages {
-            flex-grow: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background-color: var(--bg-color);
+        #music-player-content {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-        .chat-message {
-            max-width: 80%;
-            padding: 10px 15px;
-            border-radius: 18px;
-            word-wrap: break-word;
+
+        #song-title {
+            text-align: center;
+            font-size: 1.1em;
+            color: var(--text-primary);
         }
-        .chat-message.owner {
-            align-self: flex-end;
-            background-color: var(--chat-bg-owner);
-            color: var(--text-color);
-            border-bottom-right-radius: 2px;
+
+        #audio-player {
+            width: 100%;
+            background: var(--input-bg);
+            border-radius: 8px;
         }
-        .chat-message.visitor {
-            align-self: flex-start;
-            background-color: var(--chat-bg-visitor);
-            color: var(--text-color);
-            border-bottom-left-radius: 2px;
-        }
-        #chat-input-area {
-            display: flex;
+
+        #playlist {
+            max-height: 20vh;
+            overflow-y: auto;
+            margin-top: 10px;
             border-top: 1px solid var(--border-color);
-            padding: 10px;
-            background-color: var(--card-bg);
+            padding-top: 10px;
         }
-        #chat-input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            margin-right: 10px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+
+        #playlist div {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease;
         }
-        #chat-send-btn {
-            background-color: var(--accent-color);
+
+        #playlist div:hover {
+            background: rgba(0, 168, 255, 0.2);
+        }
+
+        .music-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .music-controls button {
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: 20px;
-            padding: 10px 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
             cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        #chat-send-btn:hover {
-            filter: brightness(0.9);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease, transform 0.3s ease;
         }
 
-        /* Admin View Specifics */
-        .admin-dashboard-container {
+        .music-controls button:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+        
+        /* Contribution Panel */
+        #contribution-content {
             display: flex;
-            flex-grow: 1;
+            flex-direction: column;
+            height: 100%;
         }
 
-        .admin-main-content {
+        #contribution-display {
             flex-grow: 1;
-            padding: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-content: flex-start;
-        }
-
-        /* Live Visitors */
-        #live-visitors-card {
-            flex-basis: 100%;
-        }
-        #visitor-list {
-            max-height: 300px;
             overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+        #contribution-display::-webkit-scrollbar {
+            width: 8px;
+        }
+        #contribution-display::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 4px;
+        }
+        #contribution-display::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        #contribution-display div {
+            background: var(--input-bg);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        #contribution-display img,
+        #contribution-display video {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        #contribution-form textarea {
+            width: 100%;
+            min-height: 80px;
+            background: var(--input-bg);
+            color: var(--text-primary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 10px;
+            outline: none;
+            resize: vertical;
         }
-        .visitor-item {
-            padding: 8px 0;
-            border-bottom: 1px dashed var(--border-color);
-            display: flex;
-            justify-content: space-between;
+
+        #contribution-form input[type="file"] {
+            color: var(--text-secondary);
             font-size: 0.9em;
         }
-        .visitor-item:last-child {
-            border-bottom: none;
+
+        #contribution-status {
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 10px;
         }
-        .visitor-item span {
+
+        /* Private User Panel */
+        #private-user-panel h3, #live-visitors-panel h3, #gallery-panel h3, #ezra-space-panel h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        #private-user-panel p {
+            margin-bottom: 20px;
+        }
+        #private-user-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            outline: none;
+        }
+        #private-user-submit {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        #private-user-message {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        /* Live Visitors Panel */
+        #visitor-list-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+        #visitor-list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        #visitor-list-container::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 4px;
+        }
+        #visitor-list-container::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        #visitor-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #visitor-list li {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 0.9em;
+            color: var(--text-primary);
+        }
+
+        #visitor-list li strong {
+            color: var(--accent);
+        }
+
+        #visitor-list li span {
             word-break: break-all;
         }
 
-        /* Gallery Content */
-        #gallery-content-card {
-            flex-basis: 100%;
-        }
-        #gallery-upload-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-            border: 1px dashed var(--border-color);
-            padding: 15px;
-            border-radius: 8px;
-            align-items: flex-start;
-        }
-        #gallery-preview-container {
-            display: flex;
-            flex-wrap: wrap;
+        /* Gallery Panel */
+        #gallery-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
-            margin-top: 20px;
+            padding-bottom: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+        #gallery-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        #gallery-content::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 4px;
+        }
+        #gallery-content::-webkit-scrollbar-track {
+            background-color: transparent;
         }
         .gallery-item {
+            background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
-            width: 180px;
-            box-shadow: var(--shadow);
-            position: relative;
-            background-color: var(--card-bg);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            text-align: center;
+            padding-bottom: 10px;
             display: flex;
             flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
         }
         .gallery-item img, .gallery-item video, .gallery-item audio {
             width: 100%;
             height: 120px;
             object-fit: cover;
             display: block;
+            border-bottom: 1px solid var(--border-color);
         }
-        .gallery-item audio {
-            height: auto;
-            min-height: 40px;
-            padding: 5px;
-        }
-        .gallery-item .item-info {
+        .gallery-item .item-details {
             padding: 10px;
-            font-size: 0.9em;
-            color: var(--text-color);
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
             gap: 5px;
+            flex-grow: 1;
         }
-        .gallery-item .item-info h4 {
-            margin: 0;
-            font-size: 1.1em;
-            color: var(--accent-color);
+        .gallery-item .item-details strong {
+            color: var(--accent);
+            font-size: 0.95em;
         }
-        .gallery-item .item-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 5px;
-            padding: 5px 10px 10px;
+        .gallery-item .item-details p {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            flex-grow: 1;
         }
-        .gallery-item .item-actions button {
-            background: none;
-            border: none;
-            color: var(--accent-color);
-            cursor: pointer;
-            font-size: 1em;
-            padding: 5px;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .gallery-item .item-actions button:hover {
-            background-color: var(--border-color);
+        .gallery-item .item-date {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            margin-top: 5px;
         }
 
-        /* Ruang Khusus Diriku */
-        #my-space-card {
-            flex-basis: 100%;
+        /* Ezra's Special Space Panel */
+        #ezra-space-panel {
+            text-align: center;
+            padding: 20px;
         }
-        .video-streaming-section {
+        #ezra-space-panel .content-section {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
             margin-bottom: 20px;
         }
-        .video-streaming-section video {
-            width: 100%;
-            max-height: 400px;
-            background-color: black;
-            border-radius: 8px;
-        }
-        .inspirational-quotes, .hacking-news {
-            margin-top: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-        }
-        .inspirational-quotes p, .hacking-news p {
-            background-color: var(--code-bg);
-            padding: 15px;
-            border-radius: 8px;
-            white-space: pre-wrap; /* Preserve line breaks */
-        }
-        .news-item {
+        #ezra-space-panel h4 {
+            color: var(--accent);
             margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed var(--border-color);
         }
-        .news-item:last-child {
-            border-bottom: none;
+        #ezra-space-panel video {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            object-fit: contain;
+            background-color: black;
         }
-        .news-item h3 {
-            margin: 0 0 5px 0;
-            color: var(--accent-color);
+        #ezra-space-panel .quote {
+            font-style: italic;
+            color: var(--text-secondary);
         }
-        .news-item a {
-            color: var(--accent-color);
+        #ezra-space-panel .news-links a {
+            display: block;
+            color: var(--accent);
+            margin-bottom: 5px;
             text-decoration: none;
+            transition: color 0.3s ease;
         }
-        .news-item a:hover {
+        #ezra-space-panel .news-links a:hover {
+            color: var(--primary);
             text-decoration: underline;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .card {
-                flex: 1 1 calc(50% - 30px); /* 2 kartu per baris */
-            }
+        /* Video Widget */
+        #video-player-widget {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            width: 180px; /* Slightly larger */
+            height: 180px; /* Slightly larger */
+            border-radius: 15px; /* More rounded */
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            background-color: black; /* Ensure black background */
         }
 
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-            }
-            .main-content, .admin-main-content {
-                padding: 15px;
-            }
-            .card {
-                flex: 1 1 100%; /* 1 kartu per baris */
-                min-width: unset;
-            }
-            .header h1 {
-                font-size: 1.5em;
-            }
-            .music-player-controls {
-                flex-wrap: wrap;
-            }
-            #audio-progress-container {
-                width: 100%;
-                margin-top: 10px;
-            }
-            #audio-time {
-                margin-left: 0;
-                text-align: right;
-                width: 100%;
-            }
-            #volume-control {
-                width: 100%;
-            }
+        #video-player-widget video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.6); /* Slightly more opaque */
+            padding: 5px 10px; /* More padding */
+            border-radius: 8px; /* More rounded */
+        }
+
+        .video-controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.1rem; /* Slightly larger icons */
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .video-controls button:hover {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        /* Social Links */
+        .social-links {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 999;
+        }
+
+        .social-links a {
+            color: var(--text-primary);
+            font-size: 1.8rem; /* Larger icons */
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        /* Desktop Layout */
+        body.desktop-layout {
+            overflow: auto; /* Allow scrolling in desktop layout */
+        }
+        body.desktop-layout .main-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            grid-template-rows: 1fr;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+            overflow: auto;
+        }
+        body.desktop-layout #map-wrapper {
+            position: static;
+            height: auto;
+        }
+        body.desktop-layout .panel {
+            position: static;
+            transform: none !important;
+            height: auto;
+            width: auto;
+            max-height: none;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            opacity: 1;
+            pointer-events: all;
+            overflow: hidden; /* Ensure content scrolls within desktop panel */
+        }
+        body.desktop-layout .panel-close-btn,
+        body.desktop-layout .fab,
+        body.desktop-layout .social-links {
+            display: none;
+        }
+        body.desktop-layout .desktop-fab-bar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            background: var(--bg-panel);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Desktop specific panel configurations */
+        body.desktop-layout #editor-panel {
+            grid-column: 1 / 2; /* Left column */
+            grid-row: 1 / 2;
+            display: flex; /* Ensure flex for content */
+        }
+        body.desktop-layout #music-panel {
+            grid-column: 3 / 4; /* Right column */
+            grid-row: 1 / 2;
+            display: flex; /* Ensure flex for content */
+        }
+        body.desktop-layout #contribution-panel {
+            display: none; /* Contribution panel is mobile-only FAB */
+        }
+        body.desktop-layout #private-user-panel {
+            display: none; /* Private user login is mobile-only FAB */
+        }
+        body.desktop-layout #live-visitors-panel {
+            display: flex; /* Always visible in desktop layout */
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            margin-top: 20px; /* Adjust spacing if needed */
+        }
+        body.desktop-layout #gallery-panel {
+            display: flex; /* Always visible in desktop layout */
+            grid-column: 3 / 4;
+            grid-row: 1 / 2;
+        }
+        body.desktop-layout #ezra-space-panel {
+            display: flex; /* Always visible in desktop layout */
+            grid-column: 1 / 4; /* Span all columns */
+            grid-row: 2 / 3; /* Below other panels */
+            max-height: 400px; /* Limit height */
+        }
+        body.desktop-layout #video-player-widget {
+            display: none; /* Widget hidden in desktop layout */
+        }
+
+        /* Adjust desktop layout for Ezra-specific panels */
+        body.desktop-layout.ezra-logged-in .main-container {
+            grid-template-columns: 350px 1fr 350px;
+            grid-template-rows: 1fr auto; /* Two rows: top panels and Ezra's space */
+        }
+        body.desktop-layout.ezra-logged-in #map-wrapper {
+            grid-column: 2 / 3; /* Map stays in center */
+            grid-row: 1 / 2;
+        }
+        body.desktop-layout.ezra-logged-in #live-visitors-panel {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+        }
+        body.desktop-layout.ezra-logged-in #gallery-panel {
+            grid-column: 3 / 4;
+            grid-row: 1 / 2;
+        }
+        body.desktop-layout.ezra-logged-in #ezra-space-panel {
+            grid-column: 1 / 4; /* Span all columns */
+            grid-row: 2 / 3; /* Second row */
+            display: flex; /* Make sure it's visible */
+        }
+
+        /* Hide general panels if Ezra is logged in desktop view */
+        body.desktop-layout.ezra-logged-in #editor-panel,
+        body.desktop-layout.ezra-logged-in #music-panel,
+        body.desktop-layout.ezra-logged-in #contribution-panel,
+        body.desktop-layout.ezra-logged-in #private-user-panel {
+            display: none;
+        }
+
+        /* Mobile specific adjustments when Ezra is logged in */
+        body:not(.desktop-layout).ezra-logged-in #fab-editor,
+        body:not(.desktop-layout).ezra-logged-in #fab-music,
+        body:not(.desktop-layout).ezra-logged-in #fab-contribution,
+        body:not(.desktop-layout).ezra-logged-in #fab-private-user {
+            display: none !important; /* Hide these FABs when Ezra is logged in mobile */
+        }
+        body:not(.desktop-layout).ezra-logged-in #fab-live-visitors,
+        body:not(.desktop-layout).ezra-logged-in #fab-gallery,
+        body:not(.desktop-layout).ezra-logged-in #fab-ezra-space {
+            display: block !important; /* Show these FABs when Ezra is logged in mobile */
+        }
+        body:not(.desktop-layout).ezra-logged-in #map-wrapper {
+            /* Adjust map position if needed in mobile Ezra view */
+            margin-top: 60px; /* Example adjustment */
+            margin-bottom: 60px;
         }
     </style>
 </head>
-<body>
-    <div id="app-container">
-        <div class="header">
-            <h1 id="website-title">Dashboard Pribadi Ezra</h1>
-            <div class="theme-switcher" id="theme-switcher">
-                <i class="fas fa-moon"></i>
-            </div>
-        </div>
+<body class="">
+    <canvas id="interactive-bg"></canvas>
 
-        <div id="guest-view" class="view-section">
-            <div class="main-content">
-                <div class="card">
-                    <h2><i class="fas fa-code"></i> HTML Code Editor</h2>
-                    <div id="code-editor-container">
-                        <textarea id="html-code" placeholder="Tulis kode HTML Anda di sini..."></textarea>
-                        <div class="code-editor-controls">
-                            <button id="run-code"><i class="fas fa-play"></i> Run/Preview</button>
-                            <button id="save-code"><i class="fas fa-save"></i> Save</button>
-                            <button id="load-code"><i class="fas fa-folder-open"></i> Load</button>
-                            <button id="undo-code"><i class="fas fa-undo"></i> Undo</button>
-                            <button id="redo-code"><i class="fas fa-redo"></i> Redo</button>
-                            <label for="insert-media-file" class="custom-file-upload"><i class="fas fa-plus"></i> Insert Media</label>
-                            <input type="file" id="insert-media-file" accept="image/*,video/*,audio/*">
-                        </div>
-                        <iframe id="code-preview" sandbox="allow-scripts allow-same-origin"></iframe>
-                    </div>
+    <div class="main-container">
+        <div id="map-wrapper">
+            <div id="map-container">
+                <div class="lock-screen" id="map-lock-screen">
+                    <i class="fas fa-satellite fa-3x fa-spin" style="--fa-animation-duration: 5s; color: var(--accent);"></i>
+                    <h3>REAL-TIME TRACKING SYSTEM</h3>
+                    <p style="margin:0; color:var(--text-secondary);">System is offline. Type secret code to activate.</p>
                 </div>
-
-                <div class="card" id="music-player-card">
-                    <h2><i class="fas fa-music"></i> Music Player</h2>
-                    <audio id="background-audio" loop></audio>
-                    <div class="music-player-controls">
-                        <button id="prev-track"><i class="fas fa-backward"></i></button>
-                        <button id="play-pause"><i class="fas fa-play"></i></button>
-                        <button id="next-track"><i class="fas fa-forward"></i></button>
-                        <button id="loop-toggle" title="Toggle Loop"><i class="fas fa-sync"></i></button>
-                        <div id="audio-progress-container">
-                            <div id="audio-progress-bar"></div>
-                        </div>
-                        <span id="audio-time">0:00 / 0:00</span>
-                        <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.7">
-                    </div>
-                    <canvas id="music-visualizer"></canvas>
-                    <div class="audio-track-list" id="audio-track-list">
-                        </div>
-                    <input type="file" id="upload-music" accept="audio/*" multiple style="display: none;">
-                    <button onclick="document.getElementById('upload-music').click()" class="button-group-upload"><i class="fas fa-upload"></i> Upload Music</button>
-                </div>
-
-                <div class="card">
-                    <h2><i class="fas fa-comments"></i> Live Chat</h2>
-                    <div id="chat-container">
-                        <div id="chat-messages">
-                            </div>
-                        <div id="chat-input-area">
-                            <input type="text" id="chat-input" placeholder="Ketik pesan Anda...">
-                            <button id="chat-send-btn"><i class="fas fa-paper-plane"></i> Kirim</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2><i class="fas fa-info-circle"></i> Informasi Website</h2>
-                    <p>Umur Website: <span id="website-age"></span></p>
-                    <p>Total Kunjungan: <span id="hit-counter"></span></p>
-                    <p>Fitur Eksklusif dan Personal untuk Ezra.</p>
-                </div>
-
-                <div class="card">
-                    <h2><i class="fas fa-share-alt"></i> Hubungi Aku</h2>
-                    <div class="button-group">
-                        <a href="https://wa.me/YOUR_WA_NUMBER" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                        <a href="https://www.instagram.com/YOUR_IG_USERNAME" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
-                        <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank"><i class="fas fa-bible"></i> Alkitab</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="admin-view" class="view-section">
-            <div class="admin-dashboard-container">
-                <div class="sidebar">
-                    <a href="#" id="admin-nav-visitors" class="active"><i class="fas fa-users"></i> Live Visitors</a>
-                    <a href="#" id="admin-nav-gallery"><i class="fas fa-images"></i> Gallery Content</a>
-                    <a href="#" id="admin-nav-myspace"><i class="fas fa-user-secret"></i> Ruang Khusus Diriku</a>
-                    <a href="#" id="admin-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </div>
-
-                <div class="admin-main-content">
-                    <div class="card admin-panel" id="admin-panel-visitors">
-                        <h2><i class="fas fa-users"></i> Live Visitors</h2>
-                        <div id="visitor-list">
-                            <p>Loading live visitor data...</p>
-                        </div>
-                    </div>
-
-                    <div class="card admin-panel" id="admin-panel-gallery" style="display: none;">
-                        <h2><i class="fas fa-images"></i> Gallery Content (Moments)</h2>
-                        <div id="gallery-upload-area">
-                            <input type="text" id="gallery-item-title" placeholder="Judul Moment" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color);">
-                            <textarea id="gallery-item-description" placeholder="Deskripsi Moment" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); height: 80px;"></textarea>
-                            <label for="gallery-file-upload" class="custom-file-upload"><i class="fas fa-upload"></i> Pilih Media</label>
-                            <input type="file" id="gallery-file-upload" accept="image/*,video/*,audio/*,application/pdf" style="display: none;">
-                            <button id="upload-gallery-item" class="button-group-upload"><i class="fas fa-plus"></i> Tambah Moment</button>
-                            <span id="upload-status-message" style="font-size: 0.9em; color: green;"></span>
-                        </div>
-                        <div id="gallery-preview-container">
-                            <p>Moment-moment Anda akan muncul di sini.</p>
-                        </div>
-                    </div>
-
-                    <div class="card admin-panel" id="admin-panel-myspace" style="display: none;">
-                        <h2><i class="fas fa-user-secret"></i> Ruang Khusus Diriku</h2>
-                        <div class="video-streaming-section">
-                            <h3>Video Streaming Pribadi</h3>
-                            <input type="text" id="video-stream-url" placeholder="Paste URL Video (e.g., MP4, HLS, DASH)" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color);">
-                            <button id="load-video-stream" style="margin-top: 10px; background-color: #6c757d; color: white; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer;">Load Video</button>
-                            <video id="my-private-video" controls></video>
-                        </div>
-
-                        <div class="inspirational-quotes">
-                            <h3>Kata-kata Penghibur untuk Putus Cinta</h3>
-                            <p id="breakup-quote">
-                                Cinta adalah perjalanan, bukan tujuan. Terkadang, perpisahan adalah langkah yang diperlukan untuk menemukan arah yang lebih baik. Biarkan waktu menyembuhkan, dan percayalah bahwa ada babak baru yang menanti dengan kebahagiaan yang lebih besar.
-                            </p>
-                            <button id="generate-new-quote" style="background-color: #17a2b8; color: white; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer;">Kata-kata Lain</button>
-                        </div>
-
-                        <div class="hacking-news">
-                            <h3>Berita Hacking Terkini (Simulasi/Placeholder)</h3>
-                            <div id="hacking-news-list">
-                                <div class="news-item">
-                                    <h3><a href="#" target="_blank">Waspada Serangan Phishing Terbaru Mengincar Data Pribadi</a></h3>
-                                    <p>Para ahli keamanan siber menemukan gelombang baru serangan phishing yang sangat canggih...</p>
-                                    <span>2025-06-28</span>
-                                </div>
-                                <div class="news-item">
-                                    <h3><a href="#" target="_blank">Bug Kritis Ditemukan di Sistem Operasi Populer, Segera Patch!</a></h3>
-                                    <p>Sebuah kerentanan serius telah diidentifikasi yang memungkinkan eksekusi kode jarak jauh...</p>
-                                    <span>2025-06-27</span>
-                                </div>
-                                </div>
-                            <button id="refresh-hacking-news" style="background-color: #dc3545; color: white; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer;">Refresh Berita</button>
-                        </div>
-                    </div>
-                </div>
+                <div id="map" class="hidden"></div>
+                <div id="locationInfo" class="hidden">Initializing tracking...</div>
             </div>
         </div>
     </div>
 
+    <div class="panel" id="editor-panel">
+        <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
+        <div class="editor-toolbar">
+            <button id="editor-run"><i class="fas fa-play"></i> Run</button>
+            <button id="editor-save"><i class="fas fa-save"></i> Save</button>
+            <button id="editor-load"><i class="fas fa-folder-open"></i> Load</button>
+            <button id="editor-new"><i class="fas fa-file"></i> New</button>
+            <button id="editor-undo"><i class="fas fa-undo"></i> Undo</button>
+            <button id="editor-redo"><i class="fas fa-redo"></i> Redo</button>
+            <button id="editor-add-media"><i class="fas fa-photo-video"></i> Add Media</button>
+        </div>
+        <div class="editor-main">
+            <div class="editor-code-area">
+                <div class="editor-panes">
+                    <div class="editor-pane">
+                        <label for="html-editor">HTML</label>
+                        <textarea id="html-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div class="editor-pane">
+                        <label for="css-editor">CSS</label>
+                        <textarea id="css-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div class="editor-pane">
+                        <label for="js-editor">JAVASCRIPT</label>
+                        <textarea id="js-editor" spellcheck="false"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="editor-preview-area">
+                <iframe id="editor-preview"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" id="music-panel">
+        <button class="panel-close-btn" data-panel="music-panel"><i class="fas fa-times"></i></button>
+        <h4>Now Playing</h4>
+        <div id="music-player-content">
+            <h5 id="song-title">Select a song</h5>
+            <audio id="audio-player" controls loop style="width: 100%;"></audio>
+            <div class="music-controls">
+                <button id="prev-track"><i class="fas fa-backward"></i></button>
+                <button id="next-track"><i class="fas fa-forward"></i></button>
+            </div>
+            <div id="playlist"></div>
+        </div>
+    </div>
+
+    <div class="panel" id="contribution-panel">
+        <button class="panel-close-btn" data-panel="contribution-panel"><i class="fas fa-times"></i></button>
+        <div id="contribution-content">
+            <h3>Leave a Message</h3>
+            <div id="contribution-display">
+                <p>Loading messages...</p>
+            </div>
+            <form id="contribution-form">
+                <textarea id="contribution-text" placeholder="Your message..." required></textarea>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                    <input type="file" id="contribution-file" accept="image/*,video/*,audio/*">
+                    <button type="submit" class="fab" style="position:static; width:45px; height:45px; font-size:1.1rem;"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <p id="contribution-status"></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel" id="private-user-panel">
+        <button class="panel-close-btn" data-panel="private-user-panel"><i class="fas fa-times"></i></button>
+        <div style="padding: 20px; text-align: center;">
+            <h3>Private User</h3>
+            <p>Masuk sebagai siapa?</p>
+            <input type="text" id="private-user-input" placeholder="Masukkan nama Anda...">
+            <button id="private-user-submit" class="fab">Masuk</button>
+            <p id="private-user-message"></p>
+        </div>
+    </div>
+
+    <div class="panel" id="live-visitors-panel">
+        <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
+        <div style="padding: 20px; height: 100%; display: flex; flex-direction: column;">
+            <h3>Live Visitors</h3>
+            <div id="visitor-list-container">
+                <ul id="visitor-list"></ul>
+            </div>
+            <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary);">
+                Last updated: <span id="last-updated-time">N/A</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" id="gallery-panel">
+        <button class="panel-close-btn" data-panel="gallery-panel"><i class="fas fa-times"></i></button>
+        <div style="padding: 20px; height: 100%; display: flex; flex-direction: column;">
+            <h3>Content Gallery</h3>
+            <div id="gallery-content">
+                </div>
+            <div style="margin-top: 15px; text-align: center;">
+                <input type="file" id="gallery-upload-file" accept="image/*,video/*,audio/*,application/pdf">
+                <input type="text" id="gallery-item-description" placeholder="Description..." style="width: 100%; padding: 8px; margin-top: 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-primary);">
+                <button id="gallery-upload-btn" class="fab" style="margin-top: 10px; width: auto; padding: 8px 15px; font-size: 0.9em;"><i class="fas fa-upload"></i> Upload</button>
+                <p id="gallery-upload-status" style="margin-top: 5px; font-size: 0.8em; color: var(--text-secondary);"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" id="ezra-space-panel">
+        <button class="panel-close-btn" data-panel="ezra-space-panel"><i class="fas fa-times"></i></button>
+        <div style="padding: 20px; height: 100%; display: flex; flex-direction: column;">
+            <h3>Ezra's Private Domain</h3>
+
+            <div class="content-section">
+                <h4>Patched Video Stream</h4>
+                <video id="ezra-video-stream" controls loop muted autoplay src="your-patched-video.mp4"></video>
+                <p style="font-size: 0.8em; color: var(--text-secondary); margin-top: 5px;">Change 'your-patched-video.mp4' to your actual video URL.</p>
+            </div>
+
+            <div class="content-section">
+                <h4>Words of Comfort</h4>
+                <p class="quote">"Sometimes the strongest among us are the ones who smile through silent pain, cry behind closed doors, and fight battles nobody knows about. You are resilient."</p>
+                <p style="font-size: 0.8em; color: var(--text-secondary); margin-top: 10px;">(This text can be edited manually in the HTML)</p>
+            </div>
+
+            <div class="content-section">
+                <h4>Cyber News & Insights</h4>
+                <div class="news-links">
+                    <a href="https://www.bleepingcomputer.com/" target="_blank"><i class="fas fa-link"></i> BleepingComputer</a>
+                    <a href="https://thehackernews.com/" target="_blank"><i class="fas fa-link"></i> The Hacker News</a>
+                    <a href="https://krebsonsecurity.com/" target="_blank"><i class="fas fa-link"></i> KrebsOnSecurity</a>
+                </div>
+                <p style="font-size: 0.8em; color: var(--text-secondary); margin-top: 10px;">(Links can be updated manually)</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="fab-container" id="fab-private-user">
+        <button class="fab" data-panel="private-user-panel" title="Private User"><i class="fas fa-user-secret"></i></button>
+    </div>
+    <div class="fab-container" id="fab-editor">
+        <button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button>
+    </div>
+    <div class="fab-container" id="fab-music">
+        <button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button>
+    </div>
+    <div class="fab-container" id="fab-contribution">
+        <button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button>
+    </div>
+    <div class="fab-container" id="fab-layout">
+        <button class="fab" title="Toggle Layout"><i class="fas fa-layer-group"></i></button>
+    </div>
+    <div class="fab-container" id="fab-theme">
+        <button class="fab" title="Toggle Theme"><i class="fas fa-sun"></i></button>
+    </div>
+
+    <div class="fab-container" id="fab-live-visitors" style="display: none;">
+        <button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button>
+    </div>
+    <div class="fab-container" id="fab-gallery" style="display: none;">
+        <button class="fab" data-panel="gallery-panel" title="Content Gallery"><i class="fas fa-images"></i></button>
+    </div>
+    <div class="fab-container" id="fab-ezra-space" style="display: none;">
+        <button class="fab" data-panel="ezra-space-panel" title="Ezra's Space"><i class="fas fa-user-astronaut"></i></button>
+    </div>
+
+
+    <div class="desktop-fab-bar" style="display:none;">
+        <button class="fab" id="desktop-layout-toggle" title="Toggle Layout"><i class="fas fa-mobile-alt"></i></button>
+        <button class="fab" id="desktop-theme-toggle" title="Toggle Theme"><i class="fas fa-sun"></i></button>
+    </div>
+
+    <div id="video-player-widget">
+        <video id="widget-video" loop src="video.mp4"></video>
+        <div class="video-controls">
+            <button id="video-play-pause"><i class="fas fa-play"></i></button>
+            <button id="video-mute"><i class="fas fa-volume-up"></i></button>
+        </div>
+    </div>
+
+    <div class="social-links">
+        <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://instagram.com/I_dont_care_now" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book-open"></i></a>
+    </div>
+
     <script>
-        // ====================================================================
-        // GLOBAL CONFIGURATION & UTILITIES
-        // ====================================================================
-        const WORKER_URL = 'YOUR_CLOUDFLARE_WORKER_URL'; // GANTI DENGAN URL WORKER ANDA!
-        const GITHUB_USERNAME = 'YOUR_GITHUB_USERNAME'; // GANTI DENGAN USERNAME GITHUB ANDA
-        const GITHUB_REPO = 'YOUR_GITHUB_REPO_NAME'; // GANTI DENGAN NAMA REPO GITHUB ANDA
-        const GITHUB_TOKEN = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN'; // GANTI DENGAN TOKEN GITHUB ANDA (HATI-HATI JANGAN DIPUBLIKASIKAN!)
+        const SECRET_CODE = "wherewe";
+        const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
+        const VISITOR_TRACKER_WORKER_URL = 'https://visitor-tracker-workerjs.ezvvel.workers.dev/';
+        const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA
+        const GALLERY_WORKER_URL = 'https://gallery-worker.ezvvel.workers.dev/'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA
+        const REFRESH_INTERVAL_MS = 5000;
+        let visitorRefreshInterval;
+        let isEzraLoggedIn = false; // Global variable to track login status
 
-        const WA_NUMBER = 'YOUR_WA_NUMBER'; // GANTI DENGAN NOMOR WA ANDA
-        const IG_USERNAME = 'YOUR_IG_USERNAME'; // GANTI DENGAN USERNAME IG ANDA
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticleBackground();
+            initSecretCodeListener();
+            initPanelControls();
+            initLayoutAndThemeToggles();
+            initVideoPlayer();
+            initEditor();
+            initMusicPlayer();
+            trackVisitor();
+            initPrivateUserAuth();
+            checkEzraLoginStatus(); // Check login status on load
+            if (isEzraLoggedIn) {
+                // Initialize Ezra specific features if logged in
+                fetchLiveVisitors(); // Fetch immediately on login
+                fetchGalleryItems();
+            }
+        });
 
-        const WEBSITE_BIRTH_DATE = new Date('2024-01-01T00:00:00Z'); // GANTI DENGAN TANGGAL LAHIR WEBSITE
-
-        const BREAKUP_QUOTES = [
-            "Cinta adalah perjalanan, bukan tujuan. Terkadang, perpisahan adalah langkah yang diperlukan untuk menemukan arah yang lebih baik. Biarkan waktu menyembuhkan, dan percayalah bahwa ada babak baru yang menanti dengan kebahagiaan yang lebih besar.",
-            "Setiap akhir adalah awal yang baru. Meskipun terasa sakit sekarang, percayalah bahwa ada kebahagiaan yang menanti di depan.",
-            "Patah hati adalah bagian dari pertumbuhan. Ini adalah kesempatan untuk mengenal diri sendiri lebih baik dan menjadi lebih kuat.",
-            "Jangan pernah menyesali cinta yang hilang, karena setiap pengalaman mengajarkan sesuatu yang berharga.",
-            "Cinta sejati tidak pernah berakhir, ia hanya berubah bentuk. Lepaskan yang lama untuk memberi ruang bagi yang baru dan lebih baik.",
-            "Kesedihan adalah jembatan menuju kebahagiaan. Rasakanlah, lalu lepaskan, dan melangkahlah maju.",
-            "Bukan apa yang terjadi padamu, tetapi bagaimana kamu bereaksi terhadapnya yang penting. Kamu lebih kuat dari yang kamu kira.",
-            "Terimalah rasa sakit, lalu lepaskan. Kehidupan terus berjalan, dan begitu juga kamu.",
-            "Kamu pantas mendapatkan cinta yang tulus. Percayalah bahwa yang terbaik akan datang pada waktu yang tepat."
-        ];
-
-        let visitorHistory = []; // Untuk menyimpan riwayat pengunjung lokal (simulasi)
-        let chatMessages = []; // Untuk menyimpan pesan chat lokal (simulasi)
-        let audioTracks = [
-            { name: "Track 1: Morning Vibes", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-            { name: "Track 2: Chill Beat", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-            { name: "Track 3: Upbeat Groove", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
-            // Tambahkan lebih banyak lagu di sini
-        ];
-        let currentTrackIndex = 0;
-        let galleryMoments = []; // Untuk menyimpan data gallery
-
-        // Utility function to fetch from Worker
-        async function fetchFromWorker(path, method = 'GET', body = null) {
-            const options = {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+        function initParticleBackground() {
+            const canvas = document.getElementById('interactive-bg');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let mouse = {
+                x: null,
+                y: null,
+                radius: 150
             };
-            if (body) {
-                options.body = JSON.stringify(body);
-            }
-            try {
-                const response = await fetch(`${WORKER_URL}${path}`, options);
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = event.x;
+                mouse.y = event.y;
+            });
+            class Particle {
+                constructor(x, y, dirX, dirY, size, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.dirX = dirX;
+                    this.dirY = dirY;
+                    this.size = size;
+                    this.color = color;
                 }
-                return await response.json();
-            } catch (error) {
-                console.error(`Error fetching from worker (${path}):`, error);
-                return null;
-            }
-        }
-
-        // ====================================================================
-        // DOM ELEMENTS
-        // ====================================================================
-        const appContainer = document.getElementById('app-container');
-        const guestView = document.getElementById('guest-view');
-        const adminView = document.getElementById('admin-view');
-        const themeSwitcher = document.getElementById('theme-switcher');
-        const websiteAgeSpan = document.getElementById('website-age');
-        const hitCounterSpan = document.getElementById('hit-counter');
-
-        // Guest View Elements
-        const htmlCodeEditor = document.getElementById('html-code');
-        const codePreview = document.getElementById('code-preview');
-        const runCodeBtn = document.getElementById('run-code');
-        const saveCodeBtn = document.getElementById('save-code');
-        const loadCodeBtn = document.getElementById('load-code');
-        const undoCodeBtn = document.getElementById('undo-code');
-        const redoCodeBtn = document.getElementById('redo-code');
-        const insertMediaFile = document.getElementById('insert-media-file');
-
-        const backgroundAudio = document.getElementById('background-audio');
-        const playPauseBtn = document.getElementById('play-pause');
-        const prevTrackBtn = document.getElementById('prev-track');
-        const nextTrackBtn = document.getElementById('next-track');
-        const loopToggleBtn = document.getElementById('loop-toggle');
-        const audioProgressBar = document.getElementById('audio-progress-bar');
-        const audioProgressContainer = document.getElementById('audio-progress-container');
-        const audioTimeSpan = document.getElementById('audio-time');
-        const volumeControl = document.getElementById('volume-control');
-        const musicVisualizerCanvas = document.getElementById('music-visualizer');
-        const audioTrackListDiv = document.getElementById('audio-track-list');
-        const uploadMusicInput = document.getElementById('upload-music');
-
-        const chatMessagesDiv = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const chatSendBtn = document.getElementById('chat-send-btn');
-
-        // Admin View Elements
-        const adminNavVisitors = document.getElementById('admin-nav-visitors');
-        const adminNavGallery = document.getElementById('admin-nav-gallery');
-        const adminNavMySpace = document.getElementById('admin-nav-myspace');
-        const adminLogoutBtn = document.getElementById('admin-logout');
-
-        const adminPanelVisitors = document.getElementById('admin-panel-visitors');
-        const adminPanelGallery = document.getElementById('admin-panel-gallery');
-        const adminPanelMySpace = document.getElementById('admin-panel-myspace');
-
-        const visitorListDiv = document.getElementById('visitor-list');
-
-        const galleryItemTitle = document.getElementById('gallery-item-title');
-        const galleryItemDescription = document.getElementById('gallery-item-description');
-        const galleryFileUpload = document.getElementById('gallery-file-upload');
-        const uploadGalleryItemBtn = document.getElementById('upload-gallery-item');
-        const uploadStatusMessage = document.getElementById('upload-status-message');
-        const galleryPreviewContainer = document.getElementById('gallery-preview-container');
-
-        const videoStreamUrlInput = document.getElementById('video-stream-url');
-        const loadVideoStreamBtn = document.getElementById('load-video-stream');
-        const myPrivateVideo = document.getElementById('my-private-video');
-        const breakupQuoteP = document.getElementById('breakup-quote');
-        const generateNewQuoteBtn = document.getElementById('generate-new-quote');
-        const hackingNewsListDiv = document.getElementById('hacking-news-list');
-        const refreshHackingNewsBtn = document.getElementById('refresh-hacking-news');
-
-        // ====================================================================
-        // THEME SWITCHER
-        // ====================================================================
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-            themeSwitcher.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        }
-
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                themeSwitcher.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                document.body.classList.remove('dark-mode');
-                themeSwitcher.innerHTML = '<i class="fas fa-moon"></i>';
-            }
-        }
-        themeSwitcher.addEventListener('click', toggleTheme);
-        loadTheme(); // Load theme on page load
-
-        // ====================================================================
-        // WEBSITE AGE & HIT COUNTER (GUEST & ADMIN)
-        // ====================================================================
-        function calculateWebsiteAge() {
-            const now = new Date();
-            const diffTime = Math.abs(now - WEBSITE_BIRTH_DATE);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            const years = Math.floor(diffDays / 365);
-            const remainingDays = diffDays % 365;
-            const months = Math.floor(remainingDays / 30); // Approx. months
-            const days = remainingDays % 30;
-
-            let ageString = '';
-            if (years > 0) ageString += `${years} tahun `;
-            if (months > 0) ageString += `${months} bulan `;
-            if (days > 0) ageString += `${days} hari`;
-            if (ageString === '') ageString = 'Baru saja diluncurkan!';
-            websiteAgeSpan.textContent = ageString.trim();
-        }
-
-        async function updateHitCounter() {
-            // Increment hit counter on load (only if not an admin session already counted)
-            if (!localStorage.getItem('hasIncrementedHit')) {
-                const result = await fetchFromWorker('/increment-hit-counter', 'POST');
-                if (result) {
-                    hitCounterSpan.textContent = result.hits;
-                    localStorage.setItem('hasIncrementedHit', 'true'); // Prevent multiple increments in one session
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
                 }
-            } else {
-                const result = await fetchFromWorker('/get-hit-counter', 'GET');
-                if (result) {
-                    hitCounterSpan.textContent = result.hits;
+                update() {
+                    if (this.x > canvas.width || this.x < 0) this.dirX = -this.dirX;
+                    if (this.y > canvas.height || this.y < 0) this.dirY = -this.dirY;
+                    this.x += this.dirX;
+                    this.y += this.dirY;
+                    this.draw();
                 }
             }
-        }
 
-        calculateWebsiteAge();
-        updateHitCounter();
-
-        // ====================================================================
-        // CODE EDITOR (GUEST)
-        // ====================================================================
-        function runCode() {
-            const code = htmlCodeEditor.value;
-            const iframeDoc = codePreview.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(code);
-            iframeDoc.close();
-        }
-
-        function saveCode() {
-            const code = htmlCodeEditor.value;
-            localStorage.setItem('savedHtmlCode', code);
-            alert('Kode HTML disimpan!');
-        }
-
-        function loadCode() {
-            const savedCode = localStorage.getItem('savedHtmlCode');
-            if (savedCode) {
-                htmlCodeEditor.value = savedCode;
-                runCode();
-                alert('Kode HTML dimuat!');
-            } else {
-                alert('Tidak ada kode yang tersimpan.');
+            function initParticles() {
+                particles = [];
+                let numParticles = (canvas.height * canvas.width) / 9000;
+                for (let i = 0; i < numParticles; i++) {
+                    let size = Math.random() * 2 + 1;
+                    let x = Math.random() * (innerWidth - size * 2);
+                    let y = Math.random() * (innerHeight - size * 2);
+                    let dirX = (Math.random() * .4) - .2;
+                    let dirY = (Math.random() * .4) - .2;
+                    let color = 'rgba(0, 168, 255, 0.8)';
+                    particles.push(new Particle(x, y, dirX, dirY, size, color));
+                }
             }
-        }
 
-        // Basic Undo/Redo (limited, for full features need a library)
-        let history = [];
-        let historyIndex = -1;
-
-        function recordHistory() {
-            if (htmlCodeEditor.value !== history[historyIndex]) {
-                history = history.slice(0, historyIndex + 1);
-                history.push(htmlCodeEditor.value);
-                historyIndex++;
-            }
-        }
-
-        function undoCode() {
-            if (historyIndex > 0) {
-                historyIndex--;
-                htmlCodeEditor.value = history[historyIndex];
-                runCode();
-            }
-        }
-
-        function redoCode() {
-            if (historyIndex < history.length - 1) {
-                historyIndex++;
-                htmlCodeEditor.value = history[historyIndex];
-                runCode();
-            }
-        }
-
-        htmlCodeEditor.addEventListener('input', () => {
-            recordHistory();
-            runCode(); // Live preview as you type
-        });
-
-        // Initialize history with current content
-        recordHistory();
-
-        runCodeBtn.addEventListener('click', runCode);
-        saveCodeBtn.addEventListener('click', saveCode);
-        loadCodeBtn.addEventListener('click', loadCode);
-        undoCodeBtn.addEventListener('click', undoCode);
-        redoCodeBtn.addEventListener('click', redoCode);
-
-        // Insert Media
-        insertMediaFile.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const dataURL = e.target.result;
-                    let mediaTag = '';
-                    if (file.type.startsWith('image/')) {
-                        mediaTag = `<img src="${dataURL}" alt="Inserted Image" style="max-width:100%;">`;
-                    } else if (file.type.startsWith('video/')) {
-                        mediaTag = `<video controls src="${dataURL}" style="max-width:100%;"></video>`;
-                    } else if (file.type.startsWith('audio/')) {
-                        mediaTag = `<audio controls src="${dataURL}"></audio>`;
+            function connectParticles() {
+                for (let a = 0; a < particles.length; a++) {
+                    for (let b = a; b < particles.length; b++) {
+                        let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x)) +
+                            ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                        if (distance < (canvas.width / 7) * (canvas.height / 7)) {
+                            let opacity = 1 - (distance / 20000);
+                            ctx.strokeStyle = `rgba(0, 168, 255, ${opacity})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(particles[b].x, particles[b].y);
+                            ctx.stroke();
+                        }
                     }
-                    const start = htmlCodeEditor.selectionStart;
-                    const end = htmlCodeEditor.selectionEnd;
-                    htmlCodeEditor.value = htmlCodeEditor.value.substring(0, start) + mediaTag + htmlCodeEditor.value.substring(end);
-                    runCode();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-
-        // ====================================================================
-        // MUSIC PLAYER (GUEST)
-        // ====================================================================
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        let analyser = audioContext.createAnalyser();
-        let source;
-        let dataArray;
-        let bufferLength;
-        let canvasCtx = musicVisualizerCanvas.getContext('2d');
-
-        function setupAudioVisualizer() {
-            if (!source) {
-                source = audioContext.createMediaElementSource(backgroundAudio);
-                source.connect(analyser);
-                analyser.connect(audioContext.destination);
-                analyser.fftSize = 256;
-                bufferLength = analyser.frequencyBinData.length;
-                dataArray = new Uint8Array(bufferLength);
-            }
-            drawVisualizer();
-        }
-
-        function drawVisualizer() {
-            requestAnimationFrame(drawVisualizer);
-
-            analyser.getByteFrequencyData(dataArray);
-
-            canvasCtx.clearRect(0, 0, musicVisualizerCanvas.width, musicVisualizerCanvas.height);
-
-            const barWidth = (musicVisualizerCanvas.width / bufferLength) * 2.5;
-            let barHeight;
-            let x = 0;
-
-            for (let i = 0; i < bufferLength; i++) {
-                barHeight = dataArray[i] / 2;
-
-                canvasCtx.fillStyle = 'var(--audio-wave-color)';
-                canvasCtx.fillRect(x, musicVisualizerCanvas.height - barHeight / 2, barWidth, barHeight);
-
-                x += barWidth + 1;
-            }
-        }
-
-        function loadTrack(index) {
-            backgroundAudio.src = audioTracks[index].src;
-            backgroundAudio.load();
-            backgroundAudio.play().then(() => {
-                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                if (!source) { // Ensure visualizer is setup only once after first play
-                    setupAudioVisualizer();
                 }
-            }).catch(e => console.error("Error playing audio:", e));
-            highlightCurrentTrack(index);
+            }
+
+            function animateParticles() {
+                requestAnimationFrame(animateParticles);
+                ctx.clearRect(0, 0, innerWidth, innerHeight);
+                particles.forEach(p => p.update());
+                connectParticles();
+            }
+            initParticles();
+            animateParticles();
         }
 
-        function playPauseAudio() {
-            if (backgroundAudio.paused) {
-                backgroundAudio.play().then(() => {
-                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    if (!source) {
-                        setupAudioVisualizer();
+        let keySequence = [];
+
+        function initSecretCodeListener() {
+            window.addEventListener('keydown', (e) => {
+                keySequence.push(e.key.toLowerCase());
+                keySequence = keySequence.slice(-SECRET_CODE.length);
+                if (keySequence.join('') === SECRET_CODE) {
+                    unlockTrackingSystem();
+                    keySequence = [];
+                }
+            });
+        }
+
+        function unlockTrackingSystem() {
+            const lockScreen = document.getElementById('map-lock-screen');
+            if (!lockScreen.classList.contains('hidden')) {
+                lockScreen.classList.add('hidden');
+                document.getElementById('map').classList.remove('hidden');
+                document.getElementById('locationInfo').classList.remove('hidden');
+                getLocation();
+                const info = document.getElementById('locationInfo');
+                info.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success);"></i> System Activated. Initializing tracker...`;
+            }
+        }
+
+        let map, marker;
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    (pos) => initMap(pos.coords.latitude, pos.coords.longitude),
+                    () => initMap(2.4633, 97.9158, true), // Fallback to Subulussalam
+                    {
+                        enableHighAccuracy: true
                     }
-                }).catch(e => console.error("Error playing audio:", e));
-            } else {
-                backgroundAudio.pause();
-                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                );
             }
         }
 
-        function nextTrack() {
-            currentTrackIndex = (currentTrackIndex + 1) % audioTracks.length;
-            loadTrack(currentTrackIndex);
+        function initMap(lat, lon, isDefault = false) {
+            if (!map) {
+                map = L.map('map').setView([lat, lon], 13);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap &copy; CartoDB'
+                }).addTo(map);
+                marker = L.marker([lat, lon]).addTo(map);
+            } else {
+                map.setView([lat, lon]);
+                marker.setLatLng([lat, lon]);
+            }
+            const locationInfoEl = document.getElementById('locationInfo');
+            if (isDefault) {
+                locationInfoEl.innerHTML = `Default Location: Subulussalam, Aceh`;
+            } else {
+                locationInfoEl.innerHTML = `Tracking... Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+            }
         }
 
-        function prevTrack() {
-            currentTrackIndex = (currentTrackIndex - 1 + audioTracks.length) % audioTracks.length;
-            loadTrack(currentTrackIndex);
-        }
+        function initPanelControls() {
+            document.querySelectorAll('[data-panel]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const panelId = button.getAttribute('data-panel');
+                    const panel = document.getElementById(panelId);
 
-        function updateProgressBar() {
-            const progress = (backgroundAudio.currentTime / backgroundAudio.duration) * 100;
-            audioProgressBar.style.width = `${progress}%`;
-            audioTimeSpan.textContent = `${formatTime(backgroundAudio.currentTime)} / ${formatTime(backgroundAudio.duration)}`;
-        }
+                    // Close all other panels first
+                    document.querySelectorAll('.panel').forEach(otherPanel => {
+                        if (otherPanel.id !== panelId && otherPanel.classList.contains('active')) {
+                            otherPanel.classList.remove('active');
+                            // Clear intervals or content for panels being closed
+                            if (otherPanel.id === 'live-visitors-panel') {
+                                clearInterval(visitorRefreshInterval);
+                                document.getElementById('visitor-list').innerHTML = '';
+                            }
+                        }
+                    });
 
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return "0:00";
-            const minutes = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-        }
+                    // Toggle the clicked panel
+                    panel.classList.toggle('active');
 
-        function setAudioProgress(e) {
-            const width = audioProgressContainer.clientWidth;
-            const clickX = e.offsetX;
-            const duration = backgroundAudio.duration;
-            backgroundAudio.currentTime = (clickX / width) * duration;
-        }
-
-        function toggleLoop() {
-            backgroundAudio.loop = !backgroundAudio.loop;
-            loopToggleBtn.style.color = backgroundAudio.loop ? 'var(--accent-color)' : 'var(--nav-link-color)';
-            alert(`Looping ${backgroundAudio.loop ? 'aktif' : 'nonaktif'}`);
-        }
-
-        function renderAudioTracks() {
-            audioTrackListDiv.innerHTML = '';
-            audioTracks.forEach((track, index) => {
-                const trackDiv = document.createElement('div');
-                trackDiv.classList.add('audio-track-item');
-                if (index === currentTrackIndex) {
-                    trackDiv.classList.add('active-track');
-                }
-                trackDiv.innerHTML = `<i class="fas fa-music"></i> <span>${track.name}</span>`;
-                trackDiv.addEventListener('click', () => {
-                    currentTrackIndex = index;
-                    loadTrack(currentTrackIndex);
+                    // Specific logic for panels when they become active
+                    if (panel.classList.contains('active')) {
+                        if (panelId === 'live-visitors-panel') {
+                            fetchLiveVisitors();
+                            visitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
+                        } else if (panelId === 'contribution-panel') {
+                            fetchContributions();
+                        } else if (panelId === 'gallery-panel') {
+                            fetchGalleryItems();
+                        }
+                    } else {
+                        // Specific logic for panels when they become inactive
+                        if (panelId === 'live-visitors-panel') {
+                            clearInterval(visitorRefreshInterval);
+                            document.getElementById('visitor-list').innerHTML = '';
+                        }
+                    }
                 });
-                audioTrackListDiv.appendChild(trackDiv);
+            });
+
+            document.querySelectorAll('.panel-close-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const panelId = button.getAttribute('data-panel');
+                    const panel = document.getElementById(panelId);
+                    panel.classList.remove('active');
+
+                    // Clear intervals or content for panels being closed
+                    if (panelId === 'live-visitors-panel') {
+                        clearInterval(visitorRefreshInterval);
+                        document.getElementById('visitor-list').innerHTML = '';
+                    }
+                });
             });
         }
 
-        function highlightCurrentTrack(index) {
-            const trackItems = audioTrackListDiv.querySelectorAll('.audio-track-item');
-            trackItems.forEach((item, idx) => {
-                if (idx === index) {
-                    item.classList.add('active-track');
-                } else {
-                    item.classList.remove('active-track');
-                }
+
+        function initPrivateUserAuth() {
+            const privateUserFab = document.querySelector('#fab-private-user .fab');
+            const privateUserPanel = document.getElementById('private-user-panel');
+            const privateUserInput = document.getElementById('private-user-input');
+            const privateUserSubmit = document.getElementById('private-user-submit');
+            const privateUserMessage = document.getElementById('private-user-message');
+
+            privateUserFab.addEventListener('click', () => {
+                privateUserPanel.classList.toggle('active');
+                document.querySelectorAll('.panel').forEach(otherPanel => {
+                    if (otherPanel.id !== 'private-user-panel') {
+                        otherPanel.classList.remove('active');
+                    }
+                });
+                privateUserInput.value = ''; // Clear input on open
+                privateUserMessage.textContent = ''; // Clear message on open
             });
-        }
 
-        playPauseBtn.addEventListener('click', playPauseAudio);
-        nextTrackBtn.addEventListener('click', nextTrack);
-        prevTrackBtn.addEventListener('click', prevTrack);
-        loopToggleBtn.addEventListener('click', toggleLoop);
-        backgroundAudio.addEventListener('timeupdate', updateProgressBar);
-        backgroundAudio.addEventListener('ended', nextTrack);
-        volumeControl.addEventListener('input', (e) => backgroundAudio.volume = e.target.value);
-        audioProgressContainer.addEventListener('click', setAudioProgress);
-
-        uploadMusicInput.addEventListener('change', (event) => {
-            const files = event.target.files;
-            if (files.length > 0) {
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    // Create a Blob URL for the audio file
-                    const blobUrl = URL.createObjectURL(file);
-                    audioTracks.push({ name: file.name, src: blobUrl });
-                }
-                renderAudioTracks();
-                alert(`${files.length} lagu berhasil ditambahkan!`);
-            }
-        });
-
-        // Initial load for music player
-        if (audioTracks.length > 0) {
-            loadTrack(currentTrackIndex); // Load the first track
-        }
-        renderAudioTracks(); // Render the list of tracks
-
-
-        // ====================================================================
-        // LIVE CHAT (GUEST) - Simple client-side simulation for now
-        // For real-time, needs WebSockets/polling to Cloudflare KV.
-        // ====================================================================
-        function addChatMessage(message, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('chat-message', sender);
-            msgDiv.textContent = message;
-            chatMessagesDiv.appendChild(msgDiv);
-            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Auto-scroll to bottom
-            chatMessages.push({ message, sender, timestamp: new Date().toISOString() }); // Store for history
-            // In a real app, you'd send this to Cloudflare Worker to save to KV
-        }
-
-        function sendChatMessage() {
-            const message = chatInput.value.trim();
-            if (message) {
-                addChatMessage(message, 'owner'); // Simulate owner sending message
-                chatInput.value = '';
-                // Simulate a visitor response for demo purposes
-                setTimeout(() => {
-                    addChatMessage(`Terima kasih atas pesan Anda: "${message}". Saya akan segera membalas!`, 'visitor');
-                }, 1500);
-            }
-        }
-
-        chatSendBtn.addEventListener('click', sendChatMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        });
-
-        // ====================================================================
-        // LOGIN & VIEW MANAGEMENT
-        // ====================================================================
-        async function checkLoginStatus() {
-            const bioVAuthSession = localStorage.getItem('bioVAuthSession');
-
-            if (bioVAuthSession) {
-                // Verify the token with Cloudflare Worker
-                const response = await fetchFromWorker('/verify-auth-session', 'POST', { sessionKey: bioVAuthSession });
-
-                if (response && response.authenticated) {
-                    showAdminView();
+            privateUserSubmit.addEventListener('click', async () => {
+                const username = privateUserInput.value.trim().toLowerCase();
+                if (username === '') {
+                    privateUserMessage.style.color = 'var(--danger)';
+                    privateUserMessage.textContent = 'Nama tidak boleh kosong!';
                     return;
-                } else {
-                    console.warn('Invalid or expired bioVAuthSession. Clearing...');
-                    localStorage.removeItem('bioVAuthSession'); // Clear invalid session
                 }
-            }
-            showGuestView();
-        }
 
-        function showGuestView() {
-            guestView.style.display = 'flex';
-            adminView.style.display = 'none';
-            document.getElementById('website-title').textContent = 'Dashboard Pribadi Ezra'; // Reset title for guest
-        }
+                privateUserMessage.style.color = 'var(--text-secondary)';
+                privateUserMessage.textContent = 'Memeriksa user...';
 
-        function showAdminView() {
-            guestView.style.display = 'none';
-            adminView.style.display = 'flex';
-            document.getElementById('website-title').textContent = 'Admin Dashboard - Ezra'; // Change title for admin
-            loadAdminData(); // Load admin-specific data
-        }
-
-        function handleSuccessfulLogin(sessionKey) {
-            localStorage.setItem('bioVAuthSession', sessionKey);
-            showAdminView();
-        }
-
-        function adminLogout() {
-            localStorage.removeItem('bioVAuthSession');
-            localStorage.removeItem('hasIncrementedHit'); // Allow hit counter to increment again for guest
-            showGuestView();
-            alert('Anda telah logout dari mode admin.');
-        }
-
-        // Handle login logic from external JS (as described in prompt)
-        // Assume this function will be called by your external login.html's JS
-        // For demonstration, let's manually trigger it after a delay or a mock login.
-        // Example: If an external login page redirects back with a query param or sets localStorage:
-        // window.simulateLogin = (key) => handleSuccessfulLogin(key);
-
-        // --- Mock Login Verification (Replace with your actual login.html integration) ---
-        // This is where you'd integrate the logic from your `login.html`
-        // For testing, uncomment the line below and ensure your `login.html` sets `bioVAuthSession` correctly
-        // For instance, if `login.html` sets localStorage.setItem('bioVAuthSession', 'your-secret-ezra-key');
-        // then the `checkLoginStatus()` will pick it up and verify with the Worker.
-
-        // Example of how `login.html` might set the session (DON'T DO THIS IN REAL PROD, it's insecure):
-        // (This would be in your separate login.html's JS after successful server verification)
-        // localStorage.setItem('bioVAuthSession', 'your-secret-ezra-key');
-        // window.location.href = '/'; // Redirect to the main dashboard
-
-        // --- End Mock Login Verification ---
-
-        // ====================================================================
-        // ADMIN DASHBOARD FEATURES
-        // ====================================================================
-
-        // Admin Navigation
-        const adminPanels = {
-            'admin-panel-visitors': adminPanelVisitors,
-            'admin-panel-gallery': adminPanelGallery,
-            'admin-panel-myspace': adminPanelMySpace
-        };
-
-        function showAdminPanel(panelId) {
-            for (const key in adminPanels) {
-                adminPanels[key].style.display = (key === panelId) ? 'flex' : 'none';
-            }
-            // Update active state in sidebar
-            const navLinks = document.querySelectorAll('.sidebar a');
-            navLinks.forEach(link => link.classList.remove('active'));
-            document.getElementById(`admin-nav-${panelId.replace('admin-panel-', '')}`).classList.add('active');
-        }
-
-        adminNavVisitors.addEventListener('click', (e) => { e.preventDefault(); showAdminPanel('admin-panel-visitors'); });
-        adminNavGallery.addEventListener('click', (e) => { e.preventDefault(); showAdminPanel('admin-panel-gallery'); loadGalleryMoments(); });
-        adminNavMySpace.addEventListener('click', (e) => { e.preventDefault(); showAdminPanel('admin-panel-myspace'); });
-        adminLogoutBtn.addEventListener('click', adminLogout);
-
-
-        // Live Visitors (Admin)
-        async function getVisitorIP() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip;
-            } catch (error) {
-                console.error("Error fetching IP:", error);
-                return 'Unknown';
-            }
-        }
-
-        function getBrowserInfo() {
-            const browser = navigator.userAgent;
-            const timestamp = new Date().toLocaleString();
-            return { browser, timestamp };
-        }
-
-        async function recordAndDisplayVisitor() {
-            const ip = await getVisitorIP();
-            const { browser, timestamp } = getBrowserInfo();
-            const visitorData = { ip, browser, timestamp };
-
-            // Add to local history (for display, not persistent across sessions without backend)
-            visitorHistory.unshift(visitorData); // Add to the beginning
-            // Keep only the last 10-20 for display
-            if (visitorHistory.length > 20) {
-                visitorHistory = visitorHistory.slice(0, 20);
-            }
-            renderVisitorList();
-
-            // In a real scenario, this data would be sent to Cloudflare Worker and stored in KV
-            // For now, we're simulating the display based on local generation.
-            // A persistent solution would involve the Worker recording visitors and then a separate API
-            // call to fetch them for the admin view.
-        }
-
-        function renderVisitorList() {
-            visitorListDiv.innerHTML = '';
-            if (visitorHistory.length === 0) {
-                visitorListDiv.innerHTML = '<p>Belum ada pengunjung aktif.</p>';
-                return;
-            }
-            visitorHistory.forEach(visitor => {
-                const itemDiv = document.createElement('div');
-                itemDiv.classList.add('visitor-item');
-                itemDiv.innerHTML = `
-                    <span><strong>IP:</strong> ${visitor.ip}</span>
-                    <span><strong>Browser:</strong> ${visitor.browser}</span>
-                    <span><strong>Waktu:</strong> ${visitor.timestamp}</span>
-                `;
-                visitorListDiv.appendChild(itemDiv);
+                try {
+                    // Simulate authentication against a hardcoded value for Ezra
+                    if (username === 'ezra') { // Replace with actual validation via your Cloudflare Worker if needed
+                        localStorage.setItem('bioVAuthSession', 'true'); // Simulate a valid token
+                        isEzraLoggedIn = true;
+                        privateUserMessage.style.color = 'var(--success)';
+                        privateUserMessage.textContent = 'User terautentikasi! Mengarahkan...';
+                        setTimeout(() => {
+                            privateUserPanel.classList.remove('active');
+                            checkEzraLoginStatus(); // Update UI after successful login
+                            if (isEzraLoggedIn) {
+                                fetchLiveVisitors(); // Fetch immediately on login
+                                fetchGalleryItems();
+                            }
+                        }, 1000);
+                    } else {
+                        localStorage.removeItem('bioVAuthSession');
+                        isEzraLoggedIn = false;
+                        privateUserMessage.style.color = 'var(--danger)';
+                        privateUserMessage.textContent = 'User tidak ada';
+                    }
+                } catch (error) {
+                    console.error('Error during authentication:', error);
+                    privateUserMessage.style.color = 'var(--danger)';
+                    privateUserMessage.textContent = 'Terjadi kesalahan saat otentikasi.';
+                }
             });
         }
 
-        // Gallery Content (Admin) - Using Cloudflare KV via Worker
-        async function uploadGalleryItem() {
-            const title = galleryItemTitle.value.trim();
-            const description = galleryItemDescription.value.trim();
-            const file = galleryFileUpload.files[0];
+        function initLayoutAndThemeToggles() {
+            const layoutBtn = document.querySelector('#fab-layout .fab');
+            const themeBtn = document.querySelector('#fab-theme .fab');
+            const desktopLayoutBtn = document.getElementById('desktop-layout-toggle');
+            const desktopThemeBtn = document.getElementById('desktop-theme-toggle');
 
-            if (!title || !description || !file) {
-                uploadStatusMessage.textContent = 'Harap lengkapi semua bidang dan pilih file.';
-                uploadStatusMessage.style.color = 'red';
-                return;
+            const applyTheme = (newTheme) => {
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                document.querySelectorAll('#fab-theme i, #desktop-theme-toggle i').forEach(i => {
+                    i.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                });
+            };
+
+            const toggleLayout = () => {
+                document.body.classList.toggle('desktop-layout');
+                updateDesktopFabBarVisibility();
+                // Ensure correct panels are shown/hidden based on login status
+                checkEzraLoginStatus();
+            };
+
+            const toggleTheme = () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                applyTheme(newTheme);
+            };
+
+            layoutBtn.addEventListener('click', toggleLayout);
+            desktopLayoutBtn.addEventListener('click', toggleLayout);
+            themeBtn.addEventListener('click', toggleTheme);
+            desktopThemeBtn.addEventListener('click', toggleTheme);
+
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            applyTheme(savedTheme);
+            updateDesktopFabBarVisibility();
+        }
+
+        function updateDesktopFabBarVisibility() {
+            const desktopFabBar = document.querySelector('.desktop-fab-bar');
+            if (document.body.classList.contains('desktop-layout')) {
+                desktopFabBar.style.display = 'flex';
+            } else {
+                desktopFabBar.style.display = 'none';
             }
+        }
 
-            uploadStatusMessage.textContent = 'Mengunggah...';
-            uploadStatusMessage.style.color = 'orange';
 
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const base64Content = e.target.result.split(',')[1]; // Get base64 string
-                const fileName = file.name;
-                const fileType = file.type;
+        function initVideoPlayer() {
+            const video = document.getElementById('widget-video');
+            const playBtn = document.getElementById('video-play-pause');
+            const muteBtn = document.getElementById('video-mute');
 
-                // For actual GitHub integration, you'd use GitHub API here
-                // Example with GitHub API (requires GITHUB_TOKEN with repo scope):
-                // const githubApiPath = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/gallery/${fileName}`;
-                // const githubBody = {
-                //     message: `Add gallery item: ${fileName}`,
-                //     content: base64Content,
-                //     branch: 'main' // or your default branch
-                // };
-                // const githubHeaders = {
-                //     'Authorization': `token ${GITHUB_TOKEN}`,
-                //     'Content-Type': 'application/json'
-                // };
-                // try {
-                //     const githubResponse = await fetch(githubApiPath, {
-                //         method: 'PUT',
-                //         headers: githubHeaders,
-                //         body: JSON.stringify(githubBody)
-                //     });
-                //     if (!githubResponse.ok) {
-                //         throw new Error(`GitHub API error: ${githubResponse.statusText}`);
-                //     }
-                //     const githubResult = await githubResponse.json();
-                //     const mediaUrl = githubResult.content.download_url; // Or raw.githubusercontent.com URL
-                //     console.log('File uploaded to GitHub:', mediaUrl);
+            playBtn.addEventListener('click', () => {
+                if (video.paused) {
+                    video.play();
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                } else {
+                    video.pause();
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+            muteBtn.addEventListener('click', () => {
+                video.muted = !video.muted;
+                muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+            });
+            video.volume = 0.5; // Set initial volume
+        }
 
-                // Now save metadata to KV
-                const newMoment = {
-                    title,
-                    description,
-                    mediaUrl: e.target.result, // Use Data URL for simplicity in demo, replace with actual GitHub URL
-                    fileType,
-                    fileName,
+        let currentSongIndex = 0;
+        let songs = [
+            { name: "Where We Are", url: "where-we-are.mp3" },
+            { name: "Wish You Were Here", url: "wish-you-were-here.mp3" },
+            { name: "ghost to you", url: "ghost-to-you.mp3" },
+        ];
+
+        function initMusicPlayer() {
+            const player = document.getElementById('audio-player');
+            const playlistEl = document.getElementById('playlist');
+            const songTitleEl = document.getElementById('song-title');
+            const prevBtn = document.getElementById('prev-track');
+            const nextBtn = document.getElementById('next-track');
+
+            const loadSong = (index) => {
+                if (index >= 0 && index < songs.length) {
+                    currentSongIndex = index;
+                    player.src = songs[currentSongIndex].url;
+                    songTitleEl.textContent = songs[currentSongIndex].name;
+                    player.play();
+                }
+            };
+
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.textContent = song.name;
+                item.className = 'playlist-item'; // Add class for styling if needed
+                item.onclick = () => loadSong(index);
+                playlistEl.appendChild(item);
+            });
+
+            prevBtn.addEventListener('click', () => {
+                loadSong((currentSongIndex - 1 + songs.length) % songs.length);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                loadSong((currentSongIndex + 1) % songs.length);
+            });
+
+            player.addEventListener('ended', () => {
+                loadSong((currentSongIndex + 1) % songs.length);
+            });
+
+            // Initial load of the first song
+            if (songs.length > 0) {
+                loadSong(0);
+                player.pause(); // Start paused
+                player.controls = true; // Ensure native controls are visible
+            }
+        }
+
+
+        function initEditor() {
+            const htmlEditor = document.getElementById('html-editor');
+            const cssEditor = document.getElementById('css-editor');
+            const jsEditor = document.getElementById('js-editor');
+            const previewFrame = document.getElementById('editor-preview');
+
+            let history = {
+                html: [], css: [], js: []
+            };
+            let historyIndex = {
+                html: -1, css: -1, js: -1
+            };
+
+            const saveState = (editorName, content) => {
+                const editorHistory = history[editorName];
+                const currentIndex = historyIndex[editorName];
+
+                if (currentIndex < editorHistory.length - 1) {
+                    editorHistory.splice(currentIndex + 1);
+                }
+                editorHistory.push(content);
+                historyIndex[editorName]++;
+            };
+
+            const applyState = (editorName, newContent) => {
+                const editor = document.getElementById(`${editorName}-editor`);
+                editor.value = newContent;
+                runCode();
+            };
+
+            const undo = (editorName) => {
+                const editorHistory = history[editorName];
+                if (historyIndex[editorName] > 0) {
+                    historyIndex[editorName]--;
+                    applyState(editorName, editorHistory[historyIndex[editorName]]);
+                }
+            };
+
+            const redo = (editorName) => {
+                const editorHistory = history[editorName];
+                if (historyIndex[editorName] < editorHistory.length - 1) {
+                    historyIndex[editorName]++;
+                    applyState(editorName, editorHistory[historyIndex[editorName]]);
+                }
+            };
+
+            const setupEditor = (editor, editorName) => {
+                editor.addEventListener('input', () => {
+                    runCode();
+                    saveState(editorName, editor.value);
+                });
+            };
+
+            setupEditor(htmlEditor, 'html');
+            setupEditor(cssEditor, 'css');
+            setupEditor(jsEditor, 'js');
+
+            const runCode = () => {
+                const source = `
+                    <html>
+                        <head><style>${cssEditor.value}</style></head>
+                        <body>${htmlEditor.value}<script>${jsEditor.value}<\/script></body>
+                    </html>
+                `;
+                previewFrame.srcdoc = source;
+            };
+
+            const saveCode = () => {
+                localStorage.setItem('editor_html', htmlEditor.value);
+                localStorage.setItem('editor_css', cssEditor.value);
+                localStorage.setItem('editor_js', jsEditor.value);
+                alert('Code saved!');
+            };
+
+            const loadCode = () => {
+                htmlEditor.value = localStorage.getItem('editor_html') || '';
+                cssEditor.value = localStorage.getItem('editor_css') || '';
+                jsEditor.value = localStorage.getItem('editor_js') || '';
+                runCode();
+                saveState('html', htmlEditor.value);
+                saveState('css', cssEditor.value);
+                saveState('js', jsEditor.value);
+            };
+
+            const newDoc = () => {
+                htmlEditor.value = '<h1>Hello World</h1>';
+                cssEditor.value = 'h1 { color: blue; }';
+                jsEditor.value = 'console.log("Hello from JS!");';
+                runCode();
+                saveState('html', htmlEditor.value);
+                saveState('css', cssEditor.value);
+                saveState('js', jsEditor.value);
+            };
+
+            document.getElementById('editor-run').addEventListener('click', runCode);
+            document.getElementById('editor-save').addEventListener('click', saveCode);
+            document.getElementById('editor-load').addEventListener('click', loadCode);
+            document.getElementById('editor-new').addEventListener('click', newDoc);
+            document.getElementById('editor-undo').addEventListener('click', () => {
+                undo('html');
+                undo('css');
+                undo('js');
+            });
+            document.getElementById('editor-redo').addEventListener('click', () => {
+                redo('html');
+                redo('css');
+                redo('js');
+            });
+
+            document.getElementById('editor-add-media').addEventListener('click', () => {
+                const mediaUrl = prompt('Enter URL for image, video, or audio:');
+                if (mediaUrl) {
+                    let mediaTag = '';
+                    if (mediaUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
+                        mediaTag = `<img src="${mediaUrl}" alt="media" style="max-width:100%;">`;
+                    } else if (mediaUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                        mediaTag = `<video src="${mediaUrl}" controls style="max-width:100%;"></video>`;
+                    } else if (mediaUrl.match(/\.(mp3|wav|ogg)$/i)) {
+                        mediaTag = `<audio src="${mediaUrl}" controls></audio>`;
+                    } else {
+                        alert('Unsupported media format. Please provide a direct link to an image, video, or audio file.');
+                        return;
+                    }
+                    htmlEditor.value += `\n${mediaTag}`;
+                    runCode();
+                    saveState('html', htmlEditor.value);
+                }
+            });
+            loadCode(); // Load code when editor initializes
+        }
+
+
+        async function fetchContributions() {
+            const display = document.getElementById('contribution-display');
+            display.innerHTML = `<p style="text-align: center; color: var(--text-secondary);">Loading messages...</p>`;
+            try {
+                const response = await fetch(CONTRIBUTIONS_WORKER_URL);
+                const contributions = await response.json();
+                if (contributions && contributions.length > 0) {
+                    display.innerHTML = contributions.reverse().map(c => {
+                        let mediaHTML = '';
+                        if (c.fileUrl) {
+                            if (c.fileType.startsWith('image/')) {
+                                mediaHTML = `<img src="${c.fileUrl}" style="max-width:100%; border-radius:5px; margin-top:10px;">`;
+                            } else if (c.fileType.startsWith('video/')) {
+                                mediaHTML = `<video src="${c.fileUrl}" controls style="max-width:100%; border-radius:5px; margin-top:10px;"></video>`;
+                            } else if (c.fileType.startsWith('audio/')) {
+                                mediaHTML = `<audio src="${c.fileUrl}" controls style="width:100%; margin-top:10px;"></audio>`;
+                            }
+                        }
+                        return `<div style="background:var(--input-bg);padding:10px;border-radius:8px;margin-bottom:10px; border:1px solid var(--border-color);">
+                            <p style="margin:0;">${c.text}</p>${mediaHTML}
+                            <small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small>
+                        </div>`;
+                    }).join('');
+                } else {
+                    display.innerHTML = `<p style="text-align: center; color: var(--text-secondary);">Be the first to leave a message!</p>`;
+                }
+            } catch (e) {
+                display.innerHTML = `<p style="color:var(--danger); text-align: center;">Could not load contributions.</p>`;
+                console.error("Error fetching contributions:", e);
+            }
+        }
+
+        document.getElementById('contribution-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('contribution-status');
+            statusEl.textContent = 'Uploading...';
+            const formData = new FormData();
+            formData.append('text', document.getElementById('contribution-text').value);
+            const fileInput = document.getElementById('contribution-file');
+            if (fileInput.files.length > 0) {
+                formData.append('file', fileInput.files[0]);
+            }
+            try {
+                const response = await fetch(CONTRIBUTIONS_WORKER_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error('Upload failed');
+                statusEl.style.color = 'var(--success)';
+                statusEl.textContent = 'Message sent! Thank you.';
+                e.target.reset();
+                fetchContributions();
+            } catch (err) {
+                statusEl.style.color = 'var(--danger)';
+                statusEl.textContent = `Error: ${err.message}`;
+                console.error("Error submitting contribution:", err);
+            }
+        });
+
+        function getBrowserId() {
+            let browserId = localStorage.getItem('unique_browser_id');
+            if (!browserId) {
+                browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now();
+                localStorage.setItem('unique_browser_id', browserId);
+            }
+            return browserId;
+        }
+
+        async function trackVisitor() {
+            try {
+                const browserId = getBrowserId();
+                let ipAddress = 'unknown';
+
+                try {
+                    const ipResponse = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipResponse.json();
+                    ipAddress = ipData.ip;
+                } catch (ipError) {
+                    console.warn('Could not fetch IP address:', ipError);
+                }
+
+                const data = {
+                    browserId: browserId,
+                    ip: ipAddress,
+                    userAgent: navigator.userAgent,
                     timestamp: new Date().toISOString()
                 };
 
-                const result = await fetchFromWorker('/gallery-moments', 'POST', newMoment);
+                // Send to general visitor tracker
+                fetch(VISITOR_TRACKER_WORKER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data),
+                    mode: 'no-cors'
+                }).catch(e => console.error("Error sending to general visitor tracker:", e));
 
-                if (result && result.success) {
-                    uploadStatusMessage.textContent = 'Moment berhasil diunggah dan disimpan!';
-                    uploadStatusMessage.style.color = 'green';
-                    galleryItemTitle.value = '';
-                    galleryItemDescription.value = '';
-                    galleryFileUpload.value = '';
-                    loadGalleryMoments(); // Refresh list
-                } else {
-                    uploadStatusMessage.textContent = 'Gagal menyimpan moment.';
-                    uploadStatusMessage.style.color = 'red';
-                }
-                // } catch (githubError) {
-                //     console.error('Error uploading to GitHub:', githubError);
-                //     uploadStatusMessage.textContent = `Gagal mengunggah ke GitHub: ${githubError.message}`;
-                //     uploadStatusMessage.style.color = 'red';
-                // }
-            };
-            reader.readAsDataURL(file); // Read as Data URL for direct display
-        }
+                // Send to live visitors worker
+                fetch(LIVE_VISITORS_WORKER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data),
+                }).catch(e => console.error("Error sending to live visitors worker:", e));
 
-        async function loadGalleryMoments() {
-            const result = await fetchFromWorker('/gallery-moments', 'GET');
-            if (result) {
-                galleryMoments = result;
-                renderGalleryMoments();
-            } else {
-                galleryMoments = [];
-                renderGalleryMoments();
+            } catch (e) {
+                console.error('Error in trackVisitor:', e);
             }
         }
 
-        function renderGalleryMoments() {
-            galleryPreviewContainer.innerHTML = '';
-            if (galleryMoments.length === 0) {
-                galleryPreviewContainer.innerHTML = '<p>Belum ada moment yang tersimpan.</p>';
+        function checkEzraLoginStatus() {
+            const bioVAuthSession = localStorage.getItem('bioVAuthSession');
+            isEzraLoggedIn = (bioVAuthSession === 'true');
+
+            const fabLiveVisitors = document.getElementById('fab-live-visitors');
+            const fabGallery = document.getElementById('fab-gallery');
+            const fabEzraSpace = document.getElementById('fab-ezra-space');
+
+            const fabEditor = document.getElementById('fab-editor');
+            const fabMusic = document.getElementById('fab-music');
+            const fabContribution = document.getElementById('fab-contribution');
+            const fabPrivateUser = document.getElementById('fab-private-user');
+
+            if (isEzraLoggedIn) {
+                fabLiveVisitors.style.display = 'block';
+                fabGallery.style.display = 'block';
+                fabEzraSpace.style.display = 'block';
+
+                fabEditor.style.display = 'none';
+                fabMusic.style.display = 'none';
+                fabContribution.style.display = 'none';
+                fabPrivateUser.style.display = 'none';
+
+                document.body.classList.add('ezra-logged-in'); // Add class for desktop layout adjustments
+            } else {
+                fabLiveVisitors.style.display = 'none';
+                fabGallery.style.display = 'none';
+                fabEzraSpace.style.display = 'none';
+
+                fabEditor.style.display = 'block';
+                fabMusic.style.display = 'block';
+                fabContribution.style.display = 'block';
+                fabPrivateUser.style.display = 'block';
+
+                document.body.classList.remove('ezra-logged-in'); // Remove class if not Ezra
+            }
+        }
+
+        async function fetchLiveVisitors() {
+            if (!isEzraLoggedIn) return; // Only fetch if Ezra is logged in
+
+            const visitorList = document.getElementById('visitor-list');
+            const lastUpdatedTime = document.getElementById('last-updated-time');
+
+            if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading visitors...')) {
+                visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors...</li>';
+            }
+
+            try {
+                const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const visitors = await response.json();
+
+                if (visitors && visitors.length > 0) {
+                    // Sort visitors by timestamp descending
+                    visitors.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                    visitorList.innerHTML = visitors.map(visitor => {
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+                        return `
+                            <li>
+                                <strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}...</span><br>
+                                <strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br>
+                                <strong>Time:</strong> <span>${timestamp}</span>
+                            </li>
+                        `;
+                    }).join('');
+                } else {
+                    visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No visitors online or in history.</li>';
+                }
+                lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
+
+            } catch (error) {
+                console.error('Error fetching live visitors:', error);
+                visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed to load visitors.</li>';
+                lastUpdatedTime.textContent = 'Error';
+            }
+        }
+
+        // Gallery Functions
+        async function fetchGalleryItems() {
+            if (!isEzraLoggedIn) return;
+
+            const galleryContent = document.getElementById('gallery-content');
+            galleryContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading gallery items...</p>';
+
+            try {
+                const response = await fetch(GALLERY_WORKER_URL + '?get_items=true');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const items = await response.json();
+
+                if (items && items.length > 0) {
+                    items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by newest first
+                    galleryContent.innerHTML = items.map(item => {
+                        let mediaHtml = '';
+                        if (item.fileType.startsWith('image/')) {
+                            mediaHtml = `<img src="${item.fileUrl}" alt="${item.description}">`;
+                        } else if (item.fileType.startsWith('video/')) {
+                            mediaHtml = `<video src="${item.fileUrl}" controls></video>`;
+                        } else if (item.fileType.startsWith('audio/')) {
+                            mediaHtml = `<audio src="${item.fileUrl}" controls></audio>`;
+                        } else if (item.fileType === 'application/pdf') {
+                            mediaHtml = `<div style="height:120px; display:flex; justify-content:center; align-items:center; background:#eee; color:#333;"><i class="fas fa-file-pdf fa-3x"></i></div>`;
+                        }
+
+                        const timestamp = new Date(item.timestamp).toLocaleString('id-ID', {
+                            day: '2-digit', month: '2-digit', year: 'numeric'
+                        });
+
+                        return `
+                            <div class="gallery-item">
+                                ${mediaHtml}
+                                <div class="item-details">
+                                    <strong>${item.description || 'No Description'}</strong>
+                                    <p class="item-date">${timestamp}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    galleryContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No items in gallery.</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching gallery items:', error);
+                galleryContent.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>';
+            }
+        }
+
+        document.getElementById('gallery-upload-btn').addEventListener('click', async () => {
+            if (!isEzraLoggedIn) {
+                alert('You must be logged in as Ezra to upload gallery items.');
                 return;
             }
-            galleryMoments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by newest first
 
-            galleryMoments.forEach(moment => {
-                const itemDiv = document.createElement('div');
-                itemDiv.classList.add('gallery-item');
+            const fileInput = document.getElementById('gallery-upload-file');
+            const descriptionInput = document.getElementById('gallery-item-description');
+            const statusEl = document.getElementById('gallery-upload-status');
 
-                let mediaElement;
-                if (moment.fileType.startsWith('image/')) {
-                    mediaElement = `<img src="${moment.mediaUrl}" alt="${moment.title}">`;
-                } else if (moment.fileType.startsWith('video/')) {
-                    mediaElement = `<video controls src="${moment.mediaUrl}"></video>`;
-                } else if (moment.fileType.startsWith('audio/')) {
-                    mediaElement = `<audio controls src="${moment.mediaUrl}"></audio>`;
-                } else if (moment.fileType.includes('pdf')) { // For PDF, show an icon/link
-                    mediaElement = `<div style="height:120px; display:flex; justify-content:center; align-items:center; background-color: #f0f0f0;"><i class="fas fa-file-pdf" style="font-size: 3em; color: #dc3545;"></i></div>`;
-                } else {
-                    mediaElement = `<div style="height:120px; display:flex; justify-content:center; align-items:center; background-color: #f0f0f0;"><i class="fas fa-file" style="font-size: 3em; color: #6c757d;"></i></div>`;
+            if (fileInput.files.length === 0) {
+                statusEl.style.color = 'var(--danger)';
+                statusEl.textContent = 'Please select a file to upload.';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const description = descriptionInput.value.trim();
+            statusEl.textContent = 'Uploading...';
+            statusEl.style.color = 'var(--text-secondary)';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('description', description);
+            formData.append('fileType', file.type);
+            formData.append('timestamp', new Date().toISOString());
+
+            try {
+                // This worker should handle uploading to GitHub and storing metadata in KV
+                const response = await fetch(GALLERY_WORKER_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Upload failed: ${errorText}`);
                 }
 
-                itemDiv.innerHTML = `
-                    ${mediaElement}
-                    <div class="item-info">
-                        <h4>${moment.title}</h4>
-                        <p>${moment.description}</p>
-                        <small>Diunggah: ${new Date(moment.timestamp).toLocaleDateString()}</small>
-                    </div>
-                    <div class="item-actions">
-                        <button onclick="editGalleryItem('${moment.id}')"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteGalleryItem('${moment.id}')"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                galleryPreviewContainer.appendChild(itemDiv);
-            });
-        }
-
-        async function editGalleryItem(id) {
-            alert('Fitur edit moment belum diimplementasikan. Anda bisa menambahkan logikanya di sini!');
-            // Implement: Get item by ID, populate form, send PUT request to Worker.
-        }
-
-        async function deleteGalleryItem(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus moment ini?')) {
-                // In a real app, send delete request to Worker which updates KV and potentially GitHub
-                // For demo, we'll just remove from local array and re-render.
-                const updatedMoments = galleryMoments.filter(m => m.id !== id);
-                const result = await fetchFromWorker('/gallery-moments', 'POST', updatedMoments); // Send entire updated array or specific delete endpoint
-                if (result && result.success) { // Assuming your Worker's POST for gallery allows full replacement or has a DELETE endpoint
-                    galleryMoments = updatedMoments;
-                    renderGalleryMoments();
-                    alert('Moment berhasil dihapus!');
-                } else {
-                    alert('Gagal menghapus moment.');
-                }
-            }
-        }
-
-        uploadGalleryItemBtn.addEventListener('click', uploadGalleryItem);
-
-        // Ruang Khusus Diriku (Admin)
-        loadVideoStreamBtn.addEventListener('click', () => {
-            const url = videoStreamUrlInput.value.trim();
-            if (url) {
-                myPrivateVideo.src = url;
-                myPrivateVideo.load();
-                myPrivateVideo.play().catch(e => console.error("Error playing video:", e));
-            } else {
-                alert('Harap masukkan URL video.');
+                statusEl.style.color = 'var(--success)';
+                statusEl.textContent = 'Upload successful!';
+                fileInput.value = '';
+                descriptionInput.value = '';
+                fetchGalleryItems(); // Refresh the gallery
+            } catch (error) {
+                console.error('Gallery upload error:', error);
+                statusEl.style.color = 'var(--danger)';
+                statusEl.textContent = `Upload failed: ${error.message}`;
             }
         });
-
-        generateNewQuoteBtn.addEventListener('click', () => {
-            const randomIndex = Math.floor(Math.random() * BREAKUP_QUOTES.length);
-            breakupQuoteP.textContent = BREAKUP_QUOTES[randomIndex];
-        });
-
-        refreshHackingNewsBtn.addEventListener('click', () => {
-            // Simulate fetching new news or just reload existing
-            alert('Berita hacking sedang diperbarui... (Simulasi)');
-            // In a real app, you'd fetch from an API like newsapi.org or other cybersecurity news sources
-            // This would require a proxy in your Cloudflare Worker to avoid CORS issues.
-        });
-
-        // ====================================================================
-        // INITIALIZATION
-        // ====================================================================
-        function loadAdminData() {
-            recordAndDisplayVisitor(); // Start recording and displaying visitors
-            // Consider setting up an interval for live visitor updates
-            // setInterval(recordAndDisplayVisitor, 5000); // Update every 5 seconds (be careful with API limits)
-
-            loadGalleryMoments(); // Load gallery on admin view
-        }
-
-        // Run this when the page first loads
-        window.addEventListener('DOMContentLoaded', checkLoginStatus);
-
-        // Example: if you have a separate login.js that sets bioVAuthSession
-        // and redirects, this part won't be explicitly needed here.
-        // But if login is on the same page (e.g., a modal), you'd call
-        // handleSuccessfulLogin with the verified key.
-
-        // Placeholder for external login function calling handleSuccessfulLogin
-        // For testing, if you want to simulate login without a separate login.html,
-        // you can use this in your browser console:
-        // handleSuccessfulLogin('your-secret-ezra-key');
     </script>
 </body>
 </html>
