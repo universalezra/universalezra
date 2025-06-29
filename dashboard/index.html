@@ -68,6 +68,7 @@
             transform: translateX(-100%);
         }
         #editor-panel.active { transform: translateX(0); }
+        /* Music panel positioning - remains as bottom panel */
         #music-panel {
             bottom: 0; left: 0; width: 100%; height: auto;
             max-height: 50vh; border-top: 1px solid var(--border-color);
@@ -112,10 +113,25 @@
         }
         .fab:hover { background: var(--accent); transform: scale(1.1); }
         #fab-editor { top: 20px; left: 20px; }
-        #fab-music { bottom: 20px; left: 50%; transform: translateX(-50%); }
-        #fab-contribution { top: 20px; right: 20px; }
-        #fab-theme { bottom: 20px; right: 20px; }
-        #fab-live-visitors { bottom: 20px; right: 90px; }
+        
+        /* NEW POSITIONS FOR FABS */
+        #fab-music { /* Moved to old private auth user spot */
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+        }
+        #fab-alkitab { /* New FAB for Alkitab, below music */
+            top: calc(50% + 70px); /* Music FAB height (55px) + 15px gap */
+            left: 20px;
+            transform: translateY(-50%);
+        }
+        #fab-live-visitors { /* Moved to old music panel spot (bottom center) */
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #fab-contribution { top: 20px; right: 20px; } /* Remains same */
+
 
         /* EDITOR STYLES */
         #editor-panel { padding: 0; }
@@ -180,7 +196,7 @@
             font-size: 1rem;
             cursor: pointer;
         }
-        .social-links {
+        .social-links { /* Only WhatsApp and Instagram now */
             position: fixed; top: 50%; right: 20px; transform: translateY(-50%);
             display: flex; flex-direction: column; gap: 15px; z-index: 999;
         }
@@ -308,11 +324,10 @@
     <div class="fab-container" id="fab-music">
         <button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button>
     </div>
+    <div class="fab-container" id="fab-alkitab"> <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" class="fab" title="Alkitab"><i class="fas fa-book"></i></a>
+    </div>
     <div class="fab-container" id="fab-contribution">
         <button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button>
-    </div>
-    <div class="fab-container" id="fab-theme">
-        <button class="fab" title="Toggle Theme"><i class="fas fa-sun"></i></button>
     </div>
     <div id="video-player-widget">
         <video id="widget-video" loop src="video.mp4"></video>
@@ -321,11 +336,9 @@
             <button id="video-mute"><i class="fas fa-volume-up"></i></button>
         </div>
     </div>
-    <div class="social-links">
-        <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    <div class="social-links"> <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="https://instagram.com/I_dont_care_now" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fab fa-github"></i></a>
-    </div>
+        </div>
 <script>
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
 const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
@@ -335,13 +348,11 @@ let visitorRefreshInterval;
 document.addEventListener('DOMContentLoaded', () => {
     initParticleBackground();
     initPanelControls();
-    initLayoutAndThemeToggles(); // Tetap panggil untuk toggle tema
+    // Removed: initLayoutAndThemeToggles(); (since both layout and theme toggles are removed)
     initVideoPlayer();
     initEditor();
     initMusicPlayer();
     trackVisitor();
-    // Removed: initPrivateUserAuth();
-    // Removed: checkEzraLoginAndShowVisitorsButton();
 });
 
 function initParticleBackground() {
@@ -476,22 +487,8 @@ function initPanelControls() {
     });
 }
 
-// Removed: initPrivateUserAuth function
-// Removed: checkEzraLoginAndShowVisitorsButton function
-
-function initLayoutAndThemeToggles() {
-    const themeBtn = document.querySelector('#fab-theme .fab'); // Only theme button remains
-    const toggleTheme = () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        document.querySelectorAll('#fab-theme i').forEach(i => { // Adjusted selector
-            i.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        });
-    };
-    // Removed layoutBtn and desktopLayoutBtn event listeners and related logic
-    themeBtn.addEventListener('click', toggleTheme);
-}
+// Removed: initLayoutAndThemeToggles function entirely
+// since both layout toggle and theme toggle are removed.
 
 function initVideoPlayer() {
     const video = document.getElementById('widget-video');
