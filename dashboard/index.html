@@ -293,16 +293,13 @@
             </div>
             <form id="contribution-form">
                 <textarea id="contribution-text" placeholder="Your message..." required style="width:100%; min-height: 80px; background:rgba(0,0,0,0.2); color:var(--text-primary); border:1px solid var(--border-color); border-radius:5px; padding:10px;"></textarea>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                    <input type="file" id="contribution-file" accept="image/*,video/*" style="color:var(--text-secondary);">
-                    <button type="submit" class="fab" style="position:static; width:45px; height:45px; font-size:1.1rem;"><i class="fas fa-paper-plane"></i></button>
+                <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:10px;"> <button type="submit" class="fab" style="position:static; width:45px; height:45px; font-size:1.1rem;"><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <p id="contribution-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
             </form>
         </div>
     </div>
-    <div class="fab-container" id="fab-live-visitors">
-        <button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button>
+    <div class="fab-container" id="fab-live-visitors" style="display: none;"> <button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button>
     </div>
     <div class="panel" id="live-visitors-panel">
         <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
@@ -344,15 +341,16 @@ const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.
 const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
 const REFRESH_INTERVAL_MS = 5000;
 let visitorRefreshInterval;
+let isEzraLoggedIn = false; // Re-introduced for live visitor visibility control
 
 document.addEventListener('DOMContentLoaded', () => {
     initParticleBackground();
     initPanelControls();
-    // Removed: initLayoutAndThemeToggles(); (since both layout and theme toggles are removed)
     initVideoPlayer();
     initEditor();
     initMusicPlayer();
     trackVisitor();
+    checkEzraLoginAndShowVisitorsButton(); // Call this to control live visitor FAB visibility
 });
 
 function initParticleBackground() {
@@ -485,6 +483,15 @@ function initPanelControls() {
             }
         });
     });
+}
+
+function checkEzraLoginAndShowVisitorsButton() {
+    const fabLiveVisitors = document.getElementById('fab-live-visitors');
+    if (isEzraLoggedIn) {
+        fabLiveVisitors.style.display = 'flex'; // Or 'block', depending on its default styling
+    } else {
+        fabLiveVisitors.style.display = 'none';
+    }
 }
 
 // Removed: initLayoutAndThemeToggles function entirely
@@ -701,16 +708,9 @@ async function fetchContributions() {
         const contributions = await response.json();
         if (contributions && contributions.length > 0) {
             display.innerHTML = contributions.reverse().map(c => {
-                let mediaHTML = '';
-                if(c.fileUrl) {
-                    if(c.fileType.startsWith('image/')) {
-                        mediaHTML = `<img src="${c.fileUrl}" style="max-width:100%; border-radius:5px; margin-top:10px;">`;
-                    } else if(c.fileType.startsWith('video/')) {
-                           mediaHTML = `<video src="${c.fileUrl}" controls style="max-width:100%; border-radius:5px; margin-top:10px;"></video>`;
-                    }
-                }
+                // Removed mediaHTML generation, only text will be displayed
                 return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;">
-                    <p style="margin:0;">${c.text}</p>${mediaHTML}
+                    <p style="margin:0;">${c.text}</p>
                     <small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small>
                 </div>`;
             }).join('');
@@ -728,10 +728,7 @@ document.getElementById('contribution-form').addEventListener('submit', async (e
     statusEl.textContent = 'Uploading...';
     const formData = new FormData();
     formData.append('text', document.getElementById('contribution-text').value);
-    const fileInput = document.getElementById('contribution-file');
-    if (fileInput.files.length > 0) {
-        formData.append('file', fileInput.files[0]);
-    }
+    // Removed file input handling
     try {
         const response = await fetch(CONTRIBUTIONS_WORKER_URL, { method: 'POST', body: formData });
         if (!response.ok) throw new Error('Upload failed');
