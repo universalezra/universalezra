@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,35 +11,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --primary: #8e44ad; /* Warna utama, disetel untuk tema gelap */
-            --accent: #00a8ff; /* Warna aksen, disetel untuk tema gelap */
-            --success: #2ecc71;
-            --danger: #e74c3c;
-            /* --light: #ecf0f1; dihapus, tidak lagi relevan */
-            --dark: #1a1a2e; /* Tetap ada sebagai referensi, tapi tidak menentukan tema utama */
-            --bg-main: #16213e; /* Latar belakang utama, disetel untuk tema gelap */
-            --bg-panel: rgba(26, 26, 46, 0.9); /* Latar belakang panel, disetel untuk tema gelap */
-            --text-primary: #e0fbfc; /* Warna teks utama, disetel untuk tema gelap */
-            --text-secondary: #98ded9; /* Warna teks sekunder, disetel untuk tema gelap */
-            --border-color: rgba(0, 168, 255, 0.3); /* Warna border, disetel untuk tema gelap */
+            --primary: #8e44ad; --accent: #00a8ff; --success: #2ecc71;
+            --danger: #e74c3c; --light: #ecf0f1; --dark: #1a1a2e;
+            --bg-main: #16213e; --bg-panel: rgba(26, 26, 46, 0.9);
+            --text-primary: #e0fbfc; --text-secondary: #98ded9;
+            --border-color: rgba(0, 168, 255, 0.3);
         }
-        /* html[data-theme='light'] { ... } - blok ini dihapus */
+        html[data-theme='light'] {
+            --primary: #3498db; --accent: #e67e22;
+            --bg-main: #ecf0f1; --bg-panel: rgba(255, 255, 255, 0.9);
+            --text-primary: #2c3e50; --text-secondary: #7f8c8d;
+            --border-color: rgba(52, 152, 219, 0.4);
+        }
         * { box-sizing: border-box; }
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0;
             overflow: hidden;
+            /* Mengubah font-family untuk seluruh teks */
             font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg-main);
+            /* Mengubah warna font utama menjadi hijau */
             color: #00ff00;
         }
         #interactive-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0;
-            background-image: url('January 17, 2025 at 5.10 AM.jpg');
+            /* Mengganti background particles dengan gambar */
+            background-image: url('January 17, 2025 at 5.10 AM.jpg'); /* Ganti dengan link gambar Anda */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(3px);
+            filter: blur(3px); /* Memberikan efek blur pada gambar background */
             -webkit-filter: blur(3px);
         }
         .main-container {
@@ -53,6 +55,7 @@
         }
         .central-message {
             text-align: center;
+            /* Mengubah warna font menjadi hijau */
             color: #00ff00;
             font-size: 1.5em;
         }
@@ -61,18 +64,21 @@
             margin-bottom: 10px;
         }
         .central-message p {
+            /* Mengubah warna font menjadi hijau */
             color: #00ff00;
             font-size: 0.8em;
         }
 
         .panel {
             position: fixed;
-            background: rgba(26, 26, 46, 0.7);
+            /* Membuat panel menjadi lebih transparan */
+            background: rgba(26, 26, 46, 0.7); /* Lebih transparan */
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px); z-index: 1010;
             box-shadow: 0 0 50px rgba(0,0,0,0.6);
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             display: flex; flex-direction: column;
+            /* Mengubah warna font panel menjadi hijau */
             color: #00ff00;
         }
         #editor-panel {
@@ -80,6 +86,7 @@
             transform: translateX(-100%);
         }
         #editor-panel.active { transform: translateX(0); }
+        /* Music panel positioning - remains as bottom panel */
         #music-panel {
             bottom: 0; left: 0; width: 100%; height: auto;
             max-height: 50vh; border-top: 1px solid var(--border-color);
@@ -91,15 +98,246 @@
             transform: translateX(100%); padding: 20px;
         }
         #contribution-panel.active { transform: translateX(0); }
+        
+        /* Styling for the new Moment Vault FAB */
+        #fab-moment-vault {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000; /* Pastikan di atas elemen lain jika perlu */
+        }
+
+        /* Styling for the Moment Vault Panel */
+        #moment-vault-panel {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateY(100%); /* Initially hidden below screen */
+            padding: 20px;
+            box-sizing: border-box; /* Include padding in element's total width and height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #moment-vault-panel.active {
+            transform: translateY(0); /* Slide up when active */
+        }
+
+        /* Inner layout for Moment Vault content */
+        .moment-vault-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px; /* Optional: limit max width for better readability */
+            background: var(--bg-panel);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            overflow: hidden; /* For scrolling content */
+        }
+
+        .moment-vault-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .moment-vault-tabs button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+
+        .moment-vault-tabs button:hover {
+            background: var(--accent);
+        }
+
+        .moment-vault-tabs button.active {
+            background: var(--accent);
+            box-shadow: 0 0 10px rgba(0,168,255,0.5);
+        }
+
+        .moment-vault-tab-content {
+            flex-grow: 1;
+            overflow-y: auto; /* Enable scrolling for content */
+            padding: 20px;
+            display: none; /* Hidden by default */
+        }
+
+        .moment-vault-tab-content.active {
+            display: block; /* Show when active */
+        }
+
+        /* Live Visitors Tab Specific Styling */
+        #mv-live-visitors-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        #mv-live-visitors-list li {
+            background: rgba(0, 168, 255, 0.1);
+            border: 1px solid rgba(0, 168, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 0.9em;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #mv-live-visitors-list li strong {
+            color: var(--accent);
+        }
+
+        /* Gallery Content Tab Specific Styling */
+        #moment-vault-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Small, neat grid */
+            gap: 15px;
+        }
+
+        .gallery-item {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .gallery-item img, .gallery-item video, .gallery-item audio {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .gallery-item .item-text {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            max-height: 60px; /* Limit height for text */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Show up to 3 lines */
+            -webkit-box-orient: vertical;
+        }
+
+        .gallery-item .item-date {
+            font-size: 0.7em;
+            color: var(--text-secondary);
+        }
+
+        .gallery-item .item-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .gallery-item .item-actions button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-size: 0.8em;
+            cursor: pointer;
+        }
+
+        .gallery-item .item-actions button:hover {
+            background: var(--accent);
+        }
+
+        /* Upload Form Styling */
+        #moment-upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        #moment-upload-form input[type="text"],
+        #moment-upload-form textarea,
+        #moment-upload-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.3);
+            color: var(--text-primary);
+            box-sizing: border-box;
+        }
+
+        #moment-upload-form button[type="submit"] {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        #moment-upload-form button[type="submit"]:hover {
+            background: #27ae60;
+        }
+
+        /* Hide Moment Vault FAB in desktop layout */
+        body.desktop-layout #fab-moment-vault {
+            display: none;
+        }
+
+        /* For media objects within gallery items */
+        .gallery-media {
+            width: 100%;
+            height: 120px; /* Fixed height for media preview */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 5px;
+            background-color: #333; /* Placeholder background */
+        }
+        .gallery-media img, .gallery-media video, .gallery-media audio {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover the container */
+        }
+        .gallery-media .file-icon {
+            font-size: 3em;
+            color: var(--text-secondary);
+        }
 
         .panel-close-btn {
             position: absolute; top: 15px; right: 15px; background: none; border: none;
+            /* Mengubah warna font tombol menjadi hijau */
             color: #00ff00;
             font-size: 1.5rem; cursor: pointer; z-index: 5;
         }
         .fab-container { position: fixed; z-index: 1000; }
         .fab {
-            background: rgba(142, 68, 173, 0.7);
+            /* Membuat tombol FAB lebih transparan */
+            background: rgba(142, 68, 173, 0.7); /* Lebih transparan */
+            /* Mengubah warna ikon FAB menjadi hijau */
             color: #00ff00;
             width: 55px; height: 55px;
             border-radius: 50%; border: none; cursor: pointer;
@@ -110,17 +348,19 @@
         .fab:hover { background: var(--accent); transform: scale(1.1); }
         #fab-editor { top: 20px; left: 20px; }
         
-        #fab-music {
+        /* NEW POSITIONS FOR FABS */
+        #fab-music { /* Moved to old private auth user spot */
             top: 50%;
             left: 20px;
             transform: translateY(-50%);
         }
-        #fab-alkitab {
+        /* Swapped positions for Alkitab and Contribution FABs */
+        #fab-alkitab { /* Original #fab-alkitab, now at old #fab-contribution position */
             top: 20px; 
             right: 20px; 
         }
-        #fab-contribution {
-            top: calc(50% + 70px);
+        #fab-contribution { /* Original #fab-contribution, now at old #fab-alkitab position */
+            top: calc(50% + 70px); /* Music FAB height (55px) + 15px gap */
             left: 20px;
             transform: translateY(-50%);
         }
@@ -129,11 +369,14 @@
         #editor-panel { padding: 0; }
         .editor-toolbar {
             display: flex; gap: 5px; padding: 10px;
+            /* Membuat toolbar editor lebih transparan */
             background: rgba(0,0,0,0.5);
             flex-wrap: wrap; justify-content: flex-start;
         }
         .editor-toolbar button, .editor-toolbar select {
+            /* Membuat tombol toolbar editor lebih transparan */
             background: rgba(142, 68, 173, 0.7);
+            /* Mengubah warna font tombol toolbar menjadi hijau */
             color: #00ff00;
             border:none;
             padding: 8px 12px; border-radius: 5px; cursor: pointer;
@@ -145,9 +388,11 @@
         .editor-code-area { flex: 1; display: flex; flex-direction: column; }
         .editor-preview-area { flex: 1; display: flex; flex-direction: column; }
 
+        /* Single editor textarea */
         #unified-code-editor {
             flex-grow: 1;
             background: #1e1e1e;
+            /* Mengubah warna font editor menjadi hijau */
             color: #00ff00;
             border: none;
             resize: none; padding: 10px; font-family: 'Courier New', monospace;
@@ -182,6 +427,7 @@
             transform: translateX(-50%);
             display: flex;
             gap: 10px;
+            /* Membuat kontrol video lebih transparan */
             background: rgba(0,0,0,0.5);
             padding: 5px;
             border-radius: 5px;
@@ -189,20 +435,23 @@
         .video-controls button {
             background: none;
             border: none;
+            /* Mengubah warna ikon kontrol video menjadi hijau */
             color: #00ff00;
             font-size: 1rem;
             cursor: pointer;
         }
-        .social-links {
+        .social-links { /* Only WhatsApp and Instagram now */
             position: fixed; top: 50%; right: 20px; transform: translateY(-50%);
             display: flex; flex-direction: column; gap: 15px; z-index: 999;
         }
         .social-links a {
+            /* Mengubah warna ikon sosial menjadi hijau */
             color: #00ff00;
             font-size: 1.5rem; transition: color 0.3s, transform 0.3s;
         }
         .social-links a:hover { color: var(--accent); transform: scale(1.2); }
         
+        /* Desktop Layout specific styles - adjusted */
         body.desktop-layout .main-container {
             display: flex;
             justify-content: center;
@@ -218,28 +467,32 @@
         }
         body.desktop-layout .panel-close-btn { display: none; }
         
+        /* Ensure FABs and Social Links are always visible, not hidden by desktop layout */
         body.desktop-layout .fab-container, body.desktop-layout .social-links {
-            display: block;
+            display: block; /* Override any desktop-layout specific hiding */
         }
         body.desktop-layout .fab {
+            /* Keep desktop fabs as floating buttons */
         }
 
+        /* Mengubah warna font placeholder textarea */
         textarea::placeholder {
-            color: rgba(0, 255, 0, 0.7);
+            color: rgba(0, 255, 0, 0.7); /* Warna hijau transparan */
         }
 
+        /* Styles for website age display */
         #website-age-display {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 0.8em;
-            color: #00ff00;
-            z-index: 10;
-            background: none;
-            padding: 0;
+            font-size: 0.8em; /* Very small text */
+            color: #00ff00; /* Green color */
+            z-index: 10; /* Ensure it's above other content but below panels */
+            background: none; /* No background */
+            padding: 0; /* No padding */
             text-align: center;
-            white-space: nowrap;
+            white-space: nowrap; /* Prevent text wrapping */
         }
     </style>
 </head>
@@ -306,6 +559,47 @@
     <div class="fab-container" id="fab-alkitab"> 
         <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" class="fab" title="Alkitab"><i class="fas fa-book"></i></a>
     </div>
+
+    <div class="fab-container" id="fab-moment-vault" style="display: none;">
+        <button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button>
+    </div>
+
+    <div class="panel" id="moment-vault-panel">
+        <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
+        <div class="moment-vault-content">
+            <div class="moment-vault-tabs">
+                <button id="tab-live-visitors" class="active">Live Visitors</button>
+                <button id="tab-gallery">Moment Gallery</button>
+            </div>
+            <div id="mv-live-visitors-tab" class="moment-vault-tab-content active">
+                <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Live Visitors (Last 1 Hour)</h3>
+                <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
+                    <p style="text-align: center; color: var(--text-secondary);">Loading live visitors...</p>
+                    <ul id="mv-live-visitors-list" style="list-style: none; padding: 0; margin: 0;">
+                    </ul>
+                </div>
+                <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary);">
+                    Last updated: <span id="mv-last-updated-time">N/A</span>
+                </div>
+            </div>
+            <div id="mv-gallery-tab" class="moment-vault-tab-content">
+                <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Moment Gallery</h3>
+                <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
+                    <p style="text-align: center; color: var(--text-secondary);">Loading moments...</p>
+                    <div id="moment-vault-gallery">
+                        </div>
+                </div>
+                <form id="moment-upload-form">
+                    <input type="text" id="moment-title" placeholder="Moment Title" required>
+                    <textarea id="moment-description" placeholder="Describe your moment..." rows="3"></textarea>
+                    <input type="file" id="moment-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" required>
+                    <button type="submit">Upload Moment</button>
+                    <p id="moment-upload-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="video-player-widget">
         <video id="widget-video" loop src="video.mp4"></video>
         <div class="video-controls">
@@ -321,13 +615,27 @@
 
 <script>
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
+const REFRESH_INTERVAL_MS = 5000; // Refresh data every 5 seconds for live visitors
+
+// --- NEW CONSTANTS FOR MOMENT VAULT ---
+const MOMENT_VAULT_WORKER_URL = 'https://your-moment-vault-worker.ezvvel.workers.dev/'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA untuk Moment Vault
+const GITHUB_REPO_OWNER = 'your-github-username'; // GANTI dengan username GitHub Anda
+const GITHUB_REPO_NAME = 'your-github-repo'; // GANTI dengan nama repository GitHub Anda
+const GITHUB_TOKEN_WORKER_URL = 'https://your-github-token-worker.ezvvel.workers.dev/'; // GANTI dengan URL Cloudflare Worker yang mengurus token GitHub
+
+// Global variable for Moment Vault visitor interval
+let momentVaultVisitorRefreshInterval;
 
 document.addEventListener('DOMContentLoaded', () => {
     initPanelControls();
     initVideoPlayer();
     initEditor();
     initMusicPlayer();
-    initWebsiteAgeDisplay();
+    initWebsiteAgeDisplay(); // Initialize website age display
+
+    // --- NEW: Initialize Moment Vault related functions ---
+    initMomentVaultTabs();
+    checkEzraLoginAndShowMomentVaultButton(); // Call this function on DOMContentLoaded
 });
 
 function initPanelControls() {
@@ -338,13 +646,33 @@ function initPanelControls() {
 
             panel.classList.toggle('active');
 
+            // Handle specific logic for Contribution Panel (existing)
             if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
                 fetchContributions();
             }
+            // Handle specific logic for Moment Vault Panel (NEW)
+            else if (panelId === 'moment-vault-panel') {
+                if (panel.classList.contains('active')) {
+                    // Default to Live Visitors tab and fetch data
+                    document.getElementById('tab-live-visitors').click();
+                    momentVaultVisitorRefreshInterval = setInterval(fetchMomentVaultLiveVisitors, REFRESH_INTERVAL_MS); // Start refresh
+                } else {
+                    clearInterval(momentVaultVisitorRefreshInterval); // Stop refresh when panel closed
+                    document.getElementById('mv-live-visitors-list').innerHTML = ''; // Clear list
+                    document.getElementById('moment-vault-gallery').innerHTML = ''; // Clear gallery
+                }
+            }
 
+            // Close other panels when one opens (except the one being opened)
             document.querySelectorAll('.panel').forEach(otherPanel => {
                 if (otherPanel.id !== panelId) {
                     otherPanel.classList.remove('active');
+                    // Ensure intervals are cleared if other panels close moment vault panels
+                    if (otherPanel.id === 'moment-vault-panel') {
+                        clearInterval(momentVaultVisitorRefreshInterval);
+                        document.getElementById('mv-live-visitors-list').innerHTML = '';
+                        document.getElementById('moment-vault-gallery').innerHTML = '';
+                    }
                 }
             });
         });
@@ -355,6 +683,13 @@ function initPanelControls() {
             const panelId = button.getAttribute('data-panel');
             const panel = document.getElementById(panelId);
             panel.classList.remove('active');
+
+            // Stop refresh when Moment Vault panel is closed via the close button (NEW)
+            if (panelId === 'moment-vault-panel') {
+                clearInterval(momentVaultVisitorRefreshInterval);
+                document.getElementById('mv-live-visitors-list').innerHTML = '';
+                document.getElementById('moment-vault-gallery').innerHTML = '';
+            }
         });
     });
 }
@@ -412,12 +747,14 @@ function initEditor() {
     const undoBtn = document.getElementById('editor-undo');
     const redoBtn = document.getElementById('editor-redo');
 
-    let history = [''];
+    // History stack for Undo/Redo
+    let history = ['']; // Initial empty state
     let historyPointer = 0;
 
     const updateHistory = () => {
         const currentCode = codeEditor.value;
         if (currentCode !== history[historyPointer]) {
+            // If pointer is not at the end, clear future history
             if (historyPointer < history.length - 1) {
                 history = history.slice(0, historyPointer + 1);
             }
@@ -429,11 +766,12 @@ function initEditor() {
     const runCode = () => {
         const fullCode = codeEditor.value;
         
+        // Extract HTML, CSS, and JS using simple regex (can be improved for robustness)
         const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i);
         const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i);
         const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i);
 
-        const htmlContent = htmlMatch ? htmlMatch[1] : fullCode;
+        const htmlContent = htmlMatch ? htmlMatch[1] : fullCode; // If no body tag, assume it's pure HTML or the whole thing
         const cssContent = cssMatch ? cssMatch[1] : '';
         const jsContent = jsMatch ? jsMatch[1] : '';
 
@@ -488,8 +826,8 @@ function initEditor() {
 </body>
 </html>
         `;
-        runCode();
-        history = [codeEditor.value];
+        runCode(); // Run immediately after loading
+        history = [codeEditor.value]; // Reset history
         historyPointer = 0;
     };
 
@@ -518,13 +856,14 @@ function initEditor() {
 <body>
     <h1>Start Coding Here!</h1>
     <script>
+        // Your JavaScript goes here
         console.log("New document loaded.");
     <\/script>
 </body>
 </html>
         `;
         runCode();
-        history = [codeEditor.value];
+        history = [codeEditor.value]; // Reset history
         historyPointer = 0;
     };
 
@@ -551,8 +890,10 @@ function initEditor() {
     undoBtn.addEventListener('click', undo);
     redoBtn.addEventListener('click', redo);
 
+    // Update history on every input
     codeEditor.addEventListener('input', updateHistory);
 
+    // Initial load
     loadCode();
 }
 
@@ -596,21 +937,22 @@ document.getElementById('contribution-form').addEventListener('submit', async (e
 
 function initWebsiteAgeDisplay() {
     const websiteAgeDisplay = document.getElementById('website-age-display');
-    const creationDate = new Date(2025, 5, 21, 0, 0, 0); // Month is 0-indexed, so 5 is June.
+    // Set your website's creation date here (Year, Month (0-11), Day, Hour, Minute, Second)
+    const creationDate = new Date(2025, 5, 21, 0, 0, 0); // January 17, 2024 at 05:10:00 AM
 
     function updateWebsiteAge() {
         const now = new Date();
-        const diff = now.getTime() - creationDate.getTime();
+        const diff = now.getTime() - creationDate.getTime(); // Difference in milliseconds
 
         const seconds = Math.floor(diff / 1000);
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
         
-        const years = Math.floor(days / 365.25);
+        const years = Math.floor(days / 365.25); // Account for leap years
         const remainingDaysAfterYears = Math.floor(days % 365.25);
 
-        const months = Math.floor(remainingDaysAfterYears / 30.44);
+        const months = Math.floor(remainingDaysAfterYears / 30.44); // Average days in a month
         const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
 
         const displaySeconds = seconds % 60;
@@ -619,17 +961,441 @@ function initWebsiteAgeDisplay() {
         
         let ageString = '';
         if (years > 0) ageString += `${years} T, `;
-        if (months > 0 || years > 0) ageString += `${months} B, `;
+        if (months > 0 || years > 0) ageString += `${months} B, `; // Show months if years exist or months themselves
         ageString += `${remainingDaysAfterMonths} H, `;
         ageString += `${displayHours.toString().padStart(2, '0')}:`;
         ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
-        ageString += `${displaySeconds.toString().padStart(2, '0')}`;
+        ageString += `${displaySeconds.toString().padStart(2, '0')}`;\
 
         websiteAgeDisplay.textContent = `Age: ${ageString}`;
     }
 
-    updateWebsiteAge();
-    setInterval(updateWebsiteAge, 1000);
+    updateWebsiteAge(); // Initial display
+    setInterval(updateWebsiteAge, 1000); // Update every second
+}
+
+
+// --- NEW FUNCTION: checkEzraLoginAndShowMomentVaultButton ---
+function checkEzraLoginAndShowMomentVaultButton() {
+    const isEzra = localStorage.getItem('isEzraLoggedIn');
+    const fabMomentVault = document.getElementById('fab-moment-vault');
+
+    if (isEzra === 'true') {
+        fabMomentVault.style.display = 'block'; // Show FAB if Ezra is logged in
+    } else {
+        fabMomentVault.style.display = 'none'; // Ensure it's hidden otherwise
+    }
+}
+
+// --- NEW FUNCTION: initMomentVaultTabs ---
+function initMomentVaultTabs() {
+    const liveVisitorsTabBtn = document.getElementById('tab-live-visitors');
+    const galleryTabBtn = document.getElementById('tab-gallery');
+    const liveVisitorsContent = document.getElementById('mv-live-visitors-tab');
+    const galleryContent = document.getElementById('mv-gallery-tab');
+
+    liveVisitorsTabBtn.addEventListener('click', () => {
+        liveVisitorsTabBtn.classList.add('active');
+        galleryTabBtn.classList.remove('active');
+        liveVisitorsContent.classList.add('active');
+        galleryContent.classList.remove('active');
+        fetchMomentVaultLiveVisitors(); // Fetch live visitors when tab is active
+        clearInterval(momentVaultVisitorRefreshInterval); // Clear existing interval if switching from gallery
+        momentVaultVisitorRefreshInterval = setInterval(fetchMomentVaultLiveVisitors, REFRESH_INTERVAL_MS);
+    });
+
+    galleryTabBtn.addEventListener('click', () => {
+        galleryTabBtn.classList.add('active');
+        liveVisitorsTabBtn.classList.remove('active');
+        galleryContent.classList.add('active');
+        liveVisitorsContent.classList.remove('active');
+        fetchMomentVaultGallery(); // Fetch gallery items when tab is active
+        clearInterval(momentVaultVisitorRefreshInterval); // Clear live visitor refresh interval
+    });
+
+    document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
+}
+
+
+// --- NEW FUNCTION: fetchMomentVaultLiveVisitors ---
+async function fetchMomentVaultLiveVisitors() {
+    const visitorList = document.getElementById('mv-live-visitors-list');
+    const lastUpdatedTime = document.getElementById('mv-last-updated-time');
+
+    if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading')) {
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading live visitors...</li>';
+    }
+
+    try {
+        // Mengirim GET request ke Cloudflare Worker Moment Vault untuk data pengunjung
+        // Perhatikan: Anda perlu mengimplementasikan logika ini di worker MOMENT_VAULT_WORKER_URL
+        // Worker ini harus bisa menerima GET request dengan parameter 'get_live_visitors=true'
+        // dan mengembalikan daftar pengunjung aktif selama 1 jam terakhir.
+        const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_live_visitors=true');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const visitors = await response.json();
+
+        if (visitors && visitors.length > 0) {
+            visitorList.innerHTML = visitors.map(visitor => {
+                const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                    day: '2-digit', month: '2-digit', year: 'numeric'
+                });
+                return `
+                    <li>
+                        <strong>ID:</strong> <span>${visitor.browserId || 'N/A'}</span><br>
+                        <strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br>
+                        <strong>User Agent:</strong> <span>${visitor.userAgent ? visitor.userAgent.substring(0, 50) + '...' : 'N/A'}</span><br>
+                        <strong>Waktu:</strong> <span>${timestamp}</span>
+                    </li>
+                `;
+            }).join('');
+        } else {
+            visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No active visitors in the last hour.</li>';
+        }
+        lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
+
+    } catch (error) {
+        console.error('Error fetching Moment Vault live visitors:', error);
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed to load live visitors.</li>';
+        lastUpdatedTime.textContent = 'Error';
+    }
+}
+
+
+// --- NEW FUNCTION: fetchMomentVaultGallery ---
+async function fetchMomentVaultGallery() {
+    const galleryContainer = document.getElementById('moment-vault-gallery');
+    galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading gallery items...</p>';
+
+    try {
+        // Mengirim GET request ke Cloudflare Worker Moment Vault untuk data galeri
+        // Worker ini harus bisa menerima GET request dengan parameter 'get_gallery=true'
+        // dan mengembalikan daftar item galeri (metadata dan URL).
+        const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const items = await response.json();
+
+        if (items && items.length > 0) {
+            // Sort by timestamp (most recent first)
+            items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            galleryContainer.innerHTML = items.map(item => {
+                let mediaHTML = '';
+                let fileExtension = item.fileUrl.split('.').pop().toLowerCase();
+                let iconClass = '';
+
+                if (item.fileType && item.fileType.startsWith('image/')) {
+                    mediaHTML = `<img src="${item.fileUrl}" alt="${item.title}">`;
+                } else if (item.fileType && item.fileType.startsWith('video/')) {
+                    mediaHTML = `<video src="${item.fileUrl}" controls></video>`;
+                } else if (item.fileType && item.fileType.startsWith('audio/')) {
+                    mediaHTML = `<audio src="${item.fileUrl}" controls></audio>`;
+                } else {
+                    // Handle generic files (documents, text)
+                    if (fileExtension === 'pdf') iconClass = 'fa-file-pdf';
+                    else if (fileExtension.startsWith('doc')) iconClass = 'fa-file-word';
+                    else if (fileExtension === 'txt') iconClass = 'fa-file-alt';
+                    else iconClass = 'fa-file'; // Default file icon
+                    mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`;
+                }
+
+                const timestamp = new Date(item.timestamp).toLocaleString('id-ID', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+
+                return `
+                    <div class="gallery-item" data-id="${item.id}">
+                        <div class="gallery-media">
+                            ${mediaHTML}
+                        </div>
+                        <strong>${item.title}</strong>
+                        <p class="item-text">${item.description}</p>
+                        <small class="item-date">${timestamp}</small>
+                        <div class="item-actions">
+                            <button class="edit-moment-btn"><i class="fas fa-edit"></i></button>
+                            <button class="delete-moment-btn"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add event listeners for edit and delete buttons
+            galleryContainer.querySelectorAll('.edit-moment-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = e.target.closest('.gallery-item').dataset.id;
+                    editMoment(itemId, items);
+                });
+            });
+            galleryContainer.querySelectorAll('.delete-moment-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = e.target.closest('.gallery-item').dataset.id;
+                    deleteMoment(itemId);
+                });
+            });
+
+        } else {
+            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No moments uploaded yet. Be the first!</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching Moment Vault gallery:', error);
+        galleryContainer.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>';
+    }
+}
+
+// --- NEW FUNCTION: uploadMoment ---
+async function uploadMoment(e) {
+    e.preventDefault();
+    const statusEl = document.getElementById('moment-upload-status');
+    statusEl.textContent = 'Uploading moment...';
+    statusEl.style.color = 'var(--text-secondary)';
+
+    const title = document.getElementById('moment-title').value;
+    const description = document.getElementById('moment-description').value;
+    const fileInput = document.getElementById('moment-file');
+    const file = fileInput.files[0];
+
+    if (!file || !title) {
+        statusEl.textContent = 'Title and file are required!';
+        statusEl.style.color = 'var(--danger)';
+        return;
+    }
+
+    // 1. Get GitHub Token from Worker
+    let githubToken;
+    try {
+        const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
+        if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
+        const tokenData = await tokenResponse.json();
+        githubToken = tokenData.token;
+        if (!githubToken) throw new Error('GitHub token not found in response');
+    } catch (error) {
+        console.error('Error getting GitHub token:', error);
+        statusEl.textContent = `Error: Could not get GitHub token. ${error.message}`;
+        statusEl.style.color = 'var(--danger)';
+        return;
+    }
+
+    // 2. Upload file to GitHub
+    try {
+        const filePath = `moments/${Date.now()}-${file.name}`;
+        const fileContent = await readFileAsBase64(file);
+
+        const githubApiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
+
+        const uploadResponse = await fetch(githubApiUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${githubToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: `Upload moment: ${title}`,
+                content: fileContent,
+                branch: 'main' // Or your default branch
+            })
+        });
+
+        if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${errorText}`);
+        }
+
+        const uploadData = await uploadResponse.json();
+        const rawFileUrl = uploadData.content.download_url; // Direct URL to the file
+
+        // 3. Save moment metadata to Cloudflare KV via Moment Vault Worker
+        const momentData = {
+            id: 'moment_' + Math.random().toString(36).substr(2, 9) + Date.now(),
+            title: title,
+            description: description,
+            fileUrl: rawFileUrl,
+            fileType: file.type,
+            timestamp: new Date().toISOString()
+        };
+
+        const kvSaveResponse = await fetch(MOMENT_VAULT_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(momentData)
+        });
+
+        if (!kvSaveResponse.ok) {
+            throw new Error('Failed to save moment metadata to KV');
+        }
+
+        statusEl.textContent = 'Moment uploaded successfully!';
+        statusEl.style.color = 'var(--success)';
+        e.target.reset(); // Clear form
+        fetchMomentVaultGallery(); // Refresh gallery
+
+    } catch (error) {
+        console.error('Error uploading moment:', error);
+        statusEl.textContent = `Error uploading moment: ${error.message}`;
+        statusEl.style.color = 'var(--danger)';
+    }
+}
+
+// Helper function to read file as Base64
+function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]); // Get only the base64 part
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
+
+// --- NEW FUNCTION: editMoment ---
+async function editMoment(itemId, currentItems) {
+    const itemToEdit = currentItems.find(item => item.id === itemId);
+    if (!itemToEdit) return;
+
+    const newTitle = prompt('Edit Title:', itemToEdit.title);
+    if (newTitle === null) return; // User cancelled
+
+    const newDescription = prompt('Edit Description:', itemToEdit.description);
+    if (newDescription === null) return; // User cancelled
+
+    const statusEl = document.getElementById('moment-upload-status'); // Reuse status element
+    statusEl.textContent = 'Updating moment...';
+    statusEl.style.color = 'var(--text-secondary)';
+
+    try {
+        const updatedMomentData = {
+            id: itemId,
+            title: newTitle,
+            description: newDescription,
+            // fileUrl and fileType remain the same unless re-uploaded
+            fileUrl: itemToEdit.fileUrl,
+            fileType: itemToEdit.fileType,
+            timestamp: itemToEdit.timestamp // Keep original timestamp
+        };
+
+        const response = await fetch(MOMENT_VAULT_WORKER_URL, {
+            method: 'PUT', // Assuming your worker supports PUT for updates
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedMomentData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update moment metadata');
+        }
+
+        statusEl.textContent = 'Moment updated successfully!';
+        statusEl.style.color = 'var(--success)';
+        fetchMomentVaultGallery(); // Refresh gallery
+    } catch (error) {
+        console.error('Error updating moment:', error);
+        statusEl.textContent = `Error updating moment: ${error.message}`;
+        statusEl.style.color = 'var(--danger)';
+    }
+}
+
+// --- NEW FUNCTION: deleteMoment ---
+async function deleteMoment(itemId) {
+    if (!confirm('Are you sure you want to delete this moment? This action cannot be undone.')) {
+        return;
+    }
+
+    const statusEl = document.getElementById('moment-upload-status');
+    statusEl.textContent = 'Deleting moment...';
+    statusEl.style.color = 'var(--text-secondary)';
+
+    try {
+        // First, get GitHub token
+        let githubToken;
+        try {
+            const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
+            if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
+            const tokenData = await tokenResponse.json();
+            githubToken = tokenData.token;
+            if (!githubToken) throw new Error('GitHub token not found in response');
+        } catch (error) {
+            console.error('Error getting GitHub token for delete:', error);
+            statusEl.textContent = `Error: Could not get GitHub token for deletion. ${error.message}`;
+            statusEl.style.color = 'var(--danger)';
+            return;
+        }
+
+        // Fetch all moments to find the file path to delete from GitHub
+        const galleryResponse = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
+        if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
+        const galleryItems = await galleryResponse.json();
+        const itemToDelete = galleryItems.find(item => item.id === itemId);
+
+        if (!itemToDelete || !itemToDelete.fileUrl) {
+            throw new Error('Moment or its file URL not found.');
+        }
+
+        // Extract file path from rawFileUrl for GitHub API
+        let filePathOnGithub;
+        const rawGithubContentBase = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/`; // Assuming 'main' branch
+        if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) {
+            filePathOnGithub = itemToDelete.fileUrl.substring(rawGithubContentBase.length);
+        } else {
+            console.warn("Unexpected file URL format, attempting fallback path extraction:", itemToDelete.fileUrl);
+            filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`; // Fallback to moments/filename.ext
+        }
+
+
+        // Fetch SHA of the file to be deleted (required by GitHub API for delete)
+        const githubApiGetFileUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
+        const getFileResponse = await fetch(githubApiGetFileUrl, {
+            headers: {
+                'Authorization': `token ${githubToken}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        if (!getFileResponse.ok) {
+            const errorText = await getFileResponse.text();
+            throw new Error(`Failed to get file SHA from GitHub: ${getFileResponse.status} - ${errorText}`);
+        }
+        const fileMetaData = await getFileResponse.json();
+        const fileSha = fileMetaData.sha;
+
+        // Delete file from GitHub
+        const githubDeleteUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
+        const deleteResponse = await fetch(githubDeleteUrl, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `token ${githubToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: `Delete moment: ${itemToDelete.title}`,
+                sha: fileSha,
+                branch: 'main' // Or your default branch
+            })
+        });
+
+        if (!deleteResponse.ok) {
+            const errorText = await deleteResponse.text();
+            throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`);
+        }
+
+        // Delete metadata from Cloudflare KV via Moment Vault Worker
+        const kvDeleteResponse = await fetch(MOMENT_VAULT_WORKER_URL + `?delete_moment_id=${itemId}`, {
+            method: 'DELETE' // Assuming your worker supports DELETE with query param
+        });
+
+        if (!kvDeleteResponse.ok) {
+            throw new Error('Failed to delete moment metadata from KV');
+        }
+
+        statusEl.textContent = 'Moment deleted successfully!';
+        statusEl.style.color = 'var(--success)';
+        fetchMomentVaultGallery(); // Refresh gallery
+    } catch (error) {
+        console.error('Error deleting moment:', error);
+        statusEl.textContent = `Error deleting moment: ${error.message}`;
+        statusEl.style.color = 'var(--danger)';
+    }
 }
 </script>
 </body>
