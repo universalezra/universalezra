@@ -618,10 +618,10 @@ const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.
 const REFRESH_INTERVAL_MS = 5000; // Refresh data every 5 seconds for live visitors
 
 // --- NEW CONSTANTS FOR MOMENT VAULT ---
-const MOMENT_VAULT_WORKER_URL = 'https://your-moment-vault-worker.ezvvel.workers.dev/'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA untuk Moment Vault
-const GITHUB_REPO_OWNER = 'your-github-username'; // GANTI dengan username GitHub Anda
-const GITHUB_REPO_NAME = 'your-github-repo'; // GANTI dengan nama repository GitHub Anda
-const GITHUB_TOKEN_WORKER_URL = 'https://your-github-token-worker.ezvvel.workers.dev/'; // GANTI dengan URL Cloudflare Worker yang mengurus token GitHub
+const MOMENT_VAULT_WORKER_URL = 'https://moment-vault-worker-url.universalezra.workers.dev'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA untuk Moment Vault
+const GITHUB_REPO_OWNER = 'universalezra'; // GANTI dengan username GitHub Anda
+const GITHUB_REPO_NAME = 'universalezra'; // GANTI dengan nama repository GitHub Anda
+const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.workers.dev'; // GANTI dengan URL Cloudflare Worker yang mengurus token GitHub
 
 // Global variable for Moment Vault visitor interval
 let momentVaultVisitorRefreshInterval;
@@ -965,7 +965,7 @@ function initWebsiteAgeDisplay() {
         ageString += `${remainingDaysAfterMonths} H, `;
         ageString += `${displayHours.toString().padStart(2, '0')}:`;
         ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
-        ageString += `${displaySeconds.toString().padStart(2, '0')}`;
+        ageString += `${displaySeconds.toString().padStart(2, '0')}`;\
 
         websiteAgeDisplay.textContent = `Age: ${ageString}`;
     }
