@@ -614,9 +614,6 @@
     <div id="website-age-display"></div>
 
 <script>
-    if (!localStorage.getItem('browserId')) {
-    localStorage.setItem('browserId', 'browser_' + Math.random().toString(36).substr(2, 16));
-    }
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
 const REFRESH_INTERVAL_MS = 5000; // Refresh data every 5 seconds for live visitors
 
@@ -630,6 +627,11 @@ const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.w
 let momentVaultVisitorRefreshInterval;
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Generate and store browserId in sessionStorage
+    if (!sessionStorage.getItem('browserId')) {
+        sessionStorage.setItem('browserId', 'browser_' + Math.random().toString(36).substr(2, 16) + Date.now());
+    }
+
     initPanelControls();
     initVideoPlayer();
     initEditor();
@@ -638,25 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- NEW: Initialize Moment Vault related functions ---
     initMomentVaultTabs();
-    checkEzraLoginAndShowMomentVaultButton();
-    async function trackVisitor() {
-    try {
-        const response = await fetch('https://your-moment-vault-worker.ezvvel.workers.dev/track-visitor', { // Ganti URL
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                browserId: localStorage.getItem('browserId') || 'unknown', // Pastikan Anda memiliki browserId di localStorage
-                ip: 'N/A', // Cloudflare akan mengisi IP secara otomatis di sisi Worker jika Anda tidak mengirimnya
-                userAgent: navigator.userAgent
-            })
-        });
-        if (!response.ok) {
-            console.error('Failed to track visitor:', await response.text());
-        }
-    } catch (error) {
-        console.error('Error tracking visitor:', error);
-    }
-}// Call this function on DOMContentLoaded
+    checkEzraLoginAndShowMomentVaultButton(); // Call this function on DOMContentLoaded
 });
 
 function initPanelControls() {
@@ -677,6 +661,7 @@ function initPanelControls() {
                     // Default to Live Visitors tab and fetch data
                     document.getElementById('tab-live-visitors').click();
                     momentVaultVisitorRefreshInterval = setInterval(fetchMomentVaultLiveVisitors, REFRESH_INTERVAL_MS); // Start refresh
+                    trackVisitor(); // Track visitor when Moment Vault panel is opened
                 } else {
                     clearInterval(momentVaultVisitorRefreshInterval); // Stop refresh when panel closed
                     document.getElementById('mv-live-visitors-list').innerHTML = ''; // Clear list
@@ -943,6 +928,7 @@ document.getElementById('contribution-form').addEventListener('submit', async (e
     e.preventDefault();
     const statusEl = document.getElementById('contribution-status');
     statusEl.textContent = 'Uploading...';
+    statusEl.style.color = 'var(--text-secondary)';
     const formData = new FormData();
     formData.append('text', document.getElementById('contribution-text').value);
     try {
@@ -998,7 +984,7 @@ function initWebsiteAgeDisplay() {
 
 // --- NEW FUNCTION: checkEzraLoginAndShowMomentVaultButton ---
 function checkEzraLoginAndShowMomentVaultButton() {
-    const isEzra = localStorage.getItem('isEzraLoggedIn');
+    const isEzra = sessionStorage.getItem('isEzraLoggedIn'); // <<< CHANGED TO sessionStorage
     const fabMomentVault = document.getElementById('fab-moment-vault');
 
     if (isEzra === 'true') {
@@ -1416,6 +1402,36 @@ async function deleteMoment(itemId) {
         console.error('Error deleting moment:', error);
         statusEl.textContent = `Error deleting moment: ${error.message}`;
         statusEl.style.color = 'var(--danger)';
+    }
+}
+
+
+// --- NEW FUNCTION: trackVisitor ---
+async function trackVisitor() {
+    try {
+        const browserId = sessionStorage.getItem('browserId');
+        if (!browserId) {
+            console.warn('Browser ID not found in sessionStorage, cannot track visitor.');
+            return;
+        }
+
+        // IP address will be automatically detected by Cloudflare Worker from the request
+        const response = await fetch(MOMENT_VAULT_WORKER_URL + '/track-visitor', { // Correct endpoint
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                browserId: browserId,
+                ip: 'N/A', // Placeholder, actual IP detected by Cloudflare
+                userAgent: navigator.userAgent
+            })
+        });
+        if (!response.ok) {
+            console.error('Failed to track visitor:', await response.text());
+        } else {
+            console.log('Visitor tracked successfully.');
+        }
+    } catch (error) {
+        console.error('Error tracking visitor:', error);
     }
 }
 </script>
