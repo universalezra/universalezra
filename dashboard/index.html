@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,37 +11,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --primary: #8e44ad; --accent: #00a8ff; --success: #2ecc71;
-            --danger: #e74c3c; --light: #ecf0f1; --dark: #1a1a2e;
-            --bg-main: #16213e; --bg-panel: rgba(26, 26, 46, 0.9);
-            --text-primary: #e0fbfc; --text-secondary: #98ded9;
-            --border-color: rgba(0, 168, 255, 0.3);
+            --primary: #8e44ad; /* Warna utama, disetel untuk tema gelap */
+            --accent: #00a8ff; /* Warna aksen, disetel untuk tema gelap */
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            /* --light: #ecf0f1; dihapus, tidak lagi relevan */
+            --dark: #1a1a2e; /* Tetap ada sebagai referensi, tapi tidak menentukan tema utama */
+            --bg-main: #16213e; /* Latar belakang utama, disetel untuk tema gelap */
+            --bg-panel: rgba(26, 26, 46, 0.9); /* Latar belakang panel, disetel untuk tema gelap */
+            --text-primary: #e0fbfc; /* Warna teks utama, disetel untuk tema gelap */
+            --text-secondary: #98ded9; /* Warna teks sekunder, disetel untuk tema gelap */
+            --border-color: rgba(0, 168, 255, 0.3); /* Warna border, disetel untuk tema gelap */
         }
-        html[data-theme='light'] {
-            --primary: #3498db; --accent: #e67e22;
-            --bg-main: #ecf0f1; --bg-panel: rgba(255, 255, 255, 0.9);
-            --text-primary: #2c3e50; --text-secondary: #7f8c8d;
-            --border-color: rgba(52, 152, 219, 0.4);
-        }
+        /* html[data-theme='light'] { ... } - blok ini dihapus */
         * { box-sizing: border-box; }
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0;
             overflow: hidden;
-            /* Mengubah font-family untuk seluruh teks */
             font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg-main);
-            /* Mengubah warna font utama menjadi hijau */
             color: #00ff00;
         }
         #interactive-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0;
-            /* Mengganti background particles dengan gambar */
-            background-image: url('January 17, 2025 at 5.10 AM.jpg'); /* Ganti dengan link gambar Anda */
+            background-image: url('January 17, 2025 at 5.10 AM.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(3px); /* Memberikan efek blur pada gambar background */
+            filter: blur(3px);
             -webkit-filter: blur(3px);
         }
         .main-container {
@@ -55,7 +53,6 @@
         }
         .central-message {
             text-align: center;
-            /* Mengubah warna font menjadi hijau */
             color: #00ff00;
             font-size: 1.5em;
         }
@@ -64,21 +61,18 @@
             margin-bottom: 10px;
         }
         .central-message p {
-            /* Mengubah warna font menjadi hijau */
             color: #00ff00;
             font-size: 0.8em;
         }
 
         .panel {
             position: fixed;
-            /* Membuat panel menjadi lebih transparan */
-            background: rgba(26, 26, 46, 0.7); /* Lebih transparan */
+            background: rgba(26, 26, 46, 0.7);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px); z-index: 1010;
             box-shadow: 0 0 50px rgba(0,0,0,0.6);
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             display: flex; flex-direction: column;
-            /* Mengubah warna font panel menjadi hijau */
             color: #00ff00;
         }
         #editor-panel {
@@ -86,7 +80,6 @@
             transform: translateX(-100%);
         }
         #editor-panel.active { transform: translateX(0); }
-        /* Music panel positioning - remains as bottom panel */
         #music-panel {
             bottom: 0; left: 0; width: 100%; height: auto;
             max-height: 50vh; border-top: 1px solid var(--border-color);
@@ -98,19 +91,15 @@
             transform: translateX(100%); padding: 20px;
         }
         #contribution-panel.active { transform: translateX(0); }
-        /* Removed #live-visitors-panel CSS */
 
         .panel-close-btn {
             position: absolute; top: 15px; right: 15px; background: none; border: none;
-            /* Mengubah warna font tombol menjadi hijau */
             color: #00ff00;
             font-size: 1.5rem; cursor: pointer; z-index: 5;
         }
         .fab-container { position: fixed; z-index: 1000; }
         .fab {
-            /* Membuat tombol FAB lebih transparan */
-            background: rgba(142, 68, 173, 0.7); /* Lebih transparan */
-            /* Mengubah warna ikon FAB menjadi hijau */
+            background: rgba(142, 68, 173, 0.7);
             color: #00ff00;
             width: 55px; height: 55px;
             border-radius: 50%; border: none; cursor: pointer;
@@ -121,37 +110,30 @@
         .fab:hover { background: var(--accent); transform: scale(1.1); }
         #fab-editor { top: 20px; left: 20px; }
         
-        /* NEW POSITIONS FOR FABS */
-        #fab-music { /* Moved to old private auth user spot */
+        #fab-music {
             top: 50%;
             left: 20px;
             transform: translateY(-50%);
         }
-        /* Swapped positions for Alkitab and Contribution FABs */
-        #fab-alkitab { /* Original #fab-alkitab, now at old #fab-contribution position */
+        #fab-alkitab {
             top: 20px; 
             right: 20px; 
         }
-        #fab-contribution { /* Original #fab-contribution, now at old #fab-alkitab position */
-            top: calc(50% + 70px); /* Music FAB height (55px) + 15px gap */
+        #fab-contribution {
+            top: calc(50% + 70px);
             left: 20px;
             transform: translateY(-50%);
         }
-        /* Removed #fab-live-visitors CSS */
-
 
         /* EDITOR STYLES */
         #editor-panel { padding: 0; }
         .editor-toolbar {
             display: flex; gap: 5px; padding: 10px;
-            /* Membuat toolbar editor lebih transparan */
             background: rgba(0,0,0,0.5);
             flex-wrap: wrap; justify-content: flex-start;
         }
         .editor-toolbar button, .editor-toolbar select {
-            /* Membuat tombol toolbar editor lebih transparan */
             background: rgba(142, 68, 173, 0.7);
-            /* Mengubah warna font tombol toolbar menjadi hijau */
             color: #00ff00;
             border:none;
             padding: 8px 12px; border-radius: 5px; cursor: pointer;
@@ -163,11 +145,9 @@
         .editor-code-area { flex: 1; display: flex; flex-direction: column; }
         .editor-preview-area { flex: 1; display: flex; flex-direction: column; }
 
-        /* Single editor textarea */
         #unified-code-editor {
             flex-grow: 1;
             background: #1e1e1e;
-            /* Mengubah warna font editor menjadi hijau */
             color: #00ff00;
             border: none;
             resize: none; padding: 10px; font-family: 'Courier New', monospace;
@@ -202,7 +182,6 @@
             transform: translateX(-50%);
             display: flex;
             gap: 10px;
-            /* Membuat kontrol video lebih transparan */
             background: rgba(0,0,0,0.5);
             padding: 5px;
             border-radius: 5px;
@@ -210,23 +189,20 @@
         .video-controls button {
             background: none;
             border: none;
-            /* Mengubah warna ikon kontrol video menjadi hijau */
             color: #00ff00;
             font-size: 1rem;
             cursor: pointer;
         }
-        .social-links { /* Only WhatsApp and Instagram now */
+        .social-links {
             position: fixed; top: 50%; right: 20px; transform: translateY(-50%);
             display: flex; flex-direction: column; gap: 15px; z-index: 999;
         }
         .social-links a {
-            /* Mengubah warna ikon sosial menjadi hijau */
             color: #00ff00;
             font-size: 1.5rem; transition: color 0.3s, transform 0.3s;
         }
         .social-links a:hover { color: var(--accent); transform: scale(1.2); }
         
-        /* Desktop Layout specific styles - adjusted */
         body.desktop-layout .main-container {
             display: flex;
             justify-content: center;
@@ -242,35 +218,28 @@
         }
         body.desktop-layout .panel-close-btn { display: none; }
         
-        /* Ensure FABs and Social Links are always visible, not hidden by desktop layout */
         body.desktop-layout .fab-container, body.desktop-layout .social-links {
-            display: block; /* Override any desktop-layout specific hiding */
+            display: block;
         }
         body.desktop-layout .fab {
-            /* Keep desktop fabs as floating buttons */
         }
 
-        /* Removed #visitor-list li CSS */
-        /* Removed #visitor-list li strong CSS */
-        /* Removed #visitor-list li span CSS */
-        /* Mengubah warna font placeholder textarea */
         textarea::placeholder {
-            color: rgba(0, 255, 0, 0.7); /* Warna hijau transparan */
+            color: rgba(0, 255, 0, 0.7);
         }
 
-        /* Styles for website age display */
         #website-age-display {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 0.8em; /* Very small text */
-            color: #00ff00; /* Green color */
-            z-index: 10; /* Ensure it's above other content but below panels */
-            background: none; /* No background */
-            padding: 0; /* No padding */
+            font-size: 0.8em;
+            color: #00ff00;
+            z-index: 10;
+            background: none;
+            padding: 0;
             text-align: center;
-            white-space: nowrap; /* Prevent text wrapping */
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -352,18 +321,13 @@
 
 <script>
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
-// Removed LIVE_VISITORS_WORKER_URL and REFRESH_INTERVAL_MS constants
-// Removed visitorRefreshInterval variable
-// Removed isEzraLoggedIn variable
 
 document.addEventListener('DOMContentLoaded', () => {
     initPanelControls();
     initVideoPlayer();
     initEditor();
     initMusicPlayer();
-    // Removed trackVisitor()
-    // Removed checkEzraLoginAndShowVisitorsButton()
-    initWebsiteAgeDisplay(); // Initialize website age display
+    initWebsiteAgeDisplay();
 });
 
 function initPanelControls() {
@@ -374,17 +338,13 @@ function initPanelControls() {
 
             panel.classList.toggle('active');
 
-            // Removed logic specifically for the live visitors panel
-
             if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
                 fetchContributions();
             }
 
-            // Close other panels
             document.querySelectorAll('.panel').forEach(otherPanel => {
                 if (otherPanel.id !== panelId) {
                     otherPanel.classList.remove('active');
-                    // Removed live visitors panel specific closing logic
                 }
             });
         });
@@ -395,12 +355,9 @@ function initPanelControls() {
             const panelId = button.getAttribute('data-panel');
             const panel = document.getElementById(panelId);
             panel.classList.remove('active');
-            // Removed live visitors panel specific closing logic
         });
     });
 }
-
-// Removed checkEzraLoginAndShowVisitorsButton function
 
 function initVideoPlayer() {
     const video = document.getElementById('widget-video');
@@ -455,14 +412,12 @@ function initEditor() {
     const undoBtn = document.getElementById('editor-undo');
     const redoBtn = document.getElementById('editor-redo');
 
-    // History stack for Undo/Redo
-    let history = ['']; // Initial empty state
+    let history = [''];
     let historyPointer = 0;
 
     const updateHistory = () => {
         const currentCode = codeEditor.value;
         if (currentCode !== history[historyPointer]) {
-            // If pointer is not at the end, clear future history
             if (historyPointer < history.length - 1) {
                 history = history.slice(0, historyPointer + 1);
             }
@@ -474,12 +429,11 @@ function initEditor() {
     const runCode = () => {
         const fullCode = codeEditor.value;
         
-        // Extract HTML, CSS, and JS using simple regex (can be improved for robustness)
         const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i);
         const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i);
         const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i);
 
-        const htmlContent = htmlMatch ? htmlMatch[1] : fullCode; // If no body tag, assume it's pure HTML or the whole thing
+        const htmlContent = htmlMatch ? htmlMatch[1] : fullCode;
         const cssContent = cssMatch ? cssMatch[1] : '';
         const jsContent = jsMatch ? jsMatch[1] : '';
 
@@ -534,8 +488,8 @@ function initEditor() {
 </body>
 </html>
         `;
-        runCode(); // Run immediately after loading
-        history = [codeEditor.value]; // Reset history
+        runCode();
+        history = [codeEditor.value];
         historyPointer = 0;
     };
 
@@ -564,14 +518,13 @@ function initEditor() {
 <body>
     <h1>Start Coding Here!</h1>
     <script>
-        // Your JavaScript goes here
         console.log("New document loaded.");
     <\/script>
 </body>
 </html>
         `;
         runCode();
-        history = [codeEditor.value]; // Reset history
+        history = [codeEditor.value];
         historyPointer = 0;
     };
 
@@ -598,10 +551,8 @@ function initEditor() {
     undoBtn.addEventListener('click', undo);
     redoBtn.addEventListener('click', redo);
 
-    // Update history on every input
     codeEditor.addEventListener('input', updateHistory);
 
-    // Initial load
     loadCode();
 }
 
@@ -613,7 +564,6 @@ async function fetchContributions() {
         const contributions = await response.json();
         if (contributions && contributions.length > 0) {
             display.innerHTML = contributions.reverse().map(c => {
-                // Removed mediaHTML generation, only text will be displayed
                 return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;">
                     <p style="margin:0;">${c.text}</p>
                     <small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small>
@@ -633,7 +583,6 @@ document.getElementById('contribution-form').addEventListener('submit', async (e
     statusEl.textContent = 'Uploading...';
     const formData = new FormData();
     formData.append('text', document.getElementById('contribution-text').value);
-    // Removed file input handling
     try {
         const response = await fetch(CONTRIBUTIONS_WORKER_URL, { method: 'POST', body: formData });
         if (!response.ok) throw new Error('Upload failed');
@@ -645,28 +594,23 @@ document.getElementById('contribution-form').addEventListener('submit', async (e
     }
 });
 
-// Removed getBrowserId function
-// Removed trackVisitor function
-// Removed fetchLiveVisitors function
-
 function initWebsiteAgeDisplay() {
     const websiteAgeDisplay = document.getElementById('website-age-display');
-    // Set your website's creation date here (Year, Month (0-11), Day, Hour, Minute, Second)
-    const creationDate = new Date(2025, 5, 21, 0, 0, 0); // January 17, 2024 at 05:10:00 AM
+    const creationDate = new Date(2025, 5, 21, 0, 0, 0); // Month is 0-indexed, so 5 is June.
 
     function updateWebsiteAge() {
         const now = new Date();
-        const diff = now.getTime() - creationDate.getTime(); // Difference in milliseconds
+        const diff = now.getTime() - creationDate.getTime();
 
         const seconds = Math.floor(diff / 1000);
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
         
-        const years = Math.floor(days / 365.25); // Account for leap years
+        const years = Math.floor(days / 365.25);
         const remainingDaysAfterYears = Math.floor(days % 365.25);
 
-        const months = Math.floor(remainingDaysAfterYears / 30.44); // Average days in a month
+        const months = Math.floor(remainingDaysAfterYears / 30.44);
         const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
 
         const displaySeconds = seconds % 60;
@@ -675,7 +619,7 @@ function initWebsiteAgeDisplay() {
         
         let ageString = '';
         if (years > 0) ageString += `${years} T, `;
-        if (months > 0 || years > 0) ageString += `${months} B, `; // Show months if years exist or months themselves
+        if (months > 0 || years > 0) ageString += `${months} B, `;
         ageString += `${remainingDaysAfterMonths} H, `;
         ageString += `${displayHours.toString().padStart(2, '0')}:`;
         ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
@@ -684,8 +628,8 @@ function initWebsiteAgeDisplay() {
         websiteAgeDisplay.textContent = `Age: ${ageString}`;
     }
 
-    updateWebsiteAge(); // Initial display
-    setInterval(updateWebsiteAge, 1000); // Update every second
+    updateWebsiteAge();
+    setInterval(updateWebsiteAge, 1000);
 }
 </script>
 </body>
