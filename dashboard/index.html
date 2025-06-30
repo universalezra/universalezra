@@ -614,6 +614,9 @@
     <div id="website-age-display"></div>
 
 <script>
+    if (!localStorage.getItem('browserId')) {
+    localStorage.setItem('browserId', 'browser_' + Math.random().toString(36).substr(2, 16));
+    }
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
 const REFRESH_INTERVAL_MS = 5000; // Refresh data every 5 seconds for live visitors
 
@@ -635,7 +638,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- NEW: Initialize Moment Vault related functions ---
     initMomentVaultTabs();
-    checkEzraLoginAndShowMomentVaultButton(); // Call this function on DOMContentLoaded
+    checkEzraLoginAndShowMomentVaultButton();
+    async function trackVisitor() {
+    try {
+        const response = await fetch('https://your-moment-vault-worker.ezvvel.workers.dev/track-visitor', { // Ganti URL
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                browserId: localStorage.getItem('browserId') || 'unknown', // Pastikan Anda memiliki browserId di localStorage
+                ip: 'N/A', // Cloudflare akan mengisi IP secara otomatis di sisi Worker jika Anda tidak mengirimnya
+                userAgent: navigator.userAgent
+            })
+        });
+        if (!response.ok) {
+            console.error('Failed to track visitor:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error tracking visitor:', error);
+    }
+}// Call this function on DOMContentLoaded
 });
 
 function initPanelControls() {
