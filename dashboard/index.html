@@ -99,14 +99,25 @@
         }
         #contribution-panel.active { transform: translateX(0); }
         
-        /* Styling for the new Moment Vault FAB */
-        #fab-moment-vault {
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000; /* Pastikan di atas elemen lain jika perlu */
+        /* Styling for the new Live Visitors Panel */
+        #live-visitors-panel {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateY(100%); /* Initially hidden below screen */
+            padding: 20px;
+            box-sizing: border-box; /* Include padding in element's total width and height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
+        #live-visitors-panel.active {
+            transform: translateY(0); /* Slide up when active */
+        }
+        
         /* Styling for the Moment Vault Panel */
         #moment-vault-panel {
             top: 0;
@@ -126,7 +137,8 @@
             transform: translateY(0); /* Slide up when active */
         }
 
-        /* Inner layout for Moment Vault content */
+        /* Inner layout for Panel content (Live Visitors & Moment Gallery) */
+        .live-visitors-content,
         .moment-vault-content {
             display: flex;
             flex-direction: column;
@@ -137,46 +149,6 @@
             border-radius: 15px;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
             overflow: hidden; /* For scrolling content */
-        }
-
-        .moment-vault-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(0,0,0,0.2);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .moment-vault-tabs button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background 0.3s ease;
-        }
-
-        .moment-vault-tabs button:hover {
-            background: var(--accent);
-        }
-
-        .moment-vault-tabs button.active {
-            background: var(--accent);
-            box-shadow: 0 0 10px rgba(0,168,255,0.5);
-        }
-
-        .moment-vault-tab-content {
-            flex-grow: 1;
-            overflow-y: auto; /* Enable scrolling for content */
-            padding: 20px;
-            display: none; /* Hidden by default */
-        }
-
-        .moment-vault-tab-content.active {
-            display: block; /* Show when active */
         }
 
         /* Live Visitors Tab Specific Styling */
@@ -302,8 +274,10 @@
         }
 
         /* Hide Moment Vault FAB in desktop layout */
-        body.desktop-layout #fab-moment-vault {
-            display: none;
+        body.desktop-layout #fab-moment-vault,
+        body.desktop-layout #fab-live-visitors {
+            /* Keep these visible in desktop layout, manage via JS check for isEzraLoggedIn */
+            display: block !important; /* Override any potential desktop layout display:none */
         }
 
         /* For media objects within gallery items */
@@ -364,6 +338,22 @@
             left: 20px;
             transform: translateY(-50%);
         }
+
+        /* NEW FAB positions for Live Visitors and Moment Gallery */
+        #fab-moment-vault { /* Original Moment Vault, now moved to accommodate Live Visitors above it */
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            /* display: block !important; */ /* Ensure it's always visible */
+        }
+        
+        #fab-live-visitors { /* New FAB for Live Visitors, above Moment Vault */
+            bottom: 90px; /* 20px (from moment-vault) + 55px (fab height) + 15px (gap) */
+            left: 50%;
+            transform: translateX(-50%);
+            display: none; /* Hidden by default, shown by JS based on isEzraLoggedIn */
+        }
+
 
         /* EDITOR STYLES */
         #editor-panel { padding: 0; }
@@ -560,43 +550,45 @@
         <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" class="fab" title="Alkitab"><i class="fas fa-book"></i></a>
     </div>
 
-    <div class="fab-container" id="fab-moment-vault" style="display: none;">
+    <div class="fab-container" id="fab-live-visitors" style="display: none;">
+        <button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button>
+    </div>
+
+    <div class="fab-container" id="fab-moment-vault">
         <button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button>
+    </div>
+
+    <div class="panel" id="live-visitors-panel">
+        <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
+        <div class="live-visitors-content">
+            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Live Visitors (Last 1 Hour)</h3>
+            <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
+                <p style="text-align: center; color: var(--text-secondary);">Loading live visitors...</p>
+                <ul id="mv-live-visitors-list" style="list-style: none; padding: 0; margin: 0;">
+                </ul>
+            </div>
+            <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary);">
+                Last updated: <span id="mv-last-updated-time">N/A</span>
+            </div>
+        </div>
     </div>
 
     <div class="panel" id="moment-vault-panel">
         <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
         <div class="moment-vault-content">
-            <div class="moment-vault-tabs">
-                <button id="tab-live-visitors" class="active">Live Visitors</button>
-                <button id="tab-gallery">Moment Gallery</button>
-            </div>
-            <div id="mv-live-visitors-tab" class="moment-vault-tab-content active">
-                <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Live Visitors (Last 1 Hour)</h3>
-                <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
-                    <p style="text-align: center; color: var(--text-secondary);">Loading live visitors...</p>
-                    <ul id="mv-live-visitors-list" style="list-style: none; padding: 0; margin: 0;">
-                    </ul>
-                </div>
-                <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary);">
-                    Last updated: <span id="mv-last-updated-time">N/A</span>
+            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Moment Gallery</h3>
+            <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
+                <p style="text-align: center; color: var(--text-secondary);">Loading moments...</p>
+                <div id="moment-vault-gallery">
                 </div>
             </div>
-            <div id="mv-gallery-tab" class="moment-vault-tab-content">
-                <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Moment Gallery</h3>
-                <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
-                    <p style="text-align: center; color: var(--text-secondary);">Loading moments...</p>
-                    <div id="moment-vault-gallery">
-                        </div>
-                </div>
-                <form id="moment-upload-form">
-                    <input type="text" id="moment-title" placeholder="Moment Title" required>
-                    <textarea id="moment-description" placeholder="Describe your moment..." rows="3"></textarea>
-                    <input type="file" id="moment-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" required>
-                    <button type="submit">Upload Moment</button>
-                    <p id="moment-upload-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
-                </form>
-            </div>
+            <form id="moment-upload-form">
+                <input type="text" id="moment-title" placeholder="Moment Title" required>
+                <textarea id="moment-description" placeholder="Describe your moment..." rows="3"></textarea>
+                <input type="file" id="moment-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" required>
+                <button type="submit">Upload Moment</button>
+                <p id="moment-upload-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
+            </form>
         </div>
     </div>
 
@@ -623,24 +615,18 @@ const GITHUB_REPO_OWNER = 'universalezra'; // GANTI dengan username GitHub Anda
 const GITHUB_REPO_NAME = 'universalezra'; // GANTI dengan nama repository GitHub Anda
 const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.workers.dev'; // GANTI dengan URL Cloudflare Worker yang mengurus token GitHub
 
-// Global variable for Moment Vault visitor interval
-let momentVaultVisitorRefreshInterval;
+// Global variable for Live Visitor refresh interval
+let liveVisitorRefreshInterval;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Generate and store browserId in sessionStorage
-    if (!sessionStorage.getItem('browserId')) {
-        sessionStorage.setItem('browserId', 'browser_' + Math.random().toString(36).substr(2, 16) + Date.now());
-    }
-
     initPanelControls();
     initVideoPlayer();
     initEditor();
     initMusicPlayer();
     initWebsiteAgeDisplay(); // Initialize website age display
 
-    // --- NEW: Initialize Moment Vault related functions ---
-    initMomentVaultTabs();
-    checkEzraLoginAndShowMomentVaultButton(); // Call this function on DOMContentLoaded
+    // Check Ezra login to show/hide Live Visitors button
+    checkEzraLoginAndShowLiveVisitorsButton(); 
 });
 
 function initPanelControls() {
@@ -649,22 +635,28 @@ function initPanelControls() {
             const panelId = button.getAttribute('data-panel');
             const panel = document.getElementById(panelId);
 
+            // Toggle active class for the clicked panel
             panel.classList.toggle('active');
 
-            // Handle specific logic for Contribution Panel (existing)
+            // Handle specific logic for Contribution Panel
             if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
                 fetchContributions();
             }
-            // Handle specific logic for Moment Vault Panel (NEW)
+            // Handle specific logic for Live Visitors Panel (NEW)
+            else if (panelId === 'live-visitors-panel') {
+                if (panel.classList.contains('active')) {
+                    fetchMomentVaultLiveVisitors(); // Fetch data when panel opens
+                    liveVisitorRefreshInterval = setInterval(fetchMomentVaultLiveVisitors, REFRESH_INTERVAL_MS); // Start refresh
+                } else {
+                    clearInterval(liveVisitorRefreshInterval); // Stop refresh when panel closed
+                    document.getElementById('mv-live-visitors-list').innerHTML = ''; // Clear list
+                }
+            }
+            // Handle specific logic for Moment Vault Panel (Gallery only)
             else if (panelId === 'moment-vault-panel') {
                 if (panel.classList.contains('active')) {
-                    // Default to Live Visitors tab and fetch data
-                    document.getElementById('tab-live-visitors').click();
-                    momentVaultVisitorRefreshInterval = setInterval(fetchMomentVaultLiveVisitors, REFRESH_INTERVAL_MS); // Start refresh
-                    trackVisitor(); // Track visitor when Moment Vault panel is opened
+                    fetchMomentVaultGallery(); // Fetch gallery when panel opens
                 } else {
-                    clearInterval(momentVaultVisitorRefreshInterval); // Stop refresh when panel closed
-                    document.getElementById('mv-live-visitors-list').innerHTML = ''; // Clear list
                     document.getElementById('moment-vault-gallery').innerHTML = ''; // Clear gallery
                 }
             }
@@ -673,10 +665,13 @@ function initPanelControls() {
             document.querySelectorAll('.panel').forEach(otherPanel => {
                 if (otherPanel.id !== panelId) {
                     otherPanel.classList.remove('active');
-                    // Ensure intervals are cleared if other panels close moment vault panels
-                    if (otherPanel.id === 'moment-vault-panel') {
-                        clearInterval(momentVaultVisitorRefreshInterval);
+                    // Ensure intervals are cleared if Live Visitors panel closes
+                    if (otherPanel.id === 'live-visitors-panel') {
+                        clearInterval(liveVisitorRefreshInterval);
                         document.getElementById('mv-live-visitors-list').innerHTML = '';
+                    }
+                    // Ensure gallery clears if Moment Vault panel closes
+                    if (otherPanel.id === 'moment-vault-panel') {
                         document.getElementById('moment-vault-gallery').innerHTML = '';
                     }
                 }
@@ -690,10 +685,13 @@ function initPanelControls() {
             const panel = document.getElementById(panelId);
             panel.classList.remove('active');
 
-            // Stop refresh when Moment Vault panel is closed via the close button (NEW)
-            if (panelId === 'moment-vault-panel') {
-                clearInterval(momentVaultVisitorRefreshInterval);
+            // Stop refresh when Live Visitors panel is closed via the close button
+            if (panelId === 'live-visitors-panel') {
+                clearInterval(liveVisitorRefreshInterval);
                 document.getElementById('mv-live-visitors-list').innerHTML = '';
+            }
+            // Clear gallery when Moment Vault panel is closed
+            if (panelId === 'moment-vault-panel') {
                 document.getElementById('moment-vault-gallery').innerHTML = '';
             }
         });
@@ -928,7 +926,6 @@ document.getElementById('contribution-form').addEventListener('submit', async (e
     e.preventDefault();
     const statusEl = document.getElementById('contribution-status');
     statusEl.textContent = 'Uploading...';
-    statusEl.style.color = 'var(--text-secondary)';
     const formData = new FormData();
     formData.append('text', document.getElementById('contribution-text').value);
     try {
@@ -982,49 +979,23 @@ function initWebsiteAgeDisplay() {
 }
 
 
-// --- NEW FUNCTION: checkEzraLoginAndShowMomentVaultButton ---
-function checkEzraLoginAndShowMomentVaultButton() {
-    const isEzra = sessionStorage.getItem('isEzraLoggedIn'); // <<< CHANGED TO sessionStorage
-    const fabMomentVault = document.getElementById('fab-moment-vault');
+// --- MODIFIED FUNCTION: checkEzraLoginAndShowLiveVisitorsButton ---
+function checkEzraLoginAndShowLiveVisitorsButton() {
+    const isEzra = localStorage.getItem('isEzraLoggedIn');
+    const fabLiveVisitors = document.getElementById('fab-live-visitors');
 
     if (isEzra === 'true') {
-        fabMomentVault.style.display = 'block'; // Show FAB if Ezra is logged in
+        fabLiveVisitors.style.display = 'block'; // Show FAB if Ezra is logged in
     } else {
-        fabMomentVault.style.display = 'none'; // Ensure it's hidden otherwise
+        fabLiveVisitors.style.display = 'none'; // Ensure it's hidden otherwise
     }
+    // fab-moment-vault is now always visible, no need to control it here
 }
 
-// --- NEW FUNCTION: initMomentVaultTabs ---
-function initMomentVaultTabs() {
-    const liveVisitorsTabBtn = document.getElementById('tab-live-visitors');
-    const galleryTabBtn = document.getElementById('tab-gallery');
-    const liveVisitorsContent = document.getElementById('mv-live-visitors-tab');
-    const galleryContent = document.getElementById('mv-gallery-tab');
-
-    liveVisitorsTabBtn.addEventListener('click', () => {
-        liveVisitorsTabBtn.classList.add('active');
-        galleryTabBtn.classList.remove('active');
-        liveVisitorsContent.classList.add('active');
-        galleryContent.classList.remove('active');
-        fetchMomentVaultLiveVisitors(); // Fetch live visitors when tab is active
-        clearInterval(momentVaultVisitorRefreshInterval); // Clear existing interval if switching from gallery
-        momentVaultVisitorRefreshInterval = setInterval(fetchMomentVaultLiveVisitors, REFRESH_INTERVAL_MS);
-    });
-
-    galleryTabBtn.addEventListener('click', () => {
-        galleryTabBtn.classList.add('active');
-        liveVisitorsTabBtn.classList.remove('active');
-        galleryContent.classList.add('active');
-        liveVisitorsContent.classList.remove('active');
-        fetchMomentVaultGallery(); // Fetch gallery items when tab is active
-        clearInterval(momentVaultVisitorRefreshInterval); // Clear live visitor refresh interval
-    });
-
-    document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
-}
+// --- REMOVED FUNCTION: initMomentVaultTabs (no longer needed) ---
 
 
-// --- NEW FUNCTION: fetchMomentVaultLiveVisitors ---
+// --- MODIFIED FUNCTION: fetchMomentVaultLiveVisitors (now called directly for live-visitors-panel) ---
 async function fetchMomentVaultLiveVisitors() {
     const visitorList = document.getElementById('mv-live-visitors-list');
     const lastUpdatedTime = document.getElementById('mv-last-updated-time');
@@ -1034,10 +1005,6 @@ async function fetchMomentVaultLiveVisitors() {
     }
 
     try {
-        // Mengirim GET request ke Cloudflare Worker Moment Vault untuk data pengunjung
-        // Perhatikan: Anda perlu mengimplementasikan logika ini di worker MOMENT_VAULT_WORKER_URL
-        // Worker ini harus bisa menerima GET request dengan parameter 'get_live_visitors=true'
-        // dan mengembalikan daftar pengunjung aktif selama 1 jam terakhir.
         const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_live_visitors=true');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1072,15 +1039,12 @@ async function fetchMomentVaultLiveVisitors() {
 }
 
 
-// --- NEW FUNCTION: fetchMomentVaultGallery ---
+// --- EXISTING FUNCTION: fetchMomentVaultGallery ---
 async function fetchMomentVaultGallery() {
     const galleryContainer = document.getElementById('moment-vault-gallery');
     galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading gallery items...</p>';
 
     try {
-        // Mengirim GET request ke Cloudflare Worker Moment Vault untuk data galeri
-        // Worker ini harus bisa menerima GET request dengan parameter 'get_gallery=true'
-        // dan mengembalikan daftar item galeri (metadata dan URL).
         const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1155,7 +1119,10 @@ async function fetchMomentVaultGallery() {
     }
 }
 
-// --- NEW FUNCTION: uploadMoment ---
+// Event listener for moment upload form (remains the same)
+document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
+
+// --- EXISTING FUNCTION: uploadMoment ---
 async function uploadMoment(e) {
     e.preventDefault();
     const statusEl = document.getElementById('moment-upload-status');
@@ -1248,7 +1215,7 @@ async function uploadMoment(e) {
     }
 }
 
-// Helper function to read file as Base64
+// Helper function to read file as Base64 (remains the same)
 function readFileAsBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1258,7 +1225,7 @@ function readFileAsBase64(file) {
     });
 }
 
-// --- NEW FUNCTION: editMoment ---
+// --- EXISTING FUNCTION: editMoment ---
 async function editMoment(itemId, currentItems) {
     const itemToEdit = currentItems.find(item => item.id === itemId);
     if (!itemToEdit) return;
@@ -1304,7 +1271,7 @@ async function editMoment(itemId, currentItems) {
     }
 }
 
-// --- NEW FUNCTION: deleteMoment ---
+// --- EXISTING FUNCTION: deleteMoment ---
 async function deleteMoment(itemId) {
     if (!confirm('Are you sure you want to delete this moment? This action cannot be undone.')) {
         return;
@@ -1402,36 +1369,6 @@ async function deleteMoment(itemId) {
         console.error('Error deleting moment:', error);
         statusEl.textContent = `Error deleting moment: ${error.message}`;
         statusEl.style.color = 'var(--danger)';
-    }
-}
-
-
-// --- NEW FUNCTION: trackVisitor ---
-async function trackVisitor() {
-    try {
-        const browserId = sessionStorage.getItem('browserId');
-        if (!browserId) {
-            console.warn('Browser ID not found in sessionStorage, cannot track visitor.');
-            return;
-        }
-
-        // IP address will be automatically detected by Cloudflare Worker from the request
-        const response = await fetch(MOMENT_VAULT_WORKER_URL + '/track-visitor', { // Correct endpoint
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                browserId: browserId,
-                ip: 'N/A', // Placeholder, actual IP detected by Cloudflare
-                userAgent: navigator.userAgent
-            })
-        });
-        if (!response.ok) {
-            console.error('Failed to track visitor:', await response.text());
-        } else {
-            console.log('Visitor tracked successfully.');
-        }
-    } catch (error) {
-        console.error('Error tracking visitor:', error);
     }
 }
 </script>
