@@ -68,6 +68,17 @@
             color: #00ff00;
             font-size: 0.8em;
         }
+        /* Style for the Ezra link */
+        .ezra-link {
+            color: var(--accent); /* Warna tautan */
+            text-decoration: none; /* Hapus garis bawah default */
+            cursor: pointer; /* Ubah kursor menjadi pointer */
+            transition: color 0.3s ease; /* Transisi warna saat hover */
+        }
+        .ezra-link:hover {
+            color: var(--primary); /* Warna saat di-hover */
+        }
+
 
         .panel {
             position: fixed;
@@ -492,7 +503,8 @@
         <div class="central-message">
         </div>
           <div class="central-message">
-            <h3>ezra</h3>
+            <!-- Teks "ezra" diubah menjadi tautan -->
+            <h3><a href="https://universalezra.netlify.app/elvi.html" class="ezra-link">ezra</a></h3>
           </div>
         <div class="panel" id="contribution-panel-desktop" style="display: none;">
         </div>
@@ -799,7 +811,8 @@ function initEditor() {
 
     const saveCode = () => {
         localStorage.setItem('unified_editor_code', codeEditor.value);
-        alert('Code saved successfully!');
+        // Mengganti alert() dengan pesan di konsol atau UI kustom
+        console.log('Code saved successfully!');
     };
 
     const loadCode = () => {
@@ -827,7 +840,8 @@ function initEditor() {
 
     <script>
         document.getElementById('message').onclick = function() {
-            alert('Paragraph clicked!');
+            // Mengganti alert() dengan pesan di konsol atau UI kustom
+            console.log('Paragraph clicked!');
         };
     <\/script>
 </body>
@@ -1233,9 +1247,11 @@ async function editMoment(itemId, currentItems) {
     const itemToEdit = currentItems.find(item => item.id === itemId);
     if (!itemToEdit) return;
 
+    // Mengganti prompt() dengan UI kustom jika diperlukan
     const newTitle = prompt('Edit Title:', itemToEdit.title);
     if (newTitle === null) return; // User cancelled
 
+    // Mengganti prompt() dengan UI kustom jika diperlukan
     const newDescription = prompt('Edit Description:', itemToEdit.description);
     if (newDescription === null) return; // User cancelled
 
@@ -1276,6 +1292,7 @@ async function editMoment(itemId, currentItems) {
 
 // --- EXISTING FUNCTION: deleteMoment ---
 async function deleteMoment(itemId) {
+    // Mengganti confirm() dengan UI kustom jika diperlukan
     if (!confirm('Are you sure you want to delete this moment? This action cannot be undone.')) {
         return;
     }
