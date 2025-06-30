@@ -163,7 +163,7 @@
         }
 
         /* Live Visitors Tab Specific Styling */
-        #mv-live-visitors-list ul {
+        #visitor-list ul {
             list-style: none;
             padding: 0;
             margin: 0;
@@ -172,7 +172,7 @@
             gap: 15px;
         }
 
-        #mv-live-visitors-list li {
+        #visitor-list li {
             background: rgba(0, 168, 255, 0.1);
             border: 1px solid rgba(0, 168, 255, 0.2);
             border-radius: 10px;
@@ -184,7 +184,7 @@
             gap: 8px;
         }
 
-        #mv-live-visitors-list li strong {
+        #visitor-list li strong {
             color: var(--accent);
         }
 
@@ -503,7 +503,6 @@
         <div class="central-message">
         </div>
           <div class="central-message">
-            <!-- Teks "ezra" diubah menjadi tautan -->
             <h3><a href="https://universalezra.netlify.app/elvi.html" class="ezra-link">ezra</a></h3>
           </div>
         <div class="panel" id="contribution-panel-desktop" style="display: none;">
@@ -579,11 +578,11 @@
             <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Live Visitors (Last 1 Hour)</h3>
             <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
                 <p style="text-align: center; color: var(--text-secondary);">Loading live visitors...</p>
-                <ul id="mv-live-visitors-list" style="list-style: none; padding: 0; margin: 0;">
+                <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0;">
                 </ul>
             </div>
             <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary);">
-                Last updated: <span id="mv-last-updated-time">N/A</span>
+                Last updated: <span id="last-updated-time">N/A</span>
             </div>
         </div>
     </div>
@@ -633,6 +632,14 @@ const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.w
 // Global variable for Live Visitor refresh interval
 let liveVisitorRefreshInterval;
 
+// --- Extracted Configuration ---
+// This variable controls the visibility of the Live Visitors FAB button.
+// Set to 'true' if Ezra is considered logged in, 'false' otherwise.
+// For testing purposes, you might set it directly here.
+let isEzraLoggedIn = false; // Changed from localStorage.getItem to a direct boolean for this context
+
+const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
+
 document.addEventListener('DOMContentLoaded', () => {
     initPanelControls();
     initVideoPlayer();
@@ -641,7 +648,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initWebsiteAgeDisplay(); // Initialize website age display
 
     // Check Ezra login to show/hide Live Visitors button
-    checkEzraLoginAndShowLiveVisitorsButton(); 
+    checkEzraLoginAndShowVisitorsButton(); 
+    trackVisitor(); // Track visitor on page load
 });
 
 function initPanelControls() {
@@ -660,11 +668,13 @@ function initPanelControls() {
             // Handle specific logic for Live Visitors Panel (NEW)
             else if (panelId === 'live-visitors-panel') {
                 if (panel.classList.contains('active')) {
-                    fetchMomentVaultLiveVisitors(); // Fetch data when panel opens
-                    liveVisitorRefreshInterval = setInterval(fetchMomentVaultLiveVisitors, REFRESH_INTERVAL_MS); // Start refresh
+                    fetchLiveVisitors(); // Fetch data when panel opens
+                    if (isEzraLoggedIn) { // Start refresh only if Ezra is logged in
+                        liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
+                    }
                 } else {
                     clearInterval(liveVisitorRefreshInterval); // Stop refresh when panel closed
-                    document.getElementById('mv-live-visitors-list').innerHTML = ''; // Clear list
+                    document.getElementById('visitor-list').innerHTML = ''; // Clear list
                 }
             }
             // Handle specific logic for Moment Vault Panel (Gallery only)
@@ -683,7 +693,7 @@ function initPanelControls() {
                     // Ensure intervals are cleared if Live Visitors panel closes
                     if (otherPanel.id === 'live-visitors-panel') {
                         clearInterval(liveVisitorRefreshInterval);
-                        document.getElementById('mv-live-visitors-list').innerHTML = '';
+                        document.getElementById('visitor-list').innerHTML = '';
                     }
                     // Ensure gallery clears if Moment Vault panel closes
                     if (otherPanel.id === 'moment-vault-panel') {
@@ -703,7 +713,7 @@ function initPanelControls() {
             // Stop refresh when Live Visitors panel is closed via the close button
             if (panelId === 'live-visitors-panel') {
                 clearInterval(liveVisitorRefreshInterval);
-                document.getElementById('mv-live-visitors-list').innerHTML = '';
+                document.getElementById('visitor-list').innerHTML = '';
             }
             // Clear gallery when Moment Vault panel is closed
             if (panelId === 'moment-vault-panel') {
@@ -996,39 +1006,35 @@ function initWebsiteAgeDisplay() {
 }
 
 
-// --- MODIFIED FUNCTION: checkEzraLoginAndShowLiveVisitorsButton ---
-function checkEzraLoginAndShowLiveVisitorsButton() {
-    const isEzra = localStorage.getItem('isEzraLoggedIn');
+// Function to control the visibility of the Live Visitors FAB button
+function checkEzraLoginAndShowVisitorsButton() {
     const fabLiveVisitors = document.getElementById('fab-live-visitors');
-
-    if (isEzra === 'true') {
-        fabLiveVisitors.style.display = 'block'; // Show FAB if Ezra is logged in
+    if (isEzraLoggedIn) {
+        fabLiveVisitors.style.display = 'flex'; // Show the button
     } else {
-        fabLiveVisitors.style.display = 'none'; // Ensure it's hidden otherwise
+        fabLiveVisitors.style.display = 'none'; // Hide the button
     }
-    // fab-moment-vault is now always visible, no need to control it here
 }
 
-// --- REMOVED FUNCTION: initMomentVaultTabs (no longer needed) ---
-
-
-// --- MODIFIED FUNCTION: fetchMomentVaultLiveVisitors (now called directly for live-visitors-panel) ---
-async function fetchMomentVaultLiveVisitors() {
-    const visitorList = document.getElementById('mv-live-visitors-list');
-    const lastUpdatedTime = document.getElementById('mv-last-updated-time');
-
+// Function to handle fetching and displaying live visitor data
+async function fetchLiveVisitors() {
+    const visitorList = document.getElementById('visitor-list');
+    const lastUpdatedTime = document.getElementById('last-updated-time');
+    
+    // Display loading message if the list is empty
     if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading')) {
-        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading live visitors...</li>';
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors...</li>';
     }
-
+    
     try {
-        const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_live_visitors=true');
+        const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const visitors = await response.json();
 
         if (visitors && visitors.length > 0) {
+            // Map visitor data to HTML list items
             visitorList.innerHTML = visitors.map(visitor => {
                 const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
                     hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -1036,7 +1042,7 @@ async function fetchMomentVaultLiveVisitors() {
                 });
                 return `
                     <li>
-                        <strong>ID:</strong> <span>${visitor.browserId || 'N/A'}</span><br>
+                        <strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}...</span><br>
                         <strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br>
                         <strong>User Agent:</strong> <span>${visitor.userAgent ? visitor.userAgent.substring(0, 50) + '...' : 'N/A'}</span><br>
                         <strong>Waktu:</strong> <span>${timestamp}</span>
@@ -1044,14 +1050,56 @@ async function fetchMomentVaultLiveVisitors() {
                 `;
             }).join('');
         } else {
-            visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No active visitors in the last hour.</li>';
+            visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No visitors online.</li>';
         }
-        lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
+        lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID'); // Update last refreshed time
 
     } catch (error) {
-        console.error('Error fetching Moment Vault live visitors:', error);
-        visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed to load live visitors.</li>';
+        console.error('Error fetching live visitors:', error);
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed to load visitors.</li>';
         lastUpdatedTime.textContent = 'Error';
+    }
+}
+
+// Function to get or generate a unique browser ID for visitor tracking
+function getBrowserId() {
+    let browserId = localStorage.getItem('unique_browser_id');
+    if (!browserId) {
+        browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now();
+        localStorage.setItem('unique_browser_id', browserId);
+    }
+    return browserId;
+}
+
+// Function to track the current visitor and send data to the backend
+async function trackVisitor() {
+    try {
+        const browserId = getBrowserId();
+        let ipAddress = 'unknown';
+
+        try {
+            const ipResponse = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipResponse.json();
+            ipAddress = ipData.ip;
+        } catch (ipError) {
+            console.warn('Could not fetch IP address:', ipError);
+        }
+
+        const data = {
+            browserId: browserId,
+            ip: ipAddress,
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString()
+        };
+
+        fetch(LIVE_VISITORS_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        }).catch(e => console.error("Error sending to live visitors worker:", e));
+
+    } catch(e) {
+        console.error('Error in trackVisitor:', e);
     }
 }
 
