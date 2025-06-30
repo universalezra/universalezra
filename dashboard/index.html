@@ -27,21 +27,18 @@
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0;
             overflow: hidden;
-            /* Mengubah font-family untuk seluruh teks */
             font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg-main);
-            /* Mengubah warna font utama menjadi hijau */
             color: #00ff00;
         }
         #interactive-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0;
-            /* Mengganti background particles dengan gambar */
-            background-image: url('January 17, 2025 at 5.10 AM.jpg'); /* Ganti dengan link gambar Anda */
+            background-image: url('January 17, 2025 at 5.10 AM.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(3px); /* Memberikan efek blur pada gambar background */
+            filter: blur(3px);
             -webkit-filter: blur(3px);
         }
         .main-container {
@@ -55,7 +52,6 @@
         }
         .central-message {
             text-align: center;
-            /* Mengubah warna font menjadi hijau */
             color: #00ff00;
             font-size: 1.5em;
         }
@@ -64,32 +60,26 @@
             margin-bottom: 10px;
         }
         .central-message p {
-            /* Mengubah warna font menjadi hijau */
             color: #00ff00;
             font-size: 0.8em;
         }
-        /* Style for the Ezra link */
         .ezra-link {
-            color: var(--accent); /* Warna tautan */
-            text-decoration: none; /* Hapus garis bawah default */
-            cursor: pointer; /* Ubah kursor menjadi pointer */
-            transition: color 0.3s ease; /* Transisi warna saat hover */
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
         }
         .ezra-link:hover {
-            color: var(--primary); /* Warna saat di-hover */
+            color: var(--primary);
         }
-
-
         .panel {
             position: fixed;
-            /* Membuat panel menjadi lebih transparan */
-            background: rgba(26, 26, 46, 0.7); /* Lebih transparan */
+            background: rgba(26, 26, 46, 0.7);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px); z-index: 1010;
             box-shadow: 0 0 50px rgba(0,0,0,0.6);
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             display: flex; flex-direction: column;
-            /* Mengubah warna font panel menjadi hijau */
             color: #00ff00;
         }
         #editor-panel {
@@ -97,7 +87,6 @@
             transform: translateX(-100%);
         }
         #editor-panel.active { transform: translateX(0); }
-        /* Music panel positioning - remains as bottom panel */
         #music-panel {
             bottom: 0; left: 0; width: 100%; height: auto;
             max-height: 50vh; border-top: 1px solid var(--border-color);
@@ -109,60 +98,50 @@
             transform: translateX(100%); padding: 20px;
         }
         #contribution-panel.active { transform: translateX(0); }
-        
-        /* Styling for the new Live Visitors Panel */
         #live-visitors-panel {
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            transform: translateY(100%); /* Initially hidden below screen */
+            transform: translateY(100%);
             padding: 20px;
-            box-sizing: border-box; /* Include padding in element's total width and height */
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
-
         #live-visitors-panel.active {
-            transform: translateY(0); /* Slide up when active */
+            transform: translateY(0);
         }
-        
-        /* Styling for the Moment Vault Panel */
         #moment-vault-panel {
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            transform: translateY(100%); /* Initially hidden below screen */
+            transform: translateY(100%);
             padding: 20px;
-            box-sizing: border-box; /* Include padding in element's total width and height */
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
-
         #moment-vault-panel.active {
-            transform: translateY(0); /* Slide up when active */
+            transform: translateY(0);
         }
-
-        /* Inner layout for Panel content (Live Visitors & Moment Gallery) */
         .live-visitors-content,
         .moment-vault-content {
             display: flex;
             flex-direction: column;
             width: 100%;
             height: 100%;
-            max-width: 1200px; /* Optional: limit max width for better readability */
+            max-width: 1200px;
             background: var(--bg-panel);
             border-radius: 15px;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            overflow: hidden; /* For scrolling content */
+            overflow: hidden;
         }
-
-        /* Live Visitors Tab Specific Styling */
         #visitor-list ul {
             list-style: none;
             padding: 0;
@@ -171,7 +150,6 @@
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 15px;
         }
-
         #visitor-list li {
             background: rgba(0, 168, 255, 0.1);
             border: 1px solid rgba(0, 168, 255, 0.2);
@@ -183,18 +161,14 @@
             flex-direction: column;
             gap: 8px;
         }
-
         #visitor-list li strong {
             color: var(--accent);
         }
-
-        /* Gallery Content Tab Specific Styling */
         #moment-vault-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Small, neat grid */
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 15px;
         }
-
         .gallery-item {
             background: rgba(0,0,0,0.2);
             border: 1px solid var(--border-color);
@@ -207,7 +181,6 @@
             gap: 8px;
             position: relative;
         }
-
         .gallery-item img, .gallery-item video, .gallery-item audio {
             max-width: 100%;
             height: auto;
@@ -216,25 +189,22 @@
         .gallery-item .item-text {
             font-size: 0.8em;
             color: var(--text-secondary);
-            max-height: 60px; /* Limit height for text */
+            max-height: 60px;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 3; /* Show up to 3 lines */
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
         }
-
         .gallery-item .item-date {
             font-size: 0.7em;
             color: var(--text-secondary);
         }
-
         .gallery-item .item-actions {
             display: flex;
             gap: 5px;
             margin-top: 5px;
         }
-
         .gallery-item .item-actions button {
             background: var(--primary);
             color: white;
@@ -244,12 +214,9 @@
             font-size: 0.8em;
             cursor: pointer;
         }
-
         .gallery-item .item-actions button:hover {
             background: var(--accent);
         }
-
-        /* Upload Form Styling */
         #moment-upload-form {
             display: flex;
             flex-direction: column;
@@ -258,7 +225,6 @@
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
         }
-
         #moment-upload-form input[type="text"],
         #moment-upload-form textarea,
         #moment-upload-form input[type="file"] {
@@ -270,7 +236,6 @@
             color: var(--text-primary);
             box-sizing: border-box;
         }
-
         #moment-upload-form button[type="submit"] {
             background: var(--success);
             color: white;
@@ -283,46 +248,37 @@
         #moment-upload-form button[type="submit"]:hover {
             background: #27ae60;
         }
-
-        /* Hide Moment Vault FAB in desktop layout */
         body.desktop-layout #fab-moment-vault,
         body.desktop-layout #fab-live-visitors {
-            /* Keep these visible in desktop layout, manage via JS check for isEzraLoggedIn */
-            display: block !important; /* Override any potential desktop layout display:none */
+            display: block !important;
         }
-
-        /* For media objects within gallery items */
         .gallery-media {
             width: 100%;
-            height: 120px; /* Fixed height for media preview */
+            height: 120px;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
             border-radius: 5px;
-            background-color: #333; /* Placeholder background */
+            background-color: #333;
         }
         .gallery-media img, .gallery-media video, .gallery-media audio {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Cover the container */
+            object-fit: cover;
         }
         .gallery-media .file-icon {
             font-size: 3em;
             color: var(--text-secondary);
         }
-
         .panel-close-btn {
             position: absolute; top: 15px; right: 15px; background: none; border: none;
-            /* Mengubah warna font tombol menjadi hijau */
             color: #00ff00;
             font-size: 1.5rem; cursor: pointer; z-index: 5;
         }
         .fab-container { position: fixed; z-index: 1000; }
         .fab {
-            /* Membuat tombol FAB lebih transparan */
-            background: rgba(142, 68, 173, 0.7); /* Lebih transparan */
-            /* Mengubah warna ikon FAB menjadi hijau */
+            background: rgba(142, 68, 173, 0.7);
             color: #00ff00;
             width: 55px; height: 55px;
             border-radius: 50%; border: none; cursor: pointer;
@@ -332,52 +288,39 @@
         }
         .fab:hover { background: var(--accent); transform: scale(1.1); }
         #fab-editor { top: 20px; left: 20px; }
-        
-        /* NEW POSITIONS FOR FABS */
-        #fab-music { /* Moved to old private auth user spot */
+        #fab-music {
             top: 50%;
             left: 20px;
             transform: translateY(-50%);
         }
-        /* Swapped positions for Alkitab and Contribution FABs */
-        #fab-alkitab { /* Original #fab-alkitab, now at old #fab-contribution position */
-            top: 20px; 
-            right: 20px; 
+        #fab-alkitab {
+            top: 20px;
+            right: 20px;
         }
-        #fab-contribution { /* Original #fab-contribution, now at old #fab-alkitab position */
-            top: calc(50% + 70px); /* Music FAB height (55px) + 15px gap */
+        #fab-contribution {
+            top: calc(50% + 70px);
             left: 20px;
             transform: translateY(-50%);
         }
-
-        /* NEW FAB positions for Live Visitors and Moment Gallery */
-        #fab-moment-vault { /* Original Moment Vault, now moved to accommodate Live Visitors above it */
+        #fab-moment-vault {
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            /* display: block !important; */ /* Ensure it's always visible */
         }
-        
-        #fab-live-visitors { /* New FAB for Live Visitors, above Moment Vault */
-            bottom: 90px; /* 20px (from moment-vault) + 55px (fab height) + 15px (gap) */
+        #fab-live-visitors {
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%);
-            display: none; /* Hidden by default, shown by JS based on isEzraLoggedIn */
+            display: none;
         }
-
-
-        /* EDITOR STYLES */
         #editor-panel { padding: 0; }
         .editor-toolbar {
             display: flex; gap: 5px; padding: 10px;
-            /* Membuat toolbar editor lebih transparan */
             background: rgba(0,0,0,0.5);
             flex-wrap: wrap; justify-content: flex-start;
         }
         .editor-toolbar button, .editor-toolbar select {
-            /* Membuat tombol toolbar editor lebih transparan */
             background: rgba(142, 68, 173, 0.7);
-            /* Mengubah warna font tombol toolbar menjadi hijau */
             color: #00ff00;
             border:none;
             padding: 8px 12px; border-radius: 5px; cursor: pointer;
@@ -388,12 +331,9 @@
         .editor-main { display: flex; flex-grow: 1; height: calc(100% - 58px); }
         .editor-code-area { flex: 1; display: flex; flex-direction: column; }
         .editor-preview-area { flex: 1; display: flex; flex-direction: column; }
-
-        /* Single editor textarea */
         #unified-code-editor {
             flex-grow: 1;
             background: #1e1e1e;
-            /* Mengubah warna font editor menjadi hijau */
             color: #00ff00;
             border: none;
             resize: none; padding: 10px; font-family: 'Courier New', monospace;
@@ -402,7 +342,6 @@
         #editor-preview {
             width: 100%; height: 100%; border: none; background: white;
         }
-
         #video-player-widget {
             position: fixed;
             top: 20px;
@@ -428,7 +367,6 @@
             transform: translateX(-50%);
             display: flex;
             gap: 10px;
-            /* Membuat kontrol video lebih transparan */
             background: rgba(0,0,0,0.5);
             padding: 5px;
             border-radius: 5px;
@@ -436,23 +374,19 @@
         .video-controls button {
             background: none;
             border: none;
-            /* Mengubah warna ikon kontrol video menjadi hijau */
             color: #00ff00;
             font-size: 1rem;
             cursor: pointer;
         }
-        .social-links { /* Only WhatsApp and Instagram now */
+        .social-links {
             position: fixed; top: 50%; right: 20px; transform: translateY(-50%);
             display: flex; flex-direction: column; gap: 15px; z-index: 999;
         }
         .social-links a {
-            /* Mengubah warna ikon sosial menjadi hijau */
             color: #00ff00;
             font-size: 1.5rem; transition: color 0.3s, transform 0.3s;
         }
         .social-links a:hover { color: var(--accent); transform: scale(1.2); }
-        
-        /* Desktop Layout specific styles - adjusted */
         body.desktop-layout .main-container {
             display: flex;
             justify-content: center;
@@ -467,33 +401,26 @@
             border-radius: 15px;
         }
         body.desktop-layout .panel-close-btn { display: none; }
-        
-        /* Ensure FABs and Social Links are always visible, not hidden by desktop layout */
         body.desktop-layout .fab-container, body.desktop-layout .social-links {
-            display: block; /* Override any desktop-layout specific hiding */
+            display: block;
         }
         body.desktop-layout .fab {
-            /* Keep desktop fabs as floating buttons */
         }
-
-        /* Mengubah warna font placeholder textarea */
         textarea::placeholder {
-            color: rgba(0, 255, 0, 0.7); /* Warna hijau transparan */
+            color: rgba(0, 255, 0, 0.7);
         }
-
-        /* Styles for website age display */
         #website-age-display {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 0.8em; /* Very small text */
-            color: #00ff00; /* Green color */
-            z-index: 10; /* Ensure it's above other content but below panels */
-            background: none; /* No background */
-            padding: 0; /* No padding */
+            font-size: 0.8em;
+            color: #00ff00;
+            z-index: 10;
+            background: none;
+            padding: 0;
             text-align: center;
-            white-space: nowrap; /* Prevent text wrapping */
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -557,21 +484,18 @@
     <div class="fab-container" id="fab-music">
         <button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button>
     </div>
-    <div class="fab-container" id="fab-contribution"> 
+    <div class="fab-container" id="fab-contribution">
         <button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button>
     </div>
-    <div class="fab-container" id="fab-alkitab"> 
+    <div class="fab-container" id="fab-alkitab">
         <a href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" class="fab" title="Alkitab"><i class="fas fa-book"></i></a>
     </div>
-
     <div class="fab-container" id="fab-live-visitors" style="display: none;">
         <button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button>
     </div>
-
     <div class="fab-container" id="fab-moment-vault">
         <button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button>
     </div>
-
     <div class="panel" id="live-visitors-panel">
         <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
         <div class="live-visitors-content">
@@ -586,7 +510,6 @@
             </div>
         </div>
     </div>
-
     <div class="panel" id="moment-vault-panel">
         <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
         <div class="moment-vault-content">
@@ -605,7 +528,6 @@
             </form>
         </div>
     </div>
-
     <div id="video-player-widget">
         <video id="widget-video" loop src="video.mp4"></video>
         <div class="video-controls">
@@ -616,86 +538,60 @@
     <div class="social-links"> <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="https://instagram.com/I_dont_care_now" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
         </div>
-
     <div id="website-age-display"></div>
-
 <script>
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
-
-// --- NEW CONSTANTS FOR MOMENT VAULT ---
-const MOMENT_VAULT_WORKER_URL = 'https://moment-vault-worker-url.universalezra.workers.dev'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA untuk Moment Vault
-const GITHUB_REPO_OWNER = 'universalezra'; // GANTI dengan username GitHub Anda
-const GITHUB_REPO_NAME = 'universalezra'; // GANTI dengan nama repository GitHub Anda
-const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.workers.dev'; // GANTI dengan URL Cloudflare Worker yang mengurus token GitHub
-
-// Global variable for Live Visitor refresh interval
+const MOMENT_VAULT_WORKER_URL = 'https://moment-vault-worker-url.universalezra.workers.dev';
+const GITHUB_REPO_OWNER = 'universalezra';
+const GITHUB_REPO_NAME = 'universalezra';
+const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.workers.dev';
 let liveVisitorRefreshInterval;
-
-// --- Extracted Configuration ---
-// This variable controls the visibility of the Live Visitors FAB button.
-// Set to 'true' if Ezra is considered logged in, 'false' otherwise.
-// For testing purposes, you might set it directly here.
-let isEzraLoggedIn = true; 
-
+let isEzraLoggedIn = true;
 const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
-const REFRESH_INTERVAL_MS = 5000; // Refresh interval for live visitors
-
+const REFRESH_INTERVAL_MS = 5000;
 document.addEventListener('DOMContentLoaded', () => {
     initPanelControls();
     initVideoPlayer();
     initEditor();
     initMusicPlayer();
-    initWebsiteAgeDisplay(); // Initialize website age display
-
-    // Check Ezra login to show/hide Live Visitors button
-    checkEzraLoginAndShowVisitorsButton(); 
-    trackVisitor(); // Track visitor on page load
+    initWebsiteAgeDisplay();
+    checkEzraLoginAndShowVisitorsButton();
+    trackVisitor();
 });
-
 function initPanelControls() {
     document.querySelectorAll('[data-panel]').forEach(button => {
         button.addEventListener('click', () => {
             const panelId = button.getAttribute('data-panel');
             const panel = document.getElementById(panelId);
-
-            // Toggle active class for the clicked panel
             panel.classList.toggle('active');
-
-            // Handle specific logic for Contribution Panel
             if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
                 fetchContributions();
             }
-            // Handle specific logic for Live Visitors Panel (NEW)
             else if (panelId === 'live-visitors-panel') {
                 if (panel.classList.contains('active')) {
-                    fetchLiveVisitors(); // Fetch data when panel opens
-                    if (isEzraLoggedIn) { // Start refresh only if Ezra is logged in
+                    fetchLiveVisitors();
+                    if (isEzraLoggedIn) {
                         liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
                     }
                 } else {
-                    clearInterval(liveVisitorRefreshInterval); // Stop refresh when panel closed
-                    document.getElementById('visitor-list').innerHTML = ''; // Clear list
+                    clearInterval(liveVisitorRefreshInterval);
+                    document.getElementById('visitor-list').innerHTML = '';
                 }
             }
-            // Handle specific logic for Moment Vault Panel (Gallery only)
             else if (panelId === 'moment-vault-panel') {
                 if (panel.classList.contains('active')) {
-                    fetchMomentVaultGallery(); // Fetch gallery when panel opens
+                    fetchMomentVaultGallery();
                 } else {
-                    document.getElementById('moment-vault-gallery').innerHTML = ''; // Clear gallery
+                    document.getElementById('moment-vault-gallery').innerHTML = '';
                 }
             }
-
-            // Close other panels when one opens (except the one being opened)
             document.querySelectorAll('.panel').forEach(otherPanel => {
                 if (otherPanel.id !== panelId) {
                     otherPanel.classList.remove('active');
-                    // Ensure intervals are cleared if Live Visitors panel closes
                     if (otherPanel.id === 'live-visitors-panel') {
                         clearInterval(liveVisitorRefreshInterval);
                         document.getElementById('visitor-list').innerHTML = '';
                     }
-                    // Ensure gallery clears if Moment Vault panel closes
                     if (otherPanel.id === 'moment-vault-panel') {
                         document.getElementById('moment-vault-gallery').innerHTML = '';
                     }
@@ -703,31 +599,25 @@ function initPanelControls() {
             });
         });
     });
-
     document.querySelectorAll('.panel-close-btn').forEach(button => {
         button.addEventListener('click', () => {
             const panelId = button.getAttribute('data-panel');
             const panel = document.getElementById(panelId);
             panel.classList.remove('active');
-
-            // Stop refresh when Live Visitors panel is closed via the close button
             if (panelId === 'live-visitors-panel') {
                 clearInterval(liveVisitorRefreshInterval);
                 document.getElementById('visitor-list').innerHTML = '';
             }
-            // Clear gallery when Moment Vault panel is closed
             if (panelId === 'moment-vault-panel') {
                 document.getElementById('moment-vault-gallery').innerHTML = '';
             }
         });
     });
 }
-
 function initVideoPlayer() {
     const video = document.getElementById('widget-video');
     const playBtn = document.getElementById('video-play-pause');
     const muteBtn = document.getElementById('video-mute');
-
     playBtn.addEventListener('click', () => {
         if (video.paused) {
             video.play();
@@ -742,7 +632,6 @@ function initVideoPlayer() {
         muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
     });
 }
-
 function initMusicPlayer() {
     const player = document.getElementById('audio-player');
     const playlistEl = document.getElementById('playlist');
@@ -765,7 +654,6 @@ function initMusicPlayer() {
         playlistEl.appendChild(item);
     });
 }
-
 function initEditor() {
     const codeEditor = document.getElementById('unified-code-editor');
     const previewFrame = document.getElementById('editor-preview');
@@ -774,16 +662,12 @@ function initEditor() {
     const loadBtn = document.getElementById('editor-load');
     const newBtn = document.getElementById('editor-new');
     const undoBtn = document.getElementById('editor-undo');
-    const redoBtn = document.getElementById('editor-redo');
-
-    // History stack for Undo/Redo
-    let history = ['']; // Initial empty state
+    const redoBtn = document = document.getElementById('editor-redo');
+    let history = [''];
     let historyPointer = 0;
-
     const updateHistory = () => {
         const currentCode = codeEditor.value;
         if (currentCode !== history[historyPointer]) {
-            // If pointer is not at the end, clear future history
             if (historyPointer < history.length - 1) {
                 history = history.slice(0, historyPointer + 1);
             }
@@ -791,19 +675,14 @@ function initEditor() {
             historyPointer = history.length - 1;
         }
     };
-
     const runCode = () => {
         const fullCode = codeEditor.value;
-        
-        // Extract HTML, CSS, and JS using simple regex (can be improved for robustness)
         const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i);
         const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i);
         const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i);
-
-        const htmlContent = htmlMatch ? htmlMatch[1] : fullCode; // If no body tag, assume it's pure HTML or the whole thing
+        const htmlContent = htmlMatch ? htmlMatch[1] : fullCode;
         const cssContent = cssMatch ? cssMatch[1] : '';
         const jsContent = jsMatch ? jsMatch[1] : '';
-
         const source = `
             <!DOCTYPE html>
             <html>
@@ -818,13 +697,10 @@ function initEditor() {
         `;
         previewFrame.srcdoc = source;
     };
-
     const saveCode = () => {
         localStorage.setItem('unified_editor_code', codeEditor.value);
-        // Mengganti alert() dengan pesan di konsol atau UI kustom
         console.log('Code saved successfully!');
     };
-
     const loadCode = () => {
         codeEditor.value = localStorage.getItem('unified_editor_code') || `
 <!DOCTYPE html>
@@ -847,21 +723,18 @@ function initEditor() {
 <body>
     <h1>Hello Editor</h1>
     <p id="message">Code Here.</p>
-
     <script>
         document.getElementById('message').onclick = function() {
-            // Mengganti alert() dengan pesan di konsol atau UI kustom
             console.log('Paragraph clicked!');
         };
     <\/script>
 </body>
 </html>
         `;
-        runCode(); // Run immediately after loading
-        history = [codeEditor.value]; // Reset history
+        runCode();
+        history = [codeEditor.value];
         historyPointer = 0;
     };
-
     const newDoc = () => {
         codeEditor.value = `
 <!DOCTYPE html>
@@ -887,17 +760,15 @@ function initEditor() {
 <body>
     <h1>Start Coding Here!</h1>
     <script>
-        // Your JavaScript goes here
         console.log("New document loaded.");
     <\/script>
 </body>
 </html>
         `;
         runCode();
-        history = [codeEditor.value]; // Reset history
+        history = [codeEditor.value];
         historyPointer = 0;
     };
-
     const undo = () => {
         if (historyPointer > 0) {
             historyPointer--;
@@ -905,7 +776,6 @@ function initEditor() {
             runCode();
         }
     };
-
     const redo = () => {
         if (historyPointer < history.length - 1) {
             historyPointer++;
@@ -913,21 +783,15 @@ function initEditor() {
             runCode();
         }
     };
-
     runBtn.addEventListener('click', runCode);
     saveBtn.addEventListener('click', saveCode);
     loadBtn.addEventListener('click', loadCode);
     newBtn.addEventListener('click', newDoc);
     undoBtn.addEventListener('click', undo);
     redoBtn.addEventListener('click', redo);
-
-    // Update history on every input
     codeEditor.addEventListener('input', updateHistory);
-
-    // Initial load
     loadCode();
 }
-
 async function fetchContributions() {
     const display = document.getElementById('contribution-display');
     display.innerHTML = `<p>Loading...</p>`;
@@ -948,7 +812,6 @@ async function fetchContributions() {
         display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`;
     }
 }
-
 document.getElementById('contribution-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const statusEl = document.getElementById('contribution-status');
@@ -965,76 +828,56 @@ document.getElementById('contribution-form').addEventListener('submit', async (e
         statusEl.textContent = `Error: ${err.message}`;
     }
 });
-
 function initWebsiteAgeDisplay() {
     const websiteAgeDisplay = document.getElementById('website-age-display');
-    // Set your website's creation date here (Year, Month (0-11), Day, Hour, Minute, Second)
-    const creationDate = new Date(2025, 5, 21, 0, 0, 0); // January 17, 2024 at 05:10:00 AM
-
+    const creationDate = new Date(2025, 5, 21, 0, 0, 0);
     function updateWebsiteAge() {
         const now = new Date();
-        const diff = now.getTime() - creationDate.getTime(); // Difference in milliseconds
-
+        const diff = now.getTime() - creationDate.getTime();
         const seconds = Math.floor(diff / 1000);
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
-        
-        const years = Math.floor(days / 365.25); // Account for leap years
+        const years = Math.floor(days / 365.25);
         const remainingDaysAfterYears = Math.floor(days % 365.25);
-
-        const months = Math.floor(remainingDaysAfterYears / 30.44); // Average days in a month
+        const months = Math.floor(remainingDaysAfterYears / 30.44);
         const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
-
         const displaySeconds = seconds % 60;
         const displayMinutes = minutes % 60;
         const displayHours = hours % 24;
-        
         let ageString = '';
         if (years > 0) ageString += `${years} T, `;
-        if (months > 0 || years > 0) ageString += `${months} B, `; // Show months if years exist or months themselves
+        if (months > 0 || years > 0) ageString += `${months} B, `;
         ageString += `${remainingDaysAfterMonths} H, `;
         ageString += `${displayHours.toString().padStart(2, '0')}:`;
         ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
         ageString += `${displaySeconds.toString().padStart(2, '0')}`;
-
         websiteAgeDisplay.textContent = `Age: ${ageString}`;
     }
-
-    updateWebsiteAge(); // Initial display
-    setInterval(updateWebsiteAge, 1000); // Update every second
+    updateWebsiteAge();
+    setInterval(updateWebsiteAge, 1000);
 }
-
-
-// Function to control the visibility of the Live Visitors FAB button
 function checkEzraLoginAndShowVisitorsButton() {
     const fabLiveVisitors = document.getElementById('fab-live-visitors');
     if (isEzraLoggedIn) {
-        fabLiveVisitors.style.display = 'flex'; // Show the button
+        fabLiveVisitors.style.display = 'flex';
     } else {
-        fabLiveVisitors.style.display = 'none'; // Hide the button
+        fabLiveVisitors.style.display = 'none';
     }
 }
-
-// Function to handle fetching and displaying live visitor data
 async function fetchLiveVisitors() {
     const visitorList = document.getElementById('visitor-list');
     const lastUpdatedTime = document.getElementById('last-updated-time');
-    
-    // Display loading message if the list is empty
     if (!visitorList.innerHTML.trim()) {
-        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors...</li>'; 
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors...</li>';
     }
-    
     try {
-        const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true'); 
+        const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const visitors = await response.json();
-
         if (visitors && visitors.length > 0) {
-            // Map visitor data to HTML list items
             visitorList.innerHTML = visitors.map(visitor => {
                 const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
                     hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -1051,16 +894,13 @@ async function fetchLiveVisitors() {
         } else {
             visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No visitors online.</li>';
         }
-        lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID'); // Update last refreshed time
-
+        lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
     } catch (error) {
         console.error('Error fetching live visitors:', error);
         visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed to load visitors.</li>';
         lastUpdatedTime.textContent = 'Error';
     }
 }
-
-// Function to get or generate a unique browser ID for visitor tracking
 function getBrowserId() {
     let browserId = localStorage.getItem('unique_browser_id');
     if (!browserId) {
@@ -1069,13 +909,10 @@ function getBrowserId() {
     }
     return browserId;
 }
-
-// Function to track the current visitor and send data to the backend
 async function trackVisitor() {
     try {
         const browserId = getBrowserId();
         let ipAddress = 'unknown';
-
         try {
             const ipResponse = await fetch('https://api.ipify.org?format=json');
             const ipData = await ipResponse.json();
@@ -1083,47 +920,36 @@ async function trackVisitor() {
         } catch (ipError) {
             console.warn('Could not fetch IP address:', ipError);
         }
-
         const data = {
             browserId: browserId,
             ip: ipAddress,
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString()
         };
-
         fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         }).catch(e => console.error("Error sending to live visitors worker:", e));
-
     } catch(e) {
         console.error('Error in trackVisitor:', e);
     }
 }
-
-
-// --- EXISTING FUNCTION: fetchMomentVaultGallery ---
 async function fetchMomentVaultGallery() {
     const galleryContainer = document.getElementById('moment-vault-gallery');
     galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading gallery items...</p>';
-
     try {
         const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const items = await response.json();
-
         if (items && items.length > 0) {
-            // Sort by timestamp (most recent first)
             items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
             galleryContainer.innerHTML = items.map(item => {
                 let mediaHTML = '';
                 let fileExtension = item.fileUrl.split('.').pop().toLowerCase();
                 let iconClass = '';
-
                 if (item.fileType && item.fileType.startsWith('image/')) {
                     mediaHTML = `<img src="${item.fileUrl}" alt="${item.title}">`;
                 } else if (item.fileType && item.fileType.startsWith('video/')) {
@@ -1131,19 +957,16 @@ async function fetchMomentVaultGallery() {
                 } else if (item.fileType && item.fileType.startsWith('audio/')) {
                     mediaHTML = `<audio src="${item.fileUrl}" controls></audio>`;
                 } else {
-                    // Handle generic files (documents, text)
                     if (fileExtension === 'pdf') iconClass = 'fa-file-pdf';
                     else if (fileExtension.startsWith('doc')) iconClass = 'fa-file-word';
                     else if (fileExtension === 'txt') iconClass = 'fa-file-alt';
-                    else iconClass = 'fa-file'; // Default file icon
+                    else iconClass = 'fa-file';
                     mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`;
                 }
-
                 const timestamp = new Date(item.timestamp).toLocaleString('id-ID', {
                     day: '2-digit', month: '2-digit', year: 'numeric',
                     hour: '2-digit', minute: '2-digit'
                 });
-
                 return `
                     <div class="gallery-item" data-id="${item.id}">
                         <div class="gallery-media">
@@ -1159,8 +982,6 @@ async function fetchMomentVaultGallery() {
                     </div>
                 `;
             }).join('');
-
-            // Add event listeners for edit and delete buttons
             galleryContainer.querySelectorAll('.edit-moment-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const itemId = e.target.closest('.gallery-item').dataset.id;
@@ -1173,7 +994,6 @@ async function fetchMomentVaultGallery() {
                     deleteMoment(itemId);
                 });
             });
-
         } else {
             galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No moments uploaded yet. Be the first!</p>';
         }
@@ -1182,29 +1002,21 @@ async function fetchMomentVaultGallery() {
         galleryContainer.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>';
     }
 }
-
-// Event listener for moment upload form (remains the same)
 document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
-
-// --- EXISTING FUNCTION: uploadMoment ---
 async function uploadMoment(e) {
     e.preventDefault();
     const statusEl = document.getElementById('moment-upload-status');
     statusEl.textContent = 'Uploading moment...';
     statusEl.style.color = 'var(--text-secondary)';
-
     const title = document.getElementById('moment-title').value;
     const description = document.getElementById('moment-description').value;
     const fileInput = document.getElementById('moment-file');
     const file = fileInput.files[0];
-
     if (!file || !title) {
         statusEl.textContent = 'Title and file are required!';
         statusEl.style.color = 'var(--danger)';
         return;
     }
-
-    // 1. Get GitHub Token from Worker
     let githubToken;
     try {
         const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
@@ -1218,14 +1030,10 @@ async function uploadMoment(e) {
         statusEl.style.color = 'var(--danger)';
         return;
     }
-
-    // 2. Upload file to GitHub
     try {
         const filePath = `moments/${Date.now()}-${file.name}`;
         const fileContent = await readFileAsBase64(file);
-
         const githubApiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
-
         const uploadResponse = await fetch(githubApiUrl, {
             method: 'PUT',
             headers: {
@@ -1235,19 +1043,15 @@ async function uploadMoment(e) {
             body: JSON.stringify({
                 message: `Upload moment: ${title}`,
                 content: fileContent,
-                branch: 'main' // Or your default branch
+                branch: 'main'
             })
         });
-
         if (!uploadResponse.ok) {
             const errorText = await uploadResponse.text();
             throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${errorText}`);
         }
-
         const uploadData = await uploadResponse.json();
-        const rawFileUrl = uploadData.content.download_url; // Direct URL to the file
-
-        // 3. Save moment metadata to Cloudflare KV via Moment Vault Worker
+        const rawFileUrl = uploadData.content.download_url;
         const momentData = {
             id: 'moment_' + Math.random().toString(36).substr(2, 9) + Date.now(),
             title: title,
@@ -1256,100 +1060,76 @@ async function uploadMoment(e) {
             fileType: file.type,
             timestamp: new Date().toISOString()
         };
-
         const kvSaveResponse = await fetch(MOMENT_VAULT_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(momentData)
         });
-
         if (!kvSaveResponse.ok) {
             throw new Error('Failed to save moment metadata to KV');
         }
-
         statusEl.textContent = 'Moment uploaded successfully!';
         statusEl.style.color = 'var(--success)';
-        e.target.reset(); // Clear form
-        fetchMomentVaultGallery(); // Refresh gallery
-
+        e.target.reset();
+        fetchMomentVaultGallery();
     } catch (error) {
         console.error('Error uploading moment:', error);
         statusEl.textContent = `Error uploading moment: ${error.message}`;
         statusEl.style.color = 'var(--danger)';
     }
 }
-
-// Helper function to read file as Base64 (remains the same)
 function readFileAsBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]); // Get only the base64 part
+        reader.onload = () => resolve(reader.result.split(',')[1]);
         reader.onerror = error => reject(error);
         reader.readAsDataURL(file);
     });
 }
-
-// --- EXISTING FUNCTION: editMoment ---
 async function editMoment(itemId, currentItems) {
     const itemToEdit = currentItems.find(item => item.id === itemId);
     if (!itemToEdit) return;
-
-    // Mengganti prompt() dengan UI kustom jika diperlukan
     const newTitle = prompt('Edit Title:', itemToEdit.title);
-    if (newTitle === null) return; // User cancelled
-
-    // Mengganti prompt() dengan UI kustom jika diperlukan
+    if (newTitle === null) return;
     const newDescription = prompt('Edit Description:', itemToEdit.description);
-    if (newDescription === null) return; // User cancelled
-
-    const statusEl = document.getElementById('moment-upload-status'); // Reuse status element
+    if (newDescription === null) return;
+    const statusEl = document.getElementById('moment-upload-status');
     statusEl.textContent = 'Updating moment...';
     statusEl.style.color = 'var(--text-secondary)';
-
     try {
         const updatedMomentData = {
             id: itemId,
             title: newTitle,
             description: newDescription,
-            // fileUrl and fileType remain the same unless re-uploaded
             fileUrl: itemToEdit.fileUrl,
             fileType: itemToEdit.fileType,
-            timestamp: itemToEdit.timestamp // Keep original timestamp
+            timestamp: itemToEdit.timestamp
         };
-
         const response = await fetch(MOMENT_VAULT_WORKER_URL, {
-            method: 'PUT', // Assuming your worker supports PUT for updates
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedMomentData)
         });
-
         if (!response.ok) {
             throw new Error('Failed to update moment metadata');
         }
-
         statusEl.textContent = 'Moment updated successfully!';
         statusEl.style.color = 'var(--success)';
-        fetchMomentVaultGallery(); // Refresh gallery
+        fetchMomentVaultGallery();
     } catch (error) {
         console.error('Error updating moment:', error);
         statusEl.textContent = `Error updating moment: ${error.message}`;
         statusEl.style.color = 'var(--danger)';
     }
 }
-
-// --- EXISTING FUNCTION: deleteMoment ---
 async function deleteMoment(itemId) {
-    // Mengganti confirm() dengan UI kustom jika diperlukan
     if (!confirm('Are you sure you want to delete this moment? This action cannot be undone.')) {
         return;
     }
-
     const statusEl = document.getElementById('moment-upload-status');
     statusEl.textContent = 'Deleting moment...';
     statusEl.style.color = 'var(--text-secondary)';
-
     try {
-        // First, get GitHub token
         let githubToken;
         try {
             const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
@@ -1363,29 +1143,21 @@ async function deleteMoment(itemId) {
             statusEl.style.color = 'var(--danger)';
             return;
         }
-
-        // Fetch all moments to find the file path to delete from GitHub
         const galleryResponse = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
         if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
         const galleryItems = await galleryResponse.json();
         const itemToDelete = galleryItems.find(item => item.id === itemId);
-
         if (!itemToDelete || !itemToDelete.fileUrl) {
             throw new Error('Moment or its file URL not found.');
         }
-
-        // Extract file path from rawFileUrl for GitHub API
         let filePathOnGithub;
-        const rawGithubContentBase = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/`; // Assuming 'main' branch
+        const rawGithubContentBase = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/`;
         if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) {
             filePathOnGithub = itemToDelete.fileUrl.substring(rawGithubContentBase.length);
         } else {
             console.warn("Unexpected file URL format, attempting fallback path extraction:", itemToDelete.fileUrl);
-            filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`; // Fallback to moments/filename.ext
+            filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`;
         }
-
-
-        // Fetch SHA of the file to be deleted (required by GitHub API for delete)
         const githubApiGetFileUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
         const getFileResponse = await fetch(githubApiGetFileUrl, {
             headers: {
@@ -1399,8 +1171,6 @@ async function deleteMoment(itemId) {
         }
         const fileMetaData = await getFileResponse.json();
         const fileSha = fileMetaData.sha;
-
-        // Delete file from GitHub
         const githubDeleteUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
         const deleteResponse = await fetch(githubDeleteUrl, {
             method: 'DELETE',
@@ -1411,27 +1181,22 @@ async function deleteMoment(itemId) {
             body: JSON.stringify({
                 message: `Delete moment: ${itemToDelete.title}`,
                 sha: fileSha,
-                branch: 'main' // Or your default branch
+                branch: 'main'
             })
         });
-
         if (!deleteResponse.ok) {
             const errorText = await deleteResponse.text();
             throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`);
         }
-
-        // Delete metadata from Cloudflare KV via Moment Vault Worker
         const kvDeleteResponse = await fetch(MOMENT_VAULT_WORKER_URL + `?delete_moment_id=${itemId}`, {
-            method: 'DELETE' // Assuming your worker supports DELETE with query param
+            method: 'DELETE'
         });
-
         if (!kvDeleteResponse.ok) {
             throw new Error('Failed to delete moment metadata from KV');
         }
-
         statusEl.textContent = 'Moment deleted successfully!';
         statusEl.style.color = 'var(--success)';
-        fetchMomentVaultGallery(); // Refresh gallery
+        fetchMomentVaultGallery();
     } catch (error) {
         console.error('Error deleting moment:', error);
         statusEl.textContent = `Error deleting moment: ${error.message}`;
