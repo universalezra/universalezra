@@ -503,7 +503,7 @@
         <div class="central-message">
         </div>
           <div class="central-message">
-            <h3><a href="https://universalezra.netlify.app/elvi.html" class="ezra-link">ezra</a></h3>
+            <h3><a href="elvi.html" class="ezra-link">ezra</a></h3>
           </div>
         <div class="panel" id="contribution-panel-desktop" style="display: none;">
         </div>
@@ -621,7 +621,6 @@
 
 <script>
 const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
-const REFRESH_INTERVAL_MS = 5000; // Refresh data every 5 seconds for live visitors
 
 // --- NEW CONSTANTS FOR MOMENT VAULT ---
 const MOMENT_VAULT_WORKER_URL = 'https://moment-vault-worker-url.universalezra.workers.dev'; // GANTI DENGAN URL CLOUDFLARE WORKER ANDA untuk Moment Vault
@@ -636,9 +635,10 @@ let liveVisitorRefreshInterval;
 // This variable controls the visibility of the Live Visitors FAB button.
 // Set to 'true' if Ezra is considered logged in, 'false' otherwise.
 // For testing purposes, you might set it directly here.
-let isEzraLoggedIn = false; // Changed from localStorage.getItem to a direct boolean for this context
+let isEzraLoggedIn = false; 
 
 const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
+const REFRESH_INTERVAL_MS = 5000; // Refresh interval for live visitors
 
 document.addEventListener('DOMContentLoaded', () => {
     initPanelControls();
@@ -1022,12 +1022,12 @@ async function fetchLiveVisitors() {
     const lastUpdatedTime = document.getElementById('last-updated-time');
     
     // Display loading message if the list is empty
-    if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading')) {
-        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors...</li>';
+    if (!visitorList.innerHTML.trim()) {
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors...</li>'; 
     }
     
     try {
-        const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true');
+        const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true'); 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -1044,7 +1044,6 @@ async function fetchLiveVisitors() {
                     <li>
                         <strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}...</span><br>
                         <strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br>
-                        <strong>User Agent:</strong> <span>${visitor.userAgent ? visitor.userAgent.substring(0, 50) + '...' : 'N/A'}</span><br>
                         <strong>Waktu:</strong> <span>${timestamp}</span>
                     </li>
                 `;
