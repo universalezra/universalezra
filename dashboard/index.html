@@ -499,7 +499,7 @@
         <div class="live-visitors-content">
             <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Live Visitors</h3>
             <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
-                <p style="text-align: center; color: var(--text-secondary);">Load visitor</p>
+                <p style="text-align: center; color: var(--text-secondary);">visitor</p>
                 <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0;">
                 </ul>
             </div>
@@ -889,7 +889,7 @@ async function fetchLiveVisitors() {
                 });
                 return `
                     <li>
-                        <strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}...</span><br>
+                        <strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}</span><br>
                         <strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br>
                         <strong>Waktu:</strong> <span>${timestamp}</span>
                     </li>
@@ -1186,8 +1186,7 @@ async function deleteMoment(itemId) {
                 message: `Delete moment: ${itemToDelete.title}`,
                 sha: fileSha,
                 branch: 'main'
-            })
-        });
+            })});
         if (!deleteResponse.ok) {
             const errorText = await deleteResponse.text();
             throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`);
@@ -1205,8 +1204,7 @@ async function deleteMoment(itemId) {
         console.error('Error deleting moment:', error);
         statusEl.textContent = `Error deleting moment: ${error.message}`;
         statusEl.style.color = 'var(--danger)';
-    }
-}
+}}
 </script>
 </body>
 </html>
