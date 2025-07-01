@@ -504,7 +504,7 @@
                 </ul>
             </div>
             <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary);">
-                Last updated: <span id="last-updated-time">N/A</span>
+                updated: <span id="last-updated-time">N/A</span>
             </div>
         </div>
     </div>
@@ -518,8 +518,8 @@
                 </div>
             </div>
             <form id="moment-upload-form">
-                <input type="text" id="moment-title" placeholder="Moment Title" required>
-                <textarea id="moment-description" placeholder="Describe your moment..." rows="3"></textarea>
+                <input type="text" id="moment-title" placeholder="Title" required>
+                <textarea id="moment-description" placeholder="Describe" rows="3"></textarea>
                 <input type="file" id="moment-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" required>
                 <button type="submit">Upload</button>
                 <p id="moment-upload-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
@@ -574,7 +574,7 @@ function initPanelControls() {
                         document.getElementById('visitor-list').innerHTML = '';
                     }
                 } else {
-                    alert("Incorrect password!");
+                    alert("Incorrect or blank password!");
                     isEzraLoggedIn = false;
                     return; 
                 }
@@ -706,7 +706,7 @@ function initEditor() {
     };
     const saveCode = () => {
         localStorage.setItem('unified_editor_code', codeEditor.value);
-        console.log('Code saved successfully!');
+        console.log('Code saved successfully');
     };
     const loadCode = () => {
         codeEditor.value = localStorage.getItem('unified_editor_code') || `
@@ -729,7 +729,7 @@ function initEditor() {
 </head>
 <body>
     <h1>Hello Editor</h1>
-    <p id="message">Code Here.</p>
+    <p id="message">Code Here</p>
     <script>
         document.getElementById('message').onclick = function() {
             console.log('Paragraph clicked!');
@@ -765,7 +765,7 @@ function initEditor() {
     </style>
 </head>
 <body>
-    <h1>Start Coding Here!</h1>
+    <h1>Start Coding Here!l</h1>
     <script>
         console.log("New document loaded.");
     <\/script>
@@ -813,7 +813,7 @@ async function fetchContributions() {
                 </div>`;
             }).join('');
         } else {
-            display.innerHTML = `<p>Be the first to leave a message!</p>`;
+            display.innerHTML = `<p>Be the first to leave a message</p>`;
         }
     } catch (e) {
         display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`;
@@ -999,7 +999,7 @@ async function fetchMomentVaultGallery() {
                 });
             });
         } else {
-            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No moments uploaded yet</p>';
+            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No uploaded yet</p>';
         }
     } catch (error) {
         console.error('Error fetching Moment Vault gallery:', error);
@@ -1117,7 +1117,7 @@ async function editMoment(itemId, currentItems) {
         if (!response.ok) {
             throw new Error('Failed to update moment metadata');
         }
-        statusEl.textContent = 'Moment updated successfully!';
+        statusEl.textContent = 'successfully';
         statusEl.style.color = 'var(--success)';
         fetchMomentVaultGallery();
     } catch (error) {
@@ -1152,7 +1152,7 @@ async function deleteMoment(itemId) {
         const galleryItems = await galleryResponse.json();
         const itemToDelete = galleryItems.find(item => item.id === itemId);
         if (!itemToDelete || !itemToDelete.fileUrl) {
-            throw new Error('Moment or its file URL not found.');
+            throw new Error('its file URL not found.');
         }
         let filePathOnGithub;
         const rawGithubContentBase = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/`;
