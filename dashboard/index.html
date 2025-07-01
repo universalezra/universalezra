@@ -546,17 +546,16 @@ const GITHUB_REPO_OWNER = 'universalezra';
 const GITHUB_REPO_NAME = 'universalezra';
 const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.workers.dev';
 let liveVisitorRefreshInterval;
-let isEzraLoggedIn = sessionStorage.getItem('ezraLoggedIn') === 'true'; 
+let isEzraLoggedIn = true;
 const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
 const REFRESH_INTERVAL_MS = 5000;
-const LIVE_VISITOR_PASSWORD = 'v';
 document.addEventListener('DOMContentLoaded', () => {
     initPanelControls();
     initVideoPlayer();
     initEditor();
     initMusicPlayer();
     initWebsiteAgeDisplay();
-    checkEzraLoginAndShowVisitorsButton(); 
+    checkEzraLoginAndShowVisitorsButton();
     trackVisitor();
 });
 function initPanelControls() {
@@ -564,43 +563,29 @@ function initPanelControls() {
         button.addEventListener('click', () => {
             const panelId = button.getAttribute('data-panel');
             const panel = document.getElementById(panelId);
-
-            if (panelId === 'live-visitors-panel') {
-                if (!isEzraLoggedIn) {
-                    const password = prompt('Enter password to access Live Visitors:');
-                    if (password === LIVE_VISITOR_PASSWORD) {
-                        isEzraLoggedIn = true;
-                        sessionStorage.setItem('ezraLoggedIn', 'true');
-                        panel.classList.toggle('active');
-                        fetchLiveVisitors();
-                        liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
-                    } else {
-                        alert('Incorrect password!');
-                        return;
-                    }
-                } else {
-                    panel.classList.toggle('active');
-                    if (panel.classList.contains('active')) {
-                        fetchLiveVisitors();
-                        liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
-                    } else {
-                        clearInterval(liveVisitorRefreshInterval);
-                        document.getElementById('visitor-list').innerHTML = '';
-                    }
-                }
-            } else {
-                panel.classList.toggle('active');
-                if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
-                    fetchContributions();
-                } else if (panelId === 'moment-vault-panel') {
-                    if (panel.classList.contains('active')) {
-                        fetchMomentVaultGallery();
-                    } else {
-                        document.getElementById('moment-vault-gallery').innerHTML = '';
-                    }
-                }
-            }     
-            document.querySelectorAll('.panel').forEach(otherPanel => {
+            panel.classList.toggle('active');
+            if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
+                fetchContributions();
+            }
+            else if (panelId === 'live-visitors-panel') {
+                if (panel.classList.contains('active')) {
+                    fetchLiveVisitors();
+                    if (isEzraLoggedIn) {
+                        liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
+                    }
+                } else {
+                    clearInterval(liveVisitorRefreshInterval);
+                    document.getElementById('visitor-list').innerHTML = '';
+                }
+            }
+            else if (panelId === 'moment-vault-panel') {
+                if (panel.classList.contains('active')) {
+                    fetchMomentVaultGallery();
+                } else {
+                    document.getElementById('moment-vault-gallery').innerHTML = '';
+                }
+            }
+            document.querySelectorAll('.panel').forEach(otherPanel => {
                 if (otherPanel.id !== panelId) {
                     otherPanel.classList.remove('active');
                     if (otherPanel.id === 'live-visitors-panel') {
@@ -677,7 +662,7 @@ function initEditor() {
     const loadBtn = document.getElementById('editor-load');
     const newBtn = document.getElementById('editor-new');
     const undoBtn = document.getElementById('editor-undo');
-    const redoBtn = document.getElementById('editor-redo');
+    const redoBtn = document.getElementById('editor-redo'); // Corrected line
     let history = [''];
     let historyPointer = 0;
     const updateHistory = () => {
@@ -714,6 +699,7 @@ function initEditor() {
     };
     const saveCode = () => {
         localStorage.setItem('unified_editor_code', codeEditor.value);
+        console.log('Code saved successfully!');
     };
     const loadCode = () => {
         codeEditor.value = localStorage.getItem('unified_editor_code') || `
@@ -873,7 +859,11 @@ function initWebsiteAgeDisplay() {
 }
 function checkEzraLoginAndShowVisitorsButton() {
     const fabLiveVisitors = document.getElementById('fab-live-visitors');
-    fabLiveVisitors.style.display = 'flex'; 
+    if (isEzraLoggedIn) {
+        fabLiveVisitors.style.display = 'flex';
+    } else {
+        fabLiveVisitors.style.display = 'none';
+    }
 }
 async function fetchLiveVisitors() {
     const visitorList = document.getElementById('visitor-list');
@@ -1212,7 +1202,6 @@ async function deleteMoment(itemId) {
         statusEl.textContent = `Error deleting moment: ${error.message}`;
         statusEl.style.color = 'var(--danger)';
     }
-}
-</script>
+    </script>
 </body>
 </html>
