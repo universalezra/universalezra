@@ -2127,9 +2127,6 @@
                     particle.style.top = `calc(50% + ${startY}px)`;
                     particle.style.animation = `wormholeZoomIn ${duration}s linear ${delay}s forwards`;
                     particle.style.setProperty('--random-hue', `${Math.random() * 360}deg`); 
-                    
-                    wormholeOverlay.appendChild(particle);
-
                     particle.addEventListener('animationend', () => {
                         particle.remove();
                     });
