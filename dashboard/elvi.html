@@ -1584,7 +1584,7 @@
             const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
             const uploadCancelBtn = document.getElementById('uploadCancelBtn');
             // Tambahkan fungsi pembantu untuk mendapatkan cookie
-getCookie(name) {
+getCookie(name) 
     const nameEQ = name + "=";
     const ca = document.cookie.split(';');
     for(let i=0; i < ca.length; i++) {
@@ -1597,6 +1597,7 @@ getCookie(name) {
 
 // Panggil di tempat Anda ingin memeriksa status login
 const isLoggedIn = this.getCookie(this.securityConfig.localStorageKey) === 'true';
+            
             if (isLoggedIn) {
             // Jika login, sembunyikan overlay autentikasi
             if (authOverlay) {
