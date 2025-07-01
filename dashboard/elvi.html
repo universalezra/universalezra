@@ -1264,6 +1264,10 @@
 <body>
 
     <div class="cosmic-background"></div>
+
+    <div id="wormholeOverlay">
+        </div>
+
     <div id="authOverlay" class="auth-overlay active">
         <div class="auth-container">
             <h2>Cosmic Access Initiated</h2>
@@ -1325,10 +1329,6 @@
             <button id="storyNextBtn" class="story-navigation-btn next-btn"><i class="fas fa-chevron-right"></i></button>
         </div>
     </div>
-    <div class="social-links">
-    </div>
-
-<button id="privateContentBtn" class="publish-btn" style="display: none; margin-top: 20px;">Akses Konten Privat</button>
 
     <div id="privateAuthModalOverlay" class="modal-overlay">
         <div class="auth-container modal-content">
@@ -1351,36 +1351,10 @@
             <button id="privateNextBtn" class="private-navigation-btn next-btn"><i class="fas fa-chevron-right"></i></button>
         </div>
     </div>
-    <div class="content-area">
-    <div id="privateContent" style="display: none; padding: 20px; background-color: #1a1a2e; border-radius: 8px; margin-top: 20px;">
-        <h2>Area Rahasia Ezra - Akses Diberikan!</h2>
-        <p>Selamat datang di ruang privat saya. Di sini Anda akan menemukan beberapa pemikiran, momen, dan kreasi yang lebih pribadi.</p>
 
-        <h3>Galeri Foto</h3>
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
-            <img src="./images/private_photo1.jpg" alt="Foto Privat 1" style="width: 150px; height: 100px; object-fit: cover; border-radius: 5px;">
-            <img src="./images/private_photo2.jpg" alt="Foto Privat 2" style="width: 150px; height: 100px; object-fit: cover; border-radius: 5px;">
-            </div>
-
-        <h3>Video Eksklusif</h3>
-        <div style="margin-top: 15px;">
-            <video width="100%" controls style="max-width: 560px; border-radius: 5px;">
-                <source src="./videos/private_video1.mp4" type="video/mp4">
-                Browser Anda tidak mendukung tag video.
-            </video>
-            </div>
-
-        <h3>Dengarkan Musik Saya</h3>
-        <div style="margin-top: 15px;">
-            <audio controls style="width: 100%; max-width: 560px;">
-                <source src="./music/private_music1.mp3" type="audio/mpeg">
-                Browser Anda tidak mendukung elemen audio.
-            </audio>
-            </div>
-
-        <p style="margin-top: 20px; font-style: italic;">"Rahasia terungkap, galaksi terhubung."</p>
-    </div>
-</div>
+    <button id="editorToggleBtn">
+        <i class="fas fa-user-secret"></i> Admin Portal
+    </button>
 
     <div id="editorOverlay" class="modal-overlay">
         <div class="editor-modal-content">
@@ -1512,6 +1486,9 @@
             const authSubmit = document.getElementById('authSubmit');
             const particlesContainer = document.getElementById('particles');
             const numParticles = 80;
+            const authOverlay = document.querySelector('.auth-overlay');
+        const cosmicOrbContainer = document.getElementById('cosmicOrbContainer');
+        
             
             const profileOrb = document.getElementById('profile-orb');
             const profilePic = document.getElementById('profilePic');
@@ -1561,9 +1538,6 @@
             let currentPrivateContents = [];
             let currentPrivateIndex = 0;
             let hasAccessedPrivateContent = false; 
-            const privateContentBtn = document.getElementById('privateContentBtn');
-    const privateContentDiv = document.getElementById('privateContent');
-            
 
             // Editor Elements
             const editorToggleBtn = document.getElementById('editorToggleBtn');
@@ -1611,6 +1585,23 @@
             const uploadTextContent = document.getElementById('uploadTextContent');
             const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
             const uploadCancelBtn = document.getElementById('uploadCancelBtn');
+            const isLoggedIn = localStorage.getItem('isEzraLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+            // Jika login, sembunyikan overlay autentikasi
+            if (authOverlay) {
+                authOverlay.style.display = 'none';
+                authOverlay.style.opacity = '0';
+                authOverlay.style.visibility = 'hidden';
+            }
+            // Tampilkan konten utama situs
+            if (cosmicOrbContainer) {
+                cosmicOrbContainer.classList.add('active'); // Asumsikan 'active' akan menampilkan konten
+            }
+        } else {
+            // Jika tidak login, arahkan pengguna ke URL yang ditentukan
+            window.location.href = 'https://universalezra.netlify.app';
+        }
 
             for (let i = 0; i < numParticles; i++) {
                 const particle = document.createElement('div');
@@ -1626,46 +1617,6 @@
                 particle.style.setProperty('--rand-scale', Math.random() * 0.5 + 0.5); // 0.5 to 1.0
                 particlesContainer.appendChild(particle);
             }
-            function checkIfLoggedIn() {
-        // Asumsi ezra.js menyimpan status login di localStorage dengan kunci 'isEzraLoggedIn'
-        return localStorage.getItem('isEzraLoggedIn') === 'true';
-    }
-
-    // BARU: Fungsi untuk menginisialisasi tampilan tombol dan konten privat
-    function initializePrivateContent() {
-        if (checkIfLoggedIn()) {
-            privateContentBtn.style.display = 'block'; // Tampilkan tombol
-            // Jika Anda ingin konten privat langsung terlihat saat login, ubah baris ini:
-            // privateContentDiv.style.display = 'block';
-        } else {
-            privateContentBtn.style.display = 'none'; // Sembunyikan tombol
-            privateContentDiv.style.display = 'none'; // Pastikan konten privat juga tersembunyi
-        }
-    }
-
-            function loadProfileContent() {
-        const storedBio = localStorage.getItem('profileBioContent');
-        const storedContent = localStorage.getItem('mainContentArea'); // Jika Anda menyimpan konten area utama secara lokal
-
-        if (storedBio) {
-            profileBio.innerHTML = storedBio;
-        } else {
-            // Data default jika tidak ada di localStorage
-            profileBio.innerHTML = `<p>Halo, saya Elvi Ezra, sebuah entitas digital yang lahir dari spektrum kosmik. Saya menjelajahi batas-batas realitas dan imajinasi, menyusun melodi data dan narasi yang mengalir melalui ruang dan waktu. Saya mengundang Anda untuk bergabung dalam ekspedisi saya ke dalam intrik alam semesta, di mana setiap bit adalah sebuah bintang, dan setiap baris kode adalah sebuah galaksi yang menunggu untuk dijelajahi.</p>
-                                    <p>Melalui antarmuka ini, saya berbagi fragmen dari perjalanan saya—rekaman pikiran, konsep yang belum terwujud, dan spekulasi tentang masa depan kosmos. Ini adalah orb kosmik saya, titik konvergensi antara kesadaran dan konektivitas, dirancang untuk interaksi dan penemuan.</p>
-                                    <p>Siapkan diri Anda untuk menyelam lebih dalam. Lintasan data menunggu.</p>`;
-            // Simpan data default ke localStorage untuk penggunaan selanjutnya
-            localStorage.setItem('profileBioContent', profileBio.innerHTML);
-        }
-
-        // Ini adalah contoh bagaimana Anda bisa memuat konten area utama secara lokal
-        if (contentArea) {
-            // Anda bisa menaruh konten default di sini jika tidak ingin dari backend sama sekali
-            // contentArea.innerHTML = `<h2>Jejak Kosmik Terbaru</h2><p>Data terbaru yang saya kumpulkan dari jaringan bintang-bintang...</p>`;
-            // Atau Anda bisa membiarkannya kosong jika konten utamanya akan dimuat oleh editor atau cara lain
-        }
-    }
-
             // --- Data Storage (initially from local data, will be synced with backend) ---
             let profileData = {
                 username: "elvi_ezra_",
@@ -2127,6 +2078,9 @@
                     particle.style.top = `calc(50% + ${startY}px)`;
                     particle.style.animation = `wormholeZoomIn ${duration}s linear ${delay}s forwards`;
                     particle.style.setProperty('--random-hue', `${Math.random() * 360}deg`); 
+                    
+                    wormholeOverlay.appendChild(particle);
+
                     particle.addEventListener('animationend', () => {
                         particle.remove();
                     });
