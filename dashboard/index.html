@@ -471,7 +471,7 @@
                 <p>Loading messages</p>
             </div>
             <form id="contribution-form">
-                <textarea id="contribution-text" placeholder="Your message..." required style="width:100%; min-height: 80px; background:rgba(0,0,0,0.2); color:var(--text-primary); border:1px solid var(--border-color); border-radius:5px; padding:10px;"></textarea>
+                <textarea id="contribution-text" placeholder="Your message" required style="width:100%; min-height: 80px; background:rgba(0,0,0,0.2); color:var(--text-primary); border:1px solid var(--border-color); border-radius:5px; padding:10px;"></textarea>
                 <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:10px;"> <button type="submit" class="fab" style="position:static; width:45px; height:45px; font-size:1.1rem;"><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <p id="contribution-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
@@ -499,29 +499,29 @@
     <div class="panel" id="live-visitors-panel">
         <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
         <div class="live-visitors-content">
-            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Live Visitors (Last 1 Hour)</h3>
+            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Live Visitors</h3>
             <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
-                <p style="text-align: center; color: var(--text-secondary);">Loading live visitors...</p>
+                <p style="text-align: center; color: var(--text-secondary);">Loading live visitors</p>
                 <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0;">
                 </ul>
             </div>
             <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary);">
-                Last updated: <span id="last-updated-time">N/A</span>
+                Last updated: <span id="last-updated-time">unknown</span>
             </div>
         </div>
     </div>
     <div class="panel" id="moment-vault-panel">
         <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
         <div class="moment-vault-content">
-            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Moment Gallery</h3>
+            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center;">Gallery</h3>
             <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
-                <p style="text-align: center; color: var(--text-secondary);">Loading moments...</p>
+                <p style="text-align: center; color: var(--text-secondary);">Memories</p>
                 <div id="moment-vault-gallery">
                 </div>
             </div>
             <form id="moment-upload-form">
                 <input type="text" id="moment-title" placeholder="Moment Title" required>
-                <textarea id="moment-description" placeholder="Describe your moment..." rows="3"></textarea>
+                <textarea id="moment-description" placeholder="Describe" rows="3"></textarea>
                 <input type="file" id="moment-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" required>
                 <button type="submit">Upload Moment</button>
                 <p id="moment-upload-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
@@ -794,7 +794,7 @@ function initEditor() {
 }
 async function fetchContributions() {
     const display = document.getElementById('contribution-display');
-    display.innerHTML = `<p>Loading...</p>`;
+    display.innerHTML = `<p>Loading</p>`;
     try {
         const response = await fetch(CONTRIBUTIONS_WORKER_URL);
         const contributions = await response.json();
@@ -806,22 +806,22 @@ async function fetchContributions() {
                 </div>`;
             }).join('');
         } else {
-            display.innerHTML = `<p>Be the first to leave a message!</p>`;
+            display.innerHTML = `<p>Be the first to leave a message</p>`;
         }
     } catch (e) {
-        display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`;
+        display.innerHTML = `<p style="color:var(--danger);">Refreshing contributions.</p>`;
     }
 }
 document.getElementById('contribution-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const statusEl = document.getElementById('contribution-status');
-    statusEl.textContent = 'Uploading...';
+    statusEl.textContent = 'Uploading';
     const formData = new FormData();
     formData.append('text', document.getElementById('contribution-text').value);
     try {
         const response = await fetch(CONTRIBUTIONS_WORKER_URL, { method: 'POST', body: formData });
         if (!response.ok) throw new Error('Upload failed');
-        statusEl.textContent = 'Message sent! Thank you.';
+        statusEl.textContent = 'Message sent. Thank you.';
         e.target.reset();
         fetchContributions();
     } catch (err) {
@@ -869,7 +869,7 @@ async function fetchLiveVisitors() {
     const visitorList = document.getElementById('visitor-list');
     const lastUpdatedTime = document.getElementById('last-updated-time');
     if (!visitorList.innerHTML.trim()) {
-        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors...</li>';
+        visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading visitors</li>';
     }
     try {
         const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true');
@@ -886,13 +886,13 @@ async function fetchLiveVisitors() {
                 return `
                     <li>
                         <strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}...</span><br>
-                        <strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br>
+                        <strong>IP:</strong> <span>${visitor.ip || 'unkown'}</span><br>
                         <strong>Waktu:</strong> <span>${timestamp}</span>
                     </li>
                 `;
             }).join('');
         } else {
-            visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No visitors online.</li>';
+            visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No online</li>';
         }
         lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
     } catch (error) {
@@ -995,7 +995,7 @@ async function fetchMomentVaultGallery() {
                 });
             });
         } else {
-            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No moments uploaded yet. Be the first!</p>';
+            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No moments uploaded yet. Be the first</p>';
         }
     } catch (error) {
         console.error('Error fetching Moment Vault gallery:', error);
@@ -1006,7 +1006,7 @@ document.getElementById('moment-upload-form').addEventListener('submit', uploadM
 async function uploadMoment(e) {
     e.preventDefault();
     const statusEl = document.getElementById('moment-upload-status');
-    statusEl.textContent = 'Uploading moment...';
+    statusEl.textContent = 'Uploading moment';
     statusEl.style.color = 'var(--text-secondary)';
     const title = document.getElementById('moment-title').value;
     const description = document.getElementById('moment-description').value;
@@ -1066,9 +1066,9 @@ async function uploadMoment(e) {
             body: JSON.stringify(momentData)
         });
         if (!kvSaveResponse.ok) {
-            throw new Error('Failed to save moment metadata to KV');
+            throw new Error('Failed to save momory');
         }
-        statusEl.textContent = 'Moment uploaded successfully!';
+        statusEl.textContent = 'Moment uploaded successfully';
         statusEl.style.color = 'var(--success)';
         e.target.reset();
         fetchMomentVaultGallery();
@@ -1094,7 +1094,7 @@ async function editMoment(itemId, currentItems) {
     const newDescription = prompt('Edit Description:', itemToEdit.description);
     if (newDescription === null) return;
     const statusEl = document.getElementById('moment-upload-status');
-    statusEl.textContent = 'Updating moment...';
+    statusEl.textContent = 'Updating moment';
     statusEl.style.color = 'var(--text-secondary)';
     try {
         const updatedMomentData = {
@@ -1113,7 +1113,7 @@ async function editMoment(itemId, currentItems) {
         if (!response.ok) {
             throw new Error('Failed to update moment metadata');
         }
-        statusEl.textContent = 'Moment updated successfully!';
+        statusEl.textContent = 'Moment updated successfully';
         statusEl.style.color = 'var(--success)';
         fetchMomentVaultGallery();
     } catch (error) {
@@ -1123,11 +1123,11 @@ async function editMoment(itemId, currentItems) {
     }
 }
 async function deleteMoment(itemId) {
-    if (!confirm('Are you sure you want to delete this moment? This action cannot be undone.')) {
+    if (!confirm('Are you sure you want to delete this momory? This action cannot be undone.')) {
         return;
     }
     const statusEl = document.getElementById('moment-upload-status');
-    statusEl.textContent = 'Deleting moment...';
+    statusEl.textContent = 'Deleting moment';
     statusEl.style.color = 'var(--text-secondary)';
     try {
         let githubToken;
@@ -1192,9 +1192,9 @@ async function deleteMoment(itemId) {
             method: 'DELETE'
         });
         if (!kvDeleteResponse.ok) {
-            throw new Error('Failed to delete moment metadata from KV');
+            throw new Error('Failed to delete momory');
         }
-        statusEl.textContent = 'Moment deleted successfully!';
+        statusEl.textContent = 'Momory deleted successfully!';
         statusEl.style.color = 'var(--success)';
         fetchMomentVaultGallery();
     } catch (error) {
