@@ -520,10 +520,10 @@
                 </div>
             </div>
             <form id="moment-upload-form">
-                <input type="text" id="moment-title" placeholder="Moment Title" required>
+                <input type="text" id="moment-title" placeholder="Title" required>
                 <textarea id="moment-description" placeholder="Describe" rows="3"></textarea>
                 <input type="file" id="moment-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" required>
-                <button type="submit">Upload Moment</button>
+                <button type="submit">Upload</button>
                 <p id="moment-upload-status" style="font-size:0.9em; text-align:center; margin-top:10px;"></p>
             </form>
         </div>
@@ -937,7 +937,7 @@ async function trackVisitor() {
 }
 async function fetchMomentVaultGallery() {
     const galleryContainer = document.getElementById('moment-vault-gallery');
-    galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading gallery items...</p>';
+    galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
     try {
         const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
         if (!response.ok) {
@@ -1194,7 +1194,7 @@ async function deleteMoment(itemId) {
         if (!kvDeleteResponse.ok) {
             throw new Error('Failed to delete momory');
         }
-        statusEl.textContent = 'Momory deleted successfully!';
+        statusEl.textContent = 'Momory deleted successfully';
         statusEl.style.color = 'var(--success)';
         fetchMomentVaultGallery();
     } catch (error) {
@@ -1202,7 +1202,6 @@ async function deleteMoment(itemId) {
         statusEl.textContent = `Error deleting moment: ${error.message}`;
         statusEl.style.color = 'var(--danger)';
     }
-}
 </script>
 </body>
 </html>
