@@ -1565,8 +1565,14 @@
                 cosmicOrbContainer.classList.add('active');
             }
         } else {
-            window.location.href = 'https://universalezra.netlify.app';
-        }
+    // Tampilkan pesan "Akses ditolak"
+    document.body.innerHTML = '<h1>Akses ditolak. Kamu harus login dulu</h1>'; // Atau di elemen spesifik lain
+
+    // Tunggu 1 detik sebelum redirect
+    setTimeout(function() {
+        window.location.href = 'https://universalezra.netlify.app';
+    }, 1000); // 1000 milidetik = 1 detik
+}
             for (let i = 0; i < numParticles; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
