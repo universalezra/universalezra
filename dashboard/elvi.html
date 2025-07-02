@@ -1294,6 +1294,13 @@
             <i class="fas fa-plus-circle"></i> Create New Galaxy
         </button>
     </div>
+    
+        <div id="stat-followers" class="orb-element stat-display">
+            <span id="followerCount" class="count"></span>
+        </div>
+        <div id="stat-following" class="orb-element stat-display">
+            <span id="followingCount" class="count"></span>
+        </div>
 
         <div id="highlights-section" class="orb-element">
             </div>
@@ -1547,7 +1554,8 @@
             const uploadTextSection = document.getElementById('uploadTextSection');
             const uploadTextContent = document.getElementById('uploadTextContent');
             const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
-            const uploadCancelBtn = document.getElementById('uploadCancelBtn');     
+            const uploadCancelBtn = document.getElementById('uploadCancelBtn');
+            const isLoggedIn = localStorage.getItem('isEzraLoggedIn') === 'true';   
             if (isLoggedIn) {
             if (authOverlay) {
                 authOverlay.style.display = 'none';
