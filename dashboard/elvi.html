@@ -1293,9 +1293,6 @@
         <button id="btn-create-galaxy" class="orb-element action-button">
             <i class="fas fa-plus-circle"></i> Create New Galaxy
         </button>
-
-        <div id="stat-followers" class="orb-element stat-display">
-            <span id="followerCount" class="count"></span>
         </div>
         <div id="stat-following" class="orb-element stat-display">
             <span id="followingCount" class="count"></span>
@@ -1565,13 +1562,10 @@
                 cosmicOrbContainer.classList.add('active');
             }
         } else {
-    // Tampilkan pesan "Akses ditolak"
-    document.body.innerHTML = '<h1>Akses ditolak. Kamu harus login dulu</h1>'; // Atau di elemen spesifik lain
-
-    // Tunggu 1 detik sebelum redirect
+    document.body.innerHTML = '<h1>Akses ditolak. Kamu harus login dulu</h1>';
     setTimeout(function() {
         window.location.href = 'https://universalezra.netlify.app';
-    }, 1000); // 1000 milidetik = 1 detik
+    }, 1000);
 }
             for (let i = 0; i < numParticles; i++) {
                 const particle = document.createElement('div');
