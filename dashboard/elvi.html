@@ -1474,11 +1474,8 @@
         </div>
     </div>
     <div id="particles"></div>
-
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Elements
             const authOverlay = document.getElementById('authOverlay');
             const wormholeOverlay = document.getElementById('wormholeOverlay');
             const cosmicOrbContainer = document.getElementById('cosmicOrbContainer'); // Renamed
@@ -1486,14 +1483,10 @@
             const authSubmit = document.getElementById('authSubmit');
             const particlesContainer = document.getElementById('particles');
             const numParticles = 80;
-            const authOverlay = document.querySelector('.auth-overlay');
-        const cosmicOrbContainer = document.getElementById('cosmicOrbContainer');
-        
-            
+            const authOverlay = document.querySelector('.auth-overlay');const cosmicOrbContainer = document.getElementById('cosmicOrbContainer');
             const profileOrb = document.getElementById('profile-orb');
             const profilePic = document.getElementById('profilePic');
             const profileUsername = document.getElementById('profileUsername');
-            // const postCount = document.getElementById('postCount'); // Removed this element
             const followerCount = document.getElementById('followerCount');
             const followingCount = document.getElementById('followingCount');
             const profileName = document.getElementById('profileName');
@@ -1501,17 +1494,13 @@
             const btnFollow = document.getElementById('btn-follow'); 
             const btnTikTok = document.getElementById('btn-tiktok');
             const btnInstagram = document.getElementById('btn-instagram');
-            const btnCreateGalaxy = document.getElementById('btn-create-galaxy'); // New button
-            // const statPosts = document.getElementById('stat-posts'); // Removed this element
+            const btnCreateGalaxy = document.getElementById('btn-create-galaxy');
             const statFollowers = document.getElementById('stat-followers');
             const statFollowing = document.getElementById('stat-following');
-
             const contentView = document.getElementById('content-view');
             const closeContentView = document.getElementById('close-content-view');
             const contentViewTabs = document.getElementById('content-view-tabs');
             const contentGrid = document.getElementById('content-grid');
-
-            // Story Modal Elements
             const storyModalOverlay = document.getElementById('storyModalOverlay');
             const storyCloseBtn = document.getElementById('storyCloseBtn');
             const storyPrevBtn = document.getElementById('storyPrevBtn');
@@ -1520,13 +1509,10 @@
             const storyVideo = document.getElementById('storyVideo');
             let currentHighlightStories = [];
             let currentStoryIndex = 0;
-
-            // Private Content Modal Elements
             const privateAuthModalOverlay = document.getElementById('privateAuthModalOverlay');
             const privateAuthAnswer = document.getElementById('privateAuthAnswer');
             const privateAuthSubmit = document.getElementById('privateAuthSubmit');
             const privateAuthCloseBtn = document.getElementById('privateAuthCloseBtn');
-
             const privateContentDisplayModalOverlay = document.getElementById('privateContentDisplayModalOverlay');
             const privateCloseBtn = document.getElementById('privateCloseBtn');
             const privatePrevBtn = document.getElementById('privatePrevBtn');
@@ -1534,45 +1520,31 @@
             const privateImage = document.getElementById('privateImage');
             const privateVideo = document.getElementById('privateVideo');
             const privateText = document.getElementById('privateText');
-            const privateAudio = document.getElementById('privateAudio'); // New Audio element
+            const privateAudio = document.getElementById('privateAudio');
             let currentPrivateContents = [];
             let currentPrivateIndex = 0;
             let hasAccessedPrivateContent = false; 
-
-            // Editor Elements
             const editorToggleBtn = document.getElementById('editorToggleBtn');
             const editorOverlay = document.getElementById('editorOverlay');
             const editorCloseBtn = document.getElementById('editorCloseBtn');
             const editorCancelBtn = document.getElementById('editorCancelBtn');
             const publishChangesBtn = document.getElementById('publishChangesBtn');
-
-            // Profile Editor Fields
             const editProfilePic = document.getElementById('editProfilePic');
             const editUsername = document.getElementById('editUsername');
             const editFullName = document.getElementById('editFullName');
             const editBio = document.getElementById('editBio');
-            // const editPostsCount = document.getElementById('editPostsCount'); // Removed this field from editor
             const editFollowersCount = document.getElementById('editFollowersCount');
             const editFollowingCount = document.getElementById('editFollowingCount');
-
-            // Content Editor Lists
             const editorPostsList = document.getElementById('editorPostsList');
-            // const addPostType = document.getElementById('addPostType'); // Removed, handled by upload modal
-            // const addPostSrc = document.getElementById('addPostSrc');   // Removed, handled by upload modal
-
             const editorReelsList = document.getElementById('editorReelsList');
             const addReelType = document.getElementById('addReelType');
             const addReelSrc = document.getElementById('addReelSrc');
-
             const editorTaggedList = document.getElementById('editorTaggedList');
             const addTaggedType = document.getElementById('addTaggedType');
             const addTaggedSrc = document.getElementById('addTaggedSrc');
-
             const editorHighlightsList = document.getElementById('editorHighlightsList');
             const addHighlightLabel = document.getElementById('addHighlightLabel');
             const addHighlightIcon = document.getElementById('addHighlightIcon');
-
-            // New Upload Modal Elements
             const uploadModalOverlay = document.getElementById('uploadModalOverlay');
             const uploadCloseBtn = document.getElementById('uploadCloseBtn');
             const uploadContentType = document.getElementById('uploadContentType');
@@ -1585,51 +1557,43 @@
             const uploadTextContent = document.getElementById('uploadTextContent');
             const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
             const uploadCancelBtn = document.getElementById('uploadCancelBtn');
-            const isLoggedIn = localStorage.getItem('isEzraLoggedIn') === 'true';
-            
+            const isLoggedIn = localStorage.getItem('isEzraLoggedIn') === 'true';        
             if (isLoggedIn) {
-            // Jika login, sembunyikan overlay autentikasi
             if (authOverlay) {
                 authOverlay.style.display = 'none';
                 authOverlay.style.opacity = '0';
                 authOverlay.style.visibility = 'hidden';
             }
-            // Tampilkan konten utama situs
             if (cosmicOrbContainer) {
-                cosmicOrbContainer.classList.add('active'); // Asumsikan 'active' akan menampilkan konten
+                cosmicOrbContainer.classList.add('active');
             }
         } else {
-            // Jika tidak login, arahkan pengguna ke URL yang ditentukan
             window.location.href = 'https://universalezra.netlify.app';
         }
-
             for (let i = 0; i < numParticles; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                const size = Math.random() * 5 + 2; // Size between 2px and 7px
+                const size = Math.random() * 5 + 2;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.top = `${Math.random() * 100}%`;
-                particle.style.animationDelay = `${Math.random() * -15}s`; // Start at various points in animation
-                particle.style.setProperty('--rand-x', Math.random() * 400 - 200); // -200 to 200
-                particle.style.setProperty('--rand-y', Math.random() * 400 - 200); // -200 to 200
-                particle.style.setProperty('--rand-scale', Math.random() * 0.5 + 0.5); // 0.5 to 1.0
+                particle.style.animationDelay = `${Math.random() * -15}s`;
+                particle.style.setProperty('--rand-x', Math.random() * 400 - 200);
+                particle.style.setProperty('--rand-y', Math.random() * 400 - 200);
+                particle.style.setProperty('--rand-scale', Math.random() * 0.5 + 0.5);
                 particlesContainer.appendChild(particle);
             }
-            // --- Data Storage (initially from local data, will be synced with backend) ---
             let profileData = {
                 username: "elvi_ezra_",
                 fullName: "Elvi Ezra",
                 bio: "Greetings, fellow cosmic traveler! Welcome to my personal nebula where stars align and galaxies unfold. ✨🪐\nExploring the vastness of the digital universe.",
                 profilePic: "Advanced files Elvi/May 26, 2025 at 09.00 AM.png", 
                 stats: {
-                    // posts: 13, // This will be dynamic based on postsData.length
                     followers: "4.5K",
                     following: 321
                 }
             };
-
             let postsData = [
                 { id: 'p1', type: 'video', src: 'Video Elvi/March 03, 2025 at 11.22 PM.mp4' },
                 { id: 'p2', type: 'video', src: 'Video Elvi/FDownloader.Net_13.mp4' },
@@ -1692,7 +1656,6 @@
                     ]
                 }
             ];
-
             const privateContentData = [
                 { type: 'text', content: "Beyond the stars, in this sacred cosmic chamber, our connection shines brightest. Thank you for venturing this far! ✨\n\nThis is a private transmission, reserved for those who hold the key to my heart's galaxy." },
                 { type: 'image', src: 'Advanced files Elvi/October 25, 2024 at 8.11 AM.png' },
@@ -1700,67 +1663,44 @@
                 { type: 'audio', src: 'Audio Elvi/Cosmic_Serenade.mp3' }, // New Audio example
                 { type: 'text', content: "May these cosmic moments bring us closer across the universe. You are the most unique celestial body in my orbit. Always. ❤\n\n- E.E." },
             ];
-
-            // --- Circular Positioning Logic ---
             const elementsToPosition = [
-                { element: btnFollow, angle: 225 }, // Top-left area
-                { element: btnTikTok, angle: 315 }, // Top-right area
-                { element: btnInstagram, angle: 45 }, // Bottom-right area
-                { element: btnCreateGalaxy, angle: 135 }, // NEW: Replaces stat-posts, bottom-left area
-                { element: statFollowers, angle: 180 }, // Left-middle
-                { element: statFollowing, angle: 90 }, // Right-middle
-                { element: highlightsSection, angle: 0 } // Directly above
+                { element: btnFollow, angle: 225 },
+                { element: btnTikTok, angle: 315 },
+                { element: btnInstagram, angle: 45 },
+                { element: btnCreateGalaxy, angle: 135 },
+                { element: statFollowers, angle: 180 },
+                { element: statFollowing, angle: 90 },
+                { element: highlightsSection, angle: 0 }
             ];
-
             function positionElementsCircularly() {
                 const orbRadius = cosmicOrbContainer.offsetWidth / 2;
-                const centerOffset = orbRadius; // Center of the orb
-                
+                const centerOffset = orbRadius;
                 elementsToPosition.forEach(item => {
-                    const angleRad = (item.angle - 90) * (Math.PI / 180); // Adjust angle for CSS top/left
+                    const angleRad = (item.angle - 90) * (Math.PI / 180);
                     const element = item.element;
-                    const elementRadius = element.offsetWidth / 2; // Assuming element is square for this calculation
-
-                    // Calculate position such that elements are "inside" but near the edge
-                    // We need to adjust radius so elements are within the visible orb
-                    const placementRadius = orbRadius * 0.7; // Place elements at 70% of orb radius
-
+                    const elementRadius = element.offsetWidth / 2;
+                    const placementRadius = orbRadius * 0.7;
                     const x = centerOffset + placementRadius * Math.cos(angleRad);
                     const y = centerOffset + placementRadius * Math.sin(angleRad);
-
                     element.style.left = `${x - elementRadius}px`;
                     element.style.top = `${y - elementRadius}px`;
                 });
             }
-
-            // Call on load and resize
             window.addEventListener('resize', positionElementsCircularly);
-
-
-            /**
-             * Loads and displays the main profile content.
-             */
             function loadProfileContent() {
                 profilePic.src = profileData.profilePic;
                 profileUsername.textContent = profileData.username;
-                // postCount.textContent = postsData.length; // Dynamic posts count
                 followerCount.textContent = profileData.stats.followers;
                 followingCount.textContent = profileData.stats.following;
                 profileName.textContent = profileData.fullName;
                 renderHighlights();
-                positionElementsCircularly(); // Initial positioning
+                positionElementsCircularly();
             }
-
-            /**
-             * Renders posts (images/videos/audio) into the content grid.
-             * @param {Array<Object>} data - Array of post objects.
-             */
             function renderContentGrid(data) {
-                contentGrid.innerHTML = ''; // Clear existing content
+                contentGrid.innerHTML = '';
                 data.forEach(item => {
                     const postItem = document.createElement('div');
                     postItem.classList.add('post-item');
-
                     if (item.type === 'video') {
                         const video = document.createElement('video');
                         video.src = item.src;
@@ -1775,13 +1715,12 @@
                         img.src = item.src;
                         img.alt = 'Cosmic Image Post';
                         postItem.appendChild(img);
-                    } else if (item.type === 'audio') { // Handle audio type in content grid
+                    } else if (item.type === 'audio') {
                         const audio = document.createElement('audio');
                         audio.src = item.src;
                         audio.controls = true;
-                        audio.preload = 'metadata'; // Preload metadata for faster loading
+                        audio.preload = 'metadata';
                         postItem.appendChild(audio);
-                        // Add an icon or visual cue for audio if no custom image is available
                         const audioIcon = document.createElement('i');
                         audioIcon.classList.add('fas', 'fa-music', 'fa-4x');
                         audioIcon.style.color = '#00FFFF';
@@ -1794,47 +1733,34 @@
                     contentGrid.appendChild(postItem);
                 });
             }
-
-            /**
-             * Renders highlight circles with icons and labels.
-             */
             function renderHighlights() {
-                highlightsSection.innerHTML = ''; // Clear existing highlights
+                highlightsSection.innerHTML = '';
                 highlightsData.forEach(highlight => {
                     const highlightItem = document.createElement('div');
                     highlightItem.classList.add('highlight-item');
                     highlightItem.dataset.highlightId = highlight.id;
-
                     const highlightCircle = document.createElement('div');
                     highlightCircle.classList.add('highlight-circle');
                     const img = document.createElement('img');
                     img.src = highlight.icon;
                     img.alt = highlight.label + ' highlight icon';
                     highlightCircle.appendChild(img);
-
                     const highlightLabel = document.createElement('span');
                     highlightLabel.classList.add('highlight-label');
                     highlightLabel.textContent = highlight.label;
-
                     highlightItem.appendChild(highlightCircle);
                     highlightItem.appendChild(highlightLabel);
                     highlightsSection.appendChild(highlightItem);
-
-                    // Attach click listener to open story modal
                     highlightItem.addEventListener('click', () => openStoryModal(highlight.id));
                 });
             }
-
-            // Event listener for content view tab clicks
             contentViewTabs.addEventListener('click', function(event) {
                 const targetTab = event.target.closest('.content-tab-item');
                 if (!targetTab) return;
-
                 document.querySelectorAll('.content-tab-item').forEach(tab => {
                     tab.classList.remove('active');
                 });
                 targetTab.classList.add('active');
-
                 const tabType = targetTab.dataset.tab;
                 switch (tabType) {
                     case 'posts':
@@ -1850,45 +1776,27 @@
                         renderContentGrid(postsData);
                 }
             });
-
-            // Listener to open content view when profile orb is clicked
             profileOrb.addEventListener('click', () => {
                 contentView.classList.add('active');
-                renderContentGrid(postsData); // Default to posts when opening
+                renderContentGrid(postsData);
                 contentViewTabs.querySelector('[data-tab="posts"]').classList.add('active');
             });
-
-            // Listener to close content view
             closeContentView.addEventListener('click', () => {
                 contentView.classList.remove('active');
             });
-
-
-            /**
-             * Opens the story modal and displays the first story of the selected highlight.
-             * @param {string} highlightId - The ID of the highlight to open.
-             */
             function openStoryModal(highlightId) {
                 const highlight = highlightsData.find(h => h.id === highlightId);
                 if (!highlight || highlight.stories.length === 0) return;
-
                 currentHighlightStories = highlight.stories;
                 currentStoryIndex = 0;
                 displayCurrentStory();
                 storyModalOverlay.classList.add('active');
             }
-
-            /**
-             * Displays the current story (image or video) in the story modal.
-             */
             function displayCurrentStory() {
                 const story = currentHighlightStories[currentStoryIndex];
-
-                // Hide all media elements first
                 storyImage.classList.add('hidden');
                 storyVideo.classList.add('hidden');
-                storyVideo.pause(); // Pause any currently playing video
-
+                storyVideo.pause();
                 if (story.type === 'image') {
                     storyImage.src = story.src;
                     storyImage.classList.remove('hidden');
@@ -1897,13 +1805,9 @@
                     storyVideo.classList.remove('hidden');
                     storyVideo.play().catch(e => console.log("Video autoplay blocked for story:", e)); 
                 }
-
-                // Show/hide navigation buttons
                 storyPrevBtn.style.display = (currentStoryIndex === 0) ? 'none' : 'block';
                 storyNextBtn.style.display = (currentStoryIndex === currentHighlightStories.length - 1) ? 'none' : 'block';
             }
-
-            // Story modal navigation
             storyPrevBtn.addEventListener('click', () => {
                 if (currentStoryIndex > 0) {
                     currentStoryIndex--;
@@ -1928,8 +1832,6 @@
                     storyVideo.currentTime = 0;
                 }
             });
-
-            // Follow Button / Private Content Access
             btnFollow.addEventListener('click', function() {
                 if (!hasAccessedPrivateContent) {
                     privateAuthModalOverlay.classList.add('active');
@@ -1938,8 +1840,6 @@
                     openPrivateContentDisplayModal();
                 }
             });
-
-            // Private Authentication Modal
             privateAuthCloseBtn.addEventListener('click', () => {
                 privateAuthModalOverlay.classList.remove('active');
                 privateAuthAnswer.value = '';
@@ -1950,10 +1850,6 @@
                     checkPrivateAuth();
                 }
             });
-
-            /**
-             * Checks the secret answer for private content access.
-             */
             function checkPrivateAuth() {
                 const answer = privateAuthAnswer.value.trim().toLowerCase();
                 if (answer === 'aku sayang kita') {
@@ -1965,7 +1861,6 @@
                     privateAuthAnswer.value = '';
                     openPrivateContentDisplayModal();
                 } else {
-                    // Shake and red border effect
                     privateAuthAnswer.style.borderColor = '#ff0000';
                     privateAuthAnswer.style.animation = 'shake 0.5s';
                     setTimeout(() => {
@@ -1975,31 +1870,20 @@
                     }, 500); 
                 }
             }
-
-            /**
-             * Opens the private content display modal.
-             */
             function openPrivateContentDisplayModal() {
                 currentPrivateContents = privateContentData;
                 currentPrivateIndex = 0;
                 displayCurrentPrivateContent();
                 privateContentDisplayModalOverlay.classList.add('active');
             }
-
-            /**
-             * Displays the current private content (image, video, audio, or text) in the modal.
-             */
             function displayCurrentPrivateContent() {
                 const content = currentPrivateContents[currentPrivateIndex];
-
-                // Hide all content elements first and pause media
                 privateImage.classList.add('hidden');
                 privateVideo.classList.add('hidden');
                 privateText.classList.add('hidden');
                 privateAudio.classList.add('hidden');
                 privateVideo.pause(); 
                 privateAudio.pause();
-
                 if (content.type === 'image') {
                     privateImage.src = content.src;
                     privateImage.classList.remove('hidden');
@@ -2015,13 +1899,9 @@
                     privateText.innerHTML = content.content.replace(/\n/g, '<br>'); 
                     privateText.classList.remove('hidden');
                 }
-
-                // Show/hide navigation buttons
                 privatePrevBtn.style.display = (currentPrivateIndex === 0) ? 'none' : 'block';
                 privateNextBtn.style.display = (currentPrivateIndex === currentPrivateContents.length - 1) ? 'none' : 'block';
             }
-
-            // Private content modal navigation
             privatePrevBtn.addEventListener('click', () => {
                 if (currentPrivateIndex > 0) {
                     currentPrivateIndex--;
@@ -2050,8 +1930,6 @@
                     privateAudio.currentTime = 0;
                 }
             });
-
-            // Initial authentication logic
             secretAnswer.focus(); 
             authSubmit.addEventListener('click', checkSecret);
             secretAnswer.addEventListener('keypress', function(e) {
@@ -2059,8 +1937,6 @@
                     checkSecret();
                 }
             });
-
-            // Wormhole Particle Generation (New)
             function createWormholeParticles() {
                 const particleCount = 100; 
                 for (let i = 0; i < particleCount; i++) {
@@ -2071,26 +1947,18 @@
                     const delay = Math.random() * 0.5; 
                     const startX = (Math.random() - 0.5) * window.innerWidth * 2; 
                     const startY = (Math.random() - 0.5) * window.innerHeight * 2;
-
                     particle.style.width = `${size}px`;
                     particle.style.height = `${size}px`;
                     particle.style.left = `calc(50% + ${startX}px)`;
                     particle.style.top = `calc(50% + ${startY}px)`;
                     particle.style.animation = `wormholeZoomIn ${duration}s linear ${delay}s forwards`;
-                    particle.style.setProperty('--random-hue', `${Math.random() * 360}deg`); 
-                    
+                    particle.style.setProperty('--random-hue', `${Math.random() * 360}deg`);        
                     wormholeOverlay.appendChild(particle);
-
                     particle.addEventListener('animationend', () => {
                         particle.remove();
                     });
                 }
             }
-
-
-            /**
-             * Checks the initial secret answer to grant access to the main content.
-             */
             function checkSecret() {
                 const answer = secretAnswer.value.trim().toLowerCase();
                 if (answer === 'love') {
@@ -2102,22 +1970,17 @@
                     setTimeout(() => {
                         clearInterval(particleInterval); 
                     }, 1500); 
-
                     setTimeout(() => {
                         authOverlay.remove(); 
                         wormholeOverlay.style.animation = 'fadeOut 0.7s forwards'; 
 
                         cosmicOrbContainer.classList.add('active'); 
                         loadProfileContent(); 
-                        editorToggleBtn.style.display = 'block'; // Show editor button
-
-                        // Scroll to center of the very wide body initially
-                        // This might be better handled by CSS `scroll-snap-align: center` on a wrapper if direct targeting is hard
+                        editorToggleBtn.style.display = 'block';
                         window.scrollTo(
                             (document.body.scrollWidth - window.innerWidth) / 2,
                             (document.body.scrollHeight - window.innerHeight) / 2
                         );
-
                         cosmicOrbContainer.querySelectorAll('.post-item video').forEach(video => {
                             video.play().catch(error => {
                                 console.log("Video autoplay failed (muted ok):", error);
@@ -2128,55 +1991,37 @@
                     secretAnswer.style.borderColor = '#ff0000'; 
                     secretAnswer.style.animation = 'shake 0.5s'; 
                     setTimeout(() => {
-                        window.location.href = 'https://localezra.netlify.app'; 
+                        window.location.href = 'https://universalezra.netlify.app'; 
                     }, 1000); 
                 }
             }
-
-            // --- Editor Functionality ---
-
             editorToggleBtn.addEventListener('click', () => {
                 editorOverlay.classList.add('active');
                 populateEditorFields();
             });
-
             editorCloseBtn.addEventListener('click', () => {
                 editorOverlay.classList.remove('active');
             });
             editorCancelBtn.addEventListener('click', () => {
                 editorOverlay.classList.remove('active');
             });
-
-            /**
-             * Populates the editor fields with current profile and content data.
-             */
             function populateEditorFields() {
                 editProfilePic.value = profileData.profilePic;
                 editUsername.value = profileData.username;
                 editFullName.value = profileData.fullName;
                 editBio.value = profileData.bio;
-                // editPostsCount.value = profileData.stats.posts; // No longer editable, derived from postsData.length
                 editFollowersCount.value = profileData.stats.followers;
                 editFollowingCount.value = profileData.stats.following;
-
                 renderEditorMediaList(editorPostsList, postsData, 'posts');
                 renderEditorMediaList(editorReelsList, reelsData, 'reels');
                 renderEditorMediaList(editorTaggedList, taggedData, 'tagged');
                 renderEditorHighlightsList(editorHighlightsList, highlightsData);
             }
-
-            /**
-             * Renders a list of media items in the editor (posts, reels, tagged).
-             * @param {HTMLElement} container - The container element for the list.
-             * @param {Array<Object>} data - The array of media data.
-             * @param {string} dataType - 'posts', 'reels', or 'tagged'
-             */
             function renderEditorMediaList(container, data, dataType) {
                 container.innerHTML = '';
                 data.forEach((item, index) => {
                     const mediaItemDiv = document.createElement('div');
-                    mediaItemDiv.classList.add('media-item');
-                    
+                    mediaItemDiv.classList.add('media-item'); 
                     let mediaElement;
                     if (item.type === 'image') {
                         mediaElement = document.createElement('img');
@@ -2187,21 +2032,19 @@
                         mediaElement.muted = true;
                         mediaElement.playsInline = true;
                         mediaElement.loop = true;
-                        mediaElement.autoplay = true; // Auto-play for preview
+                        mediaElement.autoplay = true;
                     } else if (item.type === 'audio') {
                         mediaElement = document.createElement('audio');
                         mediaElement.src = item.src;
                         mediaElement.controls = true;
                         mediaElement.preload = 'metadata';
-                        // Style for audio preview to look good in a circular container
                         mediaElement.style.width = '100%';
                         mediaElement.style.height = '100%';
                         mediaElement.style.borderRadius = '50%';
-                        mediaElement.style.objectFit = 'cover'; // May not work perfectly for audio, but tries to fill
+                        mediaElement.style.objectFit = 'cover';
                         mediaElement.style.backgroundColor = 'rgba(0,0,30,0.8)';
                     }
                     mediaItemDiv.appendChild(mediaElement);
-
                     const deleteBtn = document.createElement('button');
                     deleteBtn.classList.add('delete-media-btn');
                     deleteBtn.innerHTML = '&times;';
@@ -2211,30 +2054,22 @@
                             if (dataType === 'posts') postsData.splice(index, 1);
                             else if (dataType === 'reels') reelsData.splice(index, 1);
                             else if (dataType === 'tagged') taggedData.splice(index, 1);
-                            populateEditorFields(); // Re-render the list
+                            populateEditorFields();
                         }
                     });
                     mediaItemDiv.appendChild(deleteBtn);
                     container.appendChild(mediaItemDiv);
                 });
             }
-
-            /**
-             * Renders the list of highlights in the editor.
-             * @param {HTMLElement} container - The container element for highlights.
-             * @param {Array<Object>} data - The array of highlight data.
-             */
             function renderEditorHighlightsList(container, data) {
                 container.innerHTML = '';
                 data.forEach((highlight, index) => {
                     const highlightItemDiv = document.createElement('div');
-                    highlightItemDiv.classList.add('media-item'); // Re-use media-item style for circular preview
-                    
+                    highlightItemDiv.classList.add('media-item');              
                     const img = document.createElement('img');
                     img.src = highlight.icon;
                     img.alt = highlight.label;
                     highlightItemDiv.appendChild(img);
-
                     const deleteBtn = document.createElement('button');
                     deleteBtn.classList.add('delete-media-btn');
                     deleteBtn.innerHTML = '&times;';
@@ -2246,30 +2081,21 @@
                         }
                     });
                     highlightItemDiv.appendChild(deleteBtn);
-
-                    // Add click to edit stories within highlight (advanced feature)
                     highlightItemDiv.addEventListener('click', () => {
                         alert(`Editing stories for "${highlight.label}". This functionality is not fully implemented for direct editing of highlight stories in this demo. You would need a sub-modal here.`);
-                        // TODO: Implement a sub-modal to edit highlight.stories for the selected highlight
                     });
-
                     container.appendChild(highlightItemDiv);
                 });
             }
-
-            // Save profile data
             document.querySelector('.editor-save-btn[data-section="profile"]').addEventListener('click', () => {
                 profileData.profilePic = editProfilePic.value;
                 profileData.username = editUsername.value;
                 profileData.fullName = editFullName.value;
                 profileData.bio = editBio.value;
-                // profileData.stats.posts = parseInt(editPostsCount.value) || 0; // No longer editable
                 profileData.stats.followers = editFollowersCount.value;
                 profileData.stats.following = parseInt(editFollowingCount.value) || 0;
                 alert('Profile data saved locally. Click "Publish All Changes" to sync.');
             });
-
-            // Add new reel/tagged item (Posts are now handled by the 'Create New Galaxy' button)
             document.querySelector('.editor-add-btn[data-section="reels"]').addEventListener('click', () => {
                 const src = addReelSrc.value.trim();
                 if (src) {
@@ -2292,8 +2118,6 @@
                     alert('Please provide a URL for the new tagged content.');
                 }
             });
-
-            // Add new highlight
             document.querySelector('.editor-add-btn[data-section="highlights"]').addEventListener('click', () => {
                 const label = addHighlightLabel.value.trim();
                 const icon = addHighlightIcon.value.trim();
@@ -2307,39 +2131,30 @@
                     alert('Please provide a label and icon URL for the new highlight.');
                 }
             });
-
-
-            // --- New Upload Content Modal Logic ---
             btnCreateGalaxy.addEventListener('click', () => {
                 uploadModalOverlay.classList.add('active');
-                // Reset form on open
                 uploadContentType.value = 'image';
                 uploadContentDestination.value = 'posts';
-                uploadFile.value = ''; // Clear selected file
+                uploadFile.value = '';
                 uploadFileName.textContent = 'No file chosen';
                 uploadTextContent.value = '';
                 uploadPreview.innerHTML = '';
                 uploadFileSection.classList.remove('hidden');
                 uploadTextSection.classList.add('hidden');
-                updateUploadModalVisibility(); // Initial check
+                updateUploadModalVisibility();
             });
-
             uploadCloseBtn.addEventListener('click', () => {
                 uploadModalOverlay.classList.remove('active');
             });
             uploadCancelBtn.addEventListener('click', () => {
                 uploadModalOverlay.classList.remove('active');
             });
-
             uploadContentType.addEventListener('change', updateUploadModalVisibility);
             uploadContentDestination.addEventListener('change', updateUploadModalVisibility);
             uploadFile.addEventListener('change', updateUploadFileDisplayAndPreview);
-
             function updateUploadModalVisibility() {
                 const contentType = uploadContentType.value;
                 const destination = uploadContentDestination.value;
-
-                // Toggle file upload vs text input
                 if (contentType === 'text') {
                     uploadFileSection.classList.add('hidden');
                     uploadTextSection.classList.remove('hidden');
@@ -2347,10 +2162,7 @@
                     uploadFileSection.classList.remove('hidden');
                     uploadTextSection.classList.add('hidden');
                 }
-
-                // Restrict text type to private content only
                 if (contentType === 'text') {
-                    // Force destination to private if text is selected
                     if (destination !== 'private') {
                         uploadContentDestination.value = 'private';
                     }
@@ -2358,12 +2170,9 @@
                 } else {
                     uploadContentDestination.querySelector('option[value="posts"]').disabled = false; // Enable public option
                 }
-
-                // Clear preview if content type changes
                 uploadPreview.innerHTML = ''; 
                 uploadFileName.textContent = 'No file chosen';
             }
-
             function updateUploadFileDisplayAndPreview() {
                 const file = uploadFile.files[0];
                 if (file) {
@@ -2399,7 +2208,6 @@
                     uploadPreview.innerHTML = '';
                 }
             }
-
             uploadSubmitBtn.addEventListener('click', async () => {
                 const contentType = uploadContentType.value;
                 const destination = uploadContentDestination.value;
@@ -2418,54 +2226,30 @@
                         alert('Please select a file to upload.');
                         return;
                     }
-
-                    // For this simplified demo, we'll assume a direct URL or path is provided
-                    // In a real scenario, you'd upload the file to a storage service (like Cloudflare R2, Google Cloud Storage, etc.)
-                    // and then get the public URL. Here, we'll just simulate by using a dummy URL.
-                    
-                    // IMPORTANT: In a real application, you CANNOT directly upload files to GitHub repos
-                    // using browser-side JavaScript without significant complexity (e.g., base64 encoding large files,
-                    // dealing with GitHub API limits, etc.). It's best to upload media files to dedicated storage
-                    // and store only their URLs in your data.json.
-                    
-                    // For demo purposes, we'll just create a placeholder URL based on file name.
-                    // REPLACE THIS LOGIC with actual file upload and URL retrieval!
-                    const dummyFileBaseUrl = "https://your-storage-cdn.com/elvi-content/"; // Change this to your actual CDN base URL
+                    const dummyFileBaseUrl = "https://your-storage-cdn.com/elvi-content/";
                     const fileExtension = file.name.split('.').pop();
-                    const simulatedUrl = `${dummyFileBaseUrl}${file.name.replace(/ /g, '_')}`; // Simple URL generation
-
+                    const simulatedUrl = `${dummyFileBaseUrl}${file.name.replace(/ /g, '_')}`;
                     newContent = { id: `${contentType}${Date.now()}`, type: contentType, src: simulatedUrl };
                     alert(`Simulating file upload for: ${file.name}\n\nIn a real app, this file would be uploaded to storage (e.g., Cloudflare R2) and its public URL saved.`);
                 }
-
                 if (newContent) {
                     if (destination === 'posts') {
-                        postsData.unshift(newContent); // Add to the beginning
+                        postsData.unshift(newContent);
                         alert('New public post added locally! Click "Publish All Changes" to sync.');
                     } else if (destination === 'private') {
-                        privateContentData.unshift(newContent); // Add to the beginning
+                        privateContentData.unshift(newContent);
                         alert('New private content added locally! Click "Publish All Changes" to sync.');
                     }
                     uploadModalOverlay.classList.remove('active');
-                    populateEditorFields(); // Re-render editor lists
-                    loadProfileContent(); // Re-render main site (e.g., post count)
+                    populateEditorFields();
+                    loadProfileContent();
                 }
             });
-
-
-            // --- Backend Integration (Conceptual - Requires Cloudflare Worker & GitHub API) ---
-
-            const GITHUB_REPO_OWNER = 'your-github-username'; // Replace with your GitHub username
-            const GITHUB_REPO_NAME = 'your-repo-name';       // Replace with your repository name (e.g., elvi-ezra-website)
-            const GITHUB_BRANCH = 'main';                   // Or 'master'
-            const GITHUB_API_TOKEN_WORKER = 'YOUR_CLOUDFLARE_WORKER_API_ENDPOINT'; // Replace with your Cloudflare Worker URL
-            const DATA_FILE_PATH = 'data.json';             // Path to your data file in the repo
-
-            /**
-             * Fetches current data from GitHub via Cloudflare Worker.
-             * This function assumes your Cloudflare Worker is set up to proxy GitHub API requests
-             * and handle authentication securely.
-             */
+            const GITHUB_REPO_OWNER = 'your-github-username';
+            const GITHUB_REPO_NAME = 'your-repo-name';
+            const GITHUB_BRANCH = 'main';
+            const GITHUB_API_TOKEN_WORKER = 'YOUR_CLOUDFLARE_WORKER_API_ENDPOINT';
+            const DATA_FILE_PATH = 'data.json';
             async function fetchDataFromBackend() {
                 try {
                     const response = await fetch(`${GITHUB_API_TOKEN_WORKER}?path=${DATA_FILE_PATH}`);
@@ -2473,43 +2257,28 @@
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.json();
-                    
-                    // Update local data with fetched data
                     profileData = data.profileData;
                     postsData = data.postsData;
                     reelsData = data.reelsData;
                     taggedData = data.taggedData;
                     highlightsData = data.highlightsData;
-                    // Also load private content data if you store it in data.json
-                    // privateContentData = data.privateContentData || []; 
-
                     console.log('Data fetched from backend:', data);
-                    loadProfileContent(); // Re-render website with fetched data
+                    loadProfileContent();
                 } catch (error) {
                     console.error('Error fetching data from backend:', error);
                     alert('Failed to load data from backend. Using local default data.');
-                    // Fallback to local default data if fetch fails
                 }
             }
-
-            /**
-             * Publishes (saves) changes to GitHub via Cloudflare Worker.
-             * This function assumes your Cloudflare Worker is set up to handle
-             * file updates on GitHub and manage authentication securely.
-             */
             async function publishChangesToBackend() {
-                // Update posts count before publishing
                 profileData.stats.posts = postsData.length;
-
                 const allData = {
                     profileData,
                     postsData,
                     reelsData,
                     taggedData,
                     highlightsData,
-                    privateContentData // Assuming private content might also be editable eventually, or static
+                    privateContentData
                 };
-
                 try {
                     alert('Publishing changes... Please wait.');
                     const response = await fetch(GITHUB_API_TOKEN_WORKER, {
@@ -2519,43 +2288,33 @@
                         },
                         body: JSON.stringify({
                             path: DATA_FILE_PATH,
-                            content: JSON.stringify(allData, null, 2), // Pretty print JSON
+                            content: JSON.stringify(allData, null, 2),
                             message: `Update data: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })}`,
                             branch: GITHUB_BRANCH
                         }),
                     });
-
                     if (!response.ok) {
                         const errorText = await response.text();
                         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                     }
-
                     const result = await response.json();
                     console.log('Changes published to GitHub:', result);
                     alert('Changes successfully published to the galaxy!');
                     editorOverlay.classList.remove('active');
-                    loadProfileContent(); // Reload the website with the new data
+                    loadProfileContent();
                 } catch (error) {
                     console.error('Error publishing changes:', error);
                     alert(`Failed to publish changes: ${error.message}. Check Cloudflare Worker logs.`);
                 }
             }
-
             publishChangesBtn.addEventListener('click', publishChangesToBackend);
-
-            // Global functions (not part of DOMContentLoaded, can be called from HTML)
             function openTikTok() {
-                window.open("https://vm.tiktok.com/ZShf4GMgT/", "_blank");
+                window.open("https://vm.tiktok.com/ZShf4GMgT/", "https://www.tiktok.com/@elvizil?_d=secCgYIASAHKAESPgo8OqNfEJm8lpNTOVXGPk0ISpPNVu6uT%2BmGItj68N7OQXYlfd1d%2BujqyulmpHhKAAOal8ivOsaopuXMUZ3bGgA%3D&_svg=1&sec_uid=MS4wLjABAAAAu0u7O22vUTj1YALCLXsJVhCWqK-g5y0Dlu1nwpqDJEaHdP5fIMCv8uQIft94oht1&share_app_id=1340&share_author_id=6962740350511367170&share_link_id=4d1d3d75-a0c4-428f-9cb6-b635c20903e4&sharer_language=en&timestamp=1746957069&ugbiz_name=Account&utm_campaign=client_share&utm_source=copy&_r=1");
             }
-
             function openInstagram() {
-                window.open("https://www.instagram.com/elvizill/", "_blank");
+                window.open("https://www.instagram.com/elvizill/", "https://www.instagram.com/elvizill/");
             }
-
-            // Call fetchDataFromBackend on initial load to populate the website with live data
-            // Uncomment when Cloudflare Worker is ready.
-            // fetchDataFromBackend(); 
-            loadProfileContent(); // Keep this for now to ensure local data is loaded on refresh
+            loadProfileContent();
         });
     </script>
 </body>
