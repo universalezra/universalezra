@@ -1479,7 +1479,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Elements
+            const authOverlay = document.getElementById('authOverlay');
             const wormholeOverlay = document.getElementById('wormholeOverlay');
+            const cosmicOrbContainer = document.getElementById('cosmicOrbContainer'); // Renamed
             const secretAnswer = document.getElementById('secretAnswer');
             const authSubmit = document.getElementById('authSubmit');
             const particlesContainer = document.getElementById('particles');
@@ -1583,20 +1585,7 @@
             const uploadTextContent = document.getElementById('uploadTextContent');
             const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
             const uploadCancelBtn = document.getElementById('uploadCancelBtn');
-            // Tambahkan fungsi pembantu untuk mendapatkan cookie
-getCookie(name) 
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for(let i=0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-}
-
-// Panggil di tempat Anda ingin memeriksa status login
-const isLoggedIn = this.getCookie(this.securityConfig.localStorageKey) === 'true';
+            const isLoggedIn = localStorage.getItem('isEzraLoggedIn') === 'true';
             
             if (isLoggedIn) {
             // Jika login, sembunyikan overlay autentikasi
