@@ -1476,86 +1476,82 @@
     <div id="particles"></div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const secretAnswer = document.getElementById('secretAnswer');
-            const authSubmit = document.getElementById('authSubmit');
-            const particlesContainer = document.getElementById('particles');
-            const numParticles = 80;
-            const authOverlay = document.querySelector('.auth-overlay');const cosmicOrbContainer = document.getElementById('cosmicOrbContainer');
-            const profileOrb = document.getElementById('profile-orb');
-            const profilePic = document.getElementById('profilePic');
-            const profileUsername = document.getElementById('profileUsername');
-            const followerCount = document.getElementById('followerCount');
-            const followingCount = document.getElementById('followingCount');
-            const profileName = document.getElementById('profileName');
-            const highlightsSection = document.getElementById('highlights-section');
-            const btnFollow = document.getElementById('btn-follow'); 
-            const btnTikTok = document.getElementById('btn-tiktok');
-            const btnInstagram = document.getElementById('btn-instagram');
-            const btnCreateGalaxy = document.getElementById('btn-create-galaxy');
-            const statFollowers = document.getElementById('stat-followers');
-            const statFollowing = document.getElementById('stat-following');
-            const contentView = document.getElementById('content-view');
-            const closeContentView = document.getElementById('close-content-view');
-            const contentViewTabs = document.getElementById('content-view-tabs');
-            const contentGrid = document.getElementById('content-grid');
-            const storyModalOverlay = document.getElementById('storyModalOverlay');
-            const storyCloseBtn = document.getElementById('storyCloseBtn');
-            const storyPrevBtn = document.getElementById('storyPrevBtn');
-            const storyNextBtn = document.getElementById('storyNextBtn');
-            const storyImage = document.getElementById('storyImage');
-            const storyVideo = document.getElementById('storyVideo');
-            let currentHighlightStories = [];
-            let currentStoryIndex = 0;
-            const privateAuthModalOverlay = document.getElementById('privateAuthModalOverlay');
-            const privateAuthAnswer = document.getElementById('privateAuthAnswer');
-            const privateAuthSubmit = document.getElementById('privateAuthSubmit');
-            const privateAuthCloseBtn = document.getElementById('privateAuthCloseBtn');
-            const privateContentDisplayModalOverlay = document.getElementById('privateContentDisplayModalOverlay');
-            const privateCloseBtn = document.getElementById('privateCloseBtn');
-            const privatePrevBtn = document.getElementById('privatePrevBtn');
-            const privateNextBtn = document.getElementById('privateNextBtn');
-            const privateImage = document.getElementById('privateImage');
-            const privateVideo = document.getElementById('privateVideo');
-            const privateText = document.getElementById('privateText');
-            const privateAudio = document.getElementById('privateAudio');
-            let currentPrivateContents = [];
-            let currentPrivateIndex = 0;
-            let hasAccessedPrivateContent = false; 
-            const editorToggleBtn = document.getElementById('editorToggleBtn');
-            const editorOverlay = document.getElementById('editorOverlay');
-            const editorCloseBtn = document.getElementById('editorCloseBtn');
-            const editorCancelBtn = document.getElementById('editorCancelBtn');
-            const publishChangesBtn = document.getElementById('publishChangesBtn');
-            const editProfilePic = document.getElementById('editProfilePic');
-            const editUsername = document.getElementById('editUsername');
-            const editFullName = document.getElementById('editFullName');
-            const editBio = document.getElementById('editBio');
-            const editFollowersCount = document.getElementById('editFollowersCount');
-            const editFollowingCount = document.getElementById('editFollowingCount');
-            const editorPostsList = document.getElementById('editorPostsList');
-            const editorReelsList = document.getElementById('editorReelsList');
-            const addReelType = document.getElementById('addReelType');
-            const addReelSrc = document.getElementById('addReelSrc');
-            const editorTaggedList = document.getElementById('editorTaggedList');
-            const addTaggedType = document.getElementById('addTaggedType');
-            const addTaggedSrc = document.getElementById('addTaggedSrc');
-            const editorHighlightsList = document.getElementById('editorHighlightsList');
-            const addHighlightLabel = document.getElementById('addHighlightLabel');
-            const addHighlightIcon = document.getElementById('addHighlightIcon');
-            const uploadModalOverlay = document.getElementById('uploadModalOverlay');
-            const uploadCloseBtn = document.getElementById('uploadCloseBtn');
-            const uploadContentType = document.getElementById('uploadContentType');
-            const uploadContentDestination = document.getElementById('uploadContentDestination');
-            const uploadFileSection = document.getElementById('uploadFileSection');
-            const uploadFile = document.getElementById('uploadFile');
-            const uploadFileName = document.getElementById('uploadFileName');
-            const uploadPreview = document.getElementById('uploadPreview');
-            const uploadTextSection = document.getElementById('uploadTextSection');
-            const uploadTextContent = document.getElementById('uploadTextContent');
-            const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
-            const uploadCancelBtn = document.getElementById('uploadCancelBtn');
-         
-            function getCookie(name) {
+    const authOverlay = document.getElementById('authOverlay');
+    const wormholeOverlay = document.getElementById('wormholeOverlay');
+    const cosmicOrbContainer = document.getElementById('cosmicOrbContainer');
+    const secretAnswer = document.getElementById('secretAnswer');
+    const authSubmit = document.getElementById('authSubmit');
+    const particlesContainer = document.getElementById('particles');
+    const numParticles = 80;
+    const profileOrb = document.getElementById('profile-orb');
+    const profilePic = document.getElementById('profilePic');
+    const profileUsername = document.getElementById('profileUsername');
+    const profileName = document.getElementById('profileName');
+    const highlightsSection = document.getElementById('highlights-section');
+    const btnFollow = document.getElementById('btn-follow');
+    const btnTikTok = document.getElementById('btn-tiktok');
+    const btnInstagram = document.getElementById('btn-instagram');
+    const btnCreateGalaxy = document.getElementById('btn-create-galaxy');
+    const contentView = document.getElementById('content-view');
+    const closeContentView = document.getElementById('close-content-view');
+    const contentViewTabs = document.getElementById('content-view-tabs');
+    const contentGrid = document.getElementById('content-grid');
+    const storyModalOverlay = document.getElementById('storyModalOverlay');
+    const storyCloseBtn = document.getElementById('storyCloseBtn');
+    const storyPrevBtn = document.getElementById('storyPrevBtn');
+    const storyNextBtn = document.getElementById('storyNextBtn');
+    const storyImage = document.getElementById('storyImage');
+    const storyVideo = document.getElementById('storyVideo');
+    let currentHighlightStories = [];
+    let currentStoryIndex = 0;
+    const privateAuthModalOverlay = document.getElementById('privateAuthModalOverlay');
+    const privateAuthAnswer = document.getElementById('privateAuthAnswer');
+    const privateAuthSubmit = document.getElementById('privateAuthSubmit');
+    const privateAuthCloseBtn = document.getElementById('privateAuthCloseBtn');
+    const privateContentDisplayModalOverlay = document.getElementById('privateContentDisplayModalOverlay');
+    const privateCloseBtn = document.getElementById('privateCloseBtn');
+    const privatePrevBtn = document.getElementById('privatePrevBtn');
+    const privateNextBtn = document.getElementById('privateNextBtn');
+    const privateImage = document.getElementById('privateImage');
+    const privateVideo = document.getElementById('privateVideo');
+    const privateText = document.getElementById('privateText');
+    const privateAudio = document.getElementById('privateAudio');
+    let currentPrivateContents = [];
+    let currentPrivateIndex = 0;
+    let hasAccessedPrivateContent = false;
+    const editorToggleBtn = document.getElementById('editorToggleBtn');
+    const editorOverlay = document.getElementById('editorOverlay');
+    const editorCloseBtn = document.getElementById('editorCloseBtn');
+    const editorCancelBtn = document.getElementById('editorCancelBtn');
+    const publishChangesBtn = document.getElementById('publishChangesBtn');
+    const editProfilePic = document.getElementById('editProfilePic');
+    const editUsername = document.getElementById('editUsername');
+    const editFullName = document.getElementById('editFullName');
+    const editBio = document.getElementById('editBio');
+    const editorPostsList = document.getElementById('editorPostsList');
+    const editorReelsList = document.getElementById('editorReelsList');
+    const addReelType = document.getElementById('addReelType');
+    const addReelSrc = document.getElementById('addReelSrc');
+    const editorTaggedList = document.getElementById('editorTaggedList');
+    const addTaggedType = document.getElementById('addTaggedType');
+    const addTaggedSrc = document.getElementById('addTaggedSrc');
+    const editorHighlightsList = document.getElementById('editorHighlightsList');
+    const addHighlightLabel = document.getElementById('addHighlightLabel');
+    const addHighlightIcon = document.getElementById('addHighlightIcon');
+    const uploadModalOverlay = document.getElementById('uploadModalOverlay');
+    const uploadCloseBtn = document.getElementById('uploadCloseBtn');
+    const uploadContentType = document.getElementById('uploadContentType');
+    const uploadContentDestination = document.getElementById('uploadContentDestination');
+    const uploadFileSection = document.getElementById('uploadFileSection');
+    const uploadFile = document.getElementById('uploadFile');
+    const uploadFileName = document.getElementById('uploadFileName');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const uploadTextSection = document.getElementById('uploadTextSection');
+    const uploadTextContent = document.getElementById('uploadTextContent');
+    const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
+    const uploadCancelBtn = document.getElementById('uploadCancelBtn');
+
+    function getCookie(name) {
         const nameEQ = name + "=";
         const ca = document.cookie.split(';');
         for(let i=0; i < ca.length; i++) {
@@ -1564,770 +1560,749 @@
             if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
         }
         return null;
-            }
-            const isLoggedIn = getCookie('isEzraLoggedIn') === 'true';
-            if (isLoggedIn) {
-        // Jika login, sembunyikan overlay autentikasi
+    }
+    const isLoggedIn = getCookie('isEzraLoggedIn') === 'true';
+    if (isLoggedIn) {
         if (authOverlay) {
             authOverlay.style.display = 'none';
             authOverlay.style.opacity = '0';
             authOverlay.style.visibility = 'hidden';
         }
-        // Tampilkan konten utama situs
         if (cosmicOrbContainer) {
-            cosmicOrbContainer.classList.add('active'); // Asumsikan 'active' akan menampilkan konten
+            cosmicOrbContainer.classList.add('active');
+        }
+    } else {
+        document.body.innerHTML = '<h1>Akses ditolak. Kamu harus login dulu</h1>';
+        setTimeout(function() {
+            window.location.href = 'https://universalezra.netlify.app';
+        }, 1000);
+    }
+    for (let i = 0; i < numParticles; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        const size = Math.random() * 5 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * -15}s`;
+        particle.style.setProperty('--rand-x', Math.random() * 400 - 200);
+        particle.style.setProperty('--rand-y', Math.random() * 400 - 200);
+        particle.style.setProperty('--rand-scale', Math.random() * 0.5 + 0.5);
+        particlesContainer.appendChild(particle);
+    }
+    let profileData = {
+        username: "elvi_ezra_",
+        fullName: "Elvi Ezra",
+        bio: "Greetings, fellow cosmic traveler! Welcome to my personal nebula where stars align and galaxies unfold. ✨🪐\nExploring the vastness of the digital universe.",
+        profilePic: "Advanced files Elvi/May 26, 2025 at 09.00 AM.png",
+        stats: {}
+    };
+    let postsData = [
+        { id: 'p1', type: 'video', src: 'Video Elvi/March 03, 2025 at 11.22 PM.mp4' },
+        { id: 'p2', type: 'video', src: 'Video Elvi/FDownloader.Net_13.mp4' },
+        { id: 'p3', type: 'video', src: 'Video Elvi/FDownloader.Net 4.mp4' },
+        { id: 'p4', type: 'image', src: 'Advanced files Elvi/May 25, 2025 at 12.35 PM.png' },
+        { id: 'p5', type: 'video', src: 'Video Elvi/January 20, 2025 at 10.03 PM.mp4' },
+        { id: 'p6', type: 'image', src: 'Advanced files Elvi/December 21, 2024 at 4.52 AM.png' },
+    ];
+    let reelsData = [
+        { id: 'r1', type: 'video', src: 'Video Elvi/February 6, 2025 at 5.49 AM.mp4' },
+        { id: 'r2', type: 'video', src: 'Video Elvi/January 20, 2025 at 10.04 PM.mp4' },
+        { id: 'r3', type: 'video', src: 'Video Elvi/FDownloader.Net_11.mp4' },
+    ];
+    let taggedData = [
+        { id: 't1', type: 'image', src: 'Advanced Files Elvi/April 9, 2025 at 8.13 AM.png' },
+        { id: 't2', type: 'image', src: 'Advanced files Elvi/January 23, 2025 at 1.01 AM.png' },
+    ];
+
+    let highlightsData = [
+        {
+            id: 'h1',
+            label: 'My Nebula',
+            icon: 'Advanced files Elvi/iconelvi.png',
+            stories: [
+                { type: 'image', src: 'Advanced files Elvi/October 25, 2024 at 8.11 AM.png' },
+                { type: 'video', src: 'Video Elvi/FDownloader.Net_35.mp4' }
+            ]
+        },
+        {
+            id: 'h2',
+            label: 'Code Clusters',
+            icon: 'https://via.placeholder.com/60/00ff88/000000?text=</>',
+            stories: [
+                { type: 'image', src: 'Advanced files Elvi/February 2, 2025 at 11.44 AM.png' }
+            ]
+        },
+        {
+            id: 'h3',
+            label: 'Cosmic Felines',
+            icon: 'Advanced files Elvi/October 25, 2024 at 2.01 PM.png',
+            stories: [
+                { type: 'image', src: 'https://via.placeholder.com/400x700/ff69b4/FFFFFF?text=Cute+Cat+in+Space' }
+            ]
+        },
+        {
+            id: 'h4',
+            label: 'Voyage Logs',
+            icon: 'https://via.placeholder.com/60/E1306C/FFFFFF?text=🚀',
+            stories: [
+                { type: 'video', src: 'Video Elvi/FDownloader.Net_13.mp4' }
+            ]
+        },
+    ];
+
+    const privateContentData = [
+        { type: 'text', content: "Beyond the stars, in this sacred cosmic chamber, our connection shines brightest. Thank you for venturing this far! ✨\n\nThis is a private transmission, reserved for those who hold the key to my heart's galaxy." },
+        { type: 'image', src: 'Advanced files Elvi/October 25, 2024 at 8.11 AM.png' },
+        { type: 'video', src: 'Video Elvi/FDownloader.Net 4.mp4' },
+        { type: 'audio', src: 'Audio Elvi/Cosmic_Serenade.mp3' },
+        { type: 'text', content: "May these cosmic moments bring us closer across the universe. You are the most unique celestial body in my orbit. Always. ❤\n\n- E.E." },
+    ];
+
+    const elementsToPosition = [
+        { element: btnFollow, angle: 225 },
+        { element: btnTikTok, angle: 315 },
+        { element: btnInstagram, angle: 45 },
+        { element: btnCreateGalaxy, angle: 135 },
+        { element: highlightsSection, angle: 0 }
+    ];
+
+    function positionElementsCircularly() {
+        const orbRadius = cosmicOrbContainer.offsetWidth / 2;
+        const centerOffset = orbRadius;
+        elementsToPosition.forEach(item => {
+            const angleRad = (item.angle - 90) * (Math.PI / 180);
+            const element = item.element;
+            const elementRadius = element.offsetWidth / 2;
+            const placementRadius = orbRadius * 0.7;
+            const x = centerOffset + placementRadius * Math.cos(angleRad);
+            const y = centerOffset + placementRadius * Math.sin(angleRad);
+            element.style.left = `${x - elementRadius}px`;
+            element.style.top = `${y - elementRadius}px`;
+        });
+    }
+
+    window.addEventListener('resize', positionElementsCircularly);
+
+    function loadProfileContent() {
+        profilePic.src = profileData.profilePic;
+        profileUsername.textContent = profileData.username;
+        profileName.textContent = profileData.fullName;
+        renderHighlights();
+        positionElementsCircularly();
+        cosmicOrbContainer.classList.add('active');
+        editorToggleBtn.style.display = 'block';
+    }
+
+    function renderContentGrid(data) {
+        contentGrid.innerHTML = '';
+        data.forEach(item => {
+            const postItem = document.createElement('div');
+            postItem.classList.add('post-item');
+            if (item.type === 'video') {
+                const video = document.createElement('video');
+                video.src = item.src;
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.setAttribute('aria-label', 'Cosmic Video Post');
+                postItem.appendChild(video);
+            } else if (item.type === 'image') {
+                const img = document.createElement('img');
+                img.src = item.src;
+                img.alt = 'Cosmic Image Post';
+                postItem.appendChild(img);
+            } else if (item.type === 'audio') {
+                const audio = document.createElement('audio');
+                audio.src = item.src;
+                audio.controls = true;
+                audio.preload = 'metadata';
+                postItem.appendChild(audio);
+                const audioIcon = document.createElement('i');
+                audioIcon.classList.add('fas', 'fa-music', 'fa-4x');
+                audioIcon.style.color = '#00FFFF';
+                audioIcon.style.position = 'absolute';
+                audioIcon.style.top = '25%';
+                audioIcon.style.left = '50%';
+                audioIcon.style.transform = 'translate(-50%, -50%)';
+                postItem.appendChild(audioIcon);
+            }
+            contentGrid.appendChild(postItem);
+        });
+    }
+
+    function renderHighlights() {
+        highlightsSection.innerHTML = '';
+        highlightsData.forEach(highlight => {
+            const highlightItem = document.createElement('div');
+            highlightItem.classList.add('highlight-item');
+            highlightItem.dataset.highlightId = highlight.id;
+            const highlightCircle = document.createElement('div');
+            highlightCircle.classList.add('highlight-circle');
+            const img = document.createElement('img');
+            img.src = highlight.icon;
+            img.alt = highlight.label + ' highlight icon';
+            highlightCircle.appendChild(img);
+            const highlightLabel = document.createElement('span');
+            highlightLabel.classList.add('highlight-label');
+            highlightLabel.textContent = highlight.label;
+            highlightItem.appendChild(highlightCircle);
+            highlightItem.appendChild(highlightLabel);
+            highlightsSection.appendChild(highlightItem);
+            highlightItem.addEventListener('click', () => openStoryModal(highlight.id));
+        });
+    }
+
+    contentViewTabs.addEventListener('click', function(event) {
+        const targetTab = event.target.closest('.content-tab-item');
+        if (!targetTab) return;
+        document.querySelectorAll('.content-tab-item').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        targetTab.classList.add('active');
+        const tabType = targetTab.dataset.tab;
+        switch (tabType) {
+            case 'posts':
+                renderContentGrid(postsData);
+                break;
+            case 'reels':
+                renderContentGrid(reelsData);
+                break;
+            case 'tagged':
+                renderContentGrid(taggedData);
+                break;
+            default:
+                renderContentGrid(postsData);
+        }
+    });
+
+    profileOrb.addEventListener('click', () => {
+        contentView.classList.add('active');
+        renderContentGrid(postsData);
+        contentViewTabs.querySelector('[data-tab="posts"]').classList.add('active');
+    });
+
+    closeContentView.addEventListener('click', () => {
+        contentView.classList.remove('active');
+    });
+
+    function openStoryModal(highlightId) {
+        const highlight = highlightsData.find(h => h.id === highlightId);
+        if (!highlight || highlight.stories.length === 0) return;
+        currentHighlightStories = highlight.stories;
+        currentStoryIndex = 0;
+        displayCurrentStory();
+        storyModalOverlay.classList.add('active');
+    }
+
+    function displayCurrentStory() {
+        const story = currentHighlightStories[currentStoryIndex];
+        storyImage.classList.add('hidden');
+        storyVideo.classList.add('hidden');
+        storyVideo.pause();
+        if (story.type === 'image') {
+            storyImage.src = story.src;
+            storyImage.classList.remove('hidden');
+        } else if (story.type === 'video') {
+            storyVideo.src = story.src;
+            storyVideo.classList.remove('hidden');
+            storyVideo.play().catch(e => console.log("Video autoplay blocked for story:", e));
+        }
+        storyPrevBtn.style.display = (currentStoryIndex === 0) ? 'none' : 'block';
+        storyNextBtn.style.display = (currentStoryIndex === currentHighlightStories.length - 1) ? 'none' : 'block';
+    }
+
+    storyPrevBtn.addEventListener('click', () => {
+        if (currentStoryIndex > 0) {
+            currentStoryIndex--;
+            displayCurrentStory();
+        }
+    });
+    storyNextBtn.addEventListener('click', () => {
+        if (currentStoryIndex < currentHighlightStories.length - 1) {
+            currentStoryIndex++;
+            displayCurrentStory();
+        }
+    });
+    storyCloseBtn.addEventListener('click', () => {
+        storyModalOverlay.classList.remove('active');
+        storyVideo.pause();
+        storyVideo.currentTime = 0;
+    });
+    storyModalOverlay.addEventListener('click', (event) => {
+        if (event.target === storyModalOverlay) {
+            storyModalOverlay.classList.remove('active');
+            storyVideo.pause();
+            storyVideo.currentTime = 0;
+        }
+    });
+
+    btnFollow.addEventListener('click', function() {
+        if (!hasAccessedPrivateContent) {
+            privateAuthModalOverlay.classList.add('active');
+            privateAuthAnswer.focus();
+        } else {
+            openPrivateContentDisplayModal();
+        }
+    });
+
+    privateAuthCloseBtn.addEventListener('click', () => {
+        privateAuthModalOverlay.classList.remove('active');
+        privateAuthAnswer.value = '';
+    });
+    privateAuthSubmit.addEventListener('click', checkPrivateAuth);
+    privateAuthAnswer.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkPrivateAuth();
+        }
+    });
+
+    function checkPrivateAuth() {
+        const answer = privateAuthAnswer.value.trim().toLowerCase();
+        if (answer === 'aku sayang kita') {
+            hasAccessedPrivateContent = true;
+            btnFollow.textContent = "Forbidden Zone";
+            btnFollow.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
+            btnFollow.style.boxShadow = '0 5px 20px rgba(76, 175, 80, 0.5)';
+            privateAuthModalOverlay.classList.remove('active');
+            privateAuthAnswer.value = '';
+            openPrivateContentDisplayModal();
+        } else {
+            privateAuthAnswer.style.borderColor = '#ff0000';
+            privateAuthAnswer.style.animation = 'shake 0.5s';
+            setTimeout(() => {
+                privateAuthAnswer.style.borderColor = '#00BFFF';
+                privateAuthAnswer.style.animation = 'none';
+                alert("Quantum signature denied! Recalibrate and try again, Navigator.");
+            }, 500);
         }
     }
-            else {
-    document.body.innerHTML = '<h1>Akses ditolak. Kamu harus login dulu</h1>';
-    setTimeout(function() {
-        window.location.href = 'https://universalezra.netlify.app';
-    }, 1000);
-}
-            for (let i = 0; i < numParticles; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                const size = Math.random() * 5 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                particle.style.animationDelay = `${Math.random() * -15}s`;
-                particle.style.setProperty('--rand-x', Math.random() * 400 - 200);
-                particle.style.setProperty('--rand-y', Math.random() * 400 - 200);
-                particle.style.setProperty('--rand-scale', Math.random() * 0.5 + 0.5);
-                particlesContainer.appendChild(particle);
+
+    function openPrivateContentDisplayModal() {
+        currentPrivateContents = privateContentData;
+        currentPrivateIndex = 0;
+        displayCurrentPrivateContent();
+        privateContentDisplayModalOverlay.classList.add('active');
+    }
+
+    function displayCurrentPrivateContent() {
+        const content = currentPrivateContents[currentPrivateIndex];
+        privateImage.classList.add('hidden');
+        privateVideo.classList.add('hidden');
+        privateText.classList.add('hidden');
+        privateAudio.classList.add('hidden');
+        privateVideo.pause();
+        privateAudio.pause();
+        if (content.type === 'image') {
+            privateImage.src = content.src;
+            privateImage.classList.remove('hidden');
+        } else if (content.type === 'video') {
+            privateVideo.src = content.src;
+            privateVideo.classList.remove('hidden');
+            privateVideo.play().catch(e => console.log("Video autoplay blocked for private content:", e));
+        } else if (content.type === 'audio') {
+            privateAudio.src = content.src;
+            privateAudio.classList.remove('hidden');
+            privateAudio.play().catch(e => console.log("Audio autoplay blocked for private content:", e));
+        } else if (content.type === 'text') {
+            privateText.innerHTML = content.content.replace(/\n/g, '<br>');
+            privateText.classList.remove('hidden');
+        }
+        privatePrevBtn.style.display = (currentPrivateIndex === 0) ? 'none' : 'block';
+        privateNextBtn.style.display = (currentPrivateIndex === currentPrivateContents.length - 1) ? 'none' : 'block';
+    }
+
+    privatePrevBtn.addEventListener('click', () => {
+        if (currentPrivateIndex > 0) {
+            currentPrivateIndex--;
+            displayCurrentPrivateContent();
+        }
+    });
+    privateNextBtn.addEventListener('click', () => {
+        if (currentPrivateIndex < currentPrivateContents.length - 1) {
+            currentPrivateIndex++;
+            displayCurrentPrivateContent();
+        }
+    });
+    privateCloseBtn.addEventListener('click', () => {
+        privateContentDisplayModalOverlay.classList.remove('active');
+        privateVideo.pause();
+        privateVideo.currentTime = 0;
+        privateAudio.pause();
+        privateAudio.currentTime = 0;
+    });
+    privateContentDisplayModalOverlay.addEventListener('click', (event) => {
+        if (event.target === privateContentDisplayModalOverlay) {
+            privateContentDisplayModalOverlay.classList.remove('active');
+            privateVideo.pause();
+            privateVideo.currentTime = 0;
+            privateAudio.pause();
+            privateAudio.currentTime = 0;
+        }
+    });
+
+    secretAnswer.focus();
+    authSubmit.addEventListener('click', checkSecret);
+    secretAnswer.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkSecret();
+        }
+    });
+
+    function createWormholeParticles() {
+        const particleCount = 100;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('wormhole-effect');
+            const size = Math.random() * 50 + 20;
+            const duration = Math.random() * 1.5 + 0.5;
+            const delay = Math.random() * 0.5;
+            const startX = (Math.random() - 0.5) * window.innerWidth * 2;
+            const startY = (Math.random() - 0.5) * window.innerHeight * 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `calc(50% + ${startX}px)`;
+            particle.style.top = `calc(50% + ${startY}px)`;
+            particle.style.animation = `wormholeZoomIn ${duration}s linear ${delay}s forwards`;
+            particle.style.setProperty('--random-hue', `${Math.random() * 360}deg`);
+            wormholeOverlay.appendChild(particle);
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+            });
+        }
+    }
+
+    function checkSecret() {
+        const answer = secretAnswer.value.trim().toLowerCase();
+        if (answer === 'love') {
+            document.body.classList.add('wormhole-active');
+            authOverlay.style.animation = 'fadeOut 0.5s forwards';
+            createWormholeParticles();
+            const particleInterval = setInterval(createWormholeParticles, 100);
+            setTimeout(() => {
+                clearInterval(particleInterval);
+            }, 1500);
+            setTimeout(() => {
+                authOverlay.remove();
+                wormholeOverlay.style.animation = 'fadeOut 0.7s forwards';
+                cosmicOrbContainer.classList.add('active');
+                loadProfileContent();
+                editorToggleBtn.style.display = 'block';
+                window.scrollTo(
+                    (document.body.scrollWidth - window.innerWidth) / 2,
+                    (document.body.scrollHeight - window.innerHeight) / 2
+                );
+                cosmicOrbContainer.querySelectorAll('.post-item video').forEach(video => {
+                    video.play().catch(error => {
+                        console.log("Video autoplay failed (muted ok):", error);
+                    });
+                });
+            }, 2000);
+        } else {
+            secretAnswer.style.borderColor = '#ff0000';
+            secretAnswer.style.animation = 'shake 0.5s';
+            setTimeout(() => {
+                window.location.href = 'https://universalezra.netlify.app';
+            }, 1000);
+        }
+    }
+
+    editorToggleBtn.addEventListener('click', () => {
+        editorOverlay.classList.add('active');
+        populateEditorFields();
+    });
+
+    editorCloseBtn.addEventListener('click', () => {
+        editorOverlay.classList.remove('active');
+    });
+    editorCancelBtn.addEventListener('click', () => {
+        editorOverlay.classList.remove('active');
+    });
+
+    function populateEditorFields() {
+        editProfilePic.value = profileData.profilePic;
+        editUsername.value = profileData.username;
+        editFullName.value = profileData.fullName;
+        editBio.value = profileData.bio;
+        renderEditorMediaList(editorPostsList, postsData, 'posts');
+        renderEditorMediaList(editorReelsList, reelsData, 'reels');
+        renderEditorMediaList(editorTaggedList, taggedData, 'tagged');
+        renderEditorHighlightsList(editorHighlightsList, highlightsData);
+    }
+
+    function renderEditorMediaList(container, data, dataType) {
+        container.innerHTML = '';
+        data.forEach((item, index) => {
+            const mediaItemDiv = document.createElement('div');
+            mediaItemDiv.classList.add('media-item');
+            let mediaElement;
+            if (item.type === 'image') {
+                mediaElement = document.createElement('img');
+                mediaElement.src = item.src;
+            } else if (item.type === 'video') {
+                mediaElement = document.createElement('video');
+                mediaElement.src = item.src;
+                mediaElement.muted = true;
+                mediaElement.playsInline = true;
+                mediaElement.loop = true;
+                mediaElement.autoplay = true;
+            } else if (item.type === 'audio') {
+                mediaElement = document.createElement('audio');
+                mediaElement.src = item.src;
+                mediaElement.controls = true;
+                mediaElement.preload = 'metadata';
+                mediaElement.style.width = '100%';
+                mediaElement.style.height = '100%';
+                mediaElement.style.borderRadius = '50%';
+                mediaElement.style.objectFit = 'cover';
+                mediaElement.style.backgroundColor = 'rgba(0,0,30,0.8)';
             }
-            let profileData = {
-                username: "elvi_ezra_",
-                fullName: "Elvi Ezra",
-                bio: "Greetings, fellow cosmic traveler! Welcome to my personal nebula where stars align and galaxies unfold. ✨🪐\nExploring the vastness of the digital universe.",
-                profilePic: "May 26, 2025 at 09.00 AM.png", 
-                stats: {
-                    followers: "4.5K",
-                    following: 321
+            mediaItemDiv.appendChild(mediaElement);
+            const deleteBtn = document.createElement('button');
+            deleteBtn.classList.add('delete-media-btn');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.title = 'Delete this item';
+            deleteBtn.addEventListener('click', () => {
+                if (confirm(`Are you sure you want to delete this ${item.type}?`)) {
+                    if (dataType === 'posts') postsData.splice(index, 1);
+                    else if (dataType === 'reels') reelsData.splice(index, 1);
+                    else if (dataType === 'tagged') taggedData.splice(index, 1);
+                    populateEditorFields();
+                    loadProfileContent();
+                }
+            });
+            mediaItemDiv.appendChild(deleteBtn);
+            container.appendChild(mediaItemDiv);
+        });
+    }
+
+    function renderEditorHighlightsList(container, data) {
+        container.innerHTML = '';
+        data.forEach((highlight, index) => {
+            const highlightItemDiv = document.createElement('div');
+            highlightItemDiv.classList.add('media-item');
+            const img = document.createElement('img');
+            img.src = highlight.icon;
+            img.alt = highlight.label;
+            highlightItemDiv.appendChild(img);
+            const deleteBtn = document.createElement('button');
+            deleteBtn.classList.add('delete-media-btn');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.title = 'Delete this highlight';
+            deleteBtn.addEventListener('click', () => {
+                if (confirm(`Are you sure you want to delete highlight "${highlight.label}"?`)) {
+                    highlightsData.splice(index, 1);
+                    populateEditorFields();
+                    loadProfileContent();
+                }
+            });
+            highlightItemDiv.appendChild(deleteBtn);
+            highlightItemDiv.addEventListener('click', () => {
+                alert(`Editing stories for "${highlight.label}". This functionality is not fully implemented for direct editing of highlight stories in this demo. You would need a sub-modal here.`);
+            });
+            container.appendChild(highlightItemDiv);
+        });
+    }
+
+    document.querySelector('.editor-save-btn[data-section="profile"]').addEventListener('click', () => {
+        profileData.profilePic = editProfilePic.value;
+        profileData.username = editUsername.value;
+        profileData.fullName = editFullName.value;
+        profileData.bio = editBio.value;
+        alert('Profile data saved locally. Changes will be lost upon page refresh.');
+        loadProfileContent();
+    });
+
+    document.querySelector('.editor-add-btn[data-section="reels"]').addEventListener('click', () => {
+        const src = addReelSrc.value.trim();
+        if (src) {
+            reelsData.push({ id: `r${Date.now()}`, type: addReelType.value, src: src });
+            addReelSrc.value = '';
+            populateEditorFields();
+            alert('Reel added locally. Changes will be lost upon page refresh.');
+            loadProfileContent();
+        } else {
+            alert('Please provide a URL for the new reel.');
+        }
+    });
+    document.querySelector('.editor-add-btn[data-section="tagged"]').addEventListener('click', () => {
+        const src = addTaggedSrc.value.trim();
+        if (src) {
+            taggedData.push({ id: `t${Date.now()}`, type: addTaggedType.value, src: src });
+            addTaggedSrc.value = '';
+            populateEditorFields();
+            alert('Tagged content added locally. Changes will be lost upon page refresh.');
+            loadProfileContent();
+        } else {
+            alert('Please provide a URL for the new tagged content.');
+        }
+    });
+
+    document.querySelector('.editor-add-btn[data-section="highlights"]').addEventListener('click', () => {
+        const label = addHighlightLabel.value.trim();
+        const icon = addHighlightIcon.value.trim();
+        if (label && icon) {
+            highlightsData.push({ id: `h${Date.now()}`, label: label, icon: icon, stories: [] });
+            addHighlightLabel.value = '';
+            addHighlightIcon.value = '';
+            populateEditorFields();
+            alert('Highlight added locally. Changes will be lost upon page refresh.');
+            loadProfileContent();
+        } else {
+            alert('Please provide a label and icon URL for the new highlight.');
+        }
+    });
+
+    btnCreateGalaxy.addEventListener('click', () => {
+        uploadModalOverlay.classList.add('active');
+        uploadContentType.value = 'image';
+        uploadContentDestination.value = 'posts';
+        uploadFile.value = '';
+        uploadFileName.textContent = 'No file chosen';
+        uploadTextContent.value = '';
+        uploadPreview.innerHTML = '';
+        uploadFileSection.classList.remove('hidden');
+        uploadTextSection.classList.add('hidden');
+        updateUploadModalVisibility();
+    });
+
+    uploadCloseBtn.addEventListener('click', () => {
+        uploadModalOverlay.classList.remove('active');
+    });
+    uploadCancelBtn.addEventListener('click', () => {
+        uploadModalOverlay.classList.remove('active');
+    });
+
+    uploadContentType.addEventListener('change', updateUploadModalVisibility);
+    uploadContentDestination.addEventListener('change', updateUploadModalVisibility);
+    uploadFile.addEventListener('change', updateUploadFileDisplayAndPreview);
+
+    function updateUploadModalVisibility() {
+        const contentType = uploadContentType.value;
+        const destination = uploadContentDestination.value;
+        if (contentType === 'text') {
+            uploadFileSection.classList.add('hidden');
+            uploadTextSection.classList.remove('hidden');
+        } else {
+            uploadFileSection.classList.remove('hidden');
+            uploadTextSection.classList.add('hidden');
+        }
+        if (contentType === 'text') {
+            if (destination !== 'private') {
+                uploadContentDestination.value = 'private';
+            }
+            uploadContentDestination.querySelector('option[value="posts"]').disabled = true;
+        } else {
+            uploadContentDestination.querySelector('option[value="posts"]').disabled = false;
+        }
+        uploadPreview.innerHTML = '';
+        uploadFileName.textContent = 'No file chosen';
+    }
+
+    function updateUploadFileDisplayAndPreview() {
+        const file = uploadFile.files[0];
+        if (file) {
+            uploadFileName.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadPreview.innerHTML = '';
+                const contentType = uploadContentType.value;
+                if (contentType === 'image') {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('upload-preview-media');
+                    uploadPreview.appendChild(img);
+                } else if (contentType === 'video') {
+                    const video = document.createElement('video');
+                    video.src = e.target.result;
+                    video.controls = true;
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.classList.add('upload-preview-media');
+                    uploadPreview.appendChild(video);
+                } else if (contentType === 'audio') {
+                    const audio = document.createElement('audio');
+                    audio.src = e.target.result;
+                    audio.controls = true;
+                    audio.classList.add('upload-preview-media', 'audio-preview');
+                    uploadPreview.appendChild(audio);
                 }
             };
-            let postsData = [
-                { id: 'p1', type: 'video', src: 'March 03, 2025 at 11.22 PM.mp4' },
-                { id: 'p2', type: 'video', src: 'FDownloader.Net_13.mp4' },
-                { id: 'p3', type: 'video', src: 'FDownloader.Net 4.mp4' },
-                { id: 'p4', type: 'image', src: 'May 25, 2025 at 12.35 PM.png' },
-                { id: 'p5', type: 'video', src: 'January 20, 2025 at 10.03 PM.mp4' },
-                { id: 'p6', type: 'image', src: 'December 21, 2024 at 4.52 AM.png' },
-            ];
-            let reelsData = [
-                { id: 'r1', type: 'video', src: 'February 6, 2025 at 5.49 AM.mp4' },
-                { id: 'r2', type: 'video', src: 'January 20, 2025 at 10.04 PM.mp4' },
-                { id: 'r3', type: 'video', src: 'FDownloader.Net_11.mp4' },
-            ];
-            let taggedData = [
-                { id: 't1', type: 'image', src: 'April 9, 2025 at 8.13 AM.png' },
-                { id: 't2', type: 'image', src: 'January 23, 2025 at 1.01 AM.png' },
-            ];
+            reader.readAsDataURL(file);
+        } else {
+            uploadFileName.textContent = 'No file chosen';
+            uploadPreview.innerHTML = '';
+        }
+    }
 
-            let highlightsData = [
-                {
-                    id: 'h1',
-                    label: 'My Nebula',
-                    icon: 'iconelvi.png',
-                    stories: [
-                        { type: 'image', src: 'October 25, 2024 at 8.11 AM.png' },
-                        { type: 'video', src: 'FDownloader.Net_35.mp4' }
-                    ]
-                },
-                {
-                    id: 'h2',
-                    label: 'Code Clusters',
-                    icon: 'https://via.placeholder.com/60/00ff88/000000?text=</>', /* Placeholder */
-                    stories: [
-                        { type: 'image', src: 'February 2, 2025 at 11.44 AM.png' }
-                    ]
-                },
-                {
-                    id: 'h3',
-                    label: 'Cosmic Felines',
-                    icon: 'October 25, 2024 at 2.01 PM.png', /* Placeholder */
-                    stories: [
-                        { type: 'image', src: 'https://via.placeholder.com/400x700/ff69b4/FFFFFF?text=Cute+Cat+in+Space' }
-                    ]
-                },
-                {
-                    id: 'h4',
-                    label: 'Voyage Logs',
-                    icon: 'https://via.placeholder.com/60/E1306C/FFFFFF?text=🚀', /* Placeholder */
-                    stories: [
-                        { type: 'video', src: 'FDownloader.Net_13.mp4' }
-                    ]
-                },
-                {
-                    id: 'h5',
-                    label: 'Star Glimpses',
-                    icon: 'https://via.placeholder.com/60/884EA0/FFFFFF?text=✨', /* Placeholder */
-                    stories: [
-                        { type: 'image', src: 'May 25, 2025 at 12.35 PM.png' },
-                        { type: 'text', content: "A fleeting glimpse of a distant quasar! The universe is full of wonders." }
-                    ]
-                }
-            ];
-            const privateContentData = [
-                { type: 'text', content: "Beyond the stars, in this sacred cosmic chamber, our connection shines brightest. Thank you for venturing this far! ✨\n\nThis is a private transmission, reserved for those who hold the key to my heart's galaxy." },
-                { type: 'image', src: 'October 25, 2024 at 8.11 AM.png' },
-                { type: 'video', src: 'FDownloader.Net 4.mp4' },
-                { type: 'audio', src: 'Cosmic_Serenade.mp3' }, // New Audio example
-                { type: 'text', content: "May these cosmic moments bring us closer across the universe. You are the most unique celestial body in my orbit. Always. ❤\n\n- E.E." },
-            ];
-            const elementsToPosition = [
-                { element: btnFollow, angle: 225 },
-                { element: btnTikTok, angle: 315 },
-                { element: btnInstagram, angle: 45 },
-                { element: btnCreateGalaxy, angle: 135 },
-                { element: statFollowers, angle: 180 },
-                { element: statFollowing, angle: 90 },
-                { element: highlightsSection, angle: 0 }
-            ];
-            function positionElementsCircularly() {
-                const orbRadius = cosmicOrbContainer.offsetWidth / 2;
-                const centerOffset = orbRadius;
-                elementsToPosition.forEach(item => {
-                    const angleRad = (item.angle - 90) * (Math.PI / 180);
-                    const element = item.element;
-                    const elementRadius = element.offsetWidth / 2;
-                    const placementRadius = orbRadius * 0.7;
-                    const x = centerOffset + placementRadius * Math.cos(angleRad);
-                    const y = centerOffset + placementRadius * Math.sin(angleRad);
-                    element.style.left = `${x - elementRadius}px`;
-                    element.style.top = `${y - elementRadius}px`;
-                });
+    uploadSubmitBtn.addEventListener('click', async () => {
+        const contentType = uploadContentType.value;
+        const destination = uploadContentDestination.value;
+        let newContent = null;
+        if (contentType === 'text') {
+            const text = uploadTextContent.value.trim();
+            if (!text) {
+                alert('Please enter text content.');
+                return;
             }
-            window.addEventListener('resize', positionElementsCircularly);
-            function loadProfileContent() {
-                profilePic.src = profileData.profilePic;
-                profileUsername.textContent = profileData.username;
-                profileName.textContent = profileData.fullName;
-                renderHighlights();
-                positionElementsCircularly();
+            newContent = { id: `${contentType}${Date.now()}`, type: 'text', content: text };
+        } else {
+            const file = uploadFile.files[0];
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
             }
-            function renderContentGrid(data) {
-                contentGrid.innerHTML = '';
-                data.forEach(item => {
-                    const postItem = document.createElement('div');
-                    postItem.classList.add('post-item');
-                    if (item.type === 'video') {
-                        const video = document.createElement('video');
-                        video.src = item.src;
-                        video.autoplay = true;
-                        video.loop = true;
-                        video.muted = true;
-                        video.playsInline = true;
-                        video.setAttribute('aria-label', 'Cosmic Video Post');
-                        postItem.appendChild(video);
-                    } else if (item.type === 'image') {
-                        const img = document.createElement('img');
-                        img.src = item.src;
-                        img.alt = 'Cosmic Image Post';
-                        postItem.appendChild(img);
-                    } else if (item.type === 'audio') {
-                        const audio = document.createElement('audio');
-                        audio.src = item.src;
-                        audio.controls = true;
-                        audio.preload = 'metadata';
-                        postItem.appendChild(audio);
-                        const audioIcon = document.createElement('i');
-                        audioIcon.classList.add('fas', 'fa-music', 'fa-4x');
-                        audioIcon.style.color = '#00FFFF';
-                        audioIcon.style.position = 'absolute';
-                        audioIcon.style.top = '25%';
-                        audioIcon.style.left = '50%';
-                        audioIcon.style.transform = 'translate(-50%, -50%)';
-                        postItem.appendChild(audioIcon);
-                    }
-                    contentGrid.appendChild(postItem);
-                });
-            }
-            function renderHighlights() {
-                highlightsSection.innerHTML = '';
-                highlightsData.forEach(highlight => {
-                    const highlightItem = document.createElement('div');
-                    highlightItem.classList.add('highlight-item');
-                    highlightItem.dataset.highlightId = highlight.id;
-                    const highlightCircle = document.createElement('div');
-                    highlightCircle.classList.add('highlight-circle');
-                    const img = document.createElement('img');
-                    img.src = highlight.icon;
-                    img.alt = highlight.label + ' highlight icon';
-                    highlightCircle.appendChild(img);
-                    const highlightLabel = document.createElement('span');
-                    highlightLabel.classList.add('highlight-label');
-                    highlightLabel.textContent = highlight.label;
-                    highlightItem.appendChild(highlightCircle);
-                    highlightItem.appendChild(highlightLabel);
-                    highlightsSection.appendChild(highlightItem);
-                    highlightItem.addEventListener('click', () => openStoryModal(highlight.id));
-                });
-            }
-            contentViewTabs.addEventListener('click', function(event) {
-                const targetTab = event.target.closest('.content-tab-item');
-                if (!targetTab) return;
-                document.querySelectorAll('.content-tab-item').forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                targetTab.classList.add('active');
-                const tabType = targetTab.dataset.tab;
-                switch (tabType) {
-                    case 'posts':
-                        renderContentGrid(postsData);
-                        break;
-                    case 'reels':
-                        renderContentGrid(reelsData);
-                        break;
-                    case 'tagged':
-                        renderContentGrid(taggedData);
-                        break;
-                    default:
-                        renderContentGrid(postsData);
-                }
-            });
-            profileOrb.addEventListener('click', () => {
-                contentView.classList.add('active');
-                renderContentGrid(postsData);
-                contentViewTabs.querySelector('[data-tab="posts"]').classList.add('active');
-            });
-            closeContentView.addEventListener('click', () => {
-                contentView.classList.remove('active');
-            });
-            function openStoryModal(highlightId) {
-                const highlight = highlightsData.find(h => h.id === highlightId);
-                if (!highlight || highlight.stories.length === 0) return;
-                currentHighlightStories = highlight.stories;
-                currentStoryIndex = 0;
-                displayCurrentStory();
-                storyModalOverlay.classList.add('active');
-            }
-            function displayCurrentStory() {
-                const story = currentHighlightStories[currentStoryIndex];
-                storyImage.classList.add('hidden');
-                storyVideo.classList.add('hidden');
-                storyVideo.pause();
-                if (story.type === 'image') {
-                    storyImage.src = story.src;
-                    storyImage.classList.remove('hidden');
-                } else if (story.type === 'video') {
-                    storyVideo.src = story.src;
-                    storyVideo.classList.remove('hidden');
-                    storyVideo.play().catch(e => console.log("Video autoplay blocked for story:", e)); 
-                }
-                storyPrevBtn.style.display = (currentStoryIndex === 0) ? 'none' : 'block';
-                storyNextBtn.style.display = (currentStoryIndex === currentHighlightStories.length - 1) ? 'none' : 'block';
-            }
-            storyPrevBtn.addEventListener('click', () => {
-                if (currentStoryIndex > 0) {
-                    currentStoryIndex--;
-                    displayCurrentStory();
-                }
-            });
-            storyNextBtn.addEventListener('click', () => {
-                if (currentStoryIndex < currentHighlightStories.length - 1) {
-                    currentStoryIndex++;
-                    displayCurrentStory();
-                }
-            });
-            storyCloseBtn.addEventListener('click', () => {
-                storyModalOverlay.classList.remove('active');
-                storyVideo.pause();
-                storyVideo.currentTime = 0; 
-            });
-            storyModalOverlay.addEventListener('click', (event) => {
-                if (event.target === storyModalOverlay) { 
-                    storyModalOverlay.classList.remove('active');
-                    storyVideo.pause();
-                    storyVideo.currentTime = 0;
-                }
-            });
-            btnFollow.addEventListener('click', function() {
-                if (!hasAccessedPrivateContent) {
-                    privateAuthModalOverlay.classList.add('active');
-                    privateAuthAnswer.focus();
-                } else {
-                    openPrivateContentDisplayModal();
-                }
-            });
-            privateAuthCloseBtn.addEventListener('click', () => {
-                privateAuthModalOverlay.classList.remove('active');
-                privateAuthAnswer.value = '';
-            });
-            privateAuthSubmit.addEventListener('click', checkPrivateAuth);
-            privateAuthAnswer.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    checkPrivateAuth();
-                }
-            });
-            function checkPrivateAuth() {
-                const answer = privateAuthAnswer.value.trim().toLowerCase();
-                if (answer === 'aku sayang kita') {
-                    hasAccessedPrivateContent = true;
-                    btnFollow.textContent = "Forbidden Zone"; 
-                    btnFollow.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)'; 
-                    btnFollow.style.boxShadow = '0 5px 20px rgba(76, 175, 80, 0.5)';
-                    privateAuthModalOverlay.classList.remove('active');
-                    privateAuthAnswer.value = '';
-                    openPrivateContentDisplayModal();
-                } else {
-                    privateAuthAnswer.style.borderColor = '#ff0000';
-                    privateAuthAnswer.style.animation = 'shake 0.5s';
-                    setTimeout(() => {
-                        privateAuthAnswer.style.borderColor = '#00BFFF'; 
-                        privateAuthAnswer.style.animation = 'none'; 
-                        alert("Quantum signature denied! Recalibrate and try again, Navigator.");
-                    }, 500); 
-                }
-            }
-            function openPrivateContentDisplayModal() {
-                currentPrivateContents = privateContentData;
-                currentPrivateIndex = 0;
-                displayCurrentPrivateContent();
-                privateContentDisplayModalOverlay.classList.add('active');
-            }
-            function displayCurrentPrivateContent() {
-                const content = currentPrivateContents[currentPrivateIndex];
-                privateImage.classList.add('hidden');
-                privateVideo.classList.add('hidden');
-                privateText.classList.add('hidden');
-                privateAudio.classList.add('hidden');
-                privateVideo.pause(); 
-                privateAudio.pause();
-                if (content.type === 'image') {
-                    privateImage.src = content.src;
-                    privateImage.classList.remove('hidden');
-                } else if (content.type === 'video') {
-                    privateVideo.src = content.src;
-                    privateVideo.classList.remove('hidden');
-                    privateVideo.play().catch(e => console.log("Video autoplay blocked for private content:", e));
-                } else if (content.type === 'audio') {
-                    privateAudio.src = content.src;
-                    privateAudio.classList.remove('hidden');
-                    privateAudio.play().catch(e => console.log("Audio autoplay blocked for private content:", e));
-                } else if (content.type === 'text') {
-                    privateText.innerHTML = content.content.replace(/\n/g, '<br>'); 
-                    privateText.classList.remove('hidden');
-                }
-                privatePrevBtn.style.display = (currentPrivateIndex === 0) ? 'none' : 'block';
-                privateNextBtn.style.display = (currentPrivateIndex === currentPrivateContents.length - 1) ? 'none' : 'block';
-            }
-            privatePrevBtn.addEventListener('click', () => {
-                if (currentPrivateIndex > 0) {
-                    currentPrivateIndex--;
-                    displayCurrentPrivateContent();
-                }
-            });
-            privateNextBtn.addEventListener('click', () => {
-                if (currentPrivateIndex < currentPrivateContents.length - 1) {
-                    currentPrivateIndex++;
-                    displayCurrentPrivateContent();
-                }
-            });
-            privateCloseBtn.addEventListener('click', () => {
-                privateContentDisplayModalOverlay.classList.remove('active');
-                privateVideo.pause();
-                privateVideo.currentTime = 0;
-                privateAudio.pause();
-                privateAudio.currentTime = 0;
-            });
-            privateContentDisplayModalOverlay.addEventListener('click', (event) => {
-                if (event.target === privateContentDisplayModalOverlay) {
-                    privateContentDisplayModalOverlay.classList.remove('active');
-                    privateVideo.pause();
-                    privateVideo.currentTime = 0;
-                    privateAudio.pause();
-                    privateAudio.currentTime = 0;
-                }
-            });
-            secretAnswer.focus(); 
-            authSubmit.addEventListener('click', checkSecret);
-            secretAnswer.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    checkSecret();
-                }
-            });
-            function createWormholeParticles() {
-                const particleCount = 100; 
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('wormhole-effect');
-                    const size = Math.random() * 50 + 20; 
-                    const duration = Math.random() * 1.5 + 0.5; 
-                    const delay = Math.random() * 0.5; 
-                    const startX = (Math.random() - 0.5) * window.innerWidth * 2; 
-                    const startY = (Math.random() - 0.5) * window.innerHeight * 2;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `calc(50% + ${startX}px)`;
-                    particle.style.top = `calc(50% + ${startY}px)`;
-                    particle.style.animation = `wormholeZoomIn ${duration}s linear ${delay}s forwards`;
-                    particle.style.setProperty('--random-hue', `${Math.random() * 360}deg`);        
-                    wormholeOverlay.appendChild(particle);
-                    particle.addEventListener('animationend', () => {
-                        particle.remove();
-                    });
-                }
-            }
-            function checkSecret() {
-                const answer = secretAnswer.value.trim().toLowerCase();
-                if (answer === 'love') {
-                    document.body.classList.add('wormhole-active');
-                    authOverlay.style.animation = 'fadeOut 0.5s forwards'; 
-                    createWormholeParticles(); 
-
-                    const particleInterval = setInterval(createWormholeParticles, 100);
-                    setTimeout(() => {
-                        clearInterval(particleInterval); 
-                    }, 1500); 
-                    setTimeout(() => {
-                        authOverlay.remove(); 
-                        wormholeOverlay.style.animation = 'fadeOut 0.7s forwards'; 
-
-                        cosmicOrbContainer.classList.add('active'); 
-                        loadProfileContent(); 
-                        editorToggleBtn.style.display = 'block';
-                        window.scrollTo(
-                            (document.body.scrollWidth - window.innerWidth) / 2,
-                            (document.body.scrollHeight - window.innerHeight) / 2
-                        );
-                        cosmicOrbContainer.querySelectorAll('.post-item video').forEach(video => {
-                            video.play().catch(error => {
-                                console.log("Video autoplay failed (muted ok):", error);
-                            });
-                        });
-                    }, 2000); 
-                } else {
-                    secretAnswer.style.borderColor = '#ff0000'; 
-                    secretAnswer.style.animation = 'shake 0.5s'; 
-                    setTimeout(() => {
-                        window.location.href = 'https://universalezra.netlify.app'; 
-                    }, 1000); 
-                }
-            }
-            editorToggleBtn.addEventListener('click', () => {
-                editorOverlay.classList.add('active');
-                populateEditorFields();
-            });
-            editorCloseBtn.addEventListener('click', () => {
-                editorOverlay.classList.remove('active');
-            });
-            editorCancelBtn.addEventListener('click', () => {
-                editorOverlay.classList.remove('active');
-            });
-            function populateEditorFields() {
-                editProfilePic.value = profileData.profilePic;
-                editUsername.value = profileData.username;
-                editFullName.value = profileData.fullName;
-                editBio.value = profileData.bio;
-                editFollowersCount.value = profileData.stats.followers;
-                editFollowingCount.value = profileData.stats.following;
-                renderEditorMediaList(editorPostsList, postsData, 'posts');
-                renderEditorMediaList(editorReelsList, reelsData, 'reels');
-                renderEditorMediaList(editorTaggedList, taggedData, 'tagged');
-                renderEditorHighlightsList(editorHighlightsList, highlightsData);
-            }
-            function renderEditorMediaList(container, data, dataType) {
-                container.innerHTML = '';
-                data.forEach((item, index) => {
-                    const mediaItemDiv = document.createElement('div');
-                    mediaItemDiv.classList.add('media-item'); 
-                    let mediaElement;
-                    if (item.type === 'image') {
-                        mediaElement = document.createElement('img');
-                        mediaElement.src = item.src;
-                    } else if (item.type === 'video') {
-                        mediaElement = document.createElement('video');
-                        mediaElement.src = item.src;
-                        mediaElement.muted = true;
-                        mediaElement.playsInline = true;
-                        mediaElement.loop = true;
-                        mediaElement.autoplay = true;
-                    } else if (item.type === 'audio') {
-                        mediaElement = document.createElement('audio');
-                        mediaElement.src = item.src;
-                        mediaElement.controls = true;
-                        mediaElement.preload = 'metadata';
-                        mediaElement.style.width = '100%';
-                        mediaElement.style.height = '100%';
-                        mediaElement.style.borderRadius = '50%';
-                        mediaElement.style.objectFit = 'cover';
-                        mediaElement.style.backgroundColor = 'rgba(0,0,30,0.8)';
-                    }
-                    mediaItemDiv.appendChild(mediaElement);
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.classList.add('delete-media-btn');
-                    deleteBtn.innerHTML = '&times;';
-                    deleteBtn.title = 'Delete this item';
-                    deleteBtn.addEventListener('click', () => {
-                        if (confirm(`Are you sure you want to delete this ${item.type}?`)) {
-                            if (dataType === 'posts') postsData.splice(index, 1);
-                            else if (dataType === 'reels') reelsData.splice(index, 1);
-                            else if (dataType === 'tagged') taggedData.splice(index, 1);
-                            populateEditorFields();
-                        }
-                    });
-                    mediaItemDiv.appendChild(deleteBtn);
-                    container.appendChild(mediaItemDiv);
-                });
-            }
-            function renderEditorHighlightsList(container, data) {
-                container.innerHTML = '';
-                data.forEach((highlight, index) => {
-                    const highlightItemDiv = document.createElement('div');
-                    highlightItemDiv.classList.add('media-item');              
-                    const img = document.createElement('img');
-                    img.src = highlight.icon;
-                    img.alt = highlight.label;
-                    highlightItemDiv.appendChild(img);
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.classList.add('delete-media-btn');
-                    deleteBtn.innerHTML = '&times;';
-                    deleteBtn.title = 'Delete this highlight';
-                    deleteBtn.addEventListener('click', () => {
-                        if (confirm(`Are you sure you want to delete highlight "${highlight.label}"?`)) {
-                            highlightsData.splice(index, 1);
-                            populateEditorFields();
-                        }
-                    });
-                    highlightItemDiv.appendChild(deleteBtn);
-                    highlightItemDiv.addEventListener('click', () => {
-                        alert(`Editing stories for "${highlight.label}". This functionality is not fully implemented for direct editing of highlight stories in this demo. You would need a sub-modal here.`);
-                    });
-                    container.appendChild(highlightItemDiv);
-                });
-            }
-            document.querySelector('.editor-save-btn[data-section="profile"]').addEventListener('click', () => {
-                profileData.profilePic = editProfilePic.value;
-                profileData.username = editUsername.value;
-                profileData.fullName = editFullName.value;
-                profileData.bio = editBio.value;
-                profileData.stats.followers = editFollowersCount.value;
-                profileData.stats.following = parseInt(editFollowingCount.value) || 0;
-                alert('Profile data saved locally. Click "Publish All Changes" to sync.');
-            });
-            document.querySelector('.editor-add-btn[data-section="reels"]').addEventListener('click', () => {
-                const src = addReelSrc.value.trim();
-                if (src) {
-                    reelsData.push({ id: `r${Date.now()}`, type: addReelType.value, src: src });
-                    addReelSrc.value = '';
-                    populateEditorFields();
-                    alert('Reel added locally. Click "Publish All Changes" to sync.');
-                } else {
-                    alert('Please provide a URL for the new reel.');
-                }
-            });
-            document.querySelector('.editor-add-btn[data-section="tagged"]').addEventListener('click', () => {
-                const src = addTaggedSrc.value.trim();
-                if (src) {
-                    taggedData.push({ id: `t${Date.now()}`, type: addTaggedType.value, src: src });
-                    addTaggedSrc.value = '';
-                    populateEditorFields();
-                    alert('Tagged content added locally. Click "Publish All Changes" to sync.');
-                } else {
-                    alert('Please provide a URL for the new tagged content.');
-                }
-            });
-            document.querySelector('.editor-add-btn[data-section="highlights"]').addEventListener('click', () => {
-                const label = addHighlightLabel.value.trim();
-                const icon = addHighlightIcon.value.trim();
-                if (label && icon) {
-                    highlightsData.push({ id: `h${Date.now()}`, label: label, icon: icon, stories: [] });
-                    addHighlightLabel.value = '';
-                    addHighlightIcon.value = '';
-                    populateEditorFields();
-                    alert('Highlight added locally. Click "Publish All Changes" to sync.');
-                } else {
-                    alert('Please provide a label and icon URL for the new highlight.');
-                }
-            });
-            btnCreateGalaxy.addEventListener('click', () => {
-                uploadModalOverlay.classList.add('active');
-                uploadContentType.value = 'image';
-                uploadContentDestination.value = 'posts';
-                uploadFile.value = '';
-                uploadFileName.textContent = 'No file chosen';
-                uploadTextContent.value = '';
-                uploadPreview.innerHTML = '';
-                uploadFileSection.classList.remove('hidden');
-                uploadTextSection.classList.add('hidden');
-                updateUploadModalVisibility();
-            });
-            uploadCloseBtn.addEventListener('click', () => {
-                uploadModalOverlay.classList.remove('active');
-            });
-            uploadCancelBtn.addEventListener('click', () => {
-                uploadModalOverlay.classList.remove('active');
-            });
-            uploadContentType.addEventListener('change', updateUploadModalVisibility);
-            uploadContentDestination.addEventListener('change', updateUploadModalVisibility);
-            uploadFile.addEventListener('change', updateUploadFileDisplayAndPreview);
-            function updateUploadModalVisibility() {
-                const contentType = uploadContentType.value;
-                const destination = uploadContentDestination.value;
-                if (contentType === 'text') {
-                    uploadFileSection.classList.add('hidden');
-                    uploadTextSection.classList.remove('hidden');
-                } else {
-                    uploadFileSection.classList.remove('hidden');
-                    uploadTextSection.classList.add('hidden');
-                }
-                if (contentType === 'text') {
-                    if (destination !== 'private') {
-                        uploadContentDestination.value = 'private';
-                    }
-                    uploadContentDestination.querySelector('option[value="posts"]').disabled = true; // Disable public option
-                } else {
-                    uploadContentDestination.querySelector('option[value="posts"]').disabled = false; // Enable public option
-                }
-                uploadPreview.innerHTML = ''; 
-                uploadFileName.textContent = 'No file chosen';
-            }
-            function updateUploadFileDisplayAndPreview() {
-                const file = uploadFile.files[0];
-                if (file) {
-                    uploadFileName.textContent = file.name;
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        uploadPreview.innerHTML = ''; // Clear previous preview
-                        const contentType = uploadContentType.value;
-                        if (contentType === 'image') {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.classList.add('upload-preview-media');
-                            uploadPreview.appendChild(img);
-                        } else if (contentType === 'video') {
-                            const video = document.createElement('video');
-                            video.src = e.target.result;
-                            video.controls = true;
-                            video.muted = true;
-                            video.playsInline = true;
-                            video.classList.add('upload-preview-media');
-                            uploadPreview.appendChild(video);
-                        } else if (contentType === 'audio') {
-                            const audio = document.createElement('audio');
-                            audio.src = e.target.result;
-                            audio.controls = true;
-                            audio.classList.add('upload-preview-media', 'audio-preview');
-                            uploadPreview.appendChild(audio);
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    uploadFileName.textContent = 'No file chosen';
-                    uploadPreview.innerHTML = '';
-                }
-            }
-            uploadSubmitBtn.addEventListener('click', async () => {
-                const contentType = uploadContentType.value;
-                const destination = uploadContentDestination.value;
-                let newContent = null;
-
-                if (contentType === 'text') {
-                    const text = uploadTextContent.value.trim();
-                    if (!text) {
-                        alert('Please enter text content.');
-                        return;
-                    }
-                    newContent = { id: `${contentType}${Date.now()}`, type: 'text', content: text };
-                } else {
-                    const file = uploadFile.files[0];
-                    if (!file) {
-                        alert('Please select a file to upload.');
-                        return;
-                    }
-                    const dummyFileBaseUrl = "https://your-storage-cdn.com/elvi-content/";
-                    const fileExtension = file.name.split('.').pop();
-                    const simulatedUrl = `${dummyFileBaseUrl}${file.name.replace(/ /g, '_')}`;
-                    newContent = { id: `${contentType}${Date.now()}`, type: contentType, src: simulatedUrl };
-                    alert(`Simulating file upload for: ${file.name}\n\nIn a real app, this file would be uploaded to storage (e.g., Cloudflare R2) and its public URL saved.`);
-                }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const simulatedSrc = e.target.result;
+                newContent = { id: `${contentType}${Date.now()}`, type: contentType, src: simulatedSrc };
                 if (newContent) {
                     if (destination === 'posts') {
                         postsData.unshift(newContent);
-                        alert('New public post added locally! Click "Publish All Changes" to sync.');
+                        alert('New public post added locally! Changes will be lost upon page refresh.');
                     } else if (destination === 'private') {
                         privateContentData.unshift(newContent);
-                        alert('New private content added locally! Click "Publish All Changes" to sync.');
+                        alert('New private content added locally! Changes will be lost upon page refresh.');
                     }
                     uploadModalOverlay.classList.remove('active');
                     populateEditorFields();
                     loadProfileContent();
                 }
-            });
-            const GITHUB_REPO_OWNER = 'your-github-username';
-            const GITHUB_REPO_NAME = 'your-repo-name';
-            const GITHUB_BRANCH = 'main';
-            const GITHUB_API_TOKEN_WORKER = 'YOUR_CLOUDFLARE_WORKER_API_ENDPOINT';
-            const DATA_FILE_PATH = 'data.json';
-            async function fetchDataFromBackend() {
-                try {
-                    const response = await fetch(`${GITHUB_API_TOKEN_WORKER}?path=${DATA_FILE_PATH}`);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    profileData = data.profileData;
-                    postsData = data.postsData;
-                    reelsData = data.reelsData;
-                    taggedData = data.taggedData;
-                    highlightsData = data.highlightsData;
-                    console.log('Data fetched from backend:', data);
-                    loadProfileContent();
-                } catch (error) {
-                    console.error('Error fetching data from backend:', error);
-                    alert('Failed to load data from backend. Using local default data.');
-                }
+            };
+            reader.readAsDataURL(file);
+            return;
+        }
+        if (newContent) {
+            if (destination === 'posts') {
+                postsData.unshift(newContent);
+                alert('New public post added locally! Changes will be lost upon page refresh.');
+            } else if (destination === 'private') {
+                privateContentData.unshift(newContent);
+                alert('New private content added locally! Changes will be lost upon page refresh.');
             }
-            async function publishChangesToBackend() {
-                profileData.stats.posts = postsData.length;
-                const allData = {
-                    profileData,
-                    postsData,
-                    reelsData,
-                    taggedData,
-                    highlightsData,
-                    privateContentData
-                };
-                try {
-                    alert('Publishing changes... Please wait.');
-                    const response = await fetch(GITHUB_API_TOKEN_WORKER, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            path: DATA_FILE_PATH,
-                            content: JSON.stringify(allData, null, 2),
-                            message: `Update data: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })}`,
-                            branch: GITHUB_BRANCH
-                        }),
-                    });
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-                    }
-                    const result = await response.json();
-                    console.log('Changes published to GitHub:', result);
-                    alert('Changes successfully published to the galaxy!');
-                    editorOverlay.classList.remove('active');
-                    loadProfileContent();
-                } catch (error) {
-                    console.error('Error publishing changes:', error);
-                    alert(`Failed to publish changes: ${error.message}. Check Cloudflare Worker logs.`);
-                }
-            }
-            publishChangesBtn.addEventListener('click', publishChangesToBackend);
-            function openTikTok() {
-                window.open("https://vm.tiktok.com/ZShf4GMgT/", "https://www.tiktok.com/@elvizil?_d=secCgYIASAHKAESPgo8OqNfEJm8lpNTOVXGPk0ISpPNVu6uT%2BmGItj68N7OQXYlfd1d%2BujqyulmpHhKAAOal8ivOsaopuXMUZ3bGgA%3D&_svg=1&sec_uid=MS4wLjABAAAAu0u7O22vUTj1YALCLXsJVhCWqK-g5y0Dlu1nwpqDJEaHdP5fIMCv8uQIft94oht1&share_app_id=1340&share_author_id=6962740350511367170&share_link_id=4d1d3d75-a0c4-428f-9cb6-b635c20903e4&sharer_language=en&timestamp=1746957069&ugbiz_name=Account&utm_campaign=client_share&utm_source=copy&_r=1");
-            }
-            function openInstagram() {
-                window.open("https://www.instagram.com/elvizill/", "https://www.instagram.com/elvizill/");
-            }
+            uploadModalOverlay.classList.remove('active');
+            populateEditorFields();
             loadProfileContent();
-        });
-    </script>
+        }
+    });
+
+    publishChangesBtn.addEventListener('click', () => {
+        alert('Fitur publish ke backend dinonaktifkan. Semua perubahan hanya tersimpan secara lokal dan akan hilang setelah refresh halaman.');
+        editorOverlay.classList.remove('active');
+    });
+
+    window.openTikTok = function() {
+        window.open("https://vm.tiktok.com/ZShf4GMgT/", "_blank");
+    };
+
+    window.openInstagram = function() {
+        window.open("https://www.instagram.com/elvizill/", "_blank");
+    };
+
+    loadProfileContent();
+});
+</script>
 </body>
 </html>
