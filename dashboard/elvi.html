@@ -6,7 +6,7 @@
     <title>Elvi Ezra - Cosmic Orb</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+    <script src="ezra.js"></script>
     <style>
         /* General Body Styles */
         body {
@@ -1554,17 +1554,31 @@
             const uploadTextContent = document.getElementById('uploadTextContent');
             const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
             const uploadCancelBtn = document.getElementById('uploadCancelBtn');
-            const isLoggedIn = localStorage.getItem('isEzraLoggedIn') === 'true';   
+         
+            function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for(let i=0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+            }
+            const isLoggedIn = getCookie('isEzraLoggedIn') === 'true';
             if (isLoggedIn) {
-            if (authOverlay) {
-                authOverlay.style.display = 'none';
-                authOverlay.style.opacity = '0';
-                authOverlay.style.visibility = 'hidden';
-            }
-            if (cosmicOrbContainer) {
-                cosmicOrbContainer.classList.add('active');
-            }
-        } else {
+        // Jika login, sembunyikan overlay autentikasi
+        if (authOverlay) {
+            authOverlay.style.display = 'none';
+            authOverlay.style.opacity = '0';
+            authOverlay.style.visibility = 'hidden';
+        }
+        // Tampilkan konten utama situs
+        if (cosmicOrbContainer) {
+            cosmicOrbContainer.classList.add('active'); // Asumsikan 'active' akan menampilkan konten
+        }
+    }
+            else {
     document.body.innerHTML = '<h1>Akses ditolak. Kamu harus login dulu</h1>';
     setTimeout(function() {
         window.location.href = 'https://universalezra.netlify.app';
