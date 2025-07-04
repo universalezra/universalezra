@@ -1974,7 +1974,7 @@
             taggedData.push({ id: `t${Date.now()}`, type: addTaggedType.value, src: src });
             addTaggedSrc.value = '';
             populateEditorFields();
-            alert('Tagged content added locally. Changes will be lost upon page refresh.');
+            alert('Tagged content added locally');
             loadProfileContent();
         } else {
             alert('Please provide a URL.');
@@ -2110,10 +2110,10 @@
         if (newContent) {
             if (destination === 'posts') {
                 postsData.unshift(newContent);
-                alert('New public post added locally! Changes will be lost upon page refresh.');
+                alert('New public post added locally');
             } else if (destination === 'private') {
                 privateContentData.unshift(newContent);
-                alert('New private content added locally! Changes will be lost upon page refresh.');}
+                alert('New private content added locally');}
             uploadModalOverlay.classList.remove('active');
             populateEditorFields();
             loadProfileContent();}});
