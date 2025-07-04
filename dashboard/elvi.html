@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width"> 
     <title>Elvi Ezra</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon2.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x322.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x162.png">
+    <link rel="manifest" href="/site.webmanifest">
     <style>
     body {
     margin: 0;
@@ -1958,7 +1962,7 @@
             reelsData.push({ id: `r${Date.now()}`, type: addReelType.value, src: src });
             addReelSrc.value = '';
             populateEditorFields();
-            alert('Reel added locally. Changes will be lost upon page refresh.');
+            alert('Reel added locally');
             loadProfileContent();
         } else {
             alert('Please provide a URL for the new reel.');
@@ -1973,7 +1977,7 @@
             alert('Tagged content added locally. Changes will be lost upon page refresh.');
             loadProfileContent();
         } else {
-            alert('Please provide a URL for the new tagged content.');
+            alert('Please provide a URL.');
         }
     });
     document.querySelector('.editor-add-btn[data-section="highlights"]').addEventListener('click', () => {
@@ -1984,10 +1988,10 @@
             addHighlightLabel.value = '';
             addHighlightIcon.value = '';
             populateEditorFields();
-            alert('Highlight added locally. Changes will be lost upon page refresh.');
+            alert('Highlight added locally');
             loadProfileContent();
         } else {
-            alert('Please provide a label and icon URL for the new highlight.');
+            alert('Please provide a label');
         }
     });
     btnCreateGalaxy.addEventListener('click', () => {
@@ -2063,7 +2067,7 @@
             };
             reader.readAsDataURL(file);
         } else {
-            uploadFileName.textContent = 'No file chosen';
+            uploadFileName.textContent = 'No file';
             uploadPreview.innerHTML = '';
         }
     }
@@ -2081,7 +2085,7 @@
         } else {
             const file = uploadFile.files[0];
             if (!file) {
-                alert('Please select a file to upload.');
+                alert('Please select to upload.');
                 return;
             }
             const reader = new FileReader();
@@ -2091,10 +2095,10 @@
                 if (newContent) {
                     if (destination === 'posts') {
                         postsData.unshift(newContent);
-                        alert('New public post added locally! Changes will be lost upon page refresh.');
+                        alert('New public post added locally.');
                     } else if (destination === 'private') {
                         privateContentData.unshift(newContent);
-                        alert('New private content added locally! Changes will be lost upon page refresh.');
+                        alert('New private content added locally.');
                     }
                     uploadModalOverlay.classList.remove('active');
                     populateEditorFields();
@@ -2102,33 +2106,25 @@
                 }
             };
             reader.readAsDataURL(file);
-            return;
-        }
+            return;}
         if (newContent) {
             if (destination === 'posts') {
                 postsData.unshift(newContent);
                 alert('New public post added locally! Changes will be lost upon page refresh.');
             } else if (destination === 'private') {
                 privateContentData.unshift(newContent);
-                alert('New private content added locally! Changes will be lost upon page refresh.');
-            }
+                alert('New private content added locally! Changes will be lost upon page refresh.');}
             uploadModalOverlay.classList.remove('active');
             populateEditorFields();
-            loadProfileContent();
-        }
-    });
+            loadProfileContent();}});
     publishChangesBtn.addEventListener('click', () => {
         alert('Fitur publish ke backend dinonaktifkan. Semua perubahan hanya tersimpan secara lokal dan akan hilang setelah refresh halaman.');
-        editorOverlay.classList.remove('active');
-    });
+        editorOverlay.classList.remove('active');});
     window.openTikTok = function() {
-        window.open("https://vm.tiktok.com/ZShf4GMgT/", "_blank");
-    };
+        window.open("https://vm.tiktok.com/ZShf4GMgT/", "_blank");};
     window.openInstagram = function() {
-        window.open("https://www.instagram.com/elvizill/", "_blank");
-    };
-    loadProfileContent();
-});
+        window.open("https://www.instagram.com/elvizill/", "_blank");};
+    loadProfileContent();});
 </script>
 </body>
 </html>
