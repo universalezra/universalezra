@@ -1192,6 +1192,7 @@
                     <i class="fas fa-video"></i>Logs
                 </div>
                 <div class="content-tab-item" data-tab="tagged">
+                      <i class="fas fa-video"></i>Tagged
                 </div>
             </div>
             <div id="content-grid">
@@ -1227,7 +1228,7 @@
         </div>
     </div>
     <button id="editorToggleBtn">
-        <i class="fas fa-user-secret"></i>Admin
+        <i class="fas fa-user-secret"></i> Admin
     </button>
     <div id="editorOverlay" class="modal-overlay">
         <div class="editor-modal-content">
@@ -1236,7 +1237,7 @@
             <div class="editor-section">
                 <h4>Profile Data</h4>
                 <label for="editProfilePic">Profile Picture URL:</label>
-                <input type="text" id="editProfilePic" placeholder="e.g., Advanced files Elvi/May 26, 2025 at 09.00 AM.png">
+                <input type="text" id="editProfilePic" placeholder="e.g., October 25, 2024 at 8.11 AM.png">
                 <label for="editUsername">Username:</label>
                 <input type="text" id="editUsername">
                 <label for="editFullName">Full Name:</label>
@@ -1263,7 +1264,7 @@
                     <option value="video">Video</option>
                 </select>
                 <label for="addReelSrc">Add New Reel URL:</label>
-                <input type="text" id="addReelSrc" placeholder="e.g., Video Elvi/my_new_reel.mp4">
+                <input type="text" id="addReelSrc" placeholder="e.g., FDownloader.Net_29.mp4">
                 <button class="editor-add-btn" data-section="reels">Add Reel</button>
             </div>
             <div class="editor-section">
@@ -1275,14 +1276,14 @@
                     <option value="video">Video</option>
                 </select>
                 <label for="addTaggedSrc">Add New Tagged URL:</label>
-                <input type="text" id="addTaggedSrc" placeholder="e.g., Advanced files Elvi/my_tagged_pic.png">
+                <input type="text" id="addTaggedSrc" placeholder="e.g., December 11, 2024 at 3.30 AM.jpg">
                 <button class="editor-add-btn" data-section="tagged">Add Tagged</button>
             </div>
             <div class="editor-section">
                 <h4>Highlights</h4>
                 <div id="editorHighlightsList" class="media-list"></div>
                 <label for="addHighlightLabel">New Highlight Label:</label>
-                <input type="text" id="addHighlightLabel" placeholder="e.g., New Adventures">
+                <input type="text" id="addHighlightLabel" placeholder="e.g., Adventures">
                 <label for="addHighlightIcon">New Highlight Icon URL:</label>
                 <input type="text" id="addHighlightIcon" placeholder="e.g., https://via.placeholder.com/60/FFD700">
                 <button class="editor-add-btn" data-section="highlights">Add Highlight</button>
@@ -1335,6 +1336,9 @@
         </div>
     </div>
     <div id="particles"></div>
+    <audio autoplay loop hidden>
+    <source src="Pedih.mp3" type="audio/mpeg">
+    </audio>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
     const authOverlay = document.getElementById('authOverlay');
@@ -1454,7 +1458,7 @@
     let profileData = {
         username: "elvi_ezra",
         fullName: "",
-        bio: "Greetings, fellow cosmic traveler! Welcome to my personal nebula where stars align and galaxies unfold. ✨🪐\nExploring the vastness of the digital universe.",
+        bio: "Greetings, fellow cosmic traveler! Welcome to my personal, where stars align and galaxies unfold. ✨🪐\nExploring the vastness of the digital universe.",
         profilePic: "May 26, 2025 at 09.00 AM.png",
         stats: {}
     };
@@ -1463,8 +1467,8 @@
         { id: 'p2', type: 'video', src: 'FDownloader.Net_13.mp4' },
         { id: 'p3', type: 'video', src: 'FDownloader.Net 4.mp4' },
         { id: 'p4', type: 'image', src: 'May 25, 2025 at 12.35 PM.png' },
-        { id: 'p5', type: 'video', src: 'January 20, 2025 at 10.03 PM.mp4' },
-        { id: 'p6', type: 'image', src: 'Advanced files Elvi/December 21, 2024 at 4.52 AM.png' },
+        { id: 'p5', type: 'video', src: 'July 3, 2025 at 9.30 PM.mp4' },
+        { id: 'p6', type: 'image', src: 'December 21, 2024 at 4.52 AM.png' },
     ];
     let reelsData = [
         { id: 'r1', type: 'video', src: 'February 6, 2025 at 5.49 AM.mp4' },
@@ -1478,7 +1482,7 @@
     let highlightsData = [
         {
             id: 'h1',
-            label: 'My Nebula',
+            label: 'My girl 1',
             icon: 'iconelvi.png',
             stories: [
                 { type: 'image', src: 'October 25, 2024 at 8.11 AM.png' },
@@ -1487,26 +1491,26 @@
         },
         {
             id: 'h2',
-            label: 'Code Clusters',
-            icon: 'https://via.placeholder.com/60/00ff88/000000?text=</>',
+            label: 'My girl 2',
+            icon: 'June 23, 2025 at 9.30 PM.jpg',
             stories: [
                 { type: 'image', src: 'February 2, 2025 at 11.44 AM.png' }
             ]
         },
         {
             id: 'h3',
-            label: 'Cosmic Felines',
+            label: 'My girl 3',
             icon: 'October 25, 2024 at 2.01 PM.png',
             stories: [
-                { type: 'image', src: 'https://via.placeholder.com/400x700/ff69b4/FFFFFF?text=Cute+Cat+in+Space' }
+                { type: 'image', src: 'December 11, 2024 at 3.30 AM.jpg' }
             ]
         },
         {
             id: 'h4',
-            label: 'Voyage Logs',
-            icon: 'https://via.placeholder.com/60/E1306C/FFFFFF?text=🚀',
+            label: 'My girl 4',
+            icon: 'January 28, 2025 at 8.17 AM.jpg',
             stories: [
-                { type: 'video', src: 'FDownloader.Net_13.mp4' }
+                { type: 'video', src: 'FDownloader.Net_27.mp4' }
             ]
         },
     ];
@@ -1514,8 +1518,8 @@
         { type: 'text', content: "Beyond the stars, in this sacred cosmic chamber, our connection shines brightest. Thank you for venturing this far! ✨\n\nThis is a private transmission, reserved for those who hold the key to my heart's galaxy." },
         { type: 'image', src: 'October 25, 2024 at 8.11 AM.png' },
         { type: 'video', src: 'FDownloader.Net 4.mp4' },
-        { type: 'audio', src: 'Cosmic_Serenade.mp3' },
-        { type: 'text', content: "May these cosmic moments bring us closer across the universe. You are the most unique celestial body in my orbit. Always. ❤\n\n- E.E." },
+        { type: 'audio', src: 'なにわ男子 - Special Kiss.mp3' },
+        { type: 'text', content: "May these for you, love you elvi. Always, ❤\n\n- E.E." },
     ];
     const elementsToPosition = [
         { element: btnFollow, angle: 225 },
@@ -1704,7 +1708,7 @@
     });
     function checkPrivateAuth() {
         const answer = privateAuthAnswer.value.trim().toLowerCase();
-        if (answer === 'aku sayang kita') {
+        if (answer === 'ourlove') {
             hasAccessedPrivateContent = true;
             btnFollow.textContent = "Forbidden Zone";
             btnFollow.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
