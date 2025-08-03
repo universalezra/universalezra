@@ -10,110 +10,7 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root {--primary: #8e44ad; --accent: #00a8ff; --success: #2ecc71;--danger: #e74c3c; --light: #ecf0f1; --dark: #1a1a2e;--bg-main: #16213e; --bg-panel: rgba(26, 26, 46, 0.9);--text-primary: #e0fbfc; --text-secondary: #98ded9;--border-color: rgba(0, 168, 255, 0.3); }
-        html[data-theme='light'] {--primary: #3498db; --accent: #e67e22;--bg-main: #ecf0f1; --bg-panel: rgba(255, 255, 255, 0.9);--text-primary: #2c3e50; --text-secondary: #7f8c8d;--border-color: rgba(52, 152, 219, 0.4); }
-        * { box-sizing: border-box; }
-        html, body {width: 100%; height: 100%; margin: 0; padding: 0;overflow: hidden;font-family: 'Courier New', Courier, monospace;background-color: var(--bg-main);color: #00ff00; }
-        #interactive-bg {position: fixed; top: 0; left: 0; width: 100%; height: 100%;z-index: 0;background-image: url('January 17, 2025 at 5.10 AM.jpg');background-size: cover;background-position: center;background-repeat: no-repeat;filter: blur(3px);-webkit-filter: blur(3px); }
-        #visualizer-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            display: none;
-        }
-        .fullscreen-active #visualizer-canvas {
-            display: block;
-        }
-        .fullscreen-active #interactive-bg {
-            display: none;
-        }
-        .fullscreen-active .fab-container,
-        .fullscreen-active .social-links,
-        .fullscreen-active #video-player-widget,
-        .fullscreen-active #website-age-display {
-            display: none !important;
-        }
-        .fullscreen-active .main-container {
-            z-index: 1;
-        }
-        .main-container {position: relative; z-index: 1; width: 100%; height: 100%;transition: all 0.5s ease-in-out;display: flex;justify-content: center;align-items: center;flex-direction: column;padding: 20px; }
-        .central-message {text-align: center;color: #00ff00;font-size: 1.5em; }
-        .central-message h3 {color: var(--accent);margin-bottom: 10px; }
-        .central-message p {color: #00ff00;font-size: 0.8em; }
-        .ezra-link {color: var(--accent);text-decoration: none;cursor: pointer;transition: color 0.3s ease; }
-        .ezra-link:hover {color: var(--primary); }
-        .panel {position: fixed;background: rgba(26, 26, 46, 0.7);backdrop-filter: blur(15px);-webkit-backdrop-filter: blur(15px); z-index: 1010;box-shadow: 0 0 50px rgba(0,0,0,0.6);transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);display: flex;flex-direction: column;color: #00ff00; }
-        #editor-panel {top: 0; left: 0; width: 100%; height: 100%;transform: translateX(-100%); }
-        #editor-panel.active { transform: translateX(0); }
-        #music-panel {bottom: 0; left: 0; width: 100%; height: auto;max-height: 50vh; border-top: 1px solid var(--border-color);transform: translateY(100%); padding: 15px; }
-        #music-panel.active { transform: translateY(0); }
-        #contribution-panel {top: 0; right: 0; width: 400px; max-width: 90vw; height: 100%;transform: translateX(100%); padding: 20px; }
-        #contribution-panel.active { transform: translateX(0); }
-        #live-visitors-panel {top: 0;left: 0;width: 100%;height: 100%;transform: translateY(100%);padding: 20px;box-sizing: border-box;display: flex;flex-direction: column;justify-content: center;align-items: center; }
-        #live-visitors-panel.active {transform: translateY(0); }
-        #moment-vault-panel {top: 0;left: 0;width: 100%;height: 100%;transform: translateY(100%);padding: 20px;box-sizing: border-box;display: flex;flex-direction: column;justify-content: center;align-items: center; }
-        #moment-vault-panel.active {transform: translateY(0); }
-        .live-visitors-content,.moment-vault-content {display: flex;flex-direction: column;width: 100%;height: 100%;max-width: 1200px;background: var(--bg-panel);border-radius: 15px;box-shadow: 0 0 30px rgba(0,0,0,0.5);overflow: hidden; }
-        #visitor-list ul {list-style: none;padding: 0;margin: 0;display: grid;grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));gap: 15px; }
-        #visitor-list li {background: rgba(0, 168, 255, 0.1);border: 1px solid rgba(0, 168, 255, 0.2);border-radius: 10px;padding: 15px;font-size: 0.9em;color: var(--text-primary);display: flex;flex-direction: column;gap: 8px; }
-        #visitor-list li strong {color: var(--accent); }
-        #moment-vault-gallery {display: grid;grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));gap: 15px; }
-        .gallery-item {background: rgba(0,0,0,0.2);border: 1px solid var(--border-color);border-radius: 10px;padding: 10px;display: flex;flex-direction: column;align-items: center;text-align: center;gap: 8px;position: relative; }
-        .gallery-item img, .gallery-item video, .gallery-item audio {max-width: 100%;height: auto;border-radius: 5px; }
-        .gallery-item .item-text {font-size: 0.8em;color: var(--text-secondary);max-height: 60px;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 3;-webkit-box-orient: vertical; }
-        .gallery-item .item-date {font-size: 0.7em;color: var(--text-secondary); }
-        .gallery-item .item-actions {display: flex;gap: 5px;margin-top: 5px; }
-        .gallery-item .item-actions button {background: var(--primary);color: white;border: none;border-radius: 5px;padding: 5px 8px;font-size: 0.8em;cursor: pointer; }
-        .gallery-item .item-actions button:hover {background: var(--accent); }
-        #moment-upload-form {display: flex;flex-direction: column;gap: 10px;margin-top: 20px;padding-top: 20px;border-top: 1px solid var(--border-color); }
-        #moment-upload-form input[type="text"],#moment-upload-form textarea,#moment-upload-form input[type="file"] {width: 100%;padding: 10px;border-radius: 5px;border: 1px solid var(--border-color);background: rgba(0,0,0,0.3);color: var(--text-primary);box-sizing: border-box; }
-        #moment-upload-form button[type="submit"] {background: var(--success);color: white;border: none;padding: 10px 20px;border-radius: 5px;cursor: pointer;font-size: 1em; }
-        #moment-upload-form button[type="submit"]:hover {background: #27ae60; }
-        body.desktop-layout #fab-moment-vault,body.desktop-layout #fab-live-visitors {display: block !important; }
-        .gallery-media {width: 100%;height: 120px;display: flex;justify-content: center;align-items: center;overflow: hidden;border-radius: 5px;background-color: #333; }
-        .gallery-media img, .gallery-media video, .gallery-media audio {width: 100%;height: 100%;object-fit: cover; }
-        .gallery-media .file-icon {font-size: 3em;color: var(--text-secondary); }
-        .panel-close-btn {position: absolute; top: 15px; right: 15px; background: none; border: none;color: #00ff00;font-size: 1.5rem; cursor: pointer; z-index: 5; }
-        .fab-container { position: fixed; z-index: 1000; }
-        .fab {background: rgba(142, 68, 173, 0.7);color: #00ff00;width: 55px; height: 55px;border-radius: 50%; border: none; cursor: pointer;display: flex; justify-content: center; align-items: center;font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3);transition: all 0.3s ease; }
-        .fab:hover { background: var(--accent); transform: scale(1.1); }
-        #fab-editor { top: 20px; left: 20px; }
-        #fab-music {top: 50%;left: 20px;transform: translateY(-50%); }
-        #fab-alkitab {top: 20px;right: 20px; }
-        #fab-contribution {top: calc(50% + 70px);left: 20px;transform: translateY(-50%); }
-        #fab-fullscreen {
-            bottom: 20px;
-            left: calc(50% - 70px); /* Atur posisi agar di sebelah kiri tombol galeri */
-            transform: translateX(-50%);
-        }
-        #fab-moment-vault {bottom: 20px;left: 50%;transform: translateX(-50%); }
-        #fab-live-visitors {bottom: 90px;left: 50%;transform: translateX(-50%); }
-        #editor-panel { padding: 0; }
-        .editor-toolbar {display: flex; gap: 5px; padding: 10px;background: rgba(0,0,0,0.5);flex-wrap: wrap; justify-content: flex-start; }
-        .editor-toolbar button, .editor-toolbar select {background: rgba(142, 68, 173, 0.7);color: #00ff00;border:none;padding: 8px 12px; border-radius: 5px; cursor: pointer; }
-        .editor-toolbar button:hover, .editor-toolbar select:hover {background: var(--accent); }
-        .editor-main { display: flex; flex-grow: 1; height: calc(100% - 58px); }
-        .editor-code-area { flex: 1; display: flex; flex-direction: column; }
-        .editor-preview-area { flex: 1; display: flex; flex-direction: column; }
-        #unified-code-editor {flex-grow: 1;background: #1e1e1e;color: #00ff00;border: none;resize: none; padding: 10px; font-family: 'Courier New', monospace;font-size: 14px; outline: none; white-space: pre-wrap; word-wrap: break-word; }
-        #editor-preview {width: 100%; height: 100%; border: none; background: white; }
-        #video-player-widget {position: fixed;top: 20px;left: 50%;transform: translateX(-50%);z-index: 999;width: 150px;height: 150px;border-radius: 10px;overflow: hidden;box-shadow: 0 5px 20px rgba(0,0,0,0.4);border: 2px solid var(--border-color); }
-        #video-player-widget video {width: 100%;height: 100%;object-fit: cover; }
-        .video-controls {position: absolute;bottom: 5px;left: 50%;transform: translateX(-50%);display: flex;gap: 10px;background: rgba(0,0,0,0.5);padding: 5px;border-radius: 5px; }
-        .video-controls button {background: none;border: none;color: #00ff00;font-size: 1rem;cursor: pointer; }
-        .social-links {position: fixed; top: 50%; right: 20px; transform: translateY(-50%);display: flex; flex-direction: column; gap: 15px; z-index: 999; }
-        .social-links a {color: #00ff00;font-size: 1.5rem; transition: color 0.3s, transform 0.3s; }
-        .social-links a:hover { color: var(--accent); transform: scale(1.2); }
-        body.desktop-layout .main-container {display: flex;justify-content: center;align-items: center;flex-direction: column;gap: 20px; padding: 20px; height: 100vh; }
-        body.desktop-layout .panel {position: static; transform: none !important;height: auto; width: auto; max-height: none;box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color);border-radius: 15px; }
-        body.desktop-layout .panel-close-btn { display: none; }
-        body.desktop-layout .fab-container, body.desktop-layout .social-links {display: block; }
-        textarea::placeholder {color: rgba(0, 255, 0, 0.7); }
-        #website-age-display {position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);font-size: 0.8em;color: #00ff00;z-index: 10;background: none;padding: 0;text-align: center;white-space: nowrap; }
-    </style>
+        :root {--primary: #8e44ad; --accent: #00a8ff; --success: #2ecc71;--danger: #e74c3c; --light: #ecf0f1; --dark: #1a1a2e;--bg-main: #16213e; --bg-panel: rgba(26, 26, 46, 0.9);--text-primary: #e0fbfc; --text-secondary: #98ded9;--border-color: rgba(0, 168, 255, 0.3); }html[data-theme='light'] {--primary: #3498db; --accent: #e67e22;--bg-main: #ecf0f1; --bg-panel: rgba(255, 255, 255, 0.9);--text-primary: #2c3e50; --text-secondary: #7f8c8d;--border-color: rgba(52, 152, 219, 0.4); }* { box-sizing: border-box; }html, body {width: 100%; height: 100%; margin: 0; padding: 0;overflow: hidden;font-family: 'Courier New', Courier, monospace;background-color: var(--bg-main);color: #00ff00; }#interactive-bg {position: fixed; top: 0; left: 0; width: 100%; height: 100%;z-index: 0;background-image: url('January 17, 2025 at 5.10 AM.jpg');background-size: cover;background-position: center;background-repeat: no-repeat;filter: blur(3px);-webkit-filter: blur(3px); }#visualizer-canvas {position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 0;display: none;background-color: #000; /* Latar belakang hitam untuk visualisasi */}.fullscreen-active #visualizer-canvas {display: block;}.fullscreen-active #interactive-bg {display: none !important;}.fullscreen-active .fab-container, .fullscreen-active .social-links, .fullscreen-active #video-player-widget, .fullscreen-active #website-age-display, .fullscreen-active .central-message {display: none !important;}.main-container {position: relative; z-index: 1; width: 100%; height: 100%;transition: all 0.5s ease-in-out;display: flex;justify-content: center;align-items: center;flex-direction: column;padding: 20px; }.central-message {text-align: center;color: #00ff00;font-size: 1.5em; }.central-message h3 {color: var(--accent);margin-bottom: 10px; }.central-message p {color: #00ff00;font-size: 0.8em; }.ezra-link {color: var(--accent);text-decoration: none;cursor: pointer;transition: color 0.3s ease; }.ezra-link:hover {color: var(--primary); }.panel {position: fixed;background: rgba(26, 26, 46, 0.7);backdrop-filter: blur(15px);-webkit-backdrop-filter: blur(15px); z-index: 1010;box-shadow: 0 0 50px rgba(0,0,0,0.6);transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);display: flex;flex-direction: column;color: #00ff00; }#editor-panel {top: 0; left: 0; width: 100%; height: 100%;transform: translateX(-100%); }#editor-panel.active { transform: translateX(0); }#music-panel {bottom: 0; left: 0; width: 100%; height: auto;max-height: 50vh; border-top: 1px solid var(--border-color);transform: translateY(100%); padding: 15px; }#music-panel.active { transform: translateY(0); }#contribution-panel {top: 0; right: 0; width: 400px; max-width: 90vw; height: 100%;transform: translateX(100%); padding: 20px; }#contribution-panel.active { transform: translateX(0); }#live-visitors-panel {top: 0;left: 0;width: 100%;height: 100%;transform: translateY(100%);padding: 20px;box-sizing: border-box;display: flex;flex-direction: column;justify-content: center;align-items: center; }#live-visitors-panel.active {transform: translateY(0); }#moment-vault-panel {top: 0;left: 0;width: 100%;height: 100%;transform: translateY(100%);padding: 20px;box-sizing: border-box;display: flex;flex-direction: column;justify-content: center;align-items: center; }#moment-vault-panel.active {transform: translateY(0); }.live-visitors-content,.moment-vault-content {display: flex;flex-direction: column;width: 100%;height: 100%;max-width: 1200px;background: var(--bg-panel);border-radius: 15px;box-shadow: 0 0 30px rgba(0,0,0,0.5);overflow: hidden; }#visitor-list ul {list-style: none;padding: 0;margin: 0;display: grid;grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));gap: 15px; }#visitor-list li {background: rgba(0, 168, 255, 0.1);border: 1px solid rgba(0, 168, 255, 0.2);border-radius: 10px;padding: 15px;font-size: 0.9em;color: var(--text-primary);display: flex;flex-direction: column;gap: 8px; }#visitor-list li strong {color: var(--accent); }#moment-vault-gallery {display: grid;grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));gap: 15px; }.gallery-item {background: rgba(0,0,0,0.2);border: 1px solid var(--border-color);border-radius: 10px;padding: 10px;display: flex;flex-direction: column;align-items: center;text-align: center;gap: 8px;position: relative; }.gallery-item img, .gallery-item video, .gallery-item audio {max-width: 100%;height: auto;border-radius: 5px; }.gallery-item .item-text {font-size: 0.8em;color: var(--text-secondary);max-height: 60px;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 3;-webkit-box-orient: vertical; }.gallery-item .item-date {font-size: 0.7em;color: var(--text-secondary); }.gallery-item .item-actions {display: flex;gap: 5px;margin-top: 5px; }.gallery-item .item-actions button {background: var(--primary);color: white;border: none;border-radius: 5px;padding: 5px 8px;font-size: 0.8em;cursor: pointer; }.gallery-item .item-actions button:hover {background: var(--accent); }#moment-upload-form {display: flex;flex-direction: column;gap: 10px;margin-top: 20px;padding-top: 20px;border-top: 1px solid var(--border-color); }#moment-upload-form input[type="text"],#moment-upload-form textarea,#moment-upload-form input[type="file"] {width: 100%;padding: 10px;border-radius: 5px;border: 1px solid var(--border-color);background: rgba(0,0,0,0.3);color: var(--text-primary);box-sizing: border-box; }#moment-upload-form button[type="submit"] {background: var(--success);color: white;border: none;padding: 10px 20px;border-radius: 5px;cursor: pointer;font-size: 1em; }#moment-upload-form button[type="submit"]:hover {background: #27ae60; }body.desktop-layout #fab-moment-vault,body.desktop-layout #fab-live-visitors {display: block !important; }.gallery-media {width: 100%;height: 120px;display: flex;justify-content: center;align-items: center;overflow: hidden;border-radius: 5px;background-color: #333; }.gallery-media img, .gallery-media video, .gallery-media audio {width: 100%;height: 100%;object-fit: cover; }.gallery-media .file-icon {font-size: 3em;color: var(--text-secondary); }.panel-close-btn {position: absolute; top: 15px; right: 15px; background: none; border: none;color: #00ff00;font-size: 1.5rem; cursor: pointer; z-index: 5; }.fab-container { position: fixed; z-index: 1000; }.fab {background: rgba(142, 68, 173, 0.7);color: #00ff00;width: 55px; height: 55px;border-radius: 50%; border: none; cursor: pointer;display: flex; justify-content: center; align-items: center;font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3);transition: all 0.3s ease; }.fab:hover { background: var(--accent); transform: scale(1.1); }#fab-editor { top: 20px; left: 20px; }#fab-music {top: 50%;left: 20px;transform: translateY(-50%); }#fab-alkitab {top: 20px;right: 20px; }#fab-contribution {top: calc(50% + 70px);left: 20px;transform: translateY(-50%); }#fab-fullscreen {bottom: 20px;left: 50%;transform: translateX(-120%);}#fab-moment-vault {bottom: 20px;left: 50%;transform: translateX(120%); }#fab-live-visitors {bottom: 90px;left: 50%;transform: translateX(-50%); }#editor-panel { padding: 0; }.editor-toolbar {display: flex; gap: 5px; padding: 10px;background: rgba(0,0,0,0.5);flex-wrap: wrap; justify-content: flex-start; }.editor-toolbar button, .editor-toolbar select {background: rgba(142, 68, 173, 0.7);color: #00ff00;border:none;padding: 8px 12px; border-radius: 5px; cursor: pointer; }.editor-toolbar button:hover, .editor-toolbar select:hover {background: var(--accent); }.editor-main { display: flex; flex-grow: 1; height: calc(100% - 58px); }.editor-code-area { flex: 1; display: flex; flex-direction: column; }.editor-preview-area { flex: 1; display: flex; flex-direction: column; }#unified-code-editor {flex-grow: 1;background: #1e1e1e;color: #00ff00;border: none;resize: none; padding: 10px; font-family: 'Courier New', monospace;font-size: 14px; outline: none; white-space: pre-wrap; word-wrap: break-word; }#editor-preview {width: 100%; height: 100%; border: none; background: white; }#video-player-widget {position: fixed;top: 20px;left: 50%;transform: translateX(-50%);z-index: 999;width: 150px;height: 150px;border-radius: 10px;overflow: hidden;box-shadow: 0 5px 20px rgba(0,0,0,0.4);border: 2px solid var(--border-color); }#video-player-widget video {width: 100%;height: 100%;object-fit: cover; }.video-controls {position: absolute;bottom: 5px;left: 50%;transform: translateX(-50%);display: flex;gap: 10px;background: rgba(0,0,0,0.5);padding: 5px;border-radius: 5px; }.video-controls button {background: none;border: none;color: #00ff00;font-size: 1rem;cursor: pointer; }.social-links {position: fixed; top: 50%; right: 20px; transform: translateY(-50%);display: flex; flex-direction: column; gap: 15px; z-index: 999; }.social-links a {color: #00ff00;font-size: 1.5rem; transition: color 0.3s, transform 0.3s; }.social-links a:hover { color: var(--accent); transform: scale(1.2); }body.desktop-layout .main-container {display: flex;justify-content: center;align-items: center;flex-direction: column;gap: 20px; padding: 20px; height: 100vh; }body.desktop-layout .panel {position: static; transform: none !important;height: auto; width: auto; max-height: none;box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color);border-radius: 15px; }body.desktop-layout .panel-close-btn { display: none; }body.desktop-layout .fab-container, body.desktop-layout .social-links {display: block; }textarea::placeholder {color: rgba(0, 255, 0, 0.7); }#website-age-display {position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);font-size: 0.8em;color: #00ff00;z-index: 10;background: none;padding: 0;text-align: center;white-space: nowrap; }</style>
 </head>
 <body class="">
     <canvas id="visualizer-canvas"></canvas>
@@ -214,7 +111,6 @@
         <a href="https://instagram.com/I_dont_care_now" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
     </div>
     <div id="website-age-display"></div>
-
     <script>
         const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
         const MOMENT_VAULT_WORKER_URL = 'https://moment-vault-worker-url.universalezra.workers.dev';
@@ -226,13 +122,12 @@
         const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
         const REFRESH_INTERVAL_MS = 5000;
         const LIVE_VISITORS_PASSWORD = "v";
-
-        // Variabel untuk visualizer
         let isVisualizerActive = false;
         let visualizerCanvas, ctx, audioContext, analyser, source;
         let particles = [];
-        let bufferLength, dataArray;
+        let bufferLength, dataArray, frequencyData;
         const PARTICLE_COUNT = 200;
+        const PARTICLE_SPEED_MULTIPLIER = 0.5;
 
         document.addEventListener('DOMContentLoaded', () => {
             initPanelControls();
@@ -242,130 +137,7 @@
             initWebsiteAgeDisplay();
             trackVisitor();
             initVisualizer();
-
-            // Event listener untuk tombol visualizer baru
-            document.querySelector('#fab-fullscreen .fab').addEventListener('click', toggleFullscreenVisualizer);
-
-            // Event listener untuk keluar dari fullscreen
-            document.addEventListener('fullscreenchange', (event) => {
-                if (!document.fullscreenElement) {
-                    document.body.classList.remove('fullscreen-active');
-                    isVisualizerActive = false;
-                }
-            });
-            document.addEventListener('webkitfullscreenchange', (event) => {
-                if (!document.webkitFullscreenElement) {
-                    document.body.classList.remove('fullscreen-active');
-                    isVisualizerActive = false;
-                }
-            });
         });
-
-        // --- VISUALIZER FUNCTIONS ---
-        function initVisualizer() {
-            visualizerCanvas = document.getElementById('visualizer-canvas');
-            ctx = visualizerCanvas.getContext('2d');
-            resizeVisualizer();
-            window.addEventListener('resize', resizeVisualizer);
-        }
-
-        function resizeVisualizer() {
-            visualizerCanvas.width = window.innerWidth;
-            visualizerCanvas.height = window.innerHeight;
-        }
-
-        function setupAudioVisualizer() {
-            const audioPlayer = document.getElementById('audio-player');
-            if (!audioPlayer.src) {
-                alert("Pilih lagu terlebih dahulu.");
-                return;
-            }
-
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser();
-                source = audioContext.createMediaElementSource(audioPlayer);
-                source.connect(analyser);
-                analyser.connect(audioContext.destination);
-                analyser.fftSize = 256;
-                bufferLength = analyser.frequencyBinCount;
-                dataArray = new Uint8Array(bufferLength);
-            }
-        }
-
-        function createParticles() {
-            particles = [];
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                particles.push({
-                    x: Math.random() * visualizerCanvas.width,
-                    y: Math.random() * visualizerCanvas.height,
-                    size: Math.random() * 2 + 1,
-                    speedX: (Math.random() - 0.5) * 0.5,
-                    speedY: (Math.random() - 0.5) * 0.5,
-                    color: 'rgba(0, 255, 0, 0.5)',
-                });
-            }
-        }
-
-        function drawParticles(bass) {
-            ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                p.x += p.speedX * (1 + bass * 0.2);
-                p.y += p.speedY * (1 + bass * 0.2);
-                if (p.x > visualizerCanvas.width) p.x = 0;
-                if (p.x < 0) p.x = visualizerCanvas.width;
-                if (p.y > visualizerCanvas.height) p.y = 0;
-                if (p.y < 0) p.y = visualizerCanvas.height;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size * (1 + bass * 0.5), 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-            }
-        }
-
-        function animateVisualizer() {
-            if (isVisualizerActive && analyser) {
-                analyser.getByteFrequencyData(dataArray);
-                const bass = dataArray[2] / 255;
-                drawParticles(bass);
-                requestAnimationFrame(animateVisualizer);
-            }
-        }
-
-        function toggleFullscreenVisualizer() {
-            const audioPlayer = document.getElementById('audio-player');
-            const body = document.body;
-
-            if (!isVisualizerActive) {
-                if (!audioPlayer.src || audioPlayer.paused) {
-                    alert("Putar musik terlebih dahulu untuk mengaktifkan visualisasi.");
-                    return;
-                }
-
-                setupAudioVisualizer();
-                if (!analyser) return;
-
-                isVisualizerActive = true;
-                body.classList.add('fullscreen-active');
-                if (body.requestFullscreen) {
-                    body.requestFullscreen();
-                } else if (body.webkitRequestFullscreen) {
-                    body.webkitRequestFullscreen();
-                }
-
-                createParticles();
-                animateVisualizer();
-            } else {
-                isVisualizerActive = false;
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
-            }
-        }
-        // --- END VISUALIZER FUNCTIONS ---
 
         function initPanelControls() {
             document.querySelectorAll('[data-panel]').forEach(button => {
@@ -390,7 +162,7 @@
                             return;
                         }
                     } else if (panelId === 'fullscreen-visualizer') {
-                         // Jangan lakukan apa-apa di sini, karena sudah ditangani oleh toggleFullscreenVisualizer
+                        toggleFullscreenVisualizer();
                     } else {
                         panel.classList.toggle('active');
                         if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
@@ -402,23 +174,22 @@
                                 document.getElementById('moment-vault-gallery').innerHTML = '';
                             }
                         }
+                        document.querySelectorAll('.panel').forEach(otherPanel => {
+                            if (otherPanel.id !== panelId) {
+                                otherPanel.classList.remove('active');
+                                if (otherPanel.id === 'live-visitors-panel') {
+                                    clearInterval(liveVisitorRefreshInterval);
+                                    document.getElementById('visitor-list').innerHTML = '';
+                                    isEzraLoggedIn = false;
+                                }
+                                if (otherPanel.id === 'moment-vault-panel') {
+                                    document.getElementById('moment-vault-gallery').innerHTML = '';
+                                }
+                            }
+                        });
                     }
-                    document.querySelectorAll('.panel').forEach(otherPanel => {
-                        if (otherPanel.id !== panelId) {
-                            otherPanel.classList.remove('active');
-                            if (otherPanel.id === 'live-visitors-panel') {
-                                clearInterval(liveVisitorRefreshInterval);
-                                document.getElementById('visitor-list').innerHTML = '';
-                                isEzraLoggedIn = false;
-                            }
-                            if (otherPanel.id === 'moment-vault-panel') {
-                                document.getElementById('moment-vault-gallery').innerHTML = '';
-                            }
-                        }
-                    });
                 });
             });
-
             document.querySelectorAll('.panel-close-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const panelId = button.getAttribute('data-panel');
@@ -459,11 +230,7 @@
             const player = document.getElementById('audio-player');
             const playlistEl = document.getElementById('playlist');
             const songTitleEl = document.getElementById('song-title');
-            const songs = [
-                { name: "Life Goes On", url: "Life-Goes-On.mp3" },
-                { name: "Where We Are", url: "Where-We-Are.mp3" },
-                { name: "Sekuat Hatimu", url: "Sekuat Hatimu.mp3" },
-            ];
+            const songs = [{ name: "Life Goes On", url: "Life-Goes-On.mp3" },{ name: "Where We Are", url: "Where-We-Are.mp3" },{ name: "Sekuat Hatimu", url: "Sekuat Hatimu.mp3" },];
             songs.forEach((song, index) => {
                 const item = document.createElement('div');
                 item.textContent = song.name;
@@ -588,6 +355,7 @@
         function initWebsiteAgeDisplay() {
             const websiteAgeDisplay = document.getElementById('website-age-display');
             const creationDate = new Date(2025, 5, 21, 0, 0, 0);
+
             function updateWebsiteAge() {
                 const now = new Date();
                 const diff = now.getTime() - creationDate.getTime();
@@ -611,6 +379,7 @@
                 ageString += `${displaySeconds.toString().padStart(2, '0')}`;
                 websiteAgeDisplay.textContent = `${ageString}`;
             }
+
             updateWebsiteAge();
             setInterval(updateWebsiteAge, 1000);
         }
@@ -619,6 +388,7 @@
             const fabLiveVisitors = document.getElementById('fab-live-visitors');
             fabLiveVisitors.style.display = 'flex';
         }
+
         document.addEventListener('DOMContentLoaded', checkEzraLoginAndShowVisitorsButton);
 
         async function fetchLiveVisitors() {
@@ -635,10 +405,7 @@
                 const visitors = await response.json();
                 if (visitors && visitors.length > 0) {
                     visitorList.innerHTML = visitors.map(visitor => {
-                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
-                            hour: '2-digit', minute: '2-digit', second: '2-digit',
-                            day: '2-digit', month: '2-digit', year: 'numeric'
-                        });
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {hour: '2-digit', minute: '2-digit', second: '2-digit',day: '2-digit', month: '2-digit', year: 'numeric'});
                         return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`;
                     }).join('');
                 } else {
@@ -716,10 +483,7 @@
                             else iconClass = 'fa-file';
                             mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`;
                         }
-                        const timestamp = new Date(item.timestamp).toLocaleString('id-ID', {
-                            day: '2-digit', month: '2-digit', year: 'numeric',
-                            hour: '2-digit', minute: '2-digit'
-                        });
+                        const timestamp = new Date(item.timestamp).toLocaleString('id-ID', {day: '2-digit', month: '2-digit', year: 'numeric',hour: '2-digit', minute: '2-digit'});
                         return `<div class="gallery-item" data-id="${item.id}"><div class="gallery-media">${mediaHTML}</div><strong>${item.title}</strong><p class="item-text">${item.description}</p><small class="item-date">${timestamp}</small><div class="item-actions"><button class="edit-moment-btn"><i class="fas fa-edit"></i></button><button class="delete-moment-btn"><i class="fas fa-trash-alt"></i></button></div></div>`;
                     }).join('');
                     galleryContainer.querySelectorAll('.edit-moment-btn').forEach(button => {
@@ -778,15 +542,8 @@
                 const githubApiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
                 const uploadResponse = await fetch(githubApiUrl, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Upload moment: ${title}`,
-                        content: fileContent,
-                        branch: 'main'
-                    })
+                    headers: {'Authorization': `token ${githubToken}`,'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: `Upload moment: ${title}`,content: fileContent,branch: 'main'})
                 });
                 if (!uploadResponse.ok) {
                     const errorText = await uploadResponse.text();
@@ -905,10 +662,7 @@
                 }
                 const githubApiGetFileUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
                 const getFileResponse = await fetch(githubApiGetFileUrl, {
-                    headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
+                    headers: {'Authorization': `token ${githubToken}`,'Accept': 'application/vnd.github.v3+json'}
                 });
                 if (!getFileResponse.ok) {
                     const errorText = await getFileResponse.text();
@@ -919,15 +673,8 @@
                 const githubDeleteUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
                 const deleteResponse = await fetch(githubDeleteUrl, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Delete moment: ${itemToDelete.title}`,
-                        sha: fileSha,
-                        branch: 'main'
-                    })
+                    headers: {'Authorization': `token ${githubToken}`,'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: `Delete moment: ${itemToDelete.title}`,sha: fileSha,branch: 'main'})
                 });
                 if (!deleteResponse.ok) {
                     const errorText = await deleteResponse.text();
@@ -948,6 +695,165 @@
                 statusEl.style.color = 'var(--danger)';
             }
         }
+
+        // ---------- KODE UNTUK VISUALIZER BARU ----------
+        
+        function initVisualizer() {
+            visualizerCanvas = document.getElementById('visualizer-canvas');
+            ctx = visualizerCanvas.getContext('2d');
+            resizeVisualizer();
+            window.addEventListener('resize', resizeVisualizer);
+        }
+
+        function resizeVisualizer() {
+            visualizerCanvas.width = window.innerWidth;
+            visualizerCanvas.height = window.innerHeight;
+            if (isVisualizerActive) {
+                ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+            }
+        }
+        
+        function setupAudioVisualizer() {
+            const audioPlayer = document.getElementById('audio-player');
+            if (!audioPlayer.src) {
+                alert("Pilih lagu terlebih dahulu.");
+                return;
+            }
+
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                source = audioContext.createMediaElementSource(audioPlayer);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                analyser.fftSize = 256;
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                frequencyData = new Uint8Array(analyser.frequencyBinCount);
+            }
+            audioPlayer.play();
+        }
+
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * visualizerCanvas.width,
+                    y: Math.random() * visualizerCanvas.height,
+                    size: Math.random() * 2 + 1,
+                    speedX: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
+                    speedY: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                });
+            }
+        }
+
+        function drawVisualizer() {
+            if (!isVisualizerActive) return;
+
+            requestAnimationFrame(drawVisualizer);
+            
+            analyser.getByteFrequencyData(frequencyData);
+            
+            ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+            
+            const centerX = visualizerCanvas.width / 2;
+            const centerY = visualizerCanvas.height / 2;
+
+            // Dapatkan nilai bass, mid, dan treble
+            const bass = frequencyData.slice(0, 5).reduce((a, b) => a + b) / 5;
+            const mid = frequencyData.slice(10, 40).reduce((a, b) => a + b) / 30;
+            const treble = frequencyData.slice(40, 80).reduce((a, b) => a + b) / 40;
+
+            const bassRadius = 50 + bass * 0.5;
+            const midRadius = 70 + mid * 0.5;
+            const trebleRadius = 90 + treble * 0.5;
+            
+            // Gambar lingkaran visualizer di tengah
+            drawCircle(centerX, centerY, bassRadius, `rgba(255, 0, 0, 0.7)`, 5);
+            drawCircle(centerX, centerY, midRadius, `rgba(0, 255, 0, 0.7)`, 3);
+            drawCircle(centerX, centerY, trebleRadius, `rgba(0, 0, 255, 0.7)`, 2);
+
+            // Gerakkan dan gambar partikel
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.speedX = (p.speedX > 0 ? 1 : -1) * (bass / 255 * 0.5 + 0.1);
+                p.speedY = (p.speedY > 0 ? 1 : -1) * (mid / 255 * 0.5 + 0.1);
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                // Pindah partikel dari satu sisi ke sisi lain
+                if (p.x < 0) p.x = visualizerCanvas.width;
+                if (p.x > visualizerCanvas.width) p.x = 0;
+                if (p.y < 0) p.y = visualizerCanvas.height;
+                if (p.y > visualizerCanvas.height) p.y = 0;
+
+                const colorHue = (bass + mid + treble) / 3 * 1.5 + (i * 360 / PARTICLE_COUNT);
+                p.color = `hsl(${colorHue % 360}, 100%, 50%)`;
+                
+                const particleSize = p.size * (1 + (treble / 255 * 2));
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, particleSize, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            }
+        }
+        
+        function drawCircle(x, y, radius, color, lineWidth) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+        }
+
+        function toggleFullscreenVisualizer() {
+            const audioPlayer = document.getElementById('audio-player');
+            const body = document.body;
+            
+            if (!isVisualizerActive) {
+                if (!audioPlayer.src || audioPlayer.paused) {
+                    alert("Putar musik terlebih dahulu untuk mengaktifkan visualisasi.");
+                    return;
+                }
+
+                setupAudioVisualizer();
+                if (!analyser) return;
+
+                isVisualizerActive = true;
+                body.classList.add('fullscreen-active');
+                if (body.requestFullscreen) {
+                    body.requestFullscreen();
+                } else if (body.webkitRequestFullscreen) { /* Safari */
+                    body.webkitRequestFullscreen();
+                }
+                
+                createParticles();
+                drawVisualizer();
+            } else {
+                isVisualizerActive = false;
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
+        document.addEventListener('fullscreenchange', (event) => {
+            if (!document.fullscreenElement) {
+                isVisualizerActive = false;
+                document.body.classList.remove('fullscreen-active');
+            }
+        });
+        document.addEventListener('webkitfullscreenchange', (event) => {
+            if (!document.webkitFullscreenElement) {
+                isVisualizerActive = false;
+                document.body.classList.remove('fullscreen-active');
+            }
+        });
+
     </script>
 </body>
 </html>
