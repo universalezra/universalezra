@@ -552,9 +552,40 @@
         text-align: center;
         white-space: nowrap;
       }
+      #visualizer-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Pastikan berada di bawah konten utama */
+    display: none; /* Sembunyikan secara default */
+}
+
+.fullscreen-active #visualizer-canvas {
+    display: block;
+}
+
+.fullscreen-active #interactive-bg {
+    display: none; /* Sembunyikan latar belakang default */
+}
+
+/* Sembunyikan FABs dan elemen lain saat fullscreen */
+.fullscreen-active .fab-container,
+.fullscreen-active .social-links,
+.fullscreen-active #video-player-widget,
+.fullscreen-active #website-age-display {
+    display: none !important;
+}
+
+/* Atur konten utama agar berada di atas visualizer jika diperlukan */
+.fullscreen-active .main-container {
+    z-index: 1;
+}
     </style>
   </head>
   <body class="">
+  <canvas id="visualizer-canvas"></canvas>
     <div id="interactive-bg"></div>
     <div class="main-container">
       <div class="central-message"></div>
@@ -707,6 +738,7 @@
         </div>
       </div>
     </div>
+    <div class="fab-container" id="fab-fullscreen"><button class="fab" data-panel="fullscreen-visualizer" title="Fullscreen Visualizer"><i class="fas fa-expand"></i></button></div>    
     <div class="panel" id="moment-vault-panel">
       <button class="panel-close-btn" data-panel="moment-vault-panel">
         <i class="fas fa-times"></i>
@@ -758,7 +790,7 @@
         ><i class="fab fa-whatsapp"></i
       ></a>
       <a
-        href="https://instagram.com/I_dont_care_now"
+        href="https://instagram.com/zilifucek"
         target="_blank"
         title="Instagram"
         ><i class="fab fa-instagram"></i
@@ -1383,6 +1415,148 @@
           statusEl.style.color = 'var(--danger)';
         }
       }
+      // Tambahkan variabel baru di bagian atas script
+let isVisualizerActive = false;
+let visualizerCanvas, ctx, audioContext, analyser, source;
+let particles = [];
+let bufferLength, dataArray;
+const PARTICLE_COUNT = 200;
+
+function initVisualizer() {
+    visualizerCanvas = document.getElementById('visualizer-canvas');
+    ctx = visualizerCanvas.getContext('2d');
+    resizeVisualizer();
+    window.addEventListener('resize', resizeVisualizer);
+}
+
+function resizeVisualizer() {
+    visualizerCanvas.width = window.innerWidth;
+    visualizerCanvas.height = window.innerHeight;
+}
+
+function setupAudioVisualizer() {
+    const audioPlayer = document.getElementById('audio-player');
+    if (!audioPlayer.src) {
+        alert("Pilih lagu terlebih dahulu.");
+        return;
+    }
+
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        source = audioContext.createMediaElementSource(audioPlayer);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        analyser.fftSize = 256;
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+    }
+}
+
+function createParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+            x: Math.random() * visualizerCanvas.width,
+            y: Math.random() * visualizerCanvas.height,
+            size: Math.random() * 2 + 1,
+            speedX: (Math.random() - 0.5) * 0.5,
+            speedY: (Math.random() - 0.5) * 0.5,
+            color: 'rgba(0, 255, 0, 0.5)',
+        });
+    }
+}
+
+function drawParticles(bass) {
+    ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+    for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        // Update position
+        p.x += p.speedX * (1 + bass * 0.2);
+        p.y += p.speedY * (1 + bass * 0.2);
+
+        // Keep particles on screen
+        if (p.x > visualizerCanvas.width) p.x = 0;
+        if (p.x < 0) p.x = visualizerCanvas.width;
+        if (p.y > visualizerCanvas.height) p.y = 0;
+        if (p.y < 0) p.y = visualizerCanvas.height;
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (1 + bass * 0.5), 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+    }
+}
+
+function animateVisualizer() {
+    if (isVisualizerActive && analyser) {
+        analyser.getByteFrequencyData(dataArray);
+        const bass = dataArray[2] / 255; // Menggunakan frekuensi rendah untuk efek
+        drawParticles(bass);
+        requestAnimationFrame(animateVisualizer);
+    }
+}
+
+function toggleFullscreenVisualizer() {
+    const audioPlayer = document.getElementById('audio-player');
+    const visualizerCanvas = document.getElementById('visualizer-canvas');
+    const body = document.body;
+
+    if (!isVisualizerActive) {
+        if (!audioPlayer.src || audioPlayer.paused) {
+            alert("Putar musik terlebih dahulu untuk mengaktifkan visualisasi.");
+            return;
+        }
+
+        setupAudioVisualizer();
+        if (!analyser) return;
+
+        isVisualizerActive = true;
+        body.classList.add('fullscreen-active');
+        if (body.requestFullscreen) {
+            body.requestFullscreen();
+        } else if (body.webkitRequestFullscreen) {
+            body.webkitRequestFullscreen();
+        }
+
+        createParticles();
+        animateVisualizer();
+    } else {
+        isVisualizerActive = false;
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+}
+
+// Tambahkan event listener untuk tombol baru
+document.addEventListener('DOMContentLoaded', () => {
+    // ... kode yang sudah ada
+    const fullscreenButton = document.querySelector('#fab-fullscreen .fab');
+    if (fullscreenButton) {
+        fullscreenButton.addEventListener('click', toggleFullscreenVisualizer);
+    }
+
+    document.addEventListener('fullscreenchange', (event) => {
+        if (!document.fullscreenElement) {
+            document.body.classList.remove('fullscreen-active');
+            isVisualizerActive = false;
+        }
+    });
+    
+    document.addEventListener('webkitfullscreenchange', (event) => {
+        if (!document.webkitFullscreenElement) {
+            document.body.classList.remove('fullscreen-active');
+            isVisualizerActive = false;
+        }
+    });
+
+    initVisualizer();
+});
     </script>
   </body>
 </html>
