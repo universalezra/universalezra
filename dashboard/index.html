@@ -213,6 +213,53 @@
       #moment-vault-panel.active {
         transform: translateY(0);
       }
+      #gestured-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+      }
+      #gestured-panel.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .gestured-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        width: 90%;
+        max-width: 1200px;
+        height: 90%;
+        overflow-y: auto;
+        padding: 20px;
+      }
+      .gestured-block {
+        background: rgba(142, 68, 173, 0.2);
+        border: 1px solid var(--primary);
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-primary);
+        font-size: 1.2em;
+        text-align: center;
+        height: 200px;
+        transition: transform 0.3s ease;
+      }
+      .gestured-block:hover {
+        transform: scale(1.05);
+      }
       .live-visitors-content,
       .moment-vault-content {
         display: flex;
@@ -827,6 +874,23 @@
       ></a>
     </div>
     <div id="website-age-display"></div>
+    <div id="gestured-panel">
+        <button class="panel-close-btn" data-panel="gestured-panel">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="gestured-grid">
+            <div class="gestured-block">Tampilan Baru</div>
+            <div class="gestured-block">Geser ke mana saja</div>
+            <div class="gestured-block">Ini adalah blok</div>
+            <div class="gestured-block">Anda bisa mengisi konten di sini</div>
+            <div class="gestured-block">Sederhana dan minimalis</div>
+            <div class="gestured-block">Konten 1</div>
+            <div class="gestured-block">Konten 2</div>
+            <div class="gestured-block">Konten 3</div>
+            <div class="gestured-block">Konten 4</div>
+            <div class="gestured-block">Konten 5</div>
+        </div>
+    </div>
     <script>
       const CONTRIBUTIONS_WORKER_URL =
         'https://contributions-workerjs.ezvvel.workers.dev/';
@@ -840,9 +904,8 @@
       let isEzraLoggedIn = false;
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
-      // URL baru untuk riwayat pengunjung di backend
       const VISITOR_HISTORY_WORKER_URL =
-        'https://visithistory.universalezra.workers.dev/';
+        'https://visitor-history.ezvvel.workers.dev/';
       const VISITOR_HISTORY_EXPIRY_DAYS = 7;
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '💔';
@@ -852,6 +915,9 @@
       let bufferLength, dataArray, frequencyData;
       const PARTICLE_COUNT = 200;
       const PARTICLE_SPEED_MULTIPLIER = 0.5;
+      let gravity = { x: 0, y: 0 };
+      let mouseStart = { x: 0, y: 0 };
+      let isMouseDown = false;
 
       document.addEventListener('DOMContentLoaded', () => {
         initPanelControls();
@@ -861,6 +927,8 @@
         initWebsiteAgeDisplay();
         trackVisitor();
         initVisualizer();
+        initMouseGestures();
+        initDeviceMotion();
       });
 
       function initPanelControls() {
@@ -875,7 +943,7 @@
                 panel.classList.toggle('active');
                 if (panel.classList.contains('active')) {
                   fetchLiveVisitors();
-                  fetchVisitorHistory(); // Panggil fungsi riwayat pengunjung
+                  fetchVisitorHistory();
                   liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
                 } else {
                   clearInterval(liveVisitorRefreshInterval);
@@ -1241,14 +1309,12 @@
             timestamp: new Date().toISOString(),
           };
           
-          // Kirim data ke worker live visitors
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
           }).catch((e) => console.error('Error sending to live visitors worker:', e));
           
-          // Kirim data ke worker riwayat pengunjung
           fetch(VISITOR_HISTORY_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1597,31 +1663,37 @@
         const center_x = visualizerCanvas.width / 2;
         const center_y = visualizerCanvas.height / 2;
         const radius = Math.min(center_x, center_y) * 0.4;
-        const slice = (2 * Math.PI) / bufferLength;
+        const sampleRate = audioContext.sampleRate;
+        const maxFreq = 1000; // Frekuensi maksimum yang diinginkan
+        const maxIndex = Math.floor((maxFreq / (sampleRate / 2)) * bufferLength);
+        const effectiveBufferLength = maxIndex;
+        const slice = (2 * Math.PI) / effectiveBufferLength;
 
-        // Visualisasi lingkaran yang dinamis
-        for (let i = 0; i < bufferLength; i++) {
-          const barHeight = frequencyData[i] * 0.7;
-          const angle = slice * i;
-          const x = center_x + Math.cos(angle) * (radius + barHeight);
-          const y = center_y + Math.sin(angle) * (radius + barHeight);
+        for (let i = 0; i < effectiveBufferLength; i++) {
+            const barHeight = frequencyData[i] * 0.7;
+            const angle = slice * i;
+            const x = center_x + Math.cos(angle) * (radius + barHeight);
+            const y = center_y + Math.sin(angle) * (radius + barHeight);
 
-          ctx.beginPath();
-          ctx.moveTo(center_x, center_y);
-          ctx.lineTo(x, y);
+            ctx.beginPath();
+            ctx.moveTo(center_x, center_y);
+            ctx.lineTo(x, y);
 
-          const hue = (i / bufferLength) * 360;
-          ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
+            const hue = (i / effectiveBufferLength) * 360;
+            ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
         }
 
-        // Visualisasi Partikel
-        const averageAmplitude = frequencyData.reduce((a, b) => a + b) / bufferLength;
+        const averageAmplitude = frequencyData.slice(0, effectiveBufferLength).reduce((a, b) => a + b) / effectiveBufferLength;
         const particleSpeedFactor = averageAmplitude / 255 * 3;
 
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
+          
+          p.speedX += gravity.x * 0.05;
+          p.speedY += gravity.y * 0.05;
+
           p.x += p.speedX * particleSpeedFactor;
           p.y += p.speedY * particleSpeedFactor;
 
@@ -1671,6 +1743,52 @@
           }
         }
       }
+      
+      function initDeviceMotion() {
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('devicemotion', event => {
+                const { x, y, z } = event.accelerationIncludingGravity;
+                if (x !== null && y !== null) {
+                    gravity.x = x;
+                    gravity.y = y;
+                }
+            });
+        } else {
+            console.log('DeviceMotionEvent is not supported on this device.');
+        }
+      }
+      
+      function initMouseGestures() {
+          const gesturedPanel = document.getElementById('gestured-panel');
+          const closeBtn = gesturedPanel.querySelector('.panel-close-btn');
+          
+          document.addEventListener('mousedown', (e) => {
+              isMouseDown = true;
+              mouseStart.x = e.clientX;
+              mouseStart.y = e.clientY;
+          });
+          
+          document.addEventListener('mouseup', (e) => {
+              if (isMouseDown) {
+                  const mouseEnd = { x: e.clientX, y: e.clientY };
+                  const dx = mouseEnd.x - mouseStart.x;
+                  const dy = mouseEnd.y - mouseStart.y;
+                  
+                  const swipeThreshold = 100;
+                  
+                  if (Math.abs(dx) > swipeThreshold || Math.abs(dy) > swipeThreshold) {
+                      gesturedPanel.classList.add('active');
+                  }
+                  
+                  isMouseDown = false;
+              }
+          });
+          
+          closeBtn.addEventListener('click', () => {
+              gesturedPanel.classList.remove('active');
+          });
+      }
+
 
       document.addEventListener('fullscreenchange', (event) => {
         if (!document.fullscreenElement) {
