@@ -425,6 +425,67 @@
         border: none;
         background: var(--light);
       }
+      #video-player-widget .video-controls {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          display: flex;
+          justify-content: space-evenly;
+          align-items: center;
+          padding: 5px 0;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          transition: opacity 0.3s ease;
+          opacity: 0;
+      }
+      #video-player-widget:hover .video-controls {
+          opacity: 1;
+      }
+      #video-player-widget .video-controls button {
+          background: none;
+          border: none;
+          color: white;
+          font-size: 1rem;
+          cursor: pointer;
+          padding: 5px;
+      }
+      #moment-vault-panel h3 {
+        padding: 10px 20px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      #moment-upload-form {
+        width: 100%;
+        max-width: 600px;
+      }
+      #moment-upload-form input, #moment-upload-form textarea {
+        display: block;
+        width: 100%;
+        margin-top: 15px;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 8px;
+      }
+      #moment-upload-form button {
+        width: 100%;
+        padding: 12px;
+        background: var(--accent);
+        border: none;
+        color: white;
+        font-size: 1em;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background 0.3s ease;
+      }
+      #moment-upload-form button:hover {
+        background: var(--primary);
+      }
     </style>
   </head>
   <body>
