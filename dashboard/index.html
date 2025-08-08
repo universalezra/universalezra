@@ -174,19 +174,12 @@
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 0;
+        z-index: 99; /* Z-index lebih rendah dari panel, tapi di atas konten */
         display: none;
-        background-color: #000;
+        background-color: transparent;
       }
-      .fullscreen-active #visualizer-canvas {
+      .visualizer-active #visualizer-canvas {
         display: block;
-      }
-      .fullscreen-active .grid-block-content,
-      .fullscreen-active .fab-container,
-      .fullscreen-active .social-links,
-      .fullscreen-active #video-player-widget,
-      .fullscreen-active #website-age-display {
-        display: none !important;
       }
       .panel-close-btn {
         position: absolute;
@@ -241,7 +234,7 @@
         left: 20px;
         transform: translateY(-50%);
       }
-      #fab-fullscreen {
+      #fab-visualizer {
         bottom: 20px;
         left: 50%;
         transform: translateX(-120%);
@@ -291,6 +284,11 @@
           margin-bottom: 8px;
           display: flex;
           justify-content: space-between;
+      }
+      #moment-vault-gallery-container {
+        flex-grow: 1; 
+        overflow-y: auto; 
+        padding-right: 10px;
       }
       #moment-vault-gallery {
           display: grid;
@@ -372,6 +370,54 @@
         text-align: center;
         white-space: nowrap;
       }
+
+      /* CSS for Editor Panel */
+      .editor-toolbar {
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .editor-toolbar button {
+        background: var(--accent);
+        color: var(--text-primary);
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .editor-toolbar button:hover {
+        background: var(--primary);
+      }
+      .editor-main {
+        display: flex;
+        flex-grow: 1;
+        gap: 10px;
+        padding: 10px;
+      }
+      .editor-code-area, .editor-preview-area {
+        flex: 1;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      #unified-code-editor {
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.3);
+        color: var(--text-primary);
+        border: none;
+        padding: 10px;
+        resize: none;
+        outline: none;
+      }
+      #editor-preview {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: var(--light);
+      }
     </style>
   </head>
   <body>
@@ -438,8 +484,8 @@
                 ><i class="fas fa-book"></i
             ></a>
         </div>
-        <div class="fab-container" id="fab-fullscreen">
-            <button class="fab" data-panel="fullscreen-visualizer" title="Fullscreen Visualizer">
+        <div class="fab-container" id="fab-visualizer">
+            <button class="fab" data-panel="visualizer" title="Visualizer">
                 <i class="fas fa-expand"></i>
             </button>
         </div>
@@ -563,7 +609,7 @@
         <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
         <div class="moment-vault-content">
             <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Share your moment here</h3>
-            <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px">
+            <div id="moment-vault-gallery-container">
                 <p style="text-align: center; color: var(--text-secondary)">Memories</p>
                 <div id="moment-vault-gallery"></div>
             </div>
@@ -691,8 +737,8 @@
                 isEzraLoggedIn = false;
                 return;
               }
-            } else if (panelId === 'fullscreen-visualizer') {
-              toggleFullscreenVisualizer();
+            } else if (panelId === 'visualizer') {
+              toggleVisualizerOverlay();
             } else {
               panel.classList.toggle('active');
               if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
@@ -1445,7 +1491,7 @@
         }
       }
 
-      function toggleFullscreenVisualizer() {
+      function toggleVisualizerOverlay() {
         const audioPlayer = document.getElementById('audio-player');
         const body = document.body;
 
@@ -1459,22 +1505,12 @@
           if (!analyser) return;
 
           isVisualizerActive = true;
-          body.classList.add('fullscreen-active');
-          if (body.requestFullscreen) {
-            body.requestFullscreen();
-          } else if (body.webkitRequestFullscreen) {
-            body.webkitRequestFullscreen();
-          }
-
+          body.classList.add('visualizer-active');
           createParticles();
           drawVisualizer();
         } else {
           isVisualizerActive = false;
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          }
+          body.classList.remove('visualizer-active');
         }
       }
       
@@ -1491,19 +1527,6 @@
             console.log('DeviceMotionEvent is not supported on this device.');
         }
       }
-
-      document.addEventListener('fullscreenchange', (event) => {
-        if (!document.fullscreenElement) {
-          isVisualizerActive = false;
-          document.body.classList.remove('fullscreen-active');
-        }
-      });
-      document.addEventListener('webkitfullscreenchange', (event) => {
-        if (!document.webkitFullscreenElement) {
-          isVisualizerActive = false;
-          document.body.classList.remove('fullscreen-active');
-        }
-      });
     </script>
   </body>
 </html>
