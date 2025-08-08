@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>UniversalEzra</title>
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -52,57 +52,57 @@
       * {
         box-sizing: border-box;
       }
-      html,
-      body {
+      html, body {
         width: 100%;
         height: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        overflow: hidden; /* Mencegah scrolling normal */
         font-family: 'Courier New', Courier, monospace;
         background-color: var(--bg-main);
         color: #00ff00;
       }
-      #interactive-bg {
-        position: fixed;
+      #grid-container {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr;
+        transform: translate3d(-100vw, -100vh, 0); /* Posisi awal di blok tengah */
+        transition: transform 0.7s cubic-bezier(0.86, 0, 0.07, 1);
+      }
+      .grid-block {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+      }
+      .grid-block-background {
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 0;
-        background-image: url('January 17, 2025 at 5.10 AM.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         filter: blur(3px);
         -webkit-filter: blur(3px);
+        z-index: 1;
       }
-      #visualizer-canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        display: none;
-        background-color: #000;
-      }
-      .fullscreen-active #visualizer-canvas {
-        display: block;
-      }
-      .fullscreen-active #interactive-bg {
-        display: none !important;
-      }
-      .fullscreen-active .fab-container,
-      .fullscreen-active .social-links,
-      .fullscreen-active #video-player-widget,
-      .fullscreen-active #website-age-display,
-      .fullscreen-active .central-message,
-      .fullscreen-active .tesseract-nav-hint {
-        display: none !important;
+      .grid-block-content {
+        position: relative;
+        z-index: 2;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
       .panel {
-        position: fixed;
+        position: absolute;
         background: rgba(26, 26, 46, 0.7);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
@@ -113,15 +113,15 @@
         flex-direction: column;
         color: #00ff00;
       }
+      .panel.active {
+        transform: translate(0, 0) !important;
+      }
       #editor-panel {
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         transform: translateX(-100%);
-      }
-      #editor-panel.active {
-        transform: translateX(0);
       }
       #music-panel {
         bottom: 0;
@@ -133,9 +133,6 @@
         transform: translateY(100%);
         padding: 15px;
       }
-      #music-panel.active {
-        transform: translateY(0);
-      }
       #contribution-panel {
         top: 0;
         right: 0;
@@ -144,9 +141,6 @@
         height: 100%;
         transform: translateX(100%);
         padding: 20px;
-      }
-      #contribution-panel.active {
-        transform: translateX(0);
       }
       #live-visitors-panel {
         top: 0;
@@ -161,9 +155,6 @@
         justify-content: center;
         align-items: center;
       }
-      #live-visitors-panel.active {
-        transform: translateY(0);
-      }
       #moment-vault-panel {
         top: 0;
         left: 0;
@@ -177,140 +168,25 @@
         justify-content: center;
         align-items: center;
       }
-      #moment-vault-panel.active {
-        transform: translateY(0);
-      }
-      .live-visitors-content,
-      .moment-vault-content {
-        display: flex;
-        flex-direction: column;
+      #visualizer-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        max-width: 1200px;
-        background: var(--bg-panel);
-        border-radius: 15px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
+        z-index: 0;
+        display: none;
+        background-color: #000;
       }
-      #visitor-list ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 15px;
+      .fullscreen-active #visualizer-canvas {
+        display: block;
       }
-      #visitor-list li {
-        background: rgba(0, 168, 255, 0.1);
-        border: 1px solid rgba(0, 168, 255, 0.2);
-        border-radius: 10px;
-        padding: 15px;
-        font-size: 0.9em;
-        color: var(--text-primary);
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      #visitor-list li strong {
-        color: var(--accent);
-      }
-      #visitor-history ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        max-height: 200px;
-        overflow-y: auto;
-      }
-      #visitor-history li {
-        background: rgba(142, 68, 173, 0.1);
-        border: 1px solid rgba(142, 68, 173, 0.2);
-        border-radius: 10px;
-        padding: 10px;
-        font-size: 0.8em;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-        display: flex;
-        justify-content: space-between;
-      }
-      #moment-vault-gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 15px;
-      }
-      .gallery-item {
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 8px;
-        position: relative;
-      }
-      .gallery-item img,
-      .gallery-item video,
-      .gallery-item audio {
-        max-width: 100%;
-        height: auto;
-        border-radius: 5px;
-      }
-      .gallery-item .item-text {
-        font-size: 0.8em;
-        color: var(--text-secondary);
-        max-height: 60px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-      }
-      .gallery-item .item-date {
-        font-size: 0.7em;
-        color: var(--text-secondary);
-      }
-      .gallery-item .item-actions {
-        display: flex;
-        gap: 5px;
-        margin-top: 5px;
-      }
-      .gallery-item .item-actions button {
-        background: var(--primary);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 5px 8px;
-        font-size: 0.8em;
-        cursor: pointer;
-      }
-      .gallery-item .item-actions button:hover {
-        background: var(--accent);
-      }
-      body.desktop-layout #fab-moment-vault,
-      body.desktop-layout #fab-live-visitors {
-        display: block !important;
-      }
-      .gallery-media {
-        width: 100%;
-        height: 120px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        border-radius: 5px;
-        background-color: #333;
-      }
-      .gallery-media img,
-      .gallery-media video,
-      .gallery-media audio {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .gallery-media .file-icon {
-        font-size: 3em;
-        color: var(--text-secondary);
+      .fullscreen-active .grid-block-content,
+      .fullscreen-active .fab-container,
+      .fullscreen-active .social-links,
+      .fullscreen-active #video-player-widget,
+      .fullscreen-active #website-age-display {
+        display: none !important;
       }
       .panel-close-btn {
         position: absolute;
@@ -327,8 +203,7 @@
         position: fixed;
         z-index: 1000;
       }
-      .fab,
-      .fab-container a {
+      .fab, .fab-container a {
         background: rgba(142, 68, 173, 0.7);
         color: #00ff00;
         width: 55px;
@@ -344,8 +219,7 @@
         transition: all 0.3s ease;
         text-decoration: none;
       }
-      .fab:hover,
-      .fab-container a:hover {
+      .fab:hover, .fab-container a:hover {
         background: var(--accent);
         transform: scale(1.1);
       }
@@ -382,63 +256,80 @@
         left: 50%;
         transform: translateX(-50%);
       }
-      #editor-panel {
-        padding: 0;
+      #live-visitors-panel .live-visitors-content,
+      #moment-vault-panel .moment-vault-content {
+          width: 100%;
+          height: 100%;
+          max-width: 1200px;
+          background: var(--bg-panel);
+          border-radius: 15px;
+          box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+          overflow: hidden;
       }
-      .editor-toolbar {
-        display: flex;
-        gap: 5px;
+      #visitor-list ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 15px;
+      }
+      #visitor-history ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          max-height: 200px;
+          overflow-y: auto;
+      }
+      #visitor-history li {
+          background: rgba(142, 68, 173, 0.1);
+          border: 1px solid rgba(142, 68, 173, 0.2);
+          border-radius: 10px;
+          padding: 10px;
+          font-size: 0.8em;
+          color: var(--text-primary);
+          margin-bottom: 8px;
+          display: flex;
+          justify-content: space-between;
+      }
+      #moment-vault-gallery {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          gap: 15px;
+      }
+      #moment-upload-form input, #moment-upload-form textarea, #moment-upload-form button {
+        margin-top: 10px;
+      }
+      .gallery-item {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
         padding: 10px;
-        background: rgba(0, 0, 0, 0.5);
-        flex-wrap: wrap;
-        justify-content: flex-start;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+        position: relative;
       }
-      .editor-toolbar button,
-      .editor-toolbar select {
-        background: rgba(142, 68, 173, 0.7);
-        color: #00ff00;
-        border: none;
-        padding: 8px 12px;
+      .gallery-media {
+        width: 100%;
+        height: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
         border-radius: 5px;
-        cursor: pointer;
+        background-color: #333;
       }
-      .editor-toolbar button:hover,
-      .editor-toolbar select:hover {
-        background: var(--accent);
-      }
-      .editor-main {
-        display: flex;
-        flex-grow: 1;
-        height: calc(100% - 58px);
-      }
-      .editor-code-area {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-      }
-      .editor-preview-area {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-      }
-      #unified-code-editor {
-        flex-grow: 1;
-        background: #1e1e1e;
-        color: #00ff00;
-        border: none;
-        resize: none;
-        padding: 10px;
-        font-family: 'Courier New', monospace;
-        font-size: 14px;
-        outline: none;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-      }
-      #editor-preview {
+      .gallery-media img, .gallery-media video, .gallery-media audio {
         width: 100%;
         height: 100%;
-        border: none;
-        background: white;
+        object-fit: cover;
+      }
+      .gallery-media .file-icon {
+        font-size: 3em;
+        color: var(--text-secondary);
       }
       #video-player-widget {
         position: fixed;
@@ -458,24 +349,6 @@
         height: 100%;
         object-fit: cover;
       }
-      .video-controls {
-        position: absolute;
-        bottom: 5px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 10px;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 5px;
-        border-radius: 5px;
-      }
-      .video-controls button {
-        background: none;
-        border: none;
-        color: #00ff00;
-        font-size: 1rem;
-        cursor: pointer;
-      }
       .social-links {
         position: fixed;
         top: 50%;
@@ -485,35 +358,6 @@
         flex-direction: column;
         gap: 15px;
         z-index: 999;
-      }
-      .social-links a {
-        color: #00ff00;
-        font-size: 1.5rem;
-        transition: color 0.3s, transform 0.3s;
-      }
-      .social-links a:hover {
-        color: var(--accent);
-        transform: scale(1.2);
-      }
-      body.desktop-layout .panel {
-        position: static;
-        transform: none !important;
-        height: auto;
-        width: auto;
-        max-height: none;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-        border: 1px solid var(--border-color);
-        border-radius: 15px;
-      }
-      body.desktop-layout .panel-close-btn {
-        display: none;
-      }
-      body.desktop-layout .fab-container,
-      body.desktop-layout .social-links {
-        display: block;
-      }
-      textarea::placeholder {
-        color: rgba(0, 255, 0, 0.7);
       }
       #website-age-display {
         position: fixed;
@@ -528,393 +372,213 @@
         text-align: center;
         white-space: nowrap;
       }
-      #moment-upload-form input[type='text'],
-      #moment-upload-form textarea {
-        width: 100%;
-        background: rgba(0, 0, 0, 0.2);
-        color: var(--text-primary);
-        border: 1px solid var(--border-color);
-        border-radius: 5px;
-        padding: 10px;
-        margin-bottom: 10px;
-        outline: none;
-        transition: border-color 0.3s ease;
-      }
-      #moment-upload-form input[type='text']:focus,
-      #moment-upload-form textarea:focus {
-        border-color: var(--accent);
-      }
-      #moment-upload-form button[type='submit'] {
-        background: var(--primary);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 10px 15px;
-        font-size: 1em;
-        cursor: pointer;
-        width: 100%;
-        transition: background-color 0.3s ease;
-      }
-      #moment-upload-form button[type='submit']:hover {
-        background: var(--accent);
-      }
-
-      /* ======================================= */
-      /* New Tesseract Styles */
-      /* ======================================= */
-      .tesseract-viewport {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        perspective: 1000px;
-      }
-      .tesseract-container {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transform-style: preserve-3d;
-        transition: transform 0.8s ease-in-out;
-      }
-      .tesseract-face {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2em;
-        color: white;
-        text-align: center;
-        padding: 20px;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-      }
-      .tesseract-face-center {
-        transform: translateZ(0);
-        background: rgba(0, 0, 0, 0.2);
-      }
-      .tesseract-face-right {
-        transform: rotateY(90deg) translateZ(0);
-        background: rgba(142, 68, 173, 0.2);
-      }
-      .tesseract-face-left {
-        transform: rotateY(-90deg) translateZ(0);
-        background: rgba(0, 168, 255, 0.2);
-      }
-      .tesseract-face-top {
-        transform: rotateX(-90deg) translateZ(0);
-        background: rgba(46, 204, 113, 0.2);
-      }
-      .tesseract-face-bottom {
-        transform: rotateX(90deg) translateZ(0);
-        background: rgba(231, 76, 60, 0.2);
-      }
-      .tesseract-nav-hint {
-        position: fixed;
-        width: 50px;
-        height: 50px;
-        background: rgba(26, 26, 46, 0.5);
-        color: #00ff00;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50%;
-        z-index: 999;
-        opacity: 0.5;
-        transition: opacity 0.3s;
-      }
-      .tesseract-nav-hint:hover {
-        opacity: 1;
-      }
-      .tesseract-nav-hint.right {
-        top: 50%;
-        right: 20px;
-        transform: translateY(-50%);
-      }
-      .tesseract-nav-hint.left {
-        top: 50%;
-        left: 20px;
-        transform: translateY(-50%);
-      }
-      .tesseract-nav-hint.top {
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-      .tesseract-nav-hint.bottom {
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-      }
     </style>
   </head>
   <body>
     <canvas id="visualizer-canvas"></canvas>
-    <div id="interactive-bg"></div>
-
-    <div class="tesseract-viewport">
-      <div class="tesseract-container">
-        <div class="tesseract-face tesseract-face-center">
-          <div class="main-container">
+    <div id="grid-container">
+      <div class="grid-block" id="block-tl">
+        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div>
+        <div class="grid-block-content">
+          <h1>Tampilan Kiri Atas</h1>
+          <p>Tarik ke kanan atau bawah</p>
+        </div>
+      </div>
+      <div class="grid-block" id="block-tc">
+        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=2');"></div>
+        <div class="grid-block-content">
+          <h1>Tampilan Atas</h1>
+          <p>Tarik ke bawah</p>
+        </div>
+      </div>
+      <div class="grid-block" id="block-tr">
+        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div>
+        <div class="grid-block-content">
+          <h1>Tampilan Kanan Atas</h1>
+          <p>Tarik ke kiri atau bawah</p>
+        </div>
+      </div>
+      <div class="grid-block" id="block-ml">
+        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div>
+        <div class="grid-block-content">
+          <h1>Tampilan Kiri</h1>
+          <p>Tarik ke kanan</p>
+        </div>
+      </div>
+      <div class="grid-block" id="block-center">
+        <div class="grid-block-background" id="interactive-bg" style="background-image: url('January 17, 2025 at 5.10 AM.jpg');"></div>
+        <div class="grid-block-content">
             <div class="central-message">
-              <h3></h3>
-              <p>Geser ke kanan, kiri, atas, atau bawah</p>
+                <h3>Welcome to UniversalEzra</h3>
+                <p>Created with <span class="ezra-link">Ezra</span></p>
             </div>
-            <div
-              class="panel"
-              id="contribution-panel-desktop"
-              style="display: none"
-            ></div>
-          </div>
+            <div class="panel" id="contribution-panel-desktop" style="display: none"></div>
         </div>
-
-        <div class="tesseract-face tesseract-face-right">
-          <h3>Halaman Kanan</h3>
-          <p></p>
+        <div class="fab-container" id="fab-editor">
+            <button class="fab" data-panel="editor-panel" title="Code Editor">
+                <i class="fas fa-code"></i>
+            </button>
         </div>
-
-        <div class="tesseract-face tesseract-face-left">
-          <h3>Halaman Kiri</h3>
-          <p></p>
+        <div class="fab-container" id="fab-music">
+            <button class="fab" data-panel="music-panel" title="Music Player">
+                <i class="fas fa-music"></i>
+            </button>
         </div>
-
-        <div class="tesseract-face tesseract-face-top">
-          <h3>Halaman Atas</h3>
-          <p></p>
+        <div class="fab-container" id="fab-contribution">
+            <button class="fab" data-panel="contribution-panel" title="Leave a Message">
+                <i class="fas fa-feather-alt"></i>
+            </button>
         </div>
-
-        <div class="tesseract-face tesseract-face-bottom">
-          <h3>Halaman Bawah</h3>
-          <p></p>
+        <div class="fab-container" id="fab-alkitab">
+            <a
+                class="fab"
+                href="https://alkitab.me/in-tb/Matius/5/13"
+                target="_blank"
+                title="Alkitab"
+                ><i class="fas fa-book"></i
+            ></a>
+        </div>
+        <div class="fab-container" id="fab-fullscreen">
+            <button class="fab" data-panel="fullscreen-visualizer" title="Fullscreen Visualizer">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
+        <div class="fab-container" id="fab-moment-vault">
+            <button class="fab" data-panel="moment-vault-panel" title="Moment Vault">
+                <i class="fas fa-archive"></i>
+            </button>
+        </div>
+        <div class="fab-container" id="fab-live-visitors" style="display: none">
+            <button class="fab" data-panel="live-visitors-panel" title="Live Visitors">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div id="video-player-widget">
+            <video id="widget-video" loop src="video.mp4"></video>
+            <div class="video-controls">
+                <button id="video-play-pause"><i class="fas fa-play"></i></button>
+                <button id="video-mute"><i class="fas fa-volume-up"></i></button>
+            </div>
+        </div>
+        <div class="social-links">
+            <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://instagram.com/zilifucek" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+        <div id="website-age-display"></div>
+      </div>
+      <div class="grid-block" id="block-mr">
+        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div>
+        <div class="grid-block-content">
+          <h1>Tampilan Kanan</h1>
+          <p>Tarik ke kiri</p>
+        </div>
+      </div>
+      <div class="grid-block" id="block-bl">
+        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div>
+        <div class="grid-block-content">
+          <h1>Tampilan Kiri Bawah</h1>
+          <p>Tarik ke atas atau kanan</p>
+        </div>
+      </div>
+      <div class="grid-block" id="block-bc">
+        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=7');"></div>
+        <div class="grid-block-content">
+          <h1>Tampilan Bawah</h1>
+          <p>Tarik ke atas</p>
+        </div>
+      </div>
+      <div class="grid-block" id="block-br">
+        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=8');"></div>
+        <div class="grid-block-content">
+          <h1>Tampilan Kanan Bawah</h1>
+          <p>Tarik ke atas atau kiri</p>
         </div>
       </div>
     </div>
+    
     <div class="panel" id="editor-panel">
-      <button class="panel-close-btn" data-panel="editor-panel">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="editor-toolbar">
-        <button id="editor-run"><i class="fas fa-play"></i> Run</button>
-        <button id="editor-save"><i class="fas fa-save"></i> Save</button>
-        <button id="editor-load">
-          <i class="fas fa-folder-open"></i> Load
-        </button>
-        <button id="editor-new"><i class="fas fa-file"></i> New</button>
-        <button id="editor-undo"><i class="fas fa-undo"></i> Undo</button>
-        <button id="editor-redo">
-          <span><i class="fas fa-redo"></i> Redo</span>
-        </button>
-      </div>
-      <div class="editor-main">
-        <div class="editor-code-area">
-          <textarea id="unified-code-editor" spellcheck="false"></textarea>
+        <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
+        <div class="editor-toolbar">
+            <button id="editor-run"><i class="fas fa-play"></i> Run</button>
+            <button id="editor-save"><i class="fas fa-save"></i> Save</button>
+            <button id="editor-load"><i class="fas fa-folder-open"></i> Load</button>
+            <button id="editor-new"><i class="fas fa-file"></i> New</button>
+            <button id="editor-undo"><i class="fas fa-undo"></i> Undo</button>
+            <button id="editor-redo"><span><i class="fas fa-redo"></i> Redo</span></button>
         </div>
-        <div class="editor-preview-area">
-          <iframe id="editor-preview"></iframe>
+        <div class="editor-main">
+            <div class="editor-code-area">
+                <textarea id="unified-code-editor" spellcheck="false"></textarea>
+            </div>
+            <div class="editor-preview-area">
+                <iframe id="editor-preview"></iframe>
+            </div>
         </div>
-      </div>
     </div>
     <div class="panel" id="music-panel">
-      <button class="panel-close-btn" data-panel="music-panel">
-        <i class="fas fa-times"></i>
-      </button>
-      <h4>Now Playing</h4>
-      <div id="music-player-content">
-        <h5 id="song-title">Select a song</h5>
-        <audio id="audio-player" controls loop style="width: 100%"></audio>
-        <div
-          id="playlist"
-          style="max-height: 20vh; overflow-y: auto; margin-top: 10px"
-        ></div>
-      </div>
+        <button class="panel-close-btn" data-panel="music-panel"><i class="fas fa-times"></i></button>
+        <h4>Now Playing</h4>
+        <div id="music-player-content">
+            <h5 id="song-title">Select a song</h5>
+            <audio id="audio-player" controls loop style="width: 100%"></audio>
+            <div id="playlist" style="max-height: 20vh; overflow-y: auto; margin-top: 10px"></div>
+        </div>
     </div>
     <div class="panel" id="contribution-panel">
-      <button class="panel-close-btn" data-panel="contribution-panel">
-        <i class="fas fa-times"></i>
-      </button>
-      <div
-        id="contribution-content"
-        style="display: flex; flex-direction: column; height: 100%"
-      >
-        <h3 style="margin-top: 20px">Leave a Message</h3>
-        <div
-          id="contribution-display"
-          style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px"
-        >
-          <p>Loading messages</p>
+        <button class="panel-close-btn" data-panel="contribution-panel"><i class="fas fa-times"></i></button>
+        <div id="contribution-content" style="display: flex; flex-direction: column; height: 100%">
+            <h3 style="margin-top: 20px">Leave a Message</h3>
+            <div id="contribution-display" style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px">
+                <p>Loading messages</p>
+            </div>
+            <form id="contribution-form">
+                <textarea id="contribution-text" placeholder="Your message" required style="width: 100%; min-height: 80px; background: rgba(0, 0, 0, 0.2); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 5px; padding: 10px;"></textarea>
+                <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 10px;">
+                    <button type="submit" class="fab" style="position: static; width: 45px; height: 45px; font-size: 1.1rem">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <p id="contribution-status" style="font-size: 0.9em; text-align: center; margin-top: 10px"></p>
+            </form>
         </div>
-        <form id="contribution-form">
-          <textarea
-            id="contribution-text"
-            placeholder="Your message"
-            required
-            style="
-              width: 100%;
-              min-height: 80px;
-              background: rgba(0, 0, 0, 0.2);
-              color: var(--text-primary);
-              border: 1px solid var(--border-color);
-              border-radius: 5px;
-              padding: 10px;
-            "
-          ></textarea>
-          <div
-            style="
-              display: flex;
-              justify-content: flex-end;
-              align-items: center;
-              margin-top: 10px;
-            "
-          >
-            <button
-              type="submit"
-              class="fab"
-              style="position: static; width: 45px; height: 45px; font-size: 1.1rem"
-            >
-              <i class="fas fa-paper-plane"></i>
-            </button>
-          </div>
-          <p
-            id="contribution-status"
-            style="font-size: 0.9em; text-align: center; margin-top: 10px"
-          ></p>
-        </form>
-      </div>
-    </div>
-    <div class="fab-container" id="fab-editor">
-      <button class="fab" data-panel="editor-panel" title="Code Editor">
-        <i class="fas fa-code"></i>
-      </button>
-    </div>
-    <div class="fab-container" id="fab-music">
-      <button class="fab" data-panel="music-panel" title="Music Player">
-        <i class="fas fa-music"></i>
-      </button>
-    </div>
-    <div class="fab-container" id="fab-contribution">
-      <button class="fab" data-panel="contribution-panel" title="Leave a Message">
-        <i class="fas fa-feather-alt"></i>
-      </button>
-    </div>
-    <div class="fab-container" id="fab-alkitab">
-      <a
-        class="fab"
-        href="https://alkitab.me/in-tb/Matius/5/13"
-        target="_blank"
-        title="Alkitab"
-        ><i class="fas fa-book"></i
-      ></a>
-    </div>
-    <div class="fab-container" id="fab-fullscreen">
-      <button class="fab" data-panel="fullscreen-visualizer" title="Fullscreen Visualizer">
-        <i class="fas fa-expand"></i>
-      </button>
-    </div>
-    <div class="fab-container" id="fab-moment-vault">
-      <button class="fab" data-panel="moment-vault-panel" title="Moment Vault">
-        <i class="fas fa-archive"></i>
-      </button>
-    </div>
-    <div class="fab-container" id="fab-live-visitors" style="display: none">
-      <button class="fab" data-panel="live-visitors-panel" title="Live Visitors">
-        <i class="fas fa-eye"></i>
-      </button>
     </div>
     <div class="panel" id="live-visitors-panel">
-      <button class="panel-close-btn" data-panel="live-visitors-panel">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="live-visitors-content">
-        <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">
-          Live Visitors
-        </h3>
-        <div
-          id="mv-live-visitors-list-container"
-          style="flex-grow: 1; overflow-y: auto; padding-right: 10px"
-        >
-          <p style="text-align: center; color: var(--text-secondary)">visitor</p>
-          <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0"></ul>
+        <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
+        <div class="live-visitors-content">
+            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Live Visitors</h3>
+            <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px">
+                <p style="text-align: center; color: var(--text-secondary)">visitor</p>
+                <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0"></ul>
+            </div>
+            <h4 style="margin-top: 20px; color: var(--primary); text-align: center;">Visitor History</h4>
+            <div id="visitor-history" style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-top: 10px;">
+                <p style="text-align: center; color: var(--text-secondary);">Loading history...</p>
+            </div>
+            <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary)">
+                updated: <span id="last-updated-time">N/A</span>
+            </div>
         </div>
-        <h4 style="margin-top: 20px; color: var(--primary); text-align: center;">Visitor History</h4>
-        <div
-            id="visitor-history"
-            style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-top: 10px;"
-        >
-          <p style="text-align: center; color: var(--text-secondary);">Loading history...</p>
-        </div>
-        <div
-          style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary)"
-        >
-          updated: <span id="last-updated-time">N/A</span>
-        </div>
-      </div>
     </div>
     <div class="panel" id="moment-vault-panel">
-      <button class="panel-close-btn" data-panel="moment-vault-panel">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="moment-vault-content">
-        <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">
-          Share your moment here
-        </h3>
-        <div
-          id="moment-vault-gallery-container"
-          style="flex-grow: 1; overflow-y: auto; padding-right: 10px"
-        >
-          <p style="text-align: center; color: var(--text-secondary)">Memories</p>
-          <div id="moment-vault-gallery"></div>
+        <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
+        <div class="moment-vault-content">
+            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Share your moment here</h3>
+            <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px">
+                <p style="text-align: center; color: var(--text-secondary)">Memories</p>
+                <div id="moment-vault-gallery"></div>
+            </div>
+            <form id="moment-upload-form">
+                <input type="text" id="moment-title" placeholder="Title" required />
+                <textarea id="moment-description" placeholder="Describe" rows="3"></textarea>
+                <input type="file" id="moment-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" required/>
+                <button type="submit">Upload</button>
+                <p id="moment-upload-status" style="font-size: 0.9em; text-align: center; margin-top: 10px"></p>
+            </form>
         </div>
-        <form id="moment-upload-form">
-          <input type="text" id="moment-title" placeholder="Title" required />
-          <textarea
-            id="moment-description"
-            placeholder="Describe"
-            rows="3"
-          ></textarea>
-          <input
-            type="file"
-            id="moment-file"
-            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
-            required
-          />
-          <button type="submit">Upload</button>
-          <p
-            id="moment-upload-status"
-            style="font-size: 0.9em; text-align: center; margin-top: 10px"
-          ></p>
-        </form>
-      </div>
     </div>
-    <div id="video-player-widget">
-      <video id="widget-video" loop src="video.mp4"></video>
-      <div class="video-controls">
-        <button id="video-play-pause"><i class="fas fa-play"></i></button>
-        <button id="video-mute"><i class="fas fa-volume-up"></i></button>
-      </div>
-    </div>
-    <div class="social-links">
-      <a
-        href="https://wa.me/6283844959380"
-        target="_blank"
-        title="WhatsApp"
-        ><i class="fab fa-whatsapp"></i
-      ></a>
-      <a
-        href="https://instagram.com/zilifucek"
-        target="_blank"
-        title="Instagram"
-        ><i class="fab fa-instagram"></i
-      ></a>
-    </div>
-    <div id="website-age-display"></div>
-
-    <div class="tesseract-nav-hint left"><i class="fas fa-chevron-left"></i></div>
-    <div class="tesseract-nav-hint right"><i class="fas fa-chevron-right"></i></div>
-    <div class="tesseract-nav-hint top"><i class="fas fa-chevron-up"></i></div>
-    <div class="tesseract-nav-hint bottom"><i class="fas fa-chevron-down"></i></div>
 
     <script>
-      const CONTRIBUTIONS_WORKER_URL =
+        const CONTRIBUTIONS_WORKER_URL =
         'https://contributions-workerjs.ezvvel.workers.dev/';
       const MOMENT_VAULT_WORKER_URL =
         'https://moment-vault-worker-url.universalezra.workers.dev';
@@ -939,12 +603,13 @@
       const PARTICLE_SPEED_MULTIPLIER = 0.5;
       let gravity = { x: 0, y: 0 };
       
-      const swipeThreshold = 50;
-      let startX = 0;
-      let startY = 0;
-      let isSwiping = false;
+      let gridContainer, currentX = 1, currentY = 1;
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      const SWIPE_THRESHOLD = 50;
 
       document.addEventListener('DOMContentLoaded', () => {
+        gridContainer = document.getElementById('grid-container');
         initPanelControls();
         initVideoPlayer();
         initEditor();
@@ -952,9 +617,55 @@
         initWebsiteAgeDisplay();
         trackVisitor();
         initVisualizer();
-        initTesseractGestures();
+        initSwipeGestures();
         initDeviceMotion();
       });
+
+      function initSwipeGestures() {
+        const moveGrid = (x, y) => {
+            // Batasi pergerakan grid agar tidak keluar dari 9 blok
+            currentX = Math.min(2, Math.max(0, currentX + x));
+            currentY = Math.min(2, Math.max(0, currentY + y));
+            gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
+        };
+
+        const handleStart = (e) => {
+            isDragging = true;
+            startX = e.clientX || e.touches[0].clientX;
+            startY = e.clientY || e.touches[0].clientY;
+        };
+
+        const handleEnd = (e) => {
+            if (!isDragging) return;
+            const endX = e.clientX || e.changedTouches[0].clientX;
+            const endY = e.clientY || e.changedTouches[0].clientY;
+            const dx = endX - startX;
+            const dy = endY - startY;
+
+            isDragging = false;
+
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
+                // Horizontal swipe
+                if (dx > 0) {
+                    moveGrid(-1, 0); // Swipe kanan
+                } else {
+                    moveGrid(1, 0); // Swipe kiri
+                }
+            } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > SWIPE_THRESHOLD) {
+                // Vertical swipe
+                if (dy > 0) {
+                    moveGrid(0, -1); // Swipe bawah
+                } else {
+                    moveGrid(0, 1); // Swipe atas
+                }
+            }
+        };
+
+        document.addEventListener('mousedown', handleStart);
+        document.addEventListener('mouseup', handleEnd);
+        document.addEventListener('touchstart', handleStart);
+        document.addEventListener('touchend', handleEnd);
+      }
 
       function initPanelControls() {
         document.querySelectorAll('[data-panel]').forEach((button) => {
@@ -1626,7 +1337,6 @@
         }
       }
 
-      // ---------- KODE UNTUK VISUALIZER BARU ----------
       function initVisualizer() {
         visualizerCanvas = document.getElementById('visualizer-canvas');
         ctx = visualizerCanvas.getContext('2d');
@@ -1781,65 +1491,6 @@
             console.log('DeviceMotionEvent is not supported on this device.');
         }
       }
-
-      // ---------- KODE TESSERACT BARU ----------
-      function initTesseractGestures() {
-          const container = document.querySelector('.tesseract-container');
-          let currentFace = 'center';
-          let transformX = 0;
-          let transformY = 0;
-          
-          const handleSwipe = (direction) => {
-              switch (direction) {
-                  case 'right':
-                      transformY += 90;
-                      break;
-                  case 'left':
-                      transformY -= 90;
-                      break;
-                  case 'up':
-                      transformX += 90;
-                      break;
-                  case 'down':
-                      transformX -= 90;
-                      break;
-              }
-              container.style.transform = `rotateX(${transformX}deg) rotateY(${transformY}deg)`;
-          };
-
-          const handleStart = (e) => {
-              isSwiping = true;
-              startX = e.clientX || e.touches[0].clientX;
-              startY = e.clientY || e.touches[0].clientY;
-          };
-
-          const handleEnd = (e) => {
-              if (!isSwiping) return;
-              const endX = e.clientX || e.changedTouches[0].clientX;
-              const endY = e.clientY || e.changedTouches[0].clientY;
-              const dx = endX - startX;
-              const dy = endY - startY;
-              
-              if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
-                  handleSwipe(dx > 0 ? 'right' : 'left');
-              } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > swipeThreshold) {
-                  handleSwipe(dy > 0 ? 'down' : 'up');
-              }
-              isSwiping = false;
-          };
-
-          document.addEventListener('mousedown', handleStart);
-          document.addEventListener('mouseup', handleEnd);
-          document.addEventListener('touchstart', handleStart);
-          document.addEventListener('touchend', handleEnd);
-
-          // Optional: Add click handlers for the navigation hints
-          document.querySelector('.tesseract-nav-hint.left').addEventListener('click', () => handleSwipe('left'));
-          document.querySelector('.tesseract-nav-hint.right').addEventListener('click', () => handleSwipe('right'));
-          document.querySelector('.tesseract-nav-hint.top').addEventListener('click', () => handleSwipe('up'));
-          document.querySelector('.tesseract-nav-hint.bottom').addEventListener('click', () => handleSwipe('down'));
-      }
-
 
       document.addEventListener('fullscreenchange', (event) => {
         if (!document.fullscreenElement) {
