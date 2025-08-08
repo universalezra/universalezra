@@ -85,7 +85,7 @@
         height: 100%;
         z-index: 0;
         display: none;
-        background-color: #000; /* Latar belakang hitam untuk visualisasi */
+        background-color: #000;
       }
       .fullscreen-active #visualizer-canvas {
         display: block;
@@ -247,6 +247,22 @@
       #visitor-list li strong {
         color: var(--accent);
       }
+      #visitor-history ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      #visitor-history li {
+        background: rgba(142, 68, 173, 0.1);
+        border: 1px solid rgba(142, 68, 173, 0.2);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 0.8em;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+      }
       #moment-vault-gallery {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -301,37 +317,6 @@
       }
       .gallery-item .item-actions button:hover {
         background: var(--accent);
-      }
-      #moment-upload-form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid var(--border-color);
-      }
-      #moment-upload-form input[type='text'],
-      #moment-upload-form textarea,
-      #moment-upload-form input[type='file'] {
-        width: 100%;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid var(--border-color);
-        background: rgba(0, 0, 0, 0.3);
-        color: var(--text-primary);
-        box-sizing: border-box;
-      }
-      #moment-upload-form button[type='submit'] {
-        background: var(--success);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1em;
-      }
-      #moment-upload-form button[type='submit']:hover {
-        background: #27ae60;
       }
       body.desktop-layout #fab-moment-vault,
       body.desktop-layout #fab-live-visitors {
@@ -735,6 +720,13 @@
           <p style="text-align: center; color: var(--text-secondary)">visitor</p>
           <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0"></ul>
         </div>
+        <h4 style="margin-top: 20px; color: var(--primary); text-align: center;">Visitor History</h4>
+        <div
+            id="visitor-history"
+            style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-top: 10px;"
+        >
+          <p style="text-align: center; color: var(--text-secondary);">Loading history...</p>
+        </div>
         <div
           style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary)"
         >
@@ -831,8 +823,6 @@
         trackVisitor();
         initVisualizer();
       });
-      document.addEventListener('DOMContentLoaded', recordVisitor);
-    
 
       function initPanelControls() {
         document.querySelectorAll('[data-panel]').forEach((button) => {
@@ -846,10 +836,12 @@
                 panel.classList.toggle('active');
                 if (panel.classList.contains('active')) {
                   fetchLiveVisitors();
+                  fetchVisitorHistory(); // Panggil fungsi riwayat pengunjung
                   liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
                 } else {
                   clearInterval(liveVisitorRefreshInterval);
                   document.getElementById('visitor-list').innerHTML = '';
+                  document.getElementById('visitor-history').innerHTML = '';
                 }
               } else {
                 alert('Incorrect or blank password!');
@@ -875,6 +867,7 @@
                   if (otherPanel.id === 'live-visitors-panel') {
                     clearInterval(liveVisitorRefreshInterval);
                     document.getElementById('visitor-list').innerHTML = '';
+                    document.getElementById('visitor-history').innerHTML = '';
                     isEzraLoggedIn = false;
                   }
                   if (otherPanel.id === 'moment-vault-panel') {
@@ -893,6 +886,7 @@
             if (panelId === 'live-visitors-panel') {
               clearInterval(liveVisitorRefreshInterval);
               document.getElementById('visitor-list').innerHTML = '';
+              document.getElementById('visitor-history').innerHTML = '';
               isEzraLoggedIn = false;
             }
             if (panelId === 'moment-vault-panel') {
@@ -1147,7 +1141,38 @@
           lastUpdatedTime.textContent = 'Error';
         }
       }
-      fetchVisitorHistory()
+
+      async function fetchVisitorHistory() {
+        const historyContainer = document.getElementById('visitor-history');
+        historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
+        try {
+          const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_history=true');
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const visitors = await response.json();
+          if (visitors && visitors.length > 0) {
+            historyContainer.innerHTML = `<ul>${visitors
+              .map((visitor) => {
+                const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                });
+                return `<li><span>ID: ${visitor.browserId.substring(0, 10)}</span><span>IP: ${visitor.ip || 'N/A'}</span><span>${timestamp}</span></li>`;
+              })
+              .join('')}</ul>`;
+          } else {
+            historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet.</p>';
+          }
+        } catch (error) {
+          console.error('Failed to fetch visitor history:', error);
+          historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Failed to load visitor history.</p>`;
+        }
+      }
 
       function getBrowserId() {
         let browserId = localStorage.getItem('unique_browser_id');
@@ -1175,11 +1200,21 @@
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
           };
+          
+          // Send to live visitors worker
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
           }).catch((e) => console.error('Error sending to live visitors worker:', e));
+
+          // Also send to record visitor history
+          fetch(LIVE_VISITORS_WORKER_URL + '?record_history=true', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          }).catch((e) => console.error('Error sending to visitor history worker:', e));
+          
         } catch (e) {
           console.error('Error in trackVisitor:', e);
         }
@@ -1524,7 +1559,6 @@
         const centerX = visualizerCanvas.width / 2;
         const centerY = visualizerCanvas.height / 2;
 
-        // Dapatkan nilai bass, mid, dan treble
         const bass = frequencyData.slice(0, 5).reduce((a, b) => a + b) / 5;
         const mid = frequencyData.slice(10, 40).reduce((a, b) => a + b) / 30;
         const treble = frequencyData.slice(40, 80).reduce((a, b) => a + b) / 40;
@@ -1533,12 +1567,10 @@
         const midRadius = 70 + mid * 0.5;
         const trebleRadius = 90 + treble * 0.5;
 
-        // Gambar lingkaran visualizer di tengah
         drawCircle(centerX, centerY, bassRadius, `rgba(255, 0, 0, 0.7)`, 5);
         drawCircle(centerX, centerY, midRadius, `rgba(0, 255, 0, 0.7)`, 3);
         drawCircle(centerX, centerY, trebleRadius, `rgba(0, 0, 255, 0.7)`, 2);
 
-        // Gerakkan dan gambar partikel
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
           p.speedX = (p.speedX > 0 ? 1 : -1) * (bass / 255 * 0.5 + 0.1);
@@ -1546,7 +1578,6 @@
           p.x += p.speedX;
           p.y += p.speedY;
 
-          // Pindah partikel dari satu sisi ke sisi lain
           if (p.x < 0) p.x = visualizerCanvas.width;
           if (p.x > visualizerCanvas.width) p.x = 0;
           if (p.y < 0) p.y = visualizerCanvas.height;
@@ -1590,7 +1621,6 @@
           if (body.requestFullscreen) {
             body.requestFullscreen();
           } else if (body.webkitRequestFullscreen) {
-            /* Safari */
             body.webkitRequestFullscreen();
           }
 
@@ -1601,7 +1631,6 @@
           if (document.exitFullscreen) {
             document.exitFullscreen();
           } else if (document.webkitExitFullscreen) {
-            /* Safari */
             document.webkitExitFullscreen();
           }
         }
@@ -1619,55 +1648,6 @@
           document.body.classList.remove('fullscreen-active');
         }
       });
-      // Tambahkan di dalam tag <script> di file index (2).html
-
-const WORKER_URL = 'https://visithistory.universalezra.workers.dev/';
-
-// Fungsi untuk mencatat pengunjung saat halaman dimuat
-async function recordVisitor() {
-    try {
-        await fetch(`${WORKER_URL}/record-visitor`);
-    } catch (error) {
-        console.error('Failed to record visitor:', error);
-    }
-}
-
-// Fungsi untuk menampilkan riwayat pengunjung
-async function fetchVisitorHistory() {
-    try {
-        const response = await fetch(`${WORKER_URL}/get-visitors`);
-        const visitors = await response.json();
-        
-        const liveVisitorsContent = document.querySelector('#live-visitors-content');
-        liveVisitorsContent.innerHTML = ''; // Hapus konten lama
-        
-        if (visitors.length === 0) {
-            liveVisitorsContent.innerHTML = '<h3>Belum ada pengunjung dalam 7 hari terakhir.</h3>';
-            return;
-        }
-
-        visitors.forEach(visitor => {
-            const visitorItem = document.createElement('div');
-            visitorItem.classList.add('live-visitor-item');
-            visitorItem.innerHTML = `
-                <div class="visitor-details">
-                    <span class="visitor-ip">${visitor.ip}</span>
-                    <span class="visitor-time">${visitor.timestamp}</span>
-                </div>
-            `;
-            liveVisitorsContent.appendChild(visitorItem);
-        });
-
-    } catch (error) {
-        console.error('Failed to fetch visitor history:', error);
-        document.querySelector('#live-visitors-content').innerHTML = `
-            <h3>Gagal memuat riwayat pengunjung.</h3>
-        `;
-    }
-}
-
-// Panggil fungsi pencatatan pengunjung saat halaman selesai dimuat
-document.addEventListener('DOMContentLoaded', recordVisitor);
     </script>
   </body>
 </html>
