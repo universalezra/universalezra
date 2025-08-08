@@ -1525,12 +1525,12 @@
           source = audioContext.createMediaElementSource(audioPlayer);
           source.connect(analyser);
           analyser.connect(audioContext.destination);
-          analyser.fftSize = 256;
-          bufferLength = analyser.frequencyBinCount;
-          dataArray = new Uint8Array(bufferLength);
-          frequencyData = new Uint8Array(analyser.frequencyBinCount);
+          analyser.fftSize = 8192; // Ditingkatkan untuk resolusi yang lebih tinggi
+          bufferLength = analyser.frequencyBinCount; // Akan menjadi 4096
+          frequencyData = new Uint8Array(bufferLength);
         }
         audioPlayer.play();
+        createParticles();
       }
 
       function createParticles() {
@@ -1549,58 +1549,47 @@
 
       function drawVisualizer() {
         if (!isVisualizerActive) return;
-
         requestAnimationFrame(drawVisualizer);
-
         analyser.getByteFrequencyData(frequencyData);
 
         ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+        const barWidth = (visualizerCanvas.width / (bufferLength * 0.1)); // Sesuaikan lebar bar
+        let x = 0;
+        const startFreq = 20;
+        const endFreq = 2000;
+        const freqStep = audioContext.sampleRate / 2 / bufferLength;
+        const startIndex = Math.floor(startFreq / freqStep);
+        const endIndex = Math.floor(endFreq / freqStep);
 
-        const centerX = visualizerCanvas.width / 2;
-        const centerY = visualizerCanvas.height / 2;
-
-        const bass = frequencyData.slice(0, 5).reduce((a, b) => a + b) / 5;
-        const mid = frequencyData.slice(10, 40).reduce((a, b) => a + b) / 30;
-        const treble = frequencyData.slice(40, 80).reduce((a, b) => a + b) / 40;
-
-        const bassRadius = 50 + bass * 0.5;
-        const midRadius = 70 + mid * 0.5;
-        const trebleRadius = 90 + treble * 0.5;
-
-        drawCircle(centerX, centerY, bassRadius, `rgba(255, 0, 0, 0.7)`, 5);
-        drawCircle(centerX, centerY, midRadius, `rgba(0, 255, 0, 0.7)`, 3);
-        drawCircle(centerX, centerY, trebleRadius, `rgba(0, 0, 255, 0.7)`, 2);
+        for (let i = startIndex; i < endIndex; i++) {
+          const barHeight = frequencyData[i] * 2.5; // Kalikan untuk ketinggian yang lebih baik
+          const hue = (i / endIndex) * 360;
+          ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+          ctx.fillRect(x, visualizerCanvas.height - barHeight, barWidth, barHeight);
+          x += barWidth + 1;
+        }
+        
+        // Visualisasi Partikel
+        const averageAmplitude = frequencyData.reduce((a, b) => a + b) / bufferLength;
+        const particleSpeedFactor = averageAmplitude / 255 * 3;
 
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
-          p.speedX = (p.speedX > 0 ? 1 : -1) * (bass / 255 * 0.5 + 0.1);
-          p.speedY = (p.speedY > 0 ? 1 : -1) * (mid / 255 * 0.5 + 0.1);
-          p.x += p.speedX;
-          p.y += p.speedY;
+          p.x += p.speedX * particleSpeedFactor;
+          p.y += p.speedY * particleSpeedFactor;
 
-          if (p.x < 0) p.x = visualizerCanvas.width;
-          if (p.x > visualizerCanvas.width) p.x = 0;
-          if (p.y < 0) p.y = visualizerCanvas.height;
-          if (p.y > visualizerCanvas.height) p.y = 0;
+          if (p.x < 0 || p.x > visualizerCanvas.width) p.speedX *= -1;
+          if (p.y < 0 || p.y > visualizerCanvas.height) p.speedY *= -1;
 
-          const colorHue = (bass + mid + treble) / 3 * 1.5 + (i * 360 / PARTICLE_COUNT);
+          const colorHue = (averageAmplitude * 1.5 + (i * 360 / PARTICLE_COUNT));
           p.color = `hsl(${colorHue % 360}, 100%, 50%)`;
-
-          const particleSize = p.size * (1 + (treble / 255 * 2));
+          const particleSize = p.size + (averageAmplitude / 100);
 
           ctx.beginPath();
           ctx.arc(p.x, p.y, particleSize, 0, Math.PI * 2);
           ctx.fillStyle = p.color;
           ctx.fill();
         }
-      }
-
-      function drawCircle(x, y, radius, color, lineWidth) {
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = lineWidth;
-        ctx.stroke();
       }
 
       function toggleFullscreenVisualizer() {
