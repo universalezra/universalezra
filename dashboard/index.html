@@ -1758,31 +1758,47 @@
         }
       }
       
+      // ---------- KODE UNTUK GESTURE BARU ----------
       function initMouseGestures() {
           const gesturedPanel = document.getElementById('gestured-panel');
           const closeBtn = gesturedPanel.querySelector('.panel-close-btn');
           
-          document.addEventListener('mousedown', (e) => {
-              isMouseDown = true;
-              mouseStart.x = e.clientX;
-              mouseStart.y = e.clientY;
-          });
-          
-          document.addEventListener('mouseup', (e) => {
-              if (isMouseDown) {
-                  const mouseEnd = { x: e.clientX, y: e.clientY };
-                  const dx = mouseEnd.x - mouseStart.x;
-                  const dy = mouseEnd.y - mouseStart.y;
-                  
-                  const swipeThreshold = 100;
-                  
-                  if (Math.abs(dx) > swipeThreshold || Math.abs(dy) > swipeThreshold) {
-                      gesturedPanel.classList.add('active');
-                  }
-                  
-                  isMouseDown = false;
+          let startX = 0;
+          let startY = 0;
+          let isSwiping = false;
+
+          const swipeThreshold = 50; // Ambang batas geseran dalam piksel
+
+          const handleStart = (e) => {
+              isSwiping = true;
+              startX = e.clientX || e.touches[0].clientX;
+              startY = e.clientY || e.touches[0].clientY;
+          };
+
+          const handleEnd = (e) => {
+              if (!isSwiping) return;
+
+              const endX = e.clientX || e.changedTouches[0].clientX;
+              const endY = e.clientY || e.changedTouches[0].clientY;
+              
+              const dx = endX - startX;
+              const dy = endY - startY;
+              
+              if (Math.abs(dx) > swipeThreshold || Math.abs(dy) > swipeThreshold) {
+                  // Jika geseran cukup signifikan, tampilkan panel
+                  gesturedPanel.classList.add('active');
               }
-          });
+              
+              isSwiping = false;
+          };
+
+          // Event listener untuk mouse
+          document.addEventListener('mousedown', handleStart);
+          document.addEventListener('mouseup', handleEnd);
+
+          // Event listener untuk layar sentuh
+          document.addEventListener('touchstart', (e) => handleStart(e));
+          document.addEventListener('touchend', (e) => handleEnd(e));
           
           closeBtn.addEventListener('click', () => {
               gesturedPanel.classList.remove('active');
