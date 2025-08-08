@@ -57,14 +57,25 @@
         height: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        overflow: hidden; /* Mencegah scrolling pada body */
         font-family: 'Courier New', Courier, monospace;
         background-color: var(--bg-main);
         color: #00ff00;
       }
+
+      /* Viewport baru yang mengunci tampilan pada 1 blok */
+      #main-viewport {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
       #grid-container {
-        width: 100%;
-        height: 100%;
+        width: 300vw;
+        height: 300vh;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr 1fr 1fr;
@@ -102,7 +113,7 @@
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
       .panel {
-        position: absolute;
+        position: fixed; /* Diubah menjadi fixed */
         background: rgba(26, 26, 46, 0.7);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
@@ -422,126 +433,130 @@
   </head>
   <body>
     <canvas id="visualizer-canvas"></canvas>
-    <div id="grid-container">
-      <div class="grid-block" id="block-tl">
-        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div>
-        <div class="grid-block-content">
-          <h1>Tampilan Kiri Atas</h1>
-          <p>Tarik ke kanan atau bawah</p>
+    
+    <div id="main-viewport">
+      <div id="grid-container">
+        <div class="grid-block" id="block-tl">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div>
+          <div class="grid-block-content">
+            <h1>Tampilan Kiri Atas</h1>
+            <p>Tarik ke kanan atau bawah</p>
+          </div>
         </div>
-      </div>
-      <div class="grid-block" id="block-tc">
-        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=2');"></div>
-        <div class="grid-block-content">
-          <h1>Tampilan Atas</h1>
-          <p>Tarik ke bawah</p>
+        <div class="grid-block" id="block-tc">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=2');"></div>
+          <div class="grid-block-content">
+            <h1>Tampilan Atas</h1>
+            <p>Tarik ke bawah</p>
+          </div>
         </div>
-      </div>
-      <div class="grid-block" id="block-tr">
-        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div>
-        <div class="grid-block-content">
-          <h1>Tampilan Kanan Atas</h1>
-          <p>Tarik ke kiri atau bawah</p>
+        <div class="grid-block" id="block-tr">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div>
+          <div class="grid-block-content">
+            <h1>Tampilan Kanan Atas</h1>
+            <p>Tarik ke kiri atau bawah</p>
+          </div>
         </div>
-      </div>
-      <div class="grid-block" id="block-ml">
-        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div>
-        <div class="grid-block-content">
-          <h1>Tampilan Kiri</h1>
-          <p>Tarik ke kanan</p>
+        <div class="grid-block" id="block-ml">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div>
+          <div class="grid-block-content">
+            <h1>Tampilan Kiri</h1>
+            <p>Tarik ke kanan</p>
+          </div>
         </div>
-      </div>
-      <div class="grid-block" id="block-center">
-        <div class="grid-block-background" id="interactive-bg" style="background-image: url('January 17, 2025 at 5.10 AM.jpg');"></div>
-        <div class="grid-block-content">
-            <div class="central-message">
-                <h3>Welcome to UniversalEzra</h3>
-                <p>Created with <span class="ezra-link">Ezra</span></p>
-            </div>
-            <div class="panel" id="contribution-panel-desktop" style="display: none"></div>
+        <div class="grid-block" id="block-center">
+          <div class="grid-block-background" id="interactive-bg" style="background-image: url('January 17, 2025 at 5.10 AM.jpg');"></div>
+          <div class="grid-block-content">
+              <div class="central-message">
+                  <h3>Welcome to UniversalEzra</h3>
+                  <p>Created with <span class="ezra-link">Ezra</span></p>
+              </div>
+              <div class="panel" id="contribution-panel-desktop" style="display: none"></div>
+          </div>
         </div>
-        <div class="fab-container" id="fab-editor">
-            <button class="fab" data-panel="editor-panel" title="Code Editor">
-                <i class="fas fa-code"></i>
-            </button>
+        <div class="grid-block" id="block-mr">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div>
+          <div class="grid-block-content">
+            <h1>Tampilan Kanan</h1>
+            <p>Tarik ke kiri</p>
+          </div>
         </div>
-        <div class="fab-container" id="fab-music">
-            <button class="fab" data-panel="music-panel" title="Music Player">
-                <i class="fas fa-music"></i>
-            </button>
+        <div class="grid-block" id="block-bl">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div>
+          <div class="grid-block-content">
+            <h1>Tampilan Kiri Bawah</h1>
+            <p>Tarik ke atas atau kanan</p>
+          </div>
         </div>
-        <div class="fab-container" id="fab-contribution">
-            <button class="fab" data-panel="contribution-panel" title="Leave a Message">
-                <i class="fas fa-feather-alt"></i>
-            </button>
+        <div class="grid-block" id="block-bc">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=7');"></div>
+          <div class="grid-block-content">
+            <h1>Tampilan Bawah</h1>
+            <p>Tarik ke atas</p>
+          </div>
         </div>
-        <div class="fab-container" id="fab-alkitab">
-            <a
-                class="fab"
-                href="https://alkitab.me/in-tb/Matius/5/13"
-                target="_blank"
-                title="Alkitab"
-                ><i class="fas fa-book"></i
-            ></a>
-        </div>
-        <div class="fab-container" id="fab-visualizer">
-            <button class="fab" data-panel="visualizer" title="Visualizer">
-                <i class="fas fa-expand"></i>
-            </button>
-        </div>
-        <div class="fab-container" id="fab-moment-vault">
-            <button class="fab" data-panel="moment-vault-panel" title="Moment Vault">
-                <i class="fas fa-archive"></i>
-            </button>
-        </div>
-        <div class="fab-container" id="fab-live-visitors">
-            <button class="fab" data-panel="live-visitors-panel" title="Live Visitors">
-                <i class="fas fa-eye"></i>
-            </button>
-        </div>
-        <div id="video-player-widget">
-            <video id="widget-video" loop src="video.mp4"></video>
-            <div class="video-controls">
-                <button id="video-play-pause"><i class="fas fa-play"></i></button>
-                <button id="video-mute"><i class="fas fa-volume-up"></i></button>
-            </div>
-        </div>
-        <div class="social-links">
-            <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://instagram.com/zilifucek" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-        </div>
-        <div id="website-age-display"></div>
-      </div>
-      <div class="grid-block" id="block-mr">
-        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div>
-        <div class="grid-block-content">
-          <h1>Tampilan Kanan</h1>
-          <p>Tarik ke kiri</p>
-        </div>
-      </div>
-      <div class="grid-block" id="block-bl">
-        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div>
-        <div class="grid-block-content">
-          <h1>Tampilan Kiri Bawah</h1>
-          <p>Tarik ke atas atau kanan</p>
-        </div>
-      </div>
-      <div class="grid-block" id="block-bc">
-        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=7');"></div>
-        <div class="grid-block-content">
-          <h1>Tampilan Bawah</h1>
-          <p>Tarik ke atas</p>
-        </div>
-      </div>
-      <div class="grid-block" id="block-br">
-        <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=8');"></div>
-        <div class="grid-block-content">
-          <h1>Tampilan Kanan Bawah</h1>
-          <p>Tarik ke atas atau kiri</p>
+        <div class="grid-block" id="block-br">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=8');"></div>
+          <div class="grid-block-content">
+            <h1>Tampilan Kanan Bawah</h1>
+            <p>Tarik ke atas atau kiri</p>
+          </div>
         </div>
       </div>
     </div>
     
+    <div class="fab-container" id="fab-editor">
+        <button class="fab" data-panel="editor-panel" title="Code Editor">
+            <i class="fas fa-code"></i>
+        </button>
+    </div>
+    <div class="fab-container" id="fab-music">
+        <button class="fab" data-panel="music-panel" title="Music Player">
+            <i class="fas fa-music"></i>
+        </button>
+    </div>
+    <div class="fab-container" id="fab-contribution">
+        <button class="fab" data-panel="contribution-panel" title="Leave a Message">
+            <i class="fas fa-feather-alt"></i>
+        </button>
+    </div>
+    <div class="fab-container" id="fab-alkitab">
+        <a
+            class="fab"
+            href="https://alkitab.me/in-tb/Matius/5/13"
+            target="_blank"
+            title="Alkitab"
+            ><i class="fas fa-book"></i
+        ></a>
+    </div>
+    <div class="fab-container" id="fab-visualizer">
+        <button class="fab" data-panel="visualizer" title="Visualizer">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
+    <div class="fab-container" id="fab-moment-vault">
+        <button class="fab" data-panel="moment-vault-panel" title="Moment Vault">
+            <i class="fas fa-archive"></i>
+        </button>
+    </div>
+    <div class="fab-container" id="fab-live-visitors">
+        <button class="fab" data-panel="live-visitors-panel" title="Live Visitors">
+            <i class="fas fa-eye"></i>
+        </button>
+    </div>
+    <div id="video-player-widget">
+        <video id="widget-video" loop src="video.mp4"></video>
+        <div class="video-controls">
+            <button id="video-play-pause"><i class="fas fa-play"></i></button>
+            <button id="video-mute"><i class="fas fa-volume-up"></i></button>
+        </div>
+    </div>
+    <div class="social-links">
+        <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://instagram.com/zilifucek" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+    <div id="website-age-display"></div>
+
     <div class="panel" id="editor-panel">
         <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
         <div class="editor-toolbar">
@@ -575,7 +590,7 @@
         <div id="contribution-content" style="display: flex; flex-direction: column; height: 100%">
             <h3 style="margin-top: 20px">Leave a Message</h3>
             <div id="contribution-display" style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px">
-                <p>Loading messages</p>
+                <p>Loading</p>
             </div>
             <form id="contribution-form">
                 <textarea id="contribution-text" placeholder="Your message" required style="width: 100%; min-height: 80px; background: rgba(0, 0, 0, 0.2); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 5px; padding: 10px;"></textarea>
@@ -609,9 +624,9 @@
         <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
         <div class="moment-vault-content">
             <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Share your moment here</h3>
-            <div id="moment-vault-gallery-container">
+            <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
                 <p style="text-align: center; color: var(--text-secondary)">Memories</p>
-                 <div id="moment-vault-gallery"></div>
+                <div id="moment-vault-gallery"></div>
             </div>
             <form id="moment-upload-form">
                 <input type="text" id="moment-title" placeholder="Title" required />
