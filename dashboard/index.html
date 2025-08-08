@@ -360,7 +360,8 @@
         position: fixed;
         z-index: 1000;
       }
-      .fab {
+      .fab,
+      .fab-container a {
         background: rgba(142, 68, 173, 0.7);
         color: #00ff00;
         width: 55px;
@@ -374,8 +375,10 @@
         font-size: 1.4rem;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease;
+        text-decoration: none;
       }
-      .fab:hover {
+      .fab:hover,
+      .fab-container a:hover {
         background: var(--accent);
         transform: scale(1.1);
       }
@@ -567,6 +570,36 @@
         text-align: center;
         white-space: nowrap;
       }
+      #moment-upload-form input[type='text'],
+      #moment-upload-form textarea {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+      #moment-upload-form input[type='text']:focus,
+      #moment-upload-form textarea:focus {
+        border-color: var(--accent);
+      }
+      #moment-upload-form button[type='submit'] {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        font-size: 1em;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s ease;
+      }
+      #moment-upload-form button[type='submit']:hover {
+        background: var(--accent);
+      }
     </style>
   </head>
   <body class="">
@@ -685,6 +718,7 @@
     </div>
     <div class="fab-container" id="fab-alkitab">
       <a
+        class="fab"
         href="https://alkitab.me/in-tb/Matius/5/13"
         target="_blank"
         title="Alkitab"
