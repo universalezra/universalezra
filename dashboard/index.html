@@ -831,6 +831,8 @@
         trackVisitor();
         initVisualizer();
       });
+      document.addEventListener('DOMContentLoaded', recordVisitor);
+    
 
       function initPanelControls() {
         document.querySelectorAll('[data-panel]').forEach((button) => {
@@ -1145,6 +1147,7 @@
           lastUpdatedTime.textContent = 'Error';
         }
       }
+      fetchVisitorHistory()
 
       function getBrowserId() {
         let browserId = localStorage.getItem('unique_browser_id');
@@ -1665,16 +1668,6 @@ async function fetchVisitorHistory() {
 
 // Panggil fungsi pencatatan pengunjung saat halaman selesai dimuat
 document.addEventListener('DOMContentLoaded', recordVisitor);
-
-// Panggil fungsi untuk menampilkan riwayat saat panel dibuka
-// Anda perlu memodifikasi kode listener yang sudah ada untuk panel live visitors
-// Contoh:
-document.getElementById('live-visitors-button').addEventListener('click', () => {
-    // Tampilkan panel live visitors
-    // ...
-    // Panggil fungsi untuk memuat data
-    fetchVisitorHistory();
-});
     </script>
   </body>
 </html>
