@@ -840,7 +840,9 @@
       let isEzraLoggedIn = false;
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
-      const VISITOR_HISTORY_LOCAL_STORAGE_KEY = 'visitor_history';
+      // URL baru untuk riwayat pengunjung di backend
+      const VISITOR_HISTORY_WORKER_URL =
+        'https://visithistory.universalezra.workers.dev/';
       const VISITOR_HISTORY_EXPIRY_DAYS = 7;
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '💔';
@@ -1178,20 +1180,18 @@
           lastUpdatedTime.textContent = 'Error';
         }
       }
-
-      function fetchVisitorHistory() {
+      
+      async function fetchVisitorHistory() {
         const historyContainer = document.getElementById('visitor-history');
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
         try {
-          let history = JSON.parse(localStorage.getItem(VISITOR_HISTORY_LOCAL_STORAGE_KEY)) || [];
-          const now = new Date().getTime();
-          const sevenDaysAgo = now - VISITOR_HISTORY_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+          const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          let history = await response.json();
           
-          // Filter out expired entries
-          history = history.filter(item => new Date(item.timestamp).getTime() > sevenDaysAgo);
-          localStorage.setItem(VISITOR_HISTORY_LOCAL_STORAGE_KEY, JSON.stringify(history));
-
-          if (history.length > 0) {
+          if (history && history.length > 0) {
             historyContainer.innerHTML = `<ul>${history
               .map((visitor) => {
                 const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
@@ -1241,17 +1241,19 @@
             timestamp: new Date().toISOString(),
           };
           
-          // Send to live visitors worker
+          // Kirim data ke worker live visitors
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
           }).catch((e) => console.error('Error sending to live visitors worker:', e));
-
-          // Save to local storage for history
-          let history = JSON.parse(localStorage.getItem(VISITOR_HISTORY_LOCAL_STORAGE_KEY)) || [];
-          history.push(data);
-          localStorage.setItem(VISITOR_HISTORY_LOCAL_STORAGE_KEY, JSON.stringify(history));
+          
+          // Kirim data ke worker riwayat pengunjung
+          fetch(VISITOR_HISTORY_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          }).catch((e) => console.error('Error sending to visitor history worker:', e));
           
         } catch (e) {
           console.error('Error in trackVisitor:', e);
