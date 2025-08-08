@@ -1616,6 +1616,65 @@
           document.body.classList.remove('fullscreen-active');
         }
       });
+      // Tambahkan di dalam tag <script> di file index (2).html
+
+const WORKER_URL = 'https://visithistory.universalezra.workers.dev/';
+
+// Fungsi untuk mencatat pengunjung saat halaman dimuat
+async function recordVisitor() {
+    try {
+        await fetch(`${WORKER_URL}/record-visitor`);
+    } catch (error) {
+        console.error('Failed to record visitor:', error);
+    }
+}
+
+// Fungsi untuk menampilkan riwayat pengunjung
+async function fetchVisitorHistory() {
+    try {
+        const response = await fetch(`${WORKER_URL}/get-visitors`);
+        const visitors = await response.json();
+        
+        const liveVisitorsContent = document.querySelector('#live-visitors-content');
+        liveVisitorsContent.innerHTML = ''; // Hapus konten lama
+        
+        if (visitors.length === 0) {
+            liveVisitorsContent.innerHTML = '<h3>Belum ada pengunjung dalam 7 hari terakhir.</h3>';
+            return;
+        }
+
+        visitors.forEach(visitor => {
+            const visitorItem = document.createElement('div');
+            visitorItem.classList.add('live-visitor-item');
+            visitorItem.innerHTML = `
+                <div class="visitor-details">
+                    <span class="visitor-ip">${visitor.ip}</span>
+                    <span class="visitor-time">${visitor.timestamp}</span>
+                </div>
+            `;
+            liveVisitorsContent.appendChild(visitorItem);
+        });
+
+    } catch (error) {
+        console.error('Failed to fetch visitor history:', error);
+        document.querySelector('#live-visitors-content').innerHTML = `
+            <h3>Gagal memuat riwayat pengunjung.</h3>
+        `;
+    }
+}
+
+// Panggil fungsi pencatatan pengunjung saat halaman selesai dimuat
+document.addEventListener('DOMContentLoaded', recordVisitor);
+
+// Panggil fungsi untuk menampilkan riwayat saat panel dibuka
+// Anda perlu memodifikasi kode listener yang sudah ada untuk panel live visitors
+// Contoh:
+document.getElementById('live-visitors-button').addEventListener('click', () => {
+    // Tampilkan panel live visitors
+    // ...
+    // Panggil fungsi untuk memuat data
+    fetchVisitorHistory();
+});
     </script>
   </body>
 </html>
