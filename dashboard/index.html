@@ -251,6 +251,8 @@
         list-style: none;
         padding: 0;
         margin: 0;
+        max-height: 200px;
+        overflow-y: auto;
       }
       #visitor-history li {
         background: rgba(142, 68, 173, 0.1);
@@ -804,7 +806,8 @@
       let isEzraLoggedIn = false;
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
-      const VISITOR_HISTORY_WORKER_URL = 'https://visithistory.universalezra.workers.dev/';
+      const VISITOR_HISTORY_LOCAL_STORAGE_KEY = 'visitor_history';
+      const VISITOR_HISTORY_EXPIRY_DAYS = 7;
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '💔';
       let isVisualizerActive = false;
@@ -1142,17 +1145,20 @@
         }
       }
 
-      async function fetchVisitorHistory() {
+      function fetchVisitorHistory() {
         const historyContainer = document.getElementById('visitor-history');
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
         try {
-          const response = await fetch(VISITOR_HISTORY_WORKER_URL);
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const visitors = await response.json();
-          if (visitors && visitors.length > 0) {
-            historyContainer.innerHTML = `<ul>${visitors
+          let history = JSON.parse(localStorage.getItem(VISITOR_HISTORY_LOCAL_STORAGE_KEY)) || [];
+          const now = new Date().getTime();
+          const sevenDaysAgo = now - VISITOR_HISTORY_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+          
+          // Filter out expired entries
+          history = history.filter(item => new Date(item.timestamp).getTime() > sevenDaysAgo);
+          localStorage.setItem(VISITOR_HISTORY_LOCAL_STORAGE_KEY, JSON.stringify(history));
+
+          if (history.length > 0) {
+            historyContainer.innerHTML = `<ul>${history
               .map((visitor) => {
                 const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
                   hour: '2-digit',
@@ -1169,7 +1175,7 @@
             historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet.</p>';
           }
         } catch (error) {
-          console.error('Failed to fetch visitor history:', error);
+          console.error('Failed to load visitor history:', error);
           historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Failed to load visitor history.</p>`;
         }
       }
@@ -1208,12 +1214,10 @@
             body: JSON.stringify(data),
           }).catch((e) => console.error('Error sending to live visitors worker:', e));
 
-          // Also send to record visitor history
-          fetch(VISITOR_HISTORY_WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to visitor history worker:', e));
+          // Save to local storage for history
+          let history = JSON.parse(localStorage.getItem(VISITOR_HISTORY_LOCAL_STORAGE_KEY)) || [];
+          history.push(data);
+          localStorage.setItem(VISITOR_HISTORY_LOCAL_STORAGE_KEY, JSON.stringify(history));
           
         } catch (e) {
           console.error('Error in trackVisitor:', e);
@@ -1525,8 +1529,8 @@
           source = audioContext.createMediaElementSource(audioPlayer);
           source.connect(analyser);
           analyser.connect(audioContext.destination);
-          analyser.fftSize = 8192; // Ditingkatkan untuk resolusi yang lebih tinggi
-          bufferLength = analyser.frequencyBinCount; // Akan menjadi 4096
+          analyser.fftSize = 8192;
+          bufferLength = analyser.frequencyBinCount;
           frequencyData = new Uint8Array(bufferLength);
         }
         audioPlayer.play();
@@ -1537,8 +1541,8 @@
         particles = [];
         for (let i = 0; i < PARTICLE_COUNT; i++) {
           particles.push({
-            x: Math.random() * visualizerCanvas.width,
-            y: Math.random() * visualizerCanvas.height,
+            x: visualizerCanvas.width / 2,
+            y: visualizerCanvas.height / 2,
             size: Math.random() * 2 + 1,
             speedX: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
             speedY: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
@@ -1553,22 +1557,29 @@
         analyser.getByteFrequencyData(frequencyData);
 
         ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
-        const barWidth = (visualizerCanvas.width / (bufferLength * 0.1)); // Sesuaikan lebar bar
-        let x = 0;
-        const startFreq = 20;
-        const endFreq = 2000;
-        const freqStep = audioContext.sampleRate / 2 / bufferLength;
-        const startIndex = Math.floor(startFreq / freqStep);
-        const endIndex = Math.floor(endFreq / freqStep);
 
-        for (let i = startIndex; i < endIndex; i++) {
-          const barHeight = frequencyData[i] * 2.5; // Kalikan untuk ketinggian yang lebih baik
-          const hue = (i / endIndex) * 360;
-          ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-          ctx.fillRect(x, visualizerCanvas.height - barHeight, barWidth, barHeight);
-          x += barWidth + 1;
+        const center_x = visualizerCanvas.width / 2;
+        const center_y = visualizerCanvas.height / 2;
+        const radius = Math.min(center_x, center_y) * 0.4;
+        const slice = (2 * Math.PI) / bufferLength;
+
+        // Visualisasi lingkaran yang dinamis
+        for (let i = 0; i < bufferLength; i++) {
+          const barHeight = frequencyData[i] * 0.7;
+          const angle = slice * i;
+          const x = center_x + Math.cos(angle) * (radius + barHeight);
+          const y = center_y + Math.sin(angle) * (radius + barHeight);
+
+          ctx.beginPath();
+          ctx.moveTo(center_x, center_y);
+          ctx.lineTo(x, y);
+
+          const hue = (i / bufferLength) * 360;
+          ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
         }
-        
+
         // Visualisasi Partikel
         const averageAmplitude = frequencyData.reduce((a, b) => a + b) / bufferLength;
         const particleSpeedFactor = averageAmplitude / 255 * 3;
