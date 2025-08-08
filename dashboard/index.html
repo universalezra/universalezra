@@ -57,13 +57,11 @@
         height: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden; /* Mencegah scrolling pada body */
+        overflow: hidden;
         font-family: 'Courier New', Courier, monospace;
         background-color: var(--bg-main);
         color: #00ff00;
       }
-
-      /* Viewport baru yang mengunci tampilan pada 1 blok */
       #main-viewport {
         position: fixed;
         top: 0;
@@ -72,7 +70,6 @@
         height: 100vh;
         overflow: hidden;
       }
-
       #grid-container {
         width: 300vw;
         height: 300vh;
@@ -113,7 +110,7 @@
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
       .panel {
-        position: fixed; /* Diubah menjadi fixed */
+        position: fixed;
         background: rgba(26, 26, 46, 0.7);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
@@ -382,7 +379,6 @@
         text-align: center;
         white-space: nowrap;
       }
-
       .editor-toolbar {
         padding: 10px;
         display: flex;
@@ -622,9 +618,9 @@
     </div>
     <div class="panel" id="moment-vault-panel">
         <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
-        <div class="moment-vault-content">
+        <div class="moment-vault-content" style="display: flex; flex-direction: column; height: 100%;">
             <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Share your moment here</h3>
-            <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
+            <div id="moment-vault-gallery-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px;">
                 <p style="text-align: center; color: var(--text-secondary)">Memories</p>
                 <div id="moment-vault-gallery"></div>
             </div>
@@ -636,7 +632,7 @@
                 <p id="moment-upload-status" style="font-size: 0.9em; text-align: center; margin-top: 10px"></p>
             </form>
         </div>
-    </div>
+        </div>
 
     <script>
       const CONTRIBUTIONS_WORKER_URL =
