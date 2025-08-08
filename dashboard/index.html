@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UniversalEzra</title>
+    <title>universalezra</title>
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -71,13 +71,11 @@
         overflow: hidden;
       }
       #grid-container {
-        /* Perubahan: Ukuran grid menjadi 5x5 */
         width: 500vw;
         height: 500vh;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
         grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-        /* Perubahan: Posisi awal disesuaikan untuk 5x5 */
         transform: translate3d(-200vw, -200vh, 0);
         transition: transform 0.7s cubic-bezier(0.86, 0, 0.07, 1);
       }
@@ -491,11 +489,9 @@
     </style>
   </head>
   <body>
-    <canvas id="visualizer-canvas"></canvas>
-    
+    <canvas id="visualizer-canvas"></canvas>  
     <div id="main-viewport">
-      <div id="grid-container">
-        
+      <div id="grid-container">   
         <div class="grid-block" id="block-1-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div>
           <div class="grid-block-content"><h1>Block (1,1)</h1></div>
@@ -516,7 +512,6 @@
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div>
           <div class="grid-block-content"><h1>Block (1,5)</h1></div>
         </div>
-
         <div class="grid-block" id="block-2-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div>
           <div class="grid-block-content"><h1>Block (2,1)</h1></div>
@@ -536,8 +531,7 @@
         <div class="grid-block" id="block-2-5">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=10');"></div>
           <div class="grid-block-content"><h1>Block (2,5)</h1></div>
-        </div>
-        
+        </div>    
         <div class="grid-block" id="block-3-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=11');"></div>
           <div class="grid-block-content"><h1>Block (3,1)</h1></div>
@@ -550,8 +544,7 @@
           <div class="grid-block-background" id="interactive-bg" style="background-image: url('January 17, 2025 at 5.10 AM.jpg');"></div>
           <div class="grid-block-content">
               <div class="central-message">
-                  <h3>Welcome to UniversalEzra</h3>
-                  <p>Created with <span class="ezra-link">Ezra</span></p>
+                  <p>Created by <a href="secret.html" class="ezra-link">Ezra</a></p>
               </div>
               <div class="panel" id="contribution-panel-desktop" style="display: none"></div>
           </div>
@@ -564,7 +557,6 @@
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=15');"></div>
           <div class="grid-block-content"><h1>Block (3,5)</h1></div>
         </div>
-
         <div class="grid-block" id="block-4-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=16');"></div>
           <div class="grid-block-content"><h1>Block (4,1)</h1></div>
@@ -585,7 +577,6 @@
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=20');"></div>
           <div class="grid-block-content"><h1>Block (4,5)</h1></div>
         </div>
-
         <div class="grid-block" id="block-5-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=21');"></div>
           <div class="grid-block-content"><h1>Block (5,1)</h1></div>
@@ -605,11 +596,9 @@
         <div class="grid-block" id="block-5-5">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=25');"></div>
           <div class="grid-block-content"><h1>Block (5,5)</h1></div>
-        </div>
-        
+        </div>      
       </div>
-    </div>
-    
+    </div>  
     <div class="fab-container" id="fab-editor">
         <button class="fab" data-panel="editor-panel" title="Code Editor">
             <i class="fas fa-code"></i>
@@ -661,7 +650,6 @@
         <a href="https://instagram.com/zilifucek" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
     </div>
     <div id="website-age-display"></div>
-
     <div class="panel" id="editor-panel">
         <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
         <div class="editor-toolbar">
@@ -718,7 +706,7 @@
             </div>
             <h4 style="margin-top: 20px; color: var(--primary); text-align: center;">Visitor History</h4>
             <div id="visitor-history" style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-top: 10px;">
-                <p style="text-align: center; color: var(--text-secondary);">Loading history...</p>
+                <p style="text-align: center; color: var(--text-secondary);">Loading history</p>
             </div>
             <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary)">
                 updated: <span id="last-updated-time">N/A</span>
@@ -742,7 +730,6 @@
             </form>
         </div>
     </div>
-
     <script>
       const CONTRIBUTIONS_WORKER_URL =
         'https://contributions-workerjs.ezvvel.workers.dev/';
@@ -767,14 +754,11 @@
       let bufferLength, dataArray, frequencyData;
       const PARTICLE_COUNT = 200;
       const PARTICLE_SPEED_MULTIPLIER = 0.5;
-      let gravity = { x: 0, y: 0 };
-      
-      /* Perubahan: nilai awal currentX dan currentY menjadi 2 */
+      let gravity = { x: 0, y: 0 };   
       let gridContainer, currentX = 2, currentY = 2;
       let isDragging = false;
       let startX = 0, startY = 0;
       const SWIPE_THRESHOLD = 50;
-
       document.addEventListener('DOMContentLoaded', () => {
         gridContainer = document.getElementById('grid-container');
         initPanelControls();
@@ -787,30 +771,24 @@
         initSwipeGestures();
         initDeviceMotion();
       });
-
       function initSwipeGestures() {
         const moveGrid = (x, y) => {
-            /* Perubahan: batas maksimal pergerakan menjadi 4 */
             currentX = Math.min(4, Math.max(0, currentX + x));
             currentY = Math.min(4, Math.max(0, currentY + y));
             gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
         };
-
         const handleStart = (e) => {
             isDragging = true;
             startX = e.clientX || e.touches[0].clientX;
             startY = e.clientY || e.touches[0].clientY;
         };
-
         const handleEnd = (e) => {
             if (!isDragging) return;
             const endX = e.clientX || e.changedTouches[0].clientX;
             const endY = e.clientY || e.changedTouches[0].clientY;
             const dx = endX - startX;
             const dy = endY - startY;
-
             isDragging = false;
-
             if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
                 if (dx > 0) {
                     moveGrid(-1, 0);
@@ -825,13 +803,11 @@
                 }
             }
         };
-
         document.addEventListener('mousedown', handleStart);
         document.addEventListener('mouseup', handleEnd);
         document.addEventListener('touchstart', handleStart);
         document.addEventListener('touchend', handleEnd);
       }
-
       function initPanelControls() {
         document.querySelectorAll('[data-panel]').forEach((button) => {
           button.addEventListener('click', (event) => {
@@ -903,7 +879,6 @@
           });
         });
       }
-
       function initVideoPlayer() {
         const video = document.getElementById('widget-video');
         const playBtn = document.getElementById('video-play-pause');
@@ -924,7 +899,6 @@
             : '<i class="fas fa-volume-up"></i>';
         });
       }
-
       function initMusicPlayer() {
         const player = document.getElementById('audio-player');
         const playlistEl = document.getElementById('playlist');
@@ -947,7 +921,6 @@
           playlistEl.appendChild(item);
         });
       }
-
       function initEditor() {
         const codeEditor = document.getElementById('unified-code-editor');
         const previewFrame = document.getElementById('editor-preview');
@@ -1021,7 +994,6 @@
         codeEditor.addEventListener('input', updateHistory);
         loadCode();
       }
-
       async function fetchContributions() {
         const display = document.getElementById('contribution-display');
         display.innerHTML = `<p>Loading</p>`;
@@ -1044,7 +1016,6 @@
           display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`;
         }
       }
-
       document
         .getElementById('contribution-form')
         .addEventListener('submit', async (e) => {
@@ -1066,11 +1037,9 @@
             statusEl.textContent = `Error: ${err.message}`;
           }
         });
-
       function initWebsiteAgeDisplay() {
         const websiteAgeDisplay = document.getElementById('website-age-display');
         const creationDate = new Date(2006, 7, 07, 0, 0, 0);
-
         function updateWebsiteAge() {
           const now = new Date();
           const diff = now.getTime() - creationDate.getTime();
@@ -1094,18 +1063,14 @@
           ageString += `${displaySeconds.toString().padStart(2, '0')}`;
           websiteAgeDisplay.textContent = `${ageString}`;
         }
-
         updateWebsiteAge();
         setInterval(updateWebsiteAge, 1000);
       }
-
       function checkEzraLoginAndShowVisitorsButton() {
         const fabLiveVisitors = document.getElementById('fab-live-visitors');
         fabLiveVisitors.style.display = 'flex';
       }
-
       document.addEventListener('DOMContentLoaded', checkEzraLoginAndShowVisitorsButton);
-
       async function fetchLiveVisitors() {
         const visitorList = document.getElementById('visitor-list');
         const lastUpdatedTime = document.getElementById('last-updated-time');
@@ -1139,7 +1104,7 @@
               .join('');
           } else {
             visitorList.innerHTML =
-              '<li style="text-align: center; color: var(--text-secondary);">No online.</li>';
+              '<li style="text-align: center; color: var(--text-secondary);">No online</li>';
           }
           lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
         } catch (error) {
@@ -1148,8 +1113,7 @@
             '<li style="text-align: center; color: var(--danger);">Failed</li>';
           lastUpdatedTime.textContent = 'Error';
         }
-      }
-      
+      }    
       async function fetchVisitorHistory() {
         const historyContainer = document.getElementById('visitor-history');
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
@@ -1158,8 +1122,7 @@
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          let history = await response.json();
-          
+          let history = await response.json();      
           if (history && history.length > 0) {
             historyContainer.innerHTML = `<ul>${history
               .map((visitor) => {
@@ -1175,14 +1138,13 @@
               })
               .join('')}</ul>`;
           } else {
-            historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet.</p>';
+            historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>';
           }
         } catch (error) {
           console.error('Failed to load visitor history:', error);
-          historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Failed to load visitor history.</p>`;
+          historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`;
         }
       }
-
       function getBrowserId() {
         let browserId = localStorage.getItem('unique_browser_id');
         if (!browserId) {
@@ -1191,7 +1153,6 @@
         }
         return browserId;
       }
-
       async function trackVisitor() {
         try {
           const browserId = getBrowserId();
@@ -1208,25 +1169,21 @@
             ip: ipAddress,
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
-          };
-          
+          };        
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to live visitors worker:', e));
-          
+          }).catch((e) => console.error('Error sending to live visitors worker:', e));       
           fetch(VISITOR_HISTORY_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to visitor history worker:', e));
-          
+          }).catch((e) => console.error('Error sending to visitor history worker:', e));  
         } catch (e) {
           console.error('Error in trackVisitor:', e);
         }
       }
-
       async function fetchMomentVaultGallery() {
         const galleryContainer = document.getElementById('moment-vault-gallery');
         galleryContainer.innerHTML =
@@ -1289,9 +1246,7 @@
             '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>';
         }
       }
-
       document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
-
       async function uploadMoment(e) {
         e.preventDefault();
         const statusEl = document.getElementById('moment-upload-status');
@@ -1367,7 +1322,6 @@
           statusEl.style.color = 'var(--danger)';
         }
       }
-
       function readFileAsBase64(file) {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -1376,7 +1330,6 @@
           reader.readAsDataURL(file);
         });
       }
-
       async function editMoment(itemId, currentItems) {
         const itemToEdit = currentItems.find((item) => item.id === itemId);
         if (!itemToEdit) return;
@@ -1413,7 +1366,6 @@
           statusEl.style.color = 'var(--danger)';
         }
       }
-
       async function deleteMoment(itemId) {
         if (!confirm('Are you sure you want to delete? This action cannot be undone.')) {
           return;
@@ -1501,14 +1453,12 @@
           statusEl.style.color = 'var(--danger)';
         }
       }
-
       function initVisualizer() {
         visualizerCanvas = document.getElementById('visualizer-canvas');
         ctx = visualizerCanvas.getContext('2d');
         resizeVisualizer();
         window.addEventListener('resize', resizeVisualizer);
       }
-
       function resizeVisualizer() {
         visualizerCanvas.width = window.innerWidth;
         visualizerCanvas.height = window.innerHeight;
@@ -1516,14 +1466,12 @@
           ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
         }
       }
-
       function setupAudioVisualizer() {
         const audioPlayer = document.getElementById('audio-player');
         if (!audioPlayer.src) {
-          alert('Pilih lagu terlebih dahulu.');
+          alert('Pilih lagu terlebih dahulu');
           return;
         }
-
         if (!audioContext) {
           audioContext = new (window.AudioContext || window.webkitAudioContext)();
           analyser = audioContext.createAnalyser();
@@ -1537,7 +1485,6 @@
         audioPlayer.play();
         createParticles();
       }
-
       function createParticles() {
         particles = [];
         for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -1551,14 +1498,11 @@
           });
         }
       }
-
       function drawVisualizer() {
         if (!isVisualizerActive) return;
         requestAnimationFrame(drawVisualizer);
         analyser.getByteFrequencyData(frequencyData);
-
         ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
-
         const center_x = visualizerCanvas.width / 2;
         const center_y = visualizerCanvas.height / 2;
         const radius = Math.min(center_x, center_y) * 0.4;
@@ -1567,62 +1511,48 @@
         const maxIndex = Math.floor((maxFreq / (sampleRate / 2)) * bufferLength);
         const effectiveBufferLength = maxIndex;
         const slice = (2 * Math.PI) / effectiveBufferLength;
-
         for (let i = 0; i < effectiveBufferLength; i++) {
             const barHeight = frequencyData[i] * 0.7;
             const angle = slice * i;
             const x = center_x + Math.cos(angle) * (radius + barHeight);
             const y = center_y + Math.sin(angle) * (radius + barHeight);
-
             ctx.beginPath();
             ctx.moveTo(center_x, center_y);
             ctx.lineTo(x, y);
-
             const hue = (i / effectiveBufferLength) * 360;
             ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
             ctx.lineWidth = 1;
             ctx.stroke();
         }
-
         const averageAmplitude = frequencyData.slice(0, effectiveBufferLength).reduce((a, b) => a + b) / effectiveBufferLength;
         const particleSpeedFactor = averageAmplitude / 255 * 3;
-
         for (let i = 0; i < particles.length; i++) {
-          const p = particles[i];
-          
+          const p = particles[i];        
           p.speedX += gravity.x * 0.05;
           p.speedY += gravity.y * 0.05;
-
           p.x += p.speedX * particleSpeedFactor;
           p.y += p.speedY * particleSpeedFactor;
-
           if (p.x < 0 || p.x > visualizerCanvas.width) p.speedX *= -1;
           if (p.y < 0 || p.y > visualizerCanvas.height) p.speedY *= -1;
-
           const colorHue = (averageAmplitude * 1.5 + (i * 360 / PARTICLE_COUNT));
           p.color = `hsl(${colorHue % 360}, 100%, 50%)`;
           const particleSize = p.size + (averageAmplitude / 100);
-
           ctx.beginPath();
           ctx.arc(p.x, p.y, particleSize, 0, Math.PI * 2);
           ctx.fillStyle = p.color;
           ctx.fill();
         }
       }
-
       function toggleVisualizerOverlay() {
         const audioPlayer = document.getElementById('audio-player');
         const body = document.body;
-
         if (!isVisualizerActive) {
           if (!audioPlayer.src || audioPlayer.paused) {
-            alert('Putar musik terlebih dahulu untuk mengaktifkan visualisasi.');
+            alert('Putar musik terlebih dahulu');
             return;
           }
-
           setupAudioVisualizer();
           if (!analyser) return;
-
           isVisualizerActive = true;
           body.classList.add('visualizer-active');
           createParticles();
@@ -1631,8 +1561,7 @@
           isVisualizerActive = false;
           body.classList.remove('visualizer-active');
         }
-      }
-      
+      }     
       function initDeviceMotion() {
         if (window.DeviceMotionEvent) {
             window.addEventListener('devicemotion', event => {
