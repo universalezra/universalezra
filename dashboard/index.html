@@ -685,7 +685,6 @@
       <a
         href="https://alkitab.me/in-tb/Matius/5/13"
         target="_blank"
-        class="fab"
         title="Alkitab"
         ><i class="fas fa-book"></i
       ></a>
@@ -805,6 +804,7 @@
       let isEzraLoggedIn = false;
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
+      const VISITOR_HISTORY_WORKER_URL = 'https://visithistory.universalezra.workers.dev/';
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '💔';
       let isVisualizerActive = false;
@@ -1146,7 +1146,7 @@
         const historyContainer = document.getElementById('visitor-history');
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
         try {
-          const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_history=true');
+          const response = await fetch(VISITOR_HISTORY_WORKER_URL);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -1209,7 +1209,7 @@
           }).catch((e) => console.error('Error sending to live visitors worker:', e));
 
           // Also send to record visitor history
-          fetch(LIVE_VISITORS_WORKER_URL + '?record_history=true', {
+          fetch(VISITOR_HISTORY_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
