@@ -544,7 +544,7 @@
           <div class="grid-block-background" id="interactive-bg" style="background-image: url('January 17, 2025 at 5.10 AM.jpg');"></div>
           <div class="grid-block-content">
               <div class="central-message">
-                  <p>Created by <a href="secret.html" class="ezra-link">Ezra</a></p>
+                  <p>By <a href="secret.html" class="ezra-link">Ezra</a></p>
               </div>
               <div class="panel" id="contribution-panel-desktop" style="display: none"></div>
           </div>
@@ -904,7 +904,7 @@
         const playlistEl = document.getElementById('playlist');
         const songTitleEl = document.getElementById('song-title');
         const songs = [
-          { name: 'Life Goes On', url: 'Life-Goes-On.mp3' },
+          { name: 'On And On', url: 'On-And-On.mp3' },
           { name: 'Where We Are', url: 'Where-We-Are.mp3' },
           { name: 'Sekuat Hatimu', url: 'Sekuat Hatimu.mp3' },
         ];
@@ -1580,14 +1580,11 @@
       function toggleFullscreen() {
     if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(err => {
-            console.log(`Error attempting to enable fullscreen: ${err.message}`);
+            console.log(`Error when system attempting to enable fullscreen: ${err.message}`);
         });
     } else {
         if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
-}
+            document.exitFullscreen();       }    }}
     </script>
   </body>
 </html>
