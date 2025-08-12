@@ -61,6 +61,21 @@
         font-family: 'Courier New', Courier, monospace;
         background-color: var(--bg-main);
         color: #00ff00;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      body::before {
+        content: "Ezra A";
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.1);
+        z-index: 999;
+        pointer-events: none;
+        opacity: 0.8;
       }
       #main-viewport {
         position: fixed;
@@ -176,6 +191,19 @@
         justify-content: center;
         align-items: center;
       }
+      #dashboard-panel {
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transform: translateX(-100%);
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
       #visualizer-canvas {
         position: fixed;
         top: 0;
@@ -251,61 +279,67 @@
       #fab-moment-vault {
         bottom: 20px;
         left: 50%;
-        transform: translateX(0%); /* Posisi baru, bergeser ke kiri */
+        transform: translateX(0%);
       }
       #fab-live-visitors {
         bottom: 90px;
         left: 50%;
         transform: translateX(-50%);
-        display: none; /* Sembunyikan secara default */
+        display: none;
       }
       #fab-keyboard-toggle {
         bottom: 20px;
         right: 20px;
       }
+      #fab-dashboard-toggle {
+        bottom: 20px;
+        left: 20px;
+      }
       #keyboard-panel {
-        bottom: 0;
-        right: 0;
-        width: 100%;
-        max-width: 500px;
+        position: fixed;
+        width: 300px;
         height: auto;
-        transform: translateY(100%);
-        padding: 15px;
-        border-top: 1px solid var(--border-color);
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-        display: flex;
+        padding: 10px;
+        background: rgba(26, 26, 46, 0.9);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        display: none;
         flex-direction: column;
         color: var(--text-primary);
-        z-index: 1010;
-        position: fixed;
+        z-index: 1011;
+        cursor: move;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
       #keyboard-panel.active {
-          transform: translateY(0) !important;
+          display: flex;
       }
       #keyboard-input {
           width: 100%;
-          padding: 10px;
-          font-size: 1.2em;
+          padding: 8px;
+          font-size: 1em;
           background: rgba(0,0,0,0.2);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          margin-bottom: 10px;
+          margin-bottom: 8px;
           border-radius: 5px;
           text-align: center;
       }
       .keyboard-row {
           display: flex;
           justify-content: center;
-          gap: 5px;
-          margin-bottom: 5px;
+          gap: 3px;
+          margin-bottom: 3px;
       }
       .keyboard-key {
           flex: 1;
           background: var(--primary);
           border: none;
-          padding: 12px;
+          padding: 8px;
           color: var(--text-primary);
-          font-size: 1.1em;
+          font-size: 0.9em;
           border-radius: 5px;
           cursor: pointer;
           transition: background-color 0.2s;
@@ -321,7 +355,8 @@
           flex: 2;
       }
       #live-visitors-panel .live-visitors-content,
-      #moment-vault-panel .moment-vault-content {
+      #moment-vault-panel .moment-vault-content,
+      #dashboard-panel .dashboard-content {
           width: 100%;
           height: 100%;
           max-width: 1200px;
@@ -329,6 +364,9 @@
           border-radius: 15px;
           box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
           overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          padding: 20px;
       }
       #visitor-list ul {
           list-style: none;
@@ -609,9 +647,53 @@
           border: none;
           z-index: 10;
       }
+      #sabda-widget-container {
+        width: 100%;
+        max-width: 500px;
+        height: 100%;
+        max-height: 400px;
+      }
+      #dashboard-content {
+        padding: 20px;
+        text-align: left;
+        color: var(--text-primary);
+        overflow-y: auto;
+      }
+      .dashboard-card {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border: 1px solid var(--border-color);
+      }
+      .dashboard-card h4 {
+        margin-top: 0;
+        color: var(--accent);
+      }
+      .dashboard-card p {
+        margin-bottom: 0;
+        font-size: 0.9em;
+      }
+      .screenshot-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 0, 0, 0.9);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        font-size: 1.2em;
+        z-index: 9999;
+        display: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      }
     </style>
   </head>
   <body>
+    <div class="screenshot-popup" id="screenshot-popup">
+        Screenshot tidak diizinkan!
+    </div>
     <canvas id="visualizer-canvas"></canvas>  
     <div id="main-viewport">
       <div id="grid-container">   
@@ -661,9 +743,9 @@
         </div>
         <div class="grid-block" id="block-3-2">
           <h3>Ayat Hari Ini</h3>
-          <div style="width: 100%; height: 200px; display: flex; justify-content: center; align-items: center;">
-        <iframe src="https://alkitab.sabda.org/daily/widget.php" width="100%" height="100%" frameborder="0"></iframe>
-    </div>
+          <div id="sabda-widget-container">
+            <iframe src="https://alkitab.sabda.org/daily/widget.php" width="100%" height="100%" frameborder="0"></iframe>
+          </div>
         </div>
         <div class="grid-block" id="block-center">
           <div class="grid-block-background" id="interactive-bg" style="background-image: url('wallpaper.png');"></div>
@@ -772,6 +854,11 @@
             <i class="fas fa-keyboard"></i>
         </button>
     </div>
+    <div class="fab-container" id="fab-dashboard-toggle">
+        <button class="fab" data-panel="dashboard-panel" title="Target Dashboard">
+            <i class="fas fa-bullseye"></i>
+        </button>
+    </div>
     <div id="video-player-widget">
         <video id="widget-video" loop src="video.mp4"></video>
         <div class="video-controls">
@@ -864,47 +951,70 @@
             </form>
         </div>
     </div>
+    <div class="panel" id="dashboard-panel">
+      <button class="panel-close-btn" data-panel="dashboard-panel"><i class="fas fa-times"></i></button>
+      <div class="dashboard-content">
+        <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Target Dashboard</h3>
+        <p style="text-align: center; color: var(--text-secondary)">Ini adalah tampilan statis dari target-target masa depan.</p>
+        <div class="dashboard-card">
+          <h4>🚀 Proyek "Atlas"</h4>
+          <p>Menciptakan mesin pencari web 3.0 yang terdesentralisasi, aman, dan tanpa iklan yang mengganggu. Fitur: AI-powered indexing, user-owned data.</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>💡 Inisiatif "Project Athena"</h4>
+          <p>Pengembangan sistem AI personal yang dapat mempersonalisasi konten dan memberikan wawasan mendalam tanpa menyimpan data pengguna di server terpusat. Fitur: Enkripsi end-to-end, model AI on-device.</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>🌱 Misi "Gaia"</h4>
+          <p>Membangun platform edukasi interaktif untuk anak-anak, berfokus pada STEM dan kreativitas. Fitur: Augmented reality (AR) lessons, gamified learning path.</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>🔗 Integrasi "Omni-Connect"</h4>
+          <p>Menghubungkan semua aplikasi web pribadiku ke dalam satu ekosistem yang kohesif. Target: Sinkronisasi data real-time antar platform, notifikasi terpadu.</p>
+        </div>
+      </div>
+    </div>
     <div class="panel" id="keyboard-panel">
-        <button class="panel-close-btn" data-panel="keyboard-panel"><i class="fas fa-times"></i></button>
-        <input type="text" id="keyboard-input" placeholder="Enter password..." readonly />
-        <div class="keyboard-row">
-            <button class="keyboard-key">q</button>
-            <button class="keyboard-key">w</button>
-            <button class="keyboard-key">e</button>
-            <button class="keyboard-key">r</button>
-            <button class="keyboard-key">t</button>
-            <button class="keyboard-key">y</button>
-            <button class="keyboard-key">u</button>
-            <button class="keyboard-key">i</button>
-            <button class="keyboard-key">o</button>
-            <button class="keyboard-key">p</button>
-        </div>
-        <div class="keyboard-row">
-            <button class="keyboard-key">a</button>
-            <button class="keyboard-key">s</button>
-            <button class="keyboard-key">d</button>
-            <button class="keyboard-key">f</button>
-            <button class="keyboard-key">g</button>
-            <button class="keyboard-key">h</button>
-            <button class="keyboard-key">j</button>
-            <button class="keyboard-key">k</button>
-            <button class="keyboard-key">l</button>
-        </div>
-        <div class="keyboard-row">
-            <button class="keyboard-key">z</button>
-            <button class="keyboard-key">x</button>
-            <button class="keyboard-key">c</button>
-            <button class="keyboard-key">v</button>
-            <button class="keyboard-key">b</button>
-            <button class="keyboard-key">n</button>
-            <button class="keyboard-key">m</button>
-            <button class="keyboard-key">4</button>
-            <button class="keyboard-key">7</button>
-            <button class="keyboard-key special" id="backspace-key"><i class="fas fa-backspace"></i></button>
-        </div>
-        <div class="keyboard-row">
-            <button class="keyboard-key space" id="space-key">space</button>
-        </div>
+      <button class="panel-close-btn" data-panel="keyboard-panel"><i class="fas fa-times"></i></button>
+      <input type="text" id="keyboard-input" placeholder="Enter password..." readonly />
+      <div class="keyboard-row">
+          <button class="keyboard-key">q</button>
+          <button class="keyboard-key">w</button>
+          <button class="keyboard-key">e</button>
+          <button class="keyboard-key">r</button>
+          <button class="keyboard-key">t</button>
+          <button class="keyboard-key">y</button>
+          <button class="keyboard-key">u</button>
+          <button class="keyboard-key">i</button>
+          <button class="keyboard-key">o</button>
+          <button class="keyboard-key">p</button>
+      </div>
+      <div class="keyboard-row">
+          <button class="keyboard-key">a</button>
+          <button class="keyboard-key">s</button>
+          <button class="keyboard-key">d</button>
+          <button class="keyboard-key">f</button>
+          <button class="keyboard-key">g</button>
+          <button class="keyboard-key">h</button>
+          <button class="keyboard-key">j</button>
+          <button class="keyboard-key">k</button>
+          <button class="keyboard-key">l</button>
+      </div>
+      <div class="keyboard-row">
+          <button class="keyboard-key">z</button>
+          <button class="keyboard-key">x</button>
+          <button class="keyboard-key">c</button>
+          <button class="keyboard-key">v</button>
+          <button class="keyboard-key">b</button>
+          <button class="keyboard-key">n</button>
+          <button class="keyboard-key">m</button>
+          <button class="keyboard-key">4</button>
+          <button class="keyboard-key">7</button>
+          <button class="keyboard-key special" id="backspace-key"><i class="fas fa-backspace"></i></button>
+      </div>
+      <div class="keyboard-row">
+          <button class="keyboard-key space" id="space-key">space</button>
+      </div>
     </div>
     <div id="center-video-container">
         <button id="center-video-close"><i class="fas fa-times"></i></button>
@@ -923,6 +1033,7 @@
       let isEzraLoggedIn = false;
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
+      // Mengubah URL worker untuk history agar terpisah
       const VISITOR_HISTORY_WORKER_URL =
         'https://visitor-history.ezvvel.workers.dev/';
       const VISITOR_HISTORY_EXPIRY_DAYS = 7;
@@ -951,7 +1062,10 @@
         trackVisitor();
         initVisualizer();
         initSwipeGestures();
+        initDeviceMotion();
         initVirtualKeyboard();
+        initSecurityFeatures();
+        initDraggableKeyboard();
       });
       function initSwipeGestures() {
         const moveGrid = (x, y) => {
@@ -1295,11 +1409,14 @@
           lastUpdatedTime.textContent = 'Error';
         }
       }    
+      // Mengubah cara fetch history agar menggunakan Cloudflare worker yang terintegrasi dengan Google Sheet
       async function fetchVisitorHistory() {
         const historyContainer = document.getElementById('visitor-history');
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
         try {
-          const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
+          // Ganti URL ini dengan Cloudflare Worker Anda yang terhubung ke Google Script
+          const workerUrl = 'https://visitor-history-to-google-sheet.universalezra.workers.dev/';
+          const response = await fetch(workerUrl + '?get_history=true');
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -1338,6 +1455,7 @@
         try {
           const browserId = getBrowserId();
           let ipAddress = 'unknown';
+          let referrer = document.referrer || 'direct'; // Mengambil data alamat web sebelumnya
           try {
             const ipResponse = await fetch('https://api.ipify.org?format=json');
             const ipData = await ipResponse.json();
@@ -1350,17 +1468,23 @@
             ip: ipAddress,
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
+            referrer: referrer,
           };        
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
           }).catch((e) => console.error('Error sending to live visitors worker:', e));       
-          fetch(VISITOR_HISTORY_WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to visitor history worker:', e));  
+          
+          // Mengirim data ke worker baru untuk Google Sheets
+          // Ganti URL ini dengan Cloudflare Worker Anda yang terhubung ke Google Script
+          const googleSheetWorkerUrl = 'https://visitor-history-to-google-sheet.universalezra.workers.dev/';
+          fetch(googleSheetWorkerUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+          }).catch((e) => console.error('Error sending to Google Sheet worker:', e));
+  
         } catch (e) {
           console.error('Error in trackVisitor:', e);
         }
@@ -1816,6 +1940,114 @@
                 centerVideoPlayer.src = '';
                 centerVideoContainer.classList.remove('active');
             });
+        }
+        function initDraggableKeyboard() {
+            const keyboardPanel = document.getElementById('keyboard-panel');
+            let isDraggingKeyboard = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+        
+            keyboardPanel.addEventListener("mousedown", dragStart);
+            keyboardPanel.addEventListener("mouseup", dragEnd);
+            keyboardPanel.addEventListener("mousemove", drag);
+            keyboardPanel.addEventListener("touchstart", dragStart);
+            keyboardPanel.addEventListener("touchend", dragEnd);
+            keyboardPanel.addEventListener("touchmove", drag);
+        
+            function dragStart(e) {
+                if (e.target.closest('.keyboard-key') || e.target.closest('.panel-close-btn') || e.target.id === 'keyboard-input') return;
+                isDraggingKeyboard = true;
+                if (e.type === "touchstart") {
+                    initialX = e.touches[0].clientX - xOffset;
+                    initialY = e.touches[0].clientY - yOffset;
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
+                keyboardPanel.style.cursor = 'grabbing';
+            }
+        
+            function dragEnd(e) {
+                isDraggingKeyboard = false;
+                initialX = currentX;
+                initialY = currentY;
+                keyboardPanel.style.cursor = 'grab';
+            }
+        
+            function drag(e) {
+                if (isDraggingKeyboard) {
+                    e.preventDefault();
+                    if (e.type === "touchmove") {
+                        currentX = e.touches[0].clientX - initialX;
+                        currentY = e.touches[0].clientY - initialY;
+                    } else {
+                        currentX = e.clientX - initialX;
+                        currentY = e.clientY - initialY;
+                    }
+                    xOffset = currentX;
+                    yOffset = currentY;
+                    setTranslate(currentX, currentY, keyboardPanel);
+                }
+            }
+        
+            function setTranslate(xPos, yPos, el) {
+                el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+            }
+        
+            keyboardPanel.style.cursor = 'grab';
+        }
+        function initSecurityFeatures() {
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                alert('Tindakan ini tidak diizinkan.');
+            });
+            document.addEventListener('copy', (e) => {
+                e.preventDefault();
+                alert('Menyalin konten tidak diizinkan.');
+            });
+            document.addEventListener('cut', (e) => {
+                e.preventDefault();
+                alert('Memotong konten tidak diizinkan.');
+            });
+            window.addEventListener('keyup', (e) => {
+                if (e.key === 'PrintScreen' || e.key === 'Snapshot') {
+                    const popup = document.getElementById('screenshot-popup');
+                    popup.style.display = 'block';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 3000);
+                }
+            });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    setTimeout(() => {
+                        checkClipboardForScreenshot();
+                    }, 500);
+                }
+            });
+            async function checkClipboardForScreenshot() {
+                try {
+                    const clipboardItems = await navigator.clipboard.read();
+                    for (const clipboardItem of clipboardItems) {
+                        for (const type of clipboardItem.types) {
+                            if (type.startsWith('image/')) {
+                                const popup = document.getElementById('screenshot-popup');
+                                popup.style.display = 'block';
+                                setTimeout(() => {
+                                    popup.style.display = 'none';
+                                }, 3000);
+                                return;
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error('Failed to read clipboard contents: ', err);
+                }
+            }
         }
     </script>
   </body>
