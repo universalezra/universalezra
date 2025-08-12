@@ -251,12 +251,74 @@
       #fab-moment-vault {
         bottom: 20px;
         left: 50%;
-        transform: translateX(120%);
+        transform: translateX(0%); /* Posisi baru, bergeser ke kiri */
       }
       #fab-live-visitors {
         bottom: 90px;
         left: 50%;
         transform: translateX(-50%);
+        display: none; /* Sembunyikan secara default */
+      }
+      #fab-keyboard-toggle {
+        bottom: 20px;
+        right: 20px;
+      }
+      #keyboard-panel {
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+        transform: translateY(100%);
+        padding: 15px;
+        border-top: 1px solid var(--border-color);
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        display: flex;
+        flex-direction: column;
+        color: var(--text-primary);
+        z-index: 1010;
+        position: fixed;
+      }
+      #keyboard-panel.active {
+          transform: translateY(0) !important;
+      }
+      #keyboard-input {
+          width: 100%;
+          padding: 10px;
+          font-size: 1.2em;
+          background: rgba(0,0,0,0.2);
+          border: 1px solid var(--border-color);
+          color: var(--text-primary);
+          margin-bottom: 10px;
+          border-radius: 5px;
+          text-align: center;
+      }
+      .keyboard-row {
+          display: flex;
+          justify-content: center;
+          gap: 5px;
+          margin-bottom: 5px;
+      }
+      .keyboard-key {
+          flex: 1;
+          background: var(--primary);
+          border: none;
+          padding: 12px;
+          color: var(--text-primary);
+          font-size: 1.1em;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          text-transform: lowercase;
+      }
+      .keyboard-key:hover {
+          background: var(--accent);
+      }
+      .keyboard-key.special {
+          background: var(--dark);
+      }
+      .keyboard-key.space {
+          flex: 2;
       }
       #live-visitors-panel .live-visitors-content,
       #moment-vault-panel .moment-vault-content {
@@ -295,8 +357,8 @@
           justify-content: space-between;
       }
       #moment-vault-gallery-container {
-        flex-grow: 1;
-        overflow-y: auto;
+        flex-grow: 1; 
+        overflow-y: auto; 
         padding-right: 10px;
       }
       #moment-vault-gallery {
@@ -487,33 +549,72 @@
         background: var(--primary);
       }
       .grid-block-background video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
       }
-#block-4-3 .grid-block-background {
-    -webkit-filter: none;
-    -moz-filter: none;
-    -ms-filter: none;
-    filter: none;
-}
+      #block-4-3 .grid-block-background {
+        -webkit-filter: none;
+        -moz-filter: none;
+        -ms-filter: none;
+        filter: none;
+      }
       #block-3-4 .grid-block-background {
-    -webkit-filter: none;
-    filter: none;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+        -webkit-filter: none;
+        filter: none;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      #center-video-container {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1100;
+          width: 80vw;
+          height: 80vh;
+          max-width: 1200px;
+          max-height: 800px;
+          background: rgba(0,0,0,0.9);
+          border: 2px solid var(--accent);
+          border-radius: 10px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          box-shadow: 0 0 50px rgba(0,0,0,0.8);
+          display: none;
+      }
+      #center-video-container.active {
+          display: flex;
+      }
+      #center-video-container video {
+          width: 95%;
+          height: 95%;
+          object-fit: contain;
+      }
+      #center-video-close {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          font-size: 2rem;
+          color: white;
+          cursor: pointer;
+          background: none;
+          border: none;
+          z-index: 10;
       }
     </style>
   </head>
   <body>
-    <canvas id="visualizer-canvas"></canvas>
+    <canvas id="visualizer-canvas"></canvas>  
     <div id="main-viewport">
-      <div id="grid-container">
+      <div id="grid-container">   
         <div class="grid-block" id="block-1-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div>
           <div class="grid-block-content"><h1>Block (1,1)</h1></div>
@@ -553,7 +654,7 @@
         <div class="grid-block" id="block-2-5">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=10');"></div>
           <div class="grid-block-content"><h1>Block (2,5)</h1></div>
-        </div>
+        </div>    
         <div class="grid-block" id="block-3-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=11');"></div>
           <div class="grid-block-content"><h1>Block (3,1)</h1></div>
@@ -624,9 +725,9 @@
         <div class="grid-block" id="block-5-5">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=25');"></div>
           <div class="grid-block-content"><h1>Block (5,5)</h1></div>
-        </div>
+        </div>      
       </div>
-    </div>
+    </div>  
     <div class="fab-container" id="fab-editor">
         <button class="fab" data-panel="editor-panel" title="Code Editor">
             <i class="fas fa-code"></i>
@@ -664,6 +765,11 @@
     <div class="fab-container" id="fab-live-visitors">
         <button class="fab" data-panel="live-visitors-panel" title="Live Visitors">
             <i class="fas fa-eye"></i>
+        </button>
+    </div>
+    <div class="fab-container" id="fab-keyboard-toggle">
+        <button class="fab" data-panel="keyboard-panel" title="Virtual Keyboard">
+            <i class="fas fa-keyboard"></i>
         </button>
     </div>
     <div id="video-player-widget">
@@ -758,6 +864,52 @@
             </form>
         </div>
     </div>
+    <div class="panel" id="keyboard-panel">
+        <button class="panel-close-btn" data-panel="keyboard-panel"><i class="fas fa-times"></i></button>
+        <input type="text" id="keyboard-input" placeholder="Enter password..." readonly />
+        <div class="keyboard-row">
+            <button class="keyboard-key">q</button>
+            <button class="keyboard-key">w</button>
+            <button class="keyboard-key">e</button>
+            <button class="keyboard-key">r</button>
+            <button class="keyboard-key">t</button>
+            <button class="keyboard-key">y</button>
+            <button class="keyboard-key">u</button>
+            <button class="keyboard-key">i</button>
+            <button class="keyboard-key">o</button>
+            <button class="keyboard-key">p</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="keyboard-key">a</button>
+            <button class="keyboard-key">s</button>
+            <button class="keyboard-key">d</button>
+            <button class="keyboard-key">f</button>
+            <button class="keyboard-key">g</button>
+            <button class="keyboard-key">h</button>
+            <button class="keyboard-key">j</button>
+            <button class="keyboard-key">k</button>
+            <button class="keyboard-key">l</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="keyboard-key">z</button>
+            <button class="keyboard-key">x</button>
+            <button class="keyboard-key">c</button>
+            <button class="keyboard-key">v</button>
+            <button class="keyboard-key">b</button>
+            <button class="keyboard-key">n</button>
+            <button class="keyboard-key">m</button>
+            <button class="keyboard-key">4</button>
+            <button class="keyboard-key">7</button>
+            <button class="keyboard-key special" id="backspace-key"><i class="fas fa-backspace"></i></button>
+        </div>
+        <div class="keyboard-row">
+            <button class="keyboard-key space" id="space-key">space</button>
+        </div>
+    </div>
+    <div id="center-video-container">
+        <button id="center-video-close"><i class="fas fa-times"></i></button>
+        <video id="center-video-player" loop muted playsinline></video>
+    </div>
     <script>
       const CONTRIBUTIONS_WORKER_URL =
         'https://contributions-workerjs.ezvvel.workers.dev/';
@@ -776,13 +928,15 @@
       const VISITOR_HISTORY_EXPIRY_DAYS = 7;
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '💔';
+      const MOMENT_VAULT_PASSWORD = 'vmoments';
+      const CENTER_VIDEO_PASSWORD = 'elviu';
       let isVisualizerActive = false;
       let visualizerCanvas, ctx, audioContext, analyser, source;
       let particles = [];
       let bufferLength, dataArray, frequencyData;
       const PARTICLE_COUNT = 200;
       const PARTICLE_SPEED_MULTIPLIER = 0.5;
-      let gravity = { x: 0, y: 0 };
+      let gravity = { x: 0, y: 0 };   
       let gridContainer, currentX = 2, currentY = 2;
       let isDragging = false;
       let startX = 0, startY = 0;
@@ -798,6 +952,7 @@
         initVisualizer();
         initSwipeGestures();
         initDeviceMotion();
+        initVirtualKeyboard();
       });
       function initSwipeGestures() {
         const moveGrid = (x, y) => {
@@ -1096,7 +1251,6 @@
       }
       function checkEzraLoginAndShowVisitorsButton() {
         const fabLiveVisitors = document.getElementById('fab-live-visitors');
-        fabLiveVisitors.style.display = 'flex';
       }
       document.addEventListener('DOMContentLoaded', checkEzraLoginAndShowVisitorsButton);
       async function fetchLiveVisitors() {
@@ -1141,7 +1295,7 @@
             '<li style="text-align: center; color: var(--danger);">Failed</li>';
           lastUpdatedTime.textContent = 'Error';
         }
-      }
+      }    
       async function fetchVisitorHistory() {
         const historyContainer = document.getElementById('visitor-history');
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
@@ -1150,7 +1304,7 @@
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          let history = await response.json();
+          let history = await response.json();      
           if (history && history.length > 0) {
             historyContainer.innerHTML = `<ul>${history
               .map((visitor) => {
@@ -1197,17 +1351,17 @@
             ip: ipAddress,
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
-          };
+          };        
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to live visitors worker:', e));
+          }).catch((e) => console.error('Error sending to live visitors worker:', e));       
           fetch(VISITOR_HISTORY_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to visitor history worker:', e));
+          }).catch((e) => console.error('Error sending to visitor history worker:', e));  
         } catch (e) {
           console.error('Error in trackVisitor:', e);
         }
@@ -1350,15 +1504,12 @@
           statusEl.style.color = 'var(--danger)';
         }
       }
-      function readFileAsBase64(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = (error) => reject(error);
-          reader.readAsDataURL(file);
-        });
-      }
       async function editMoment(itemId, currentItems) {
+        const password = prompt('Masukkan password untuk mengedit:');
+        if (password !== MOMENT_VAULT_PASSWORD) {
+            alert('Password salah!');
+            return;
+        }
         const itemToEdit = currentItems.find((item) => item.id === itemId);
         if (!itemToEdit) return;
         const newTitle = prompt('Edit Title:', itemToEdit.title);
@@ -1395,6 +1546,11 @@
         }
       }
       async function deleteMoment(itemId) {
+        const password = prompt('Masukkan password untuk menghapus:');
+        if (password !== MOMENT_VAULT_PASSWORD) {
+            alert('Password salah!');
+            return;
+        }
         if (!confirm('Are you sure you want to delete? This action cannot be undone.')) {
           return;
         }
@@ -1555,7 +1711,7 @@
         const averageAmplitude = frequencyData.slice(0, effectiveBufferLength).reduce((a, b) => a + b) / effectiveBufferLength;
         const particleSpeedFactor = averageAmplitude / 255 * 3;
         for (let i = 0; i < particles.length; i++) {
-          const p = particles[i];
+          const p = particles[i];        
           p.speedX += gravity.x * 0.05;
           p.speedY += gravity.y * 0.05;
           p.x += p.speedX * particleSpeedFactor;
@@ -1599,10 +1755,69 @@
         });
     } else {
         if (document.exitFullscreen) {
-            document.exitFullscreen();
+            document.exitFullscreen();       }    }}
+        function initVirtualKeyboard() {
+            const keyboardPanel = document.getElementById('keyboard-panel');
+            const keyboardInput = document.getElementById('keyboard-input');
+            const liveVisitorsButton = document.getElementById('fab-live-visitors');
+            const centerVideoContainer = document.getElementById('center-video-container');
+            const centerVideoPlayer = document.getElementById('center-video-player');
+            const centerVideoCloseBtn = document.getElementById('center-video-close');
+            
+            const passwordMap = {
+                'mylove 47': () => {
+                    liveVisitorsButton.style.display = 'flex';
+                    keyboardPanel.classList.remove('active');
+                },
+                'elviu': () => {
+                    centerVideoContainer.classList.add('active');
+                    centerVideoPlayer.src = 'bg.mp4';
+                    centerVideoPlayer.play();
+                    keyboardPanel.classList.remove('active');
+                    keyboardInput.value = '';
+                },
+                'password3': () => { console.log('Fungsi password 3'); },
+                'password4': () => { console.log('Fungsi password 4'); },
+                'password5': () => { console.log('Fungsi password 5'); },
+                'password6': () => { console.log('Fungsi password 6'); },
+                'password7': () => { console.log('Fungsi password 7'); },
+                'password8': () => { console.log('Fungsi password 8'); },
+                'password9': () => { console.log('Fungsi password 9'); },
+                'password10': () => { console.log('Fungsi password 10'); },
+            };
+            
+            let currentInput = '';
+            
+            document.querySelectorAll('.keyboard-key').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const keyText = e.target.closest('.keyboard-key').textContent.trim();
+                    if (e.target.closest('.keyboard-key').id === 'backspace-key') {
+                        currentInput = currentInput.slice(0, -1);
+                    } else if (e.target.closest('.keyboard-key').id === 'space-key') {
+                        currentInput += ' ';
+                    } else {
+                        currentInput += keyText;
+                    }
+            
+                    keyboardInput.value = currentInput;
+            
+                    if (passwordMap[currentInput]) {
+                        passwordMap[currentInput]();
+                        currentInput = '';
+                        keyboardInput.value = '';
+                    } else {
+                        // Reset all buttons to hidden if the password is wrong
+                        liveVisitorsButton.style.display = 'none';
+                        // ... Tambahkan kode untuk menyembunyikan fitur lain di sini
+                    }
+                });
+            });
+            centerVideoCloseBtn.addEventListener('click', () => {
+                centerVideoPlayer.pause();
+                centerVideoPlayer.src = '';
+                centerVideoContainer.classList.remove('active');
+            });
         }
-    }
-    }
     </script>
   </body>
 </html>
