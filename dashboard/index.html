@@ -1595,19 +1595,6 @@
           body.classList.remove('visualizer-active');
           toggleFullscreen();
         }
-      }     
-      function initDeviceMotion() {
-        if (window.DeviceMotionEvent) {
-            window.addEventListener('devicemotion', event => {
-                const { x, y, z } = event.accelerationIncludingGravity;
-                if (x !== null && y !== null) {
-                    gravity.x = x;
-                    gravity.y = y;
-                }
-            });
-        } else {
-            console.log('DeviceMotionEvent is not supported on this device.');
-        }
       }
       function toggleFullscreen() {
     if (!document.fullscreenElement) {
