@@ -1062,7 +1062,6 @@
         trackVisitor();
         initVisualizer();
         initSwipeGestures();
-        initDeviceMotion();
         initVirtualKeyboard();
         initSecurityFeatures();
         initDraggableKeyboard();
@@ -1888,13 +1887,13 @@
             const centerVideoCloseBtn = document.getElementById('center-video-close');
             
             const passwordMap = {
-                'mylove 47': () => {
+                'mylove': () => {
                     liveVisitorsButton.style.display = 'flex';
                     keyboardPanel.classList.remove('active');
                 },
                 'elviu': () => {
                     centerVideoContainer.classList.add('active');
-                    centerVideoPlayer.src = 'bg.mp4';
+                    centerVideoPlayer.src = 'stiker.mp4';
                     centerVideoPlayer.play();
                     keyboardPanel.classList.remove('active');
                     keyboardInput.value = '';
