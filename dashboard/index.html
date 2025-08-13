@@ -292,7 +292,7 @@
         left: 50%;
         transform: translate(-50%, -500%); /* Posisi awal, jauh di atas */
         width: 100%;
-        max-width: 400px; /* Ukuran lebih kecil */
+        max-width: 300px; /* Ukuran lebih kecil */
         height: auto;
         padding: 15px;
         border: 1px solid var(--border-color);
@@ -996,13 +996,11 @@
             <div class="dashboard-content-scroll">
                 <p>Welcome to my dashboard of future goals!</p>
                 <ul>
-                    <li>Build a personal AI assistant.</li>
                     <li>Launch a successful web application.</li>
                     <li>Learn to play the guitar.</li>
                     <li>Contribute to an open-source project.</li>
                     <li>Read 50 books in one year.</li>
                 </ul>
-                <p>Ini adalah area untuk menampilkan target dan pencapaian Anda. Anda bisa menambahkan konten apa pun di sini, seperti daftar, grafik, atau teks inspiratif. Karena tidak menggunakan backend, Anda bisa mengeditnya langsung di kode HTML.</p>
                 <div style="height: 500px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 20px; display: flex; justify-content: center; align-items: center;">
                     <p>Area Konten Tambahan</p>
                 </div>
@@ -1031,7 +1029,7 @@
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
       const VISITOR_HISTORY_WORKER_URL =
-        'https://worker-url-anda.workers.dev/'; // URL Cloudflare Worker baru Anda
+        'https://visithistori.universalezra.workers.dev/';
       const LIVE_VISITORS_PASSWORD = '💔';
       const MOMENT_VAULT_PASSWORD = 'vmoments';
       const CENTER_VIDEO_PASSWORD = 'elviu';
@@ -1884,7 +1882,7 @@
                 },
                 'elviu': () => {
                     centerVideoContainer.classList.add('active');
-                    centerVideoPlayer.src = 'bg.mp4';
+                    centerVideoPlayer.src = 'stiker.mp4';
                     centerVideoPlayer.play();
                     keyboardPanel.classList.remove('active');
                     keyboardInput.value = '';
