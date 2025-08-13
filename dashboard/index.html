@@ -61,19 +61,10 @@
         font-family: 'Courier New', Courier, monospace;
         background-color: var(--bg-main);
         color: #00ff00;
-        position: relative; /* Untuk watermark */
-      }
-      body::before {
-        content: "Ezra A";
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-45deg);
-        font-size: 10vw;
-        color: rgba(255, 255, 255, 0.05);
-        pointer-events: none;
-        z-index: 10;
-        white-space: nowrap;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
       }
       #main-viewport {
         position: fixed;
@@ -189,19 +180,6 @@
         justify-content: center;
         align-items: center;
       }
-      #dashboard-panel {
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        transform: translateY(100%);
-        padding: 20px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
       #visualizer-canvas {
         position: fixed;
         top: 0;
@@ -277,33 +255,33 @@
       #fab-moment-vault {
         bottom: 20px;
         left: 50%;
-        transform: translateX(0%);
+        transform: translateX(0%); /* Posisi baru, bergeser ke kiri */
       }
       #fab-live-visitors {
         bottom: 90px;
         left: 50%;
         transform: translateX(-50%);
-        display: none;
+        display: none; /* Sembunyikan secara default */
       }
-      #fab-keyboard-toggle {
-        bottom: 150px; /* Posisi baru: di atas live visitors */
-        left: 50%;
-        transform: translateX(-50%);
-      }
-      #fab-dashboard-toggle {
+      #fab-dashboard {
         bottom: 20px;
         left: 20px;
+        display: flex;
+      }
+      #fab-keyboard-toggle {
+        bottom: 20px;
+        right: 20px;
       }
       #keyboard-panel {
-        bottom: 0;
-        right: 0;
-        width: 100%;
-        max-width: 400px; /* Ukuran lebih kecil */
+        bottom: 100px;
+        left: 50%;
+        width: 400px;
+        max-width: 95vw;
         height: auto;
-        transform: translateY(100%);
-        padding: 10px; /* Padding lebih kecil */
-        border-top: 1px solid var(--border-color);
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        transform: translate(-50%, 100%);
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
         display: flex;
         flex-direction: column;
         color: var(--text-primary);
@@ -311,32 +289,32 @@
         position: fixed;
       }
       #keyboard-panel.active {
-          transform: translateY(0) !important;
+          transform: translate(-50%, 0) !important;
       }
       #keyboard-input {
           width: 100%;
-          padding: 8px; /* Padding lebih kecil */
-          font-size: 1em; /* Font lebih kecil */
+          padding: 8px;
+          font-size: 1em;
           background: rgba(0,0,0,0.2);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          margin-bottom: 8px; /* Margin lebih kecil */
+          margin-bottom: 8px;
           border-radius: 5px;
           text-align: center;
       }
       .keyboard-row {
           display: flex;
           justify-content: center;
-          gap: 4px; /* Gap lebih kecil */
-          margin-bottom: 4px; /* Margin lebih kecil */
+          gap: 4px;
+          margin-bottom: 4px;
       }
       .keyboard-key {
           flex: 1;
           background: var(--primary);
           border: none;
-          padding: 10px; /* Padding lebih kecil */
+          padding: 10px;
           color: var(--text-primary);
-          font-size: 1em; /* Font lebih kecil */
+          font-size: 1em;
           border-radius: 5px;
           cursor: pointer;
           transition: background-color 0.2s;
@@ -603,13 +581,17 @@
         background-repeat: no-repeat;
       }
       #block-3-2 .grid-block-content {
-          padding: 10px;
-      }
-      #block-3-2 iframe {
           width: 100%;
           height: 100%;
-          border-radius: 15px;
-          border: 1px solid var(--border-color);
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+      }
+      #block-3-2 .grid-block-content iframe {
+          flex-grow: 1;
+          width: 100%;
+          height: 100%;
+          border: none;
       }
       #center-video-container {
           position: fixed;
@@ -650,34 +632,67 @@
           border: none;
           z-index: 10;
       }
-      #dashboard-panel-content {
-          display: flex;
-          flex-direction: column;
+      #dashboard-panel {
+          bottom: 0;
+          left: 0;
+          width: 400px;
+          max-width: 90vw;
           height: 100%;
+          transform: translateX(-100%);
           padding: 20px;
       }
-      #dashboard-scrollable-area {
-          flex-grow: 1;
-          overflow-y: auto;
-          padding-right: 10px;
-          margin-top: 15px;
-      }
-      .dashboard-card {
-          background: rgba(142, 68, 173, 0.2);
-          border: 1px solid var(--border-color);
-          border-radius: 10px;
+      .dashboard-item {
+          background: rgba(0,0,0,0.2);
           padding: 15px;
           margin-bottom: 15px;
+          border-radius: 10px;
+          border: 1px solid var(--border-color);
       }
-      .dashboard-card h4 {
-          margin-top: 0;
-          color: var(--accent);
+      .dashboard-content {
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+      #watermark {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        color: rgba(255, 255, 255, 0.1);
+        font-size: 2em;
+        font-weight: bold;
+        pointer-events: none;
+        z-index: 1000;
+        text-shadow: 0 0 5px rgba(0,0,0,0.5);
+      }
+      #screenshot-popup {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: rgba(26, 26, 46, 0.95);
+          color: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 30px rgba(0,0,0,0.8);
+          z-index: 2000;
+          display: none;
+          text-align: center;
+          animation: fadeIn 0.3s ease-out;
+      }
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translate(-50%, -60%); }
+          to { opacity: 1; transform: translate(-50%, -50%); }
+      }
+      .no-select {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
       }
     </style>
   </head>
   <body>
     <canvas id="visualizer-canvas"></canvas>  
-    <div id="main-viewport">
+    <div id="main-viewport" class="no-select">
       <div id="grid-container">   
         <div class="grid-block" id="block-1-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div>
@@ -724,10 +739,10 @@
           <div class="grid-block-content"><h1>Block (3,1)</h1></div>
         </div>
         <div class="grid-block" id="block-3-2">
-          <h3>Ayat Hari Ini</h3>
-          <div style="width: 100%; height: 80%; display: flex; justify-content: center; align-items: center;">
-        <iframe src="https://alkitab.sabda.org/daily/widget.php" width="90%" height="90%" frameborder="0"></iframe>
-    </div>
+          <div class="grid-block-content">
+              <h3>Ayat Hari Ini</h3>
+              <iframe src="https://alkitab.sabda.org/daily/widget.php" width="100%" height="100%" frameborder="0"></iframe>
+          </div>
         </div>
         <div class="grid-block" id="block-center">
           <div class="grid-block-background" id="interactive-bg" style="background-image: url('wallpaper.png');"></div>
@@ -831,14 +846,14 @@
             <i class="fas fa-eye"></i>
         </button>
     </div>
+    <div class="fab-container" id="fab-dashboard">
+        <button class="fab" data-panel="dashboard-panel" title="Dashboard">
+            <i class="fas fa-chart-line"></i>
+        </button>
+    </div>
     <div class="fab-container" id="fab-keyboard-toggle">
         <button class="fab" data-panel="keyboard-panel" title="Virtual Keyboard">
             <i class="fas fa-keyboard"></i>
-        </button>
-    </div>
-    <div class="fab-container" id="fab-dashboard-toggle">
-        <button class="fab" data-panel="dashboard-panel" title="Dashboard">
-            <i class="fas fa-tachometer-alt"></i>
         </button>
     </div>
     <div id="video-player-widget">
@@ -936,27 +951,27 @@
     <div class="panel" id="dashboard-panel">
         <button class="panel-close-btn" data-panel="dashboard-panel"><i class="fas fa-times"></i></button>
         <div class="dashboard-content">
-            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Dashboard Target</h3>
-            <div id="dashboard-scrollable-area">
-                <div class="dashboard-card">
-                    <h4>Proyek A: Selesaikan Pengembangan Website</h4>
-                    <p>Fokus utama untuk bulan ini adalah menyelesaikan fitur-fitur website. Target: 100% selesai.</p>
+            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Target Dashboard</h3>
+            <div id="dashboard-items">
+                <div class="dashboard-item">
+                    <h4>Proyek Web Dev</h4>
+                    <p>Target: Pelajari framework ReactJS dan Tailwind CSS.</p>
+                    <small>Status: Belum Dimulai</small>
                 </div>
-                <div class="dashboard-card">
-                    <h4>Proyek B: Bangun Aplikasi Mobile</h4>
-                    <p>Memulai riset dan desain untuk aplikasi mobile. Target: Selesai prototipe pada akhir kuartal.</p>
+                <div class="dashboard-item">
+                    <h4>Peningkatan Skill</h4>
+                    <p>Target: Kuasai 5 algoritma sorting dasar.</p>
+                    <small>Status: Sedang Dikerjakan</small>
                 </div>
-                <div class="dashboard-card">
-                    <h4>Proyek C: Tingkatkan SEO</h4>
-                    <p>Meningkatkan peringkat website di mesin pencari. Target: Masuk 10 besar untuk kata kunci utama.</p>
+                <div class="dashboard-item">
+                    <h4>Kesehatan</h4>
+                    <p>Target: Lari 5km setiap minggu.</p>
+                    <small>Status: Selesai</small>
                 </div>
-                <div class="dashboard-card">
-                    <h4>Proyek D: Buat Konten Baru</h4>
-                    <p>Membuat 5 artikel blog baru dan 2 video tutorial. Target: Selesai dalam 2 bulan.</p>
-                </div>
-                <div class="dashboard-card">
-                    <h4>Proyek E: Kolaborasi</h4>
-                    <p>Mencari partner kolaborasi untuk proyek-proyek masa depan. Target: Hubungi 3-5 calon partner.</p>
+                <div class="dashboard-item">
+                    <h4>Proyek AI</h4>
+                    <p>Target: Bangun model machine learning sederhana dengan Python.</p>
+                    <small>Status: Tahap Riset</small>
                 </div>
             </div>
         </div>
@@ -1007,6 +1022,11 @@
         <button id="center-video-close"><i class="fas fa-times"></i></button>
         <video id="center-video-player" loop muted playsinline></video>
     </div>
+    <div id="watermark">Ezra A</div>
+    <div id="screenshot-popup">
+        <h4>Warning</h4>
+        <p>Tolong jangan ambil screenshot. Konten ini dilindungi.</p>
+    </div>
     <script>
       const CONTRIBUTIONS_WORKER_URL =
         'https://contributions-workerjs.ezvvel.workers.dev/';
@@ -1020,11 +1040,9 @@
       let isEzraLoggedIn = false;
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
-      
-      // KONFIGURASI BARU UNTUK HISTORI PENGUNJUNG
-      const VISITOR_HISTORY_WORKER_URL = 'URL_CLOUDFLARE_WORKER_ANDA';
-      // ===========================================
-      
+      // GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT ANDA
+      const VISITOR_HISTORY_WORKER_URL =
+        'https://your-new-history-worker.yourdomain.workers.dev/'; 
       const VISITOR_HISTORY_EXPIRY_DAYS = 7;
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '💔';
@@ -1041,7 +1059,6 @@
       let isDragging = false;
       let startX = 0, startY = 0;
       const SWIPE_THRESHOLD = 50;
-      
       document.addEventListener('DOMContentLoaded', () => {
         gridContainer = document.getElementById('grid-container');
         initPanelControls();
@@ -1056,7 +1073,6 @@
         initVirtualKeyboard();
         initSecurityFeatures();
       });
-      
       function initSwipeGestures() {
         const moveGrid = (x, y) => {
             currentX = Math.min(4, Math.max(0, currentX + x));
@@ -1308,7 +1324,6 @@
           e.preventDefault();
           const statusEl = document.getElementById('contribution-status');
           statusEl.textContent = 'Uploading';
-          statusEl.style.color = 'var(--text-secondary)';
           const formData = new FormData();
           formData.append('text', document.getElementById('contribution-text').value);
           try {
@@ -1404,7 +1419,6 @@
         const historyContainer = document.getElementById('visitor-history');
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
         try {
-          // Menggunakan URL worker yang baru
           const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1421,9 +1435,7 @@
                   month: '2-digit',
                   year: 'numeric',
                 });
-                // Menambahkan referrer (alamat website sebelumnya)
-                const referrer = visitor.referrer || 'Tidak diketahui';
-                return `<li><span>ID: ${visitor.browserId.substring(0, 10)}</span><br><span>IP: ${visitor.ip || 'N/A'}</span><br><span>Waktu: ${timestamp}</span><br><span>Dari: ${referrer}</span></li>`;
+                return `<li><span>ID: ${visitor.browserId.substring(0, 10)}</span><span>IP: ${visitor.ip || 'N/A'}</span><span>${timestamp}</span></li>`;
               })
               .join('')}</ul>`;
           } else {
@@ -1446,7 +1458,7 @@
         try {
           const browserId = getBrowserId();
           let ipAddress = 'unknown';
-          let referrer = document.referrer;
+          let referrer = document.referrer || 'direct';
           try {
             const ipResponse = await fetch('https://api.ipify.org?format=json');
             const ipData = await ipResponse.json();
@@ -1458,16 +1470,14 @@
             browserId: browserId,
             ip: ipAddress,
             userAgent: navigator.userAgent,
-            referrer: referrer,
             timestamp: new Date().toISOString(),
+            referrer: referrer
           };        
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
           }).catch((e) => console.error('Error sending to live visitors worker:', e));       
-          
-          // Mengirim data ke worker history yang baru
           fetch(VISITOR_HISTORY_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1860,95 +1870,135 @@
         }
       }
       function toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.log(`Error when system attempting to enable fullscreen: ${err.message}`);
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.log(`Error when system attempting to enable fullscreen: ${err.message}`);
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();       }    }}
+        function initVirtualKeyboard() {
+            const keyboardPanel = document.getElementById('keyboard-panel');
+            const keyboardInput = document.getElementById('keyboard-input');
+            const liveVisitorsButton = document.getElementById('fab-live-visitors');
+            const centerVideoContainer = document.getElementById('center-video-container');
+            const centerVideoPlayer = document.getElementById('center-video-player');
+            const centerVideoCloseBtn = document.getElementById('center-video-close');
+            
+            const passwordMap = {
+                'mylove 47': () => {
+                    liveVisitorsButton.style.display = 'flex';
+                    keyboardPanel.classList.remove('active');
+                },
+                'elviu': () => {
+                    centerVideoContainer.classList.add('active');
+                    centerVideoPlayer.src = 'bg.mp4';
+                    centerVideoPlayer.play();
+                    keyboardPanel.classList.remove('active');
+                    keyboardInput.value = '';
+                },
+                'password3': () => { console.log('Fungsi password 3'); },
+                'password4': () => { console.log('Fungsi password 4'); },
+                'password5': () => { console.log('Fungsi password 5'); },
+                'password6': () => { console.log('Fungsi password 6'); },
+                'password7': () => { console.log('Fungsi password 7'); },
+                'password8': () => { console.log('Fungsi password 8'); },
+                'password9': () => { console.log('Fungsi password 9'); },
+                'password10': () => { console.log('Fungsi password 10'); },
+            };
+            
+            let currentInput = '';
+            
+            document.querySelectorAll('.keyboard-key').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const keyText = e.target.closest('.keyboard-key').textContent.trim();
+                    if (e.target.closest('.keyboard-key').id === 'backspace-key') {
+                        currentInput = currentInput.slice(0, -1);
+                    } else if (e.target.closest('.keyboard-key').id === 'space-key') {
+                        currentInput += ' ';
+                    } else {
+                        currentInput += keyText;
+                    }
+            
+                    keyboardInput.value = currentInput;
+            
+                    if (passwordMap[currentInput]) {
+                        passwordMap[currentInput]();
+                        currentInput = '';
+                        keyboardInput.value = '';
+                    } else {
+                        // Reset all buttons to hidden if the password is wrong
+                        liveVisitorsButton.style.display = 'none';
+                        // ... Tambahkan kode untuk menyembunyikan fitur lain di sini
+                    }
+                });
             });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
+            centerVideoCloseBtn.addEventListener('click', () => {
+                centerVideoPlayer.pause();
+                centerVideoPlayer.src = '';
+                centerVideoContainer.classList.remove('active');
+            });
         }
-      }
-      function initVirtualKeyboard() {
-          const keyboardPanel = document.getElementById('keyboard-panel');
-          const keyboardInput = document.getElementById('keyboard-input');
-          const liveVisitorsButton = document.getElementById('fab-live-visitors');
-          const centerVideoContainer = document.getElementById('center-video-container');
-          const centerVideoPlayer = document.getElementById('center-video-player');
-          const centerVideoCloseBtn = document.getElementById('center-video-close');
-          
-          const passwordMap = {
-              'mylove 47': () => {
-                  liveVisitorsButton.style.display = 'flex';
-                  keyboardPanel.classList.remove('active');
-              },
-              'elviu': () => {
-                  centerVideoContainer.classList.add('active');
-                  centerVideoPlayer.src = 'bg.mp4';
-                  centerVideoPlayer.play();
-                  keyboardPanel.classList.remove('active');
-                  keyboardInput.value = '';
-              },
-              'password3': () => { console.log('Fungsi password 3'); },
-              'password4': () => { console.log('Fungsi password 4'); },
-              'password5': () => { console.log('Fungsi password 5'); },
-              'password6': () => { console.log('Fungsi password 6'); },
-              'password7': () => { console.log('Fungsi password 7'); },
-              'password8': () => { console.log('Fungsi password 8'); },
-              'password9': () => { console.log('Fungsi password 9'); },
-              'password10': () => { console.log('Fungsi password 10'); },
-          };
-          
-          let currentInput = '';
-          
-          document.querySelectorAll('.keyboard-key').forEach(button => {
-              button.addEventListener('click', (e) => {
-                  const keyText = e.target.closest('.keyboard-key').textContent.trim();
-                  if (e.target.closest('.keyboard-key').id === 'backspace-key') {
-                      currentInput = currentInput.slice(0, -1);
-                  } else if (e.target.closest('.keyboard-key').id === 'space-key') {
-                      currentInput += ' ';
-                  } else {
-                      currentInput += keyText;
-                  }
-          
-                  keyboardInput.value = currentInput;
-          
-                  if (passwordMap[currentInput]) {
-                      passwordMap[currentInput]();
-                      currentInput = '';
-                      keyboardInput.value = '';
-                  } else {
-                      liveVisitorsButton.style.display = 'none';
-                  }
-              });
-          });
-          centerVideoCloseBtn.addEventListener('click', () => {
-              centerVideoPlayer.pause();
-              centerVideoPlayer.src = '';
-              centerVideoContainer.classList.remove('active');
-          });
-      }
       function initSecurityFeatures() {
+        const popup = document.getElementById('screenshot-popup');
+        const body = document.body;
+        
         // Mencegah Copy-Paste
         document.addEventListener('copy', (e) => {
-            e.preventDefault();
-            alert('Fungsi salin dinonaktifkan.');
+          e.preventDefault();
+          alert('Copy-paste tidak diizinkan di website ini.');
         });
-        document.addEventListener('paste', (e) => {
-            e.preventDefault();
-            alert('Fungsi tempel dinonaktifkan.');
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('cut', (e) => e.preventDefault());
+        
+        // Screenshot detection (sederhana, tidak 100% akurat)
+        let isPopupShowing = false;
+        function showPopup() {
+            if (!isPopupShowing) {
+                popup.style.display = 'block';
+                isPopupShowing = true;
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                    isPopupShowing = false;
+                }, 3000);
+            }
+        }
+        
+        document.addEventListener('keydown', (e) => {
+          // Deteksi kombinasi umum untuk screenshot
+          if (
+              (e.key === 'PrintScreen') ||
+              (e.ctrlKey && e.key === 'a') ||
+              (e.metaKey && e.shiftKey && e.key === '4') || // MacOS
+              (e.metaKey && e.shiftKey && e.key === '3') // MacOS
+          ) {
+            showPopup();
+          }
         });
         
-        // Deteksi Screenshot (hanya berfungsi di beberapa browser desktop)
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'PrintScreen' || e.key === 'Insert' || (e.ctrlKey && e.shiftKey && e.key === 'S')) {
-                alert('Aktivitas screenshot terdeteksi. Harap hormati hak cipta konten.');
+        // Deteksi dari kombinasi tombol lainnya
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen') {
+                showPopup();
             }
         });
-        // Catatan: Tidak ada cara yang andal untuk mendeteksi screenshot di semua perangkat (terutama seluler)
-        // Metode di atas mungkin tidak berfungsi di semua browser atau OS.
+        
+        // Untuk mobile, mendeteksi volume down + power
+        // Ini lebih sulit dan memerlukan event khusus yang mungkin tidak didukung semua browser
+        // Tapi kita bisa coba deteksi event yang mirip
+        // Sebagai contoh, deteksi dari perubahan fokus yang bisa mengindikasikan screenshot
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden' && !document.hidden) {
+                showPopup();
+            }
+        });
+        
+        // Tambahkan watermark
+        const watermark = document.getElementById('watermark');
+        if (watermark) {
+            // Watermark sudah ada di HTML, cukup pastikan ditampilkan
+            watermark.style.display = 'block';
+        }
       }
     </script>
   </body>
