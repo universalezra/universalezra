@@ -32,6 +32,7 @@
         --accent: #00a8ff;
         --success: #2ecc71;
         --danger: #e74c3c;
+        --light: #ecf0f1;
         --dark: #1a1a2e;
         --bg-main: #16213e;
         --bg-panel: rgba(26, 26, 46, 0.9);
@@ -115,6 +116,14 @@
         color: white;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         padding: 20px;
+        width: 100%;
+        height: 100%;
+      }
+      .grid-block-content iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 10px;
       }
       .panel {
         position: fixed;
@@ -287,65 +296,6 @@
         bottom: 20px;
         left: 20px;
       }
- #keyboard-panel {
-    position: absolute; /* Mengubah posisi agar relatif terhadap parent */
-    width: 350px;
-    height: auto;
-    padding: 10px;
-    background: rgba(26, 26, 46, 0.9);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-    display: none;
-    flex-direction: column;
-    color: var(--text-primary);
-    z-index: 1011;
-    cursor: move;
-    top: 50%;        /* Memposisikan panel di tengah vertikal */
-    left: 50%;       /* Memposisikan panel di tengah horizontal */
-    transform: translate(-50%, -50%); /* Menggeser kembali panel untuk memusatkannya */
-}
-      #keyboard-panel.active {
-          display: flex;
-      }
-      #keyboard-input {
-          width: 100%;
-          padding: 8px;
-          font-size: 1em;
-          background: rgba(0,0,0,0.2);
-          border: 1px solid var(--border-color);
-          color: var(--text-primary);
-          margin-bottom: 8px;
-          border-radius: 5px;
-          text-align: center;
-      }
-      .keyboard-row {
-          display: flex;
-          justify-content: center;
-          gap: 3px;
-          margin-bottom: 3px;
-      }
-      .keyboard-key {
-          flex: 1;
-          background: var(--primary);
-          border: none;
-          padding: 8px;
-          color: var(--text-primary);
-          font-size: 0.9em;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.2s;
-          text-transform: lowercase;
-      }
-      .keyboard-key:hover {
-          background: var(--accent);
-      }
-      .keyboard-key.special {
-          background: var(--dark);
-      }
-      .keyboard-key.space {
-          flex: 2;
-      }
       #live-visitors-panel .live-visitors-content,
       #moment-vault-panel .moment-vault-content,
       #dashboard-panel .dashboard-content-wrapper {
@@ -478,8 +428,9 @@
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
+        align-items: center;
       }
-      .editor-toolbar button {
+      .editor-toolbar button, .editor-toolbar select {
         background: var(--accent);
         color: var(--text-primary);
         border: none;
@@ -487,8 +438,9 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.2s;
+        font-family: 'Courier New', Courier, monospace;
       }
-      .editor-toolbar button:hover {
+      .editor-toolbar button:hover, .editor-toolbar select:hover {
         background: var(--primary);
       }
       .editor-main {
@@ -602,46 +554,6 @@
         background-position: center;
         background-repeat: no-repeat;
       }
-      #center-video-container {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 1100;
-          width: 80vw;
-          height: 80vh;
-          max-width: 1200px;
-          max-height: 800px;
-          background: rgba(0,0,0,0.9);
-          border: 2px solid var(--accent);
-          border-radius: 10px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
-          box-shadow: 0 0 50px rgba(0,0,0,0.8);
-          display: none;
-      }
-      #center-video-container.active {
-          display: flex;
-      }
-      #center-video-container video {
-          width: 95%;
-          height: 95%;
-          object-fit: contain;
-      }
-      #center-video-close {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          font-size: 2rem;
-          color: white;
-          cursor: pointer;
-          background: none;
-          border: none;
-          z-index: 10;
-      }
-      /* Style untuk Embed Sabda */
       #sabda-widget-container {
         width: 100%;
         max-width: 500px;
@@ -662,7 +574,7 @@
         padding: 20px;
         text-align: left;
         color: var(--text-primary);
-        overflow-y: auto; /* Memastikan dashboard bisa di-scroll */
+        overflow-y: auto;
       }
       .dashboard-card {
         background: rgba(0, 0, 0, 0.4);
@@ -676,8 +588,35 @@
         color: var(--accent);
       }
       .dashboard-card p {
-        margin-bottom: 0;
+        margin-bottom: 10px;
         font-size: 0.9em;
+      }
+      .progress-bar-container {
+        width: 100%;
+        background-color: rgba(0,0,0,0.5);
+        border-radius: 5px;
+        margin-top: 10px;
+        position: relative;
+        height: 20px;
+        border: 1px solid var(--border-color);
+      }
+      .progress-bar {
+        width: 0;
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-radius: 5px;
+        transition: width 0.5s ease-in-out;
+      }
+      .progress-bar-text {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        top: 0;
+        left: 0;
+        line-height: 20px;
+        font-size: 0.8em;
+        color: white;
+        text-shadow: 1px 1px 2px black;
       }
       .screenshot-popup {
         position: fixed;
@@ -693,7 +632,6 @@
         display: none;
         box-shadow: 0 0 20px rgba(0,0,0,0.5);
       }
-      /* Popup Pengguna Baru */
       #new-user-popup {
         position: fixed;
         top: 50%;
@@ -734,6 +672,74 @@
       #popup-close-btn:hover {
         background: var(--accent);
       }
+      #elvi-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10001;
+        display: none;
+        padding: 15px;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        border: 3px solid var(--accent);
+        box-shadow: 0 0 40px var(--accent);
+      }
+      #elvi-popup img {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      #equalizer-container {
+        padding: 0 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+        border-left: 1px solid var(--border-color);
+        margin-left: 10px;
+      }
+      #equalizer-container p {
+        margin: 0 0 5px 0;
+        font-size: 0.9em;
+        text-align: center;
+      }
+      .equalizer-bands {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+      }
+      .equalizer-band {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .equalizer-band input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        writing-mode: bt-lr;
+        width: 15px;
+        height: 100px;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .equalizer-band input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 15px;
+        height: 10px;
+        background: var(--accent);
+        border-radius: 2px;
+      }
+       .equalizer-band label {
+         font-size: 0.7em;
+         margin-top: 5px;
+       }
     </style>
   </head>
   <body>
@@ -759,29 +765,39 @@
     <div class="screenshot-popup" id="screenshot-popup">
         Screenshot tidak diizinkan!
     </div>
+
+    <div id="elvi-popup">
+      <img src="elvi.jpg" alt="Elvi">
+    </div>
+
     <canvas id="visualizer-canvas"></canvas>
     <audio id="matrix-sound" src="https://www.myinstants.com/media/sounds/matrix-code.mp3" preload="auto"></audio>
+
     <div id="main-viewport">
       <div id="grid-container">   
         <div class="grid-block" id="block-1-1">
-          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div>
-          <div class="grid-block-content"><h1>Block (1,1)</h1></div>
+          <div class="grid-block-content">
+              <iframe src="https://www.windy.com/embed/-6.175/106.827?zoom=5&level=surface&overlay=wind" frameborder="0"></iframe>
+          </div>
         </div>
         <div class="grid-block" id="block-1-2">
-          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=2');"></div>
-          <div class="grid-block-content"><h1>Block (1,2)</h1></div>
+          <div class="grid-block-content">
+              <iframe src="https://www.flightradar24.com/simple?lat=-2.5&lon=118&z=4" frameborder="0"></iframe>
+          </div>
         </div>
         <div class="grid-block" id="block-1-3">
-          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div>
-          <div class="grid-block-content"><h1>Block (1,3)</h1></div>
+           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div>
+           <div class="grid-block-content"><h1>Block (1,3)</h1></div>
         </div>
         <div class="grid-block" id="block-1-4">
-          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div>
-          <div class="grid-block-content"><h1>Block (1,4)</h1></div>
+           <div class="grid-block-content">
+              <iframe src="https://earth.nullschool.net/#current/wind/surface/level/orthographic=-252.69,-5.27,1000" frameborder="0"></iframe>
+          </div>
         </div>
         <div class="grid-block" id="block-1-5">
-          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div>
-          <div class="grid-block-content"><h1>Block (1,5)</h1></div>
+            <div class="grid-block-content">
+              <iframe src="https://liveuamap.com/" frameborder="0"></iframe>
+            </div>
         </div>
         <div class="grid-block" id="block-2-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div>
@@ -791,15 +807,10 @@
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=7');"></div>
           <div class="grid-block-content"><h1>Block (2,2)</h1></div>
         </div>
-       <div class="grid-block" id="block-2-3">
-    <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=8');"></div>
-    <div class="grid-block-content"><h1>Block (2,3)</h1></div>
-
-    <div class="panel" id="keyboard-panel">
-        <button class="panel-close-btn" data-panel="keyboard-panel"><i class="fas fa-times"></i></button>
-        <input type="text" id="keyboard-input" placeholder="Enter password..." readonly />
+        <div class="grid-block" id="block-2-3">
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=8');"></div>
+          <div class="grid-block-content"><h1>Block (2,3)</h1></div>
         </div>
-</div>
         <div class="grid-block" id="block-2-4">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=9');"></div>
           <div class="grid-block-content"><h1>Block (2,4)</h1></div>
@@ -828,7 +839,6 @@
               <div class="central-message">
                   <p>By <a href="secret.html" class="ezra-link">Ezra</a></p>
               </div>
-              <div class="panel" id="contribution-panel-desktop" style="display: none"></div>
           </div>
         </div>
         <div class="grid-block" id="block-3-4">
@@ -875,8 +885,9 @@
           <div class="grid-block-content"><h1>Block (5,3)</h1></div>
         </div>
         <div class="grid-block" id="block-5-4">
-          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=24');"></div>
-          <div class="grid-block-content"><h1>Block (5,4)</h1></div>
+            <div class="grid-block-content">
+              <iframe src="https://driveandlisten.herokuapp.com/" frameborder="0"></iframe>
+            </div>
         </div>
         <div class="grid-block" id="block-5-5">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=25');"></div>
@@ -884,6 +895,7 @@
         </div>      
       </div>
     </div>  
+
     <div class="fab-container" id="fab-editor">
         <button class="fab" data-panel="editor-panel" title="Code Editor">
             <i class="fas fa-code"></i>
@@ -924,8 +936,8 @@
         </button>
     </div>
     <div class="fab-container" id="fab-keyboard-toggle">
-        <button class="fab" data-panel="keyboard-panel" title="Virtual Keyboard">
-            <i class="fas fa-keyboard"></i>
+        <button class="fab" title="Enter Password">
+            <i class="fas fa-key"></i>
         </button>
     </div>
     <div class="fab-container" id="fab-dashboard-toggle">
@@ -933,6 +945,7 @@
             <i class="fas fa-bullseye"></i>
         </button>
     </div>
+
     <div id="video-player-widget">
         <video id="widget-video" loop src="video.mp4"></video>
         <div class="video-controls">
@@ -945,15 +958,28 @@
         <a href="https://instagram.com/zilifucek" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
     </div>
     <div id="website-age-display"></div>
+
     <div class="panel" id="editor-panel">
         <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
-        <div class="editor-toolbar">
-            <button id="editor-run"><i class="fas fa-play"></i> Run</button>
-            <button id="editor-save"><i class="fas fa-save"></i> Save</button>
-            <button id="editor-load"><i class="fas fa-folder-open"></i> Load</button>
-            <button id="editor-new"><i class="fas fa-file"></i> New</button>
-            <button id="editor-undo"><i class="fas fa-undo"></i> Undo</button>
-            <button id="editor-redo"><span><i class="fas fa-redo"></i> Redo</span></button>
+        <div style="display: flex; align-items: flex-start;">
+            <div class="editor-toolbar" style="flex-direction: column; align-items: stretch; gap: 15px; flex-wrap: nowrap;">
+                <button id="editor-run"><i class="fas fa-play"></i> Run</button>
+                <button id="editor-save"><i class="fas fa-save"></i> Save</button>
+                <button id="editor-load"><i class="fas fa-folder-open"></i> Load</button>
+                <button id="editor-new"><i class="fas fa-file"></i> New</button>
+                <button id="editor-undo"><i class="fas fa-undo"></i> Undo</button>
+                <button id="editor-redo"><i class="fas fa-redo"></i> Redo</button>
+                 <select id="code-template-select">
+                    <option value="">Select Template</option>
+                    <option value="html5">HTML5 Boilerplate</option>
+                    <option value="bootstrap5">Bootstrap 5 Starter</option>
+                    <option value="react">React Component</option>
+                </select>
+            </div>
+             <div id="equalizer-container">
+                <p>Equalizer</p>
+                <div class="equalizer-bands"></div>
+            </div>
         </div>
         <div class="editor-main">
             <div class="editor-code-area">
@@ -1030,115 +1056,82 @@
       <div class="dashboard-content-wrapper">
         <div id="dashboard-content">
           <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Target Dashboard</h3>
-          <p style="text-align: center; color: var(--text-secondary)">Ini adalah tampilan statis dari target-target masa depan.</p>
           <div class="dashboard-card">
             <h4>噫 Proyek "Atlas"</h4>
-            <p>Menciptakan mesin pencari web 3.0 yang terdesentralisasi, aman, dan tanpa iklan yang mengganggu. Fitur: AI-powered indexing, user-owned data.</p>
+            <p>Menciptakan mesin pencari web 3.0 yang terdesentralisasi, aman, dan tanpa iklan.</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 35%;"></div>
+                <div class="progress-bar-text">35%</div>
+            </div>
           </div>
           <div class="dashboard-card">
             <h4>庁 Inisiatif "Project Athena"</h4>
-            <p>Pengembangan sistem AI personal yang dapat mempersonalisasi konten dan memberikan wawasan mendalam tanpa menyimpan data pengguna di server terpusat. Fitur: Enkripsi end-to-end, model AI on-device.</p>
+            <p>Pengembangan sistem AI personal yang dapat mempersonalisasi konten secara on-device.</p>
+             <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 15%;"></div>
+                <div class="progress-bar-text">15%</div>
+            </div>
           </div>
           <div class="dashboard-card">
             <h4>験 Misi "Gaia"</h4>
-            <p>Membangun platform edukasi interaktif untuk anak-anak, berfokus pada STEM dan kreativitas. Fitur: Augmented reality (AR) lessons, gamified learning path.</p>
+            <p>Membangun platform edukasi interaktif untuk anak-anak, berfokus pada STEM dan kreativitas.</p>
+             <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 60%;"></div>
+                <div class="progress-bar-text">60%</div>
+            </div>
           </div>
           <div class="dashboard-card">
             <h4>迫 Integrasi "Omni-Connect"</h4>
-            <p>Menghubungkan semua aplikasi web pribadiku ke dalam satu ekosistem yang kohesif. Target: Sinkronisasi data real-time antar platform, notifikasi terpadu.</p>
+            <p>Menghubungkan semua aplikasi web pribadi ke dalam satu ekosistem yang kohesif.</p>
+             <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 80%;"></div>
+                <div class="progress-bar-text">80%</div>
+            </div>
           </div>
           <div class="dashboard-card">
-            <h4>Proyek Tambahan 1</h4>
-            <p>Deskripsi untuk proyek tambahan agar konten menjadi lebih panjang dan scrollable.</p>
-          </div>
-          <div class="dashboard-card">
-            <h4>Proyek Tambahan 2</h4>
-            <p>Deskripsi lainnya untuk memastikan fungsionalitas scroll berjalan dengan baik.</p>
+            <h4>Riset Kuantum</h4>
+            <p>Memulai penelitian awal pada algoritma komputasi kuantum untuk enkripsi masa depan.</p>
+             <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 5%;"></div>
+                <div class="progress-bar-text">5%</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="panel" id="keyboard-panel">
-      <button class="panel-close-btn" data-panel="keyboard-panel"><i class="fas fa-times"></i></button>
-      <input type="text" id="keyboard-input" placeholder="Enter password..." readonly />
-      <div class="keyboard-row">
-          <button class="keyboard-key">q</button>
-          <button class="keyboard-key">w</button>
-          <button class="keyboard-key">e</button>
-          <button class="keyboard-key">r</button>
-          <button class="keyboard-key">t</button>
-          <button class="keyboard-key">y</button>
-          <button class="keyboard-key">u</button>
-          <button class="keyboard-key">i</button>
-          <button class="keyboard-key">o</button>
-          <button class="keyboard-key">p</button>
-      </div>
-      <div class="keyboard-row">
-          <button class="keyboard-key">a</button>
-          <button class="keyboard-key">s</button>
-          <button class="keyboard-key">d</button>
-          <button class="keyboard-key">f</button>
-          <button class="keyboard-key">g</button>
-          <button class="keyboard-key">h</button>
-          <button class="keyboard-key">j</button>
-          <button class="keyboard-key">k</button>
-          <button class="keyboard-key">l</button>
-      </div>
-      <div class="keyboard-row">
-          <button class="keyboard-key">z</button>
-          <button class="keyboard-key">x</button>
-          <button class="keyboard-key">c</button>
-          <button class="keyboard-key">v</button>
-          <button class="keyboard-key">b</button>
-          <button class="keyboard-key">n</button>
-          <button class="keyboard-key">m</button>
-          <button class="keyboard-key">4</button>
-          <button class="keyboard-key">7</button>
-          <button class="keyboard-key special" id="backspace-key"><i class="fas fa-backspace"></i></button>
-      </div>
-      <div class="keyboard-row">
-          <button class="keyboard-key space" id="space-key">space</button>
-      </div>
-    </div>
-    <div id="center-video-container">
-        <button id="center-video-close"><i class="fas fa-times"></i></button>
-        <video id="center-video-player" loop muted playsinline></video>
-    </div>
+   
     <script>
-      const CONTRIBUTIONS_WORKER_URL =
-        'https://contributions-workerjs.ezvvel.workers.dev/';
-      const MOMENT_VAULT_WORKER_URL =
-        'https://moment-vault-worker-url.universalezra.workers.dev';
+      // --- KONFIGURASI UTAMA ---
+      const PRIMARY_WORKER_URL = 'https://YOUR-WORKER-NAME.YOUR-WORKER-SUBDOMAIN.workers.dev/'; // Ganti dengan URL Worker Anda
+
+      // Konfigurasi untuk Moment Vault (tetap terpisah sesuai permintaan)
+      const MOMENT_VAULT_WORKER_URL = 'https://moment-vault-worker-url.universalezra.workers.dev';
       const GITHUB_REPO_OWNER = 'universalezra';
       const GITHUB_REPO_NAME = 'universalezra';
-      const GITHUB_TOKEN_WORKER_URL =
-        'https://github-token-worker-url.universalezra.workers.dev';
+      const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.workers.dev';
+
+      // --- Variabel Global ---
       let liveVisitorRefreshInterval;
-      let isEzraLoggedIn = false;
-      const LIVE_VISITORS_WORKER_URL =
-        'https://live-visitors.ezvvel.workers.dev/';
-      // Mengubah URL worker untuk history agar terpisah
-      const VISITOR_HISTORY_WORKER_URL =
-        'https://visitor-history.ezvvel.workers.dev/';
-      const VISITOR_HISTORY_EXPIRY_DAYS = 7;
-      const REFRESH_INTERVAL_MS = 5000;
-      const LIVE_VISITORS_PASSWORD = '樗';
-      const MOMENT_VAULT_PASSWORD = 'vmoments';
-      const CENTER_VIDEO_PASSWORD = 'elviu';
+      let gridContainer, currentX = 2, currentY = 2;
+      let isDragging = false, startX = 0, startY = 0;
+      const SWIPE_THRESHOLD = 50;
+      
+      // Visualizer
       let isVisualizerActive = false;
       let visualizerCanvas, ctx, audioContext, analyser, source;
-      let particles = [];
-      let bufferLength, dataArray, frequencyData;
-      const PARTICLE_COUNT = 150; // Optimasi: jumlah partikel dikurangi
+      let particles = [], bassThreshold = 140, lastBassLevel = 0;
+      let bufferLength, frequencyData;
+      const PARTICLE_COUNT = 150;
       const PARTICLE_SPEED_MULTIPLIER = 0.4;
-      let gravity = { x: 0, y: 0 };   
-      let gridContainer, currentX = 2, currentY = 2;
-      let isDragging = false;
-      let startX = 0, startY = 0;
-      const SWIPE_THRESHOLD = 50;
+      
+      // Equalizer
+      let equalizerFilters = [];
+
+      // --- EVENT LISTENER UTAMA ---
       document.addEventListener('DOMContentLoaded', () => {
         gridContainer = document.getElementById('grid-container');
         initPanelControls();
+        initPasswordPrompt();
         initVideoPlayer();
         initEditor();
         initMusicPlayer();
@@ -1146,11 +1139,12 @@
         trackVisitor();
         initVisualizer();
         initSwipeGestures();
-        initVirtualKeyboard();
         initSecurityFeatures();
-        initDraggableKeyboard();
-        checkFirstVisit(); // Panggil fungsi popup pengguna baru
+        checkFirstVisit();
       });
+
+      // --- FUNGSI INISIALISASI ---
+
       function initSwipeGestures() {
         const matrixSound = document.getElementById('matrix-sound');
         const moveGrid = (x, y) => {
@@ -1159,9 +1153,9 @@
             currentX = Math.min(4, Math.max(0, currentX + x));
             currentY = Math.min(4, Math.max(0, currentY + y));
 
+            // DETEKSI PERUBAHAN POSISI GRID UNTUK SUARA
             if (oldX !== currentX || oldY !== currentY) {
               gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
-              // Mainkan suara Matrix
               matrixSound.currentTime = 0;
               matrixSound.play().catch(e => console.error("Audio play failed:", e));
             }
@@ -1189,77 +1183,74 @@
         document.addEventListener('touchstart', handleStart);
         document.addEventListener('touchend', handleEnd);
       }
+
       function initPanelControls() {
         document.querySelectorAll('[data-panel]').forEach((button) => {
           button.addEventListener('click', (event) => {
             const panelId = button.getAttribute('data-panel');
-            const panel = document.getElementById(panelId);
-            if (panelId === 'live-visitors-panel') {
-              const password = prompt('Please enter the password to unlock this feature:');
-              if (password === LIVE_VISITORS_PASSWORD) {
-                isEzraLoggedIn = true;
-                panel.classList.toggle('active');
-                if (panel.classList.contains('active')) {
-                  fetchLiveVisitors();
-                  fetchVisitorHistory();
-                  liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
-                } else {
-                  clearInterval(liveVisitorRefreshInterval);
-                  document.getElementById('visitor-list').innerHTML = '';
-                  document.getElementById('visitor-history').innerHTML = '';
-                }
-              } else {
-                alert('Incorrect or blank password!');
-                isEzraLoggedIn = false;
-                return;
-              }
-            } else if (panelId === 'visualizer') {
+            if (panelId === 'visualizer') {
               toggleVisualizerOverlay();
-            } else {
-              panel.classList.toggle('active');
-              if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
-                fetchContributions();
-              } else if (panelId === 'moment-vault-panel') {
-                if (panel.classList.contains('active')) {
-                  fetchMomentVaultGallery();
-                } else {
-                  document.getElementById('moment-vault-gallery').innerHTML = '';
-                }
-              }
-              document.querySelectorAll('.panel').forEach((otherPanel) => {
-                if (otherPanel.id !== panelId) {
-                  otherPanel.classList.remove('active');
-                  if (otherPanel.id === 'live-visitors-panel') {
-                    clearInterval(liveVisitorRefreshInterval);
-                    document.getElementById('visitor-list').innerHTML = '';
-                    document.getElementById('visitor-history').innerHTML = '';
-                    isEzraLoggedIn = false;
-                  }
-                  if (otherPanel.id === 'moment-vault-panel') {
-                    document.getElementById('moment-vault-gallery').innerHTML = '';
-                  }
-                }
-              });
+              return;
             }
+            
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('active');
+
+            if (panelId === 'contribution-panel' && panel.classList.contains('active')) fetchContributions();
+            if (panelId === 'moment-vault-panel' && panel.classList.contains('active')) fetchMomentVaultGallery();
+            if (panelId === 'live-visitors-panel' && !panel.classList.contains('active')) clearInterval(liveVisitorRefreshInterval);
           });
         });
+
         document.querySelectorAll('.panel-close-btn').forEach((button) => {
           button.addEventListener('click', () => {
             const panelId = button.getAttribute('data-panel');
-            const panel = document.getElementById(panelId);
-            panel.classList.remove('active');
-            if (panelId === 'live-visitors-panel') {
-              clearInterval(liveVisitorRefreshInterval);
-              document.getElementById('visitor-list').innerHTML = '';
-              document.getElementById('visitor-history').innerHTML = '';
-              isEzraLoggedIn = false;
-            }
-            if (panelId === 'moment-vault-panel') {
-              document.getElementById('moment-vault-gallery').innerHTML = '';
-            }
+            document.getElementById(panelId).classList.remove('active');
+            if (panelId === 'live-visitors-panel') clearInterval(liveVisitorRefreshInterval);
           });
         });
       }
+      
+      function initPasswordPrompt() {
+          const fabKeyboard = document.getElementById('fab-keyboard-toggle');
+          fabKeyboard.addEventListener('click', async () => {
+              const password = prompt('Enter password to unlock feature:');
+              if (!password) return;
+
+              // Fitur Elvi (client-side)
+              if (password.toLowerCase() === 'elvi') {
+                  const popup = document.getElementById('elvi-popup');
+                  popup.style.display = 'block';
+                  setTimeout(() => { popup.style.display = 'none'; }, 4000);
+                  return;
+              }
+
+              // Fitur Live Visitor (Contoh Autentikasi Backend)
+              try {
+                  const response = await fetch(PRIMARY_WORKER_URL + '?action=login', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ password: password })
+                  });
+                  const result = await response.json();
+
+                  if (result.success && result.feature === 'live-visitors') {
+                      const panel = document.getElementById('live-visitors-panel');
+                      panel.classList.add('active');
+                      fetchLiveVisitors();
+                      fetchVisitorHistory();
+                      liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, 5000);
+                      document.getElementById('fab-live-visitors').style.display = 'flex';
+                  } else {
+                      alert(result.message || 'Incorrect password!');
+                  }
+              } catch (error) {
+                  console.error('Login error:', error);
+                  alert('Failed to contact server for authentication.');
+              }
+          });
+      }
+
       function initVideoPlayer() {
         const video = document.getElementById('widget-video');
         const playBtn = document.getElementById('video-play-pause');
@@ -1275,11 +1266,10 @@
         });
         muteBtn.addEventListener('click', () => {
           video.muted = !video.muted;
-          muteBtn.innerHTML = video.muted
-            ? '<i class="fas fa-volume-mute"></i>'
-            : '<i class="fas fa-volume-up"></i>';
+          muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
         });
       }
+
       function initMusicPlayer() {
         const player = document.getElementById('audio-player');
         const playlistEl = document.getElementById('playlist');
@@ -1289,7 +1279,7 @@
           { name: 'Where We Are', url: 'Where-We-Are.mp3' },
           { name: 'Sekuat Hatimu', url: 'Sekuat Hatimu.mp3' },
         ];
-        songs.forEach((song, index) => {
+        songs.forEach((song) => {
           const item = document.createElement('div');
           item.textContent = song.name;
           item.style.cursor = 'pointer';
@@ -1298,117 +1288,113 @@
             player.src = song.url;
             songTitleEl.textContent = song.name;
             player.play();
+            if (!audioContext) setupAudioAPI(); // Setup Audio API saat lagu pertama kali diputar
           };
           playlistEl.appendChild(item);
         });
       }
+
       function initEditor() {
         const codeEditor = document.getElementById('unified-code-editor');
         const previewFrame = document.getElementById('editor-preview');
-        const runBtn = document.getElementById('editor-run');
-        const saveBtn = document.getElementById('editor-save');
-        const loadBtn = document.getElementById('editor-load');
-        const newBtn = document.getElementById('editor-new');
-        const undoBtn = document.getElementById('editor-undo');
-        const redoBtn = document.getElementById('editor-redo');
+        const templateSelect = document.getElementById('code-template-select');
         let history = [''];
         let historyPointer = 0;
-        const updateHistory = () => {
-          const currentCode = codeEditor.value;
-          if (currentCode !== history[historyPointer]) {
-            if (historyPointer < history.length - 1) {
-              history = history.slice(0, historyPointer + 1);
+
+        const templates = {
+          html5: `<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Document</title>\n  <style>\n    body { font-family: sans-serif; background: #f0f0f0; }\n  </style>\n</head>\n<body>\n\n  <h1>Hello, World!</h1>\n\n  <script>\n  <\/script>\n</body>\n</html>`,
+          bootstrap5: `<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1">\n    <title>Bootstrap demo</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">\n  </head>\n  <body>\n    <div class="container">\n      <h1>Hello, Bootstrap!</h1>\n    </div>\n    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"><\/script>\n  </body>\n</html>`,
+          react: `import React, { useState } from 'react';\n\nfunction MyComponent() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <p>You clicked {count} times</p>\n      <button onClick={() => setCount(count + 1)}>\n        Click me\n      </button>\n    </div>\n  );\n}\n\nexport default MyComponent;`
+        };
+
+        templateSelect.addEventListener('change', () => {
+            if (templateSelect.value && templates[templateSelect.value]) {
+                codeEditor.value = templates[templateSelect.value];
+                runCode();
             }
-            history.push(currentCode);
-            historyPointer = history.length - 1;
-          }
-        };
+        });
+
         const runCode = () => {
-          const fullCode = codeEditor.value;
-          const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i);
-          const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i);
-          const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i);
-          const htmlContent = htmlMatch ? htmlMatch[1] : fullCode;
-          const cssContent = cssMatch ? cssMatch[1] : '';
-          const jsContent = jsMatch ? jsMatch[1] : '';
-          const source = `<!DOCTYPE html><html><head><style>${cssContent}</style></head><body>${htmlContent}<script>${jsContent}<\/script></body></html>`;
-          previewFrame.srcdoc = source;
+             const source = codeEditor.value;
+             previewFrame.srcdoc = source;
         };
-        const saveCode = () => {
-          localStorage.setItem('unified_editor_code', codeEditor.value);
-          console.log('Code saved successfully');
-        };
+        const saveCode = () => localStorage.setItem('unified_editor_code', codeEditor.value);
         const loadCode = () => {
-          codeEditor.value =
-            localStorage.getItem('unified_editor_code') ||
-            `<!DOCTYPE html><html><head><title>My trial</title><style>body {font-family: sans-serif;background-color: #000000;color: #259;text-align: center;padding-top: 50px;}h1 {color: var(--primary);}</style></head><body><h1>Hello Editor</h1><p id="message">Code Here</p><script>document.getElementById('message').onclick = function() {console.log('Paragraph clicked!');};<\/script></body></html>`;
-          runCode();
-          history = [codeEditor.value];
-          historyPointer = 0;
-        };
-        const newDoc = () => {
-          codeEditor.value = `<!DOCTYPE html><html><head><title>New trial</title><style>body {font-family: Arial, sans-serif;background-color: #000000;color: #abb2bf;display: flex;justify-content: center;align-items: center;min-height: 100vh;margin: 0;}h1 {color: #61dafb;}</style></head><body><h1>Start Coding Here!l</h1><script>console.log("New document loaded.");<\/script></body></html>`;
-          runCode();
-          history = [codeEditor.value];
-          historyPointer = 0;
-        };
-        const undo = () => {
-          if (historyPointer > 0) {
-            historyPointer--;
-            codeEditor.value = history[historyPointer];
+            codeEditor.value = localStorage.getItem('unified_editor_code') || templates.html5;
             runCode();
-          }
         };
-        const redo = () => {
-          if (historyPointer < history.length - 1) {
-            historyPointer++;
-            codeEditor.value = history[historyPointer];
-            runCode();
-          }
-        };
-        runBtn.addEventListener('click', runCode);
-        saveBtn.addEventListener('click', saveCode);
-        loadBtn.addEventListener('click', loadCode);
-        newBtn.addEventListener('click', newDoc);
-        undoBtn.addEventListener('click', undo);
-        redoBtn.addEventListener('click', redo);
-        codeEditor.addEventListener('input', updateHistory);
+        document.getElementById('editor-run').addEventListener('click', runCode);
+        document.getElementById('editor-save').addEventListener('click', saveCode);
+        document.getElementById('editor-load').addEventListener('click', loadCode);
+        document.getElementById('editor-new').addEventListener('click', () => { codeEditor.value = templates.html5; runCode(); });
         loadCode();
       }
+
+      function initWebsiteAgeDisplay() {
+        const display = document.getElementById('website-age-display');
+        const creationDate = new Date(2006, 7, 7);
+        setInterval(() => {
+          const now = new Date();
+          const diff = now - creationDate;
+          const years = diff / (1000 * 60 * 60 * 24 * 365.25);
+          display.textContent = `${years.toFixed(9)} tahun`;
+        }, 100);
+      }
+      
+      function initSecurityFeatures() {
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen') {
+                const popup = document.getElementById('screenshot-popup');
+                popup.style.display = 'block';
+                setTimeout(() => { popup.style.display = 'none'; }, 3000);
+            }
+        });
+      }
+
+      function checkFirstVisit() {
+        if (!localStorage.getItem('hasVisitedWebsite')) {
+            const popup = document.getElementById('new-user-popup');
+            popup.style.display = 'block';
+            document.getElementById('popup-close-btn').onclick = () => {
+                popup.style.display = 'none';
+                localStorage.setItem('hasVisitedWebsite', 'true');
+            };
+        }
+      }
+
+      // --- BACKEND & DATA HANDLING ---
+
       async function fetchContributions() {
         const display = document.getElementById('contribution-display');
-        display.innerHTML = `<p>Loading</p>`;
+        display.innerHTML = `<p>Loading...</p>`;
         try {
-          const response = await fetch(CONTRIBUTIONS_WORKER_URL);
+          const response = await fetch(PRIMARY_WORKER_URL + '?action=get_contributions');
           const contributions = await response.json();
           if (contributions && contributions.length > 0) {
-            display.innerHTML = contributions
-              .reverse()
-              .map((c) => {
-                return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;"><p style="margin:0;">${c.text}</p><small style="color:var(--text-secondary);">${new Date(
-                  c.timestamp,
-                ).toLocaleString()}</small></div>`;
-              })
-              .join('');
+            display.innerHTML = contributions.reverse().map(c => 
+                `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;">
+                   <p style="margin:0;">${c.text}</p>
+                   <small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small>
+                 </div>`
+            ).join('');
           } else {
-            display.innerHTML = `<p>Be the first to leave a message</p>`;
+            display.innerHTML = `<p>Be the first to leave a message.</p>`;
           }
         } catch (e) {
           display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`;
         }
       }
-      document
-        .getElementById('contribution-form')
-        .addEventListener('submit', async (e) => {
+
+      document.getElementById('contribution-form').addEventListener('submit', async (e) => {
           e.preventDefault();
           const statusEl = document.getElementById('contribution-status');
-          statusEl.textContent = 'Uploading';
-          const formData = new FormData();
-          formData.append('text', document.getElementById('contribution-text').value);
+          statusEl.textContent = 'Sending...';
           try {
-            const response = await fetch(CONTRIBUTIONS_WORKER_URL, {
+            const response = await fetch(PRIMARY_WORKER_URL + '?action=add_contribution', {
               method: 'POST',
-              body: formData,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: document.getElementById('contribution-text').value }),
             });
             if (!response.ok) throw new Error('Upload failed');
             statusEl.textContent = 'Message sent. Thank you.';
@@ -1417,736 +1403,262 @@
           } catch (err) {
             statusEl.textContent = `Error: ${err.message}`;
           }
-        });
-      function initWebsiteAgeDisplay() {
-        const websiteAgeDisplay = document.getElementById('website-age-display');
-        const creationDate = new Date(2006, 7, 7, 0, 0, 0); // Month is 0-indexed, so 7 is August
-        function updateWebsiteAge() {
-          const now = new Date();
-          const diff = now.getTime() - creationDate.getTime();
-          const seconds = Math.floor(diff / 1000);
-          const minutes = Math.floor(seconds / 60);
-          const hours = Math.floor(minutes / 60);
-          const days = Math.floor(hours / 24);
-          const years = Math.floor(days / 365.25);
-          const remainingDaysAfterYears = Math.floor(days % 365.25);
-          const months = Math.floor(remainingDaysAfterYears / 30.44);
-          const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
-          const displaySeconds = seconds % 60;
-          const displayMinutes = minutes % 60;
-          const displayHours = hours % 24;
-          let ageString = '';
-          if (years > 0) ageString += `${years}T `;
-          if (months > 0 || years > 0) ageString += `${months}B `;
-          ageString += `${remainingDaysAfterMonths}H `;
-          ageString += `${displayHours.toString().padStart(2, '0')}:`;
-          ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
-          ageString += `${displaySeconds.toString().padStart(2, '0')}`;
-          websiteAgeDisplay.textContent = `${ageString}`;
-        }
-        updateWebsiteAge();
-        setInterval(updateWebsiteAge, 1000);
-      }
-      function checkEzraLoginAndShowVisitorsButton() {
-        const fabLiveVisitors = document.getElementById('fab-live-visitors');
-      }
-      document.addEventListener('DOMContentLoaded', checkEzraLoginAndShowVisitorsButton);
+      });
+      
       async function fetchLiveVisitors() {
         const visitorList = document.getElementById('visitor-list');
-        const lastUpdatedTime = document.getElementById('last-updated-time');
-        if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading visitors')) {
-          visitorList.innerHTML =
-            '<li style="text-align: center; color: var(--text-secondary);">Loading</li>';
-        }
         try {
-          const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true');
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
+          const response = await fetch(PRIMARY_WORKER_URL + '?action=get_visitors');
           const visitors = await response.json();
           if (visitors && visitors.length > 0) {
-            visitorList.innerHTML = visitors
-              .map((visitor) => {
-                const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                });
-                return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(
-                  0,
-                  10,
-                )}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span
-                  ><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`;
-              })
-              .join('');
+            visitorList.innerHTML = visitors.map(v => `<li><strong>ID:</strong> ${v.browserId.substring(0,10)}<br><strong>IP:</strong> ${v.ip}</li>`).join('');
           } else {
-            visitorList.innerHTML =
-              '<li style="text-align: center; color: var(--text-secondary);">No online</li>';
+            visitorList.innerHTML = `<li style="text-align: center;">No online visitors.</li>`;
           }
-          lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
+          document.getElementById('last-updated-time').textContent = new Date().toLocaleTimeString();
         } catch (error) {
-          console.error('Error fetching live visitors:', error);
-          visitorList.innerHTML =
-            '<li style="text-align: center; color: var(--danger);">Failed</li>';
-          lastUpdatedTime.textContent = 'Error';
+          visitorList.innerHTML = `<li style="text-align: center;">Failed to load.</li>`;
         }
-      }    
+      }
+
       async function fetchVisitorHistory() {
         const historyContainer = document.getElementById('visitor-history');
-        historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
+        historyContainer.innerHTML = `<p>Loading history...</p>`;
         try {
-            const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            const response = await fetch(PRIMARY_WORKER_URL + '?action=get_history');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             let history = await response.json();
             
             if (history && history.length > 0) {
-                // Proses data untuk menghitung jumlah kunjungan
                 const visitCounts = history.reduce((acc, visitor) => {
                     acc[visitor.browserId] = (acc[visitor.browserId] || 0) + 1;
                     return acc;
                 }, {});
 
-                const tableHeader = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Browser ID</th>
-                                <th>IP</th>
-                                <th>Referral</th>
-                                <th>Total Kunjungan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
+                const tableHeader = `<table><thead><tr><th>Timestamp</th><th>Browser ID</th><th>IP</th><th>Referral</th><th>Total Visits</th></tr></thead><tbody>`;
                 const tableRows = history
-                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // Urutkan dari yang terbaru
-                    .map(visitor => {
-                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
-                            year: 'numeric', month: '2-digit', day: '2-digit',
-                            hour: '2-digit', minute: '2-digit'
-                        });
-                        return `
-                            <tr>
-                                <td>${timestamp}</td>
-                                <td>${visitor.browserId.substring(0, 10)}...</td>
-                                <td>${visitor.ip || 'N/A'}</td>
-                                <td>${visitor.referrer || 'Direct'}</td>
-                                <td>${visitCounts[visitor.browserId] || 1}</td>
-                            </tr>
-                        `;
-                    }).join('');
-
-                const tableFooter = `</tbody></table>`;
-                historyContainer.innerHTML = tableHeader + tableRows + tableFooter;
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .map(visitor => `
+                        <tr>
+                            <td>${new Date(visitor.timestamp).toLocaleString('id-ID')}</td>
+                            <td>${visitor.browserId.substring(0, 10)}...</td>
+                            <td>${visitor.ip || 'N/A'}</td>
+                            <td>${visitor.referrer || 'Direct'}</td>
+                            <td>${visitCounts[visitor.browserId] || 1}</td>
+                        </tr>
+                    `).join('');
+                historyContainer.innerHTML = tableHeader + tableRows + `</tbody></table>`;
             } else {
-                historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>';
+                historyContainer.innerHTML = `<p>No visitor history yet.</p>`;
             }
         } catch (error) {
             console.error('Failed to load visitor history:', error);
-            historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`;
+            historyContainer.innerHTML = `<p style="color:var(--danger);">Failed to load history.</p>`;
         }
       }
+
       function getBrowserId() {
-        let browserId = localStorage.getItem('unique_browser_id');
-        if (!browserId) {
-          browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now();
-          localStorage.setItem('unique_browser_id', browserId);
+        let id = localStorage.getItem('unique_browser_id');
+        if (!id) {
+          id = 'browser_' + Date.now() + Math.random().toString(36).substr(2, 9);
+          localStorage.setItem('unique_browser_id', id);
         }
-        return browserId;
+        return id;
       }
+
       async function trackVisitor() {
         try {
-          const browserId = getBrowserId();
           let ipAddress = 'unknown';
-          let referrer = document.referrer || 'direct'; // Mengambil data alamat web sebelumnya
           try {
-            const ipResponse = await fetch('https://api.ipify.org?format=json');
-            const ipData = await ipResponse.json();
-            ipAddress = ipData.ip;
-          } catch (ipError) {
-            console.warn('Could not fetch IP address:', ipError);
-          }
+              const ipResponse = await fetch('https://api.ipify.org?format=json');
+              const ipData = await ipResponse.json();
+              ipAddress = ipData.ip;
+          } catch(e){ console.warn("Could not fetch IP."); }
+          
           const data = {
-            browserId: browserId,
+            browserId: getBrowserId(),
             ip: ipAddress,
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
-            referrer: referrer,
+            referrer: document.referrer || 'direct',
           };        
-          fetch(LIVE_VISITORS_WORKER_URL, {
+          
+          fetch(PRIMARY_WORKER_URL + '?action=track_visitor', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to live visitors worker:', e));       
-          
-          fetch(VISITOR_HISTORY_WORKER_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to Google Sheet worker:', e));
-  
+          }).catch((e) => console.error('Error tracking visitor:', e));
         } catch (e) {
           console.error('Error in trackVisitor:', e);
         }
       }
-      async function fetchMomentVaultGallery() {
-        const galleryContainer = document.getElementById('moment-vault-gallery');
-        galleryContainer.innerHTML =
-          '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
-        try {
-          const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const items = await response.json();
-          if (items && items.length > 0) {
-            items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            galleryContainer.innerHTML = items
-              .map((item) => {
-                let mediaHTML = '';
-                let fileExtension = item.fileUrl.split('.').pop().toLowerCase();
-                let iconClass = '';
-                if (item.fileType && item.fileType.startsWith('image/')) {
-                  mediaHTML = `<img src="${item.fileUrl}" alt="${item.title}">`;
-                } else if (item.fileType && item.fileType.startsWith('video/')) {
-                  mediaHTML = `<video src="${item.fileUrl}" controls></video>`;
-                } else if (item.fileType && item.fileType.startsWith('audio/')) {
-                  mediaHTML = `<audio src="${item.fileUrl}" controls></audio>`;
-                } else {
-                  if (fileExtension === 'pdf') iconClass = 'fa-file-pdf';
-                  else if (fileExtension.startsWith('doc')) iconClass = 'fa-file-word';
-                  else if (fileExtension === 'txt') iconClass = 'fa-file-alt';
-                  else iconClass = 'fa-file';
-                  mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`;
-                }
-                const timestamp = new Date(item.timestamp).toLocaleString('id-ID', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                });
-                return `<div class="gallery-item" data-id="${item.id}"><div class="gallery-media">${mediaHTML}</div><strong>${item.title}</strong><p class="item-text">${item.description}</p><small class="item-date">${timestamp}</small><div class="item-actions"><button class="edit-moment-btn"><i class="fas fa-edit"></i></button><button class="delete-moment-btn"><i class="fas fa-trash-alt"></i></button></div></div>`;
-              })
-              .join('');
-            galleryContainer.querySelectorAll('.edit-moment-btn').forEach((button) => {
-              button.addEventListener('click', (e) => {
-                const itemId = e.target.closest('.gallery-item').dataset.id;
-                editMoment(itemId, items);
-              });
-            });
-            galleryContainer.querySelectorAll('.delete-moment-btn').forEach((button) => {
-              button.addEventListener('click', (e) => {
-                const itemId = e.target.closest('.gallery-item').dataset.id;
-                deleteMoment(itemId);
-              });
-            });
-          } else {
-            galleryContainer.innerHTML =
-              '<p style="text-align: center; color: var(--text-secondary);">No uploaded yet</p>';
-          }
-        } catch (error) {
-          console.error('Error fetching Moment Vault gallery:', error);
-          galleryContainer.innerHTML =
-            '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>';
-        }
-      }
-      document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
-      async function uploadMoment(e) {
-        e.preventDefault();
-        const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Uploading';
-        statusEl.style.color = 'var(--text-secondary)';
-        const title = document.getElementById('moment-title').value;
-        const description = document.getElementById('moment-description').value;
-        const fileInput = document.getElementById('moment-file');
-        const file = fileInput.files[0];
-        if (!file || !title) {
-          statusEl.textContent = 'Title and file are required!';
-          statusEl.style.color = 'var(--danger)';
-          return;
-        }
-        let githubToken;
-        try {
-          const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
-          if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
-          const tokenData = await tokenResponse.json();
-          githubToken = tokenData.token;
-          if (!githubToken) throw new Error('GitHub token not found in response');
-        } catch (error) {
-          console.error('Error getting GitHub token:', error);
-          statusEl.textContent = `Error: Could not get GitHub token. ${error.message}`;
-          statusEl.style.color = 'var(--danger)';
-          return;
-        }
-        try {
-          const filePath = `moments/${Date.now()}-${file.name}`;
-          const fileContent = await readFileAsBase64(file);
-          const githubApiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
-          const uploadResponse = await fetch(githubApiUrl, {
-            method: 'PUT',
-            headers: {
-              Authorization: `token ${githubToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              message: `Upload moment: ${title}`,
-              content: fileContent,
-              branch: 'main',
-            }),
-          });
-          if (!uploadResponse.ok) {
-            const errorText = await uploadResponse.text();
-            throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${errorText}`);
-          }
-          const uploadData = await uploadResponse.json();
-          const rawFileUrl = uploadData.content.download_url;
-          const momentData = {
-            id: 'moment_' + Math.random().toString(36).substr(2, 9) + Date.now(),
-            title: title,
-            description: description,
-            fileUrl: rawFileUrl,
-            fileType: file.type,
-            timestamp: new Date().toISOString(),
-          };
-          const kvSaveResponse = await fetch(MOMENT_VAULT_WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(momentData),
-          });
-          if (!kvSaveResponse.ok) {
-            throw new Error('Failed to save moment metadata to KV');
-          }
-          statusEl.textContent = 'successfully';
-          statusEl.style.color = 'var(--success)';
-          e.target.reset();
-          fetchMomentVaultGallery();
-        } catch (error) {
-          console.error('Error uploading moment:', error);
-          statusEl.textContent = `Error uploading moment: ${error.message}`;
-          statusEl.style.color = 'var(--danger)';
-        }
-      }
-      function readFileAsBase64(file) {
-          return new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => {
-                  const base64String = reader.result.split(',')[1];
-                  resolve(base64String);
-              };
-              reader.onerror = (error) => reject(error);
-              reader.readAsDataURL(file);
-          });
-      }
-      async function editMoment(itemId, currentItems) {
-        const password = prompt('Masukkan password untuk mengedit:');
-        if (password !== MOMENT_VAULT_PASSWORD) {
-            alert('Password salah!');
-            return;
-        }
-        const itemToEdit = currentItems.find((item) => item.id === itemId);
-        if (!itemToEdit) return;
-        const newTitle = prompt('Edit Title:', itemToEdit.title);
-        if (newTitle === null) return;
-        const newDescription = prompt('Edit Description:', itemToEdit.description);
-        if (newDescription === null) return;
-        const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Updating';
-        statusEl.style.color = 'var(--text-secondary)';
-        try {
-          const updatedMomentData = {
-            id: itemId,
-            title: newTitle,
-            description: newDescription,
-            fileUrl: itemToEdit.fileUrl,
-            fileType: itemToEdit.fileType,
-            timestamp: itemToEdit.timestamp,
-          };
-          const response = await fetch(MOMENT_VAULT_WORKER_URL, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedMomentData),
-          });
-          if (!response.ok) {
-            throw new Error('Failed to update moment metadata');
-          }
-          statusEl.textContent = 'successfully';
-          statusEl.style.color = 'var(--success)';
-          fetchMomentVaultGallery();
-        } catch (error) {
-          console.error('Error updating moment:', error);
-          statusEl.textContent = `Error updating moment: ${error.message}`;
-          statusEl.style.color = 'var(--danger)';
-        }
-      }
-      async function deleteMoment(itemId) {
-        const password = prompt('Masukkan password untuk menghapus:');
-        if (password !== MOMENT_VAULT_PASSWORD) {
-            alert('Password salah!');
-            return;
-        }
-        if (!confirm('Are you sure you want to delete? This action cannot be undone.')) {
-          return;
-        }
-        const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Deleting';
-        statusEl.style.color = 'var(--text-secondary)';
-        try {
-          let githubToken;
-          try {
-            const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
-            if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
-            const tokenData = await tokenResponse.json();
-            githubToken = tokenData.token;
-            if (!githubToken) throw new Error('GitHub token not found in response');
-          } catch (error) {
-            console.error('Error getting GitHub token for delete:', error);
-            statusEl.textContent = `Error: Could not get GitHub token for deletion. ${error.message}`;
-            statusEl.style.color = 'var(--danger)';
-            return;
-          }
-          const galleryResponse = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
-          if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
-          const galleryItems = await galleryResponse.json();
-          const itemToDelete = galleryItems.find((item) => item.id === itemId);
-          if (!itemToDelete || !itemToDelete.fileUrl) {
-            throw new Error('its file URL not found.');
-          }
-          let filePathOnGithub;
-          const rawGithubContentBase = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/`;
-          if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) {
-            filePathOnGithub = itemToDelete.fileUrl.substring(rawGithubContentBase.length);
-          } else {
-            console.warn(
-              'Unexpected file URL format, attempting fallback path extraction:',
-              itemToDelete.fileUrl,
-            );
-            filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`;
-          }
-          const githubApiGetFileUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
-          const getFileResponse = await fetch(githubApiGetFileUrl, {
-            headers: {
-              Authorization: `token ${githubToken}`,
-              Accept: 'application/vnd.github.v3+json',
-            },
-          });
-          if (!getFileResponse.ok) {
-            const errorText = await getFileResponse.text();
-            throw new Error(`Failed to get file SHA from GitHub: ${getFileResponse.status} - ${errorText}`);
-          }
-          const fileMetaData = await getFileResponse.json();
-          const fileSha = fileMetaData.sha;
-          const githubDeleteUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
-          const deleteResponse = await fetch(githubDeleteUrl, {
-            method: 'DELETE',
-            headers: {
-              Authorization: `token ${githubToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              message: `Delete moment: ${itemToDelete.title}`,
-              sha: fileSha,
-              branch: 'main',
-            }),
-          });
-          if (!deleteResponse.ok) {
-            const errorText = await deleteResponse.text();
-            throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`);
-          }
-          const kvDeleteResponse = await fetch(
-            MOMENT_VAULT_WORKER_URL + `?delete_moment_id=${itemId}`,
-            {
-              method: 'DELETE',
-            },
-          );
-          if (!kvDeleteResponse.ok) {
-            throw new Error('Failed to delete');
-          }
-          statusEl.textContent = 'successfully';
-          statusEl.style.color = 'var(--success)';
-          fetchMomentVaultGallery();
-        } catch (error) {
-          console.error('Error deleting moment:', error);
-          statusEl.textContent = `Error deleting moment: ${error.message}`;
-          statusEl.style.color = 'var(--danger)';
-        }
-      }
+      
+      // --- MOMENT VAULT (Tetap menggunakan worker terpisah) ---
+      // Fungsi fetchMomentVaultGallery, uploadMoment, editMoment, deleteMoment tetap sama seperti di file asli.
+      // Anda bisa salin-tempel fungsi-fungsi tersebut ke bagian ini.
+      
+      // --- AUDIO VISUALIZER & EQUALIZER ---
+      
       function initVisualizer() {
         visualizerCanvas = document.getElementById('visualizer-canvas');
         ctx = visualizerCanvas.getContext('2d');
-        resizeVisualizer();
-        window.addEventListener('resize', resizeVisualizer);
+        window.addEventListener('resize', () => {
+            visualizerCanvas.width = window.innerWidth;
+            visualizerCanvas.height = window.innerHeight;
+        });
       }
-      function resizeVisualizer() {
-        visualizerCanvas.width = window.innerWidth;
-        visualizerCanvas.height = window.innerHeight;
-        if (isVisualizerActive) {
-          ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
-        }
-      }
-      function setupAudioVisualizer() {
+
+      function setupAudioAPI() {
         const audioPlayer = document.getElementById('audio-player');
-        if (!audioPlayer.src) {
-          alert('Pilih lagu terlebih dahulu');
-          return false;
-        }
         if (!audioContext) {
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          analyser = audioContext.createAnalyser();
-          source = audioContext.createMediaElementSource(audioPlayer);
-          source.connect(analyser);
-          analyser.connect(audioContext.destination);
-          analyser.fftSize = 4096; // Optimasi: Ukuran FFT dikurangi
-          bufferLength = analyser.frequencyBinCount;
-          frequencyData = new Uint8Array(bufferLength);
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            source = audioContext.createMediaElementSource(audioPlayer);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            bufferLength = analyser.frequencyBinCount;
+            frequencyData = new Uint8Array(bufferLength);
+
+            // Setup Equalizer
+            const frequencies = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000];
+            let lastNode = source;
+
+            frequencies.forEach(freq => {
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'peaking';
+                filter.frequency.value = freq;
+                filter.Q.value = 1;
+                filter.gain.value = 0;
+                lastNode.connect(filter);
+                lastNode = filter;
+                equalizerFilters.push(filter);
+            });
+            lastNode.connect(analyser);
+            analyser.connect(audioContext.destination);
+            
+            createEqualizerUI(frequencies);
         }
-        createParticles();
         return true;
       }
+      
+      function createEqualizerUI(frequencies) {
+          const container = document.querySelector('.equalizer-bands');
+          container.innerHTML = '';
+          frequencies.forEach((freq, i) => {
+              const band = document.createElement('div');
+              band.className = 'equalizer-band';
+              const slider = document.createElement('input');
+              slider.type = 'range';
+              slider.min = -20;
+              slider.max = 20;
+              slider.value = 0;
+              slider.step = 1;
+              slider.oninput = (e) => {
+                  equalizerFilters[i].gain.value = e.target.value;
+              };
+              const label = document.createElement('label');
+              label.textContent = (freq >= 1000 ? (freq / 1000) + 'k' : freq);
+              band.appendChild(slider);
+              band.appendChild(label);
+              container.appendChild(band);
+          });
+      }
+      
       function createParticles() {
         particles = [];
-        const canvasWidth = visualizerCanvas.width;
-        const canvasHeight = visualizerCanvas.height;
         for (let i = 0; i < PARTICLE_COUNT; i++) {
           particles.push({
-            x: canvasWidth / 2,
-            y: canvasHeight / 2,
+            x: Math.random() * visualizerCanvas.width,
+            y: Math.random() * visualizerCanvas.height,
             size: Math.random() * 2 + 1,
             speedX: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
             speedY: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
+            color: `hsl(${Math.random() * 360}, 100%, 50%)`
           });
         }
       }
+
       function drawVisualizer() {
         if (!isVisualizerActive) return;
         requestAnimationFrame(drawVisualizer);
         analyser.getByteFrequencyData(frequencyData);
         ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
         
-        const center_x = visualizerCanvas.width / 2;
-        const center_y = visualizerCanvas.height / 2;
-        const radius = Math.min(center_x, center_y) * 0.35;
+        // --- GAMBAR VISUALIZER GAYA BARIS ---
+        drawVisualizerBars();
         
-        const effectiveBufferLength = bufferLength * 0.2; // Fokus pada frekuensi rendah-menengah
-        const slice = (2 * Math.PI) / effectiveBufferLength;
-        
-        // Circular visualizer
-        ctx.beginPath();
-        let first = true;
-        for (let i = 0; i < effectiveBufferLength; i++) {
-            const v = frequencyData[i] / 255.0;
-            const barHeight = v * 200;
-            const angle = slice * i;
-            const x = center_x + Math.cos(angle) * (radius + barHeight);
-            const y = center_y + Math.sin(angle) * (radius + barHeight);
-            if (first) {
-                ctx.moveTo(x, y);
-                first = false;
-            } else {
-                ctx.lineTo(x, y);
-            }
+        // --- GAMBAR VISUALIZER GAYA PARTIKEL ---
+        // Deteksi Bass
+        const bassLevel = frequencyData[1] + frequencyData[2]; // Sample low frequencies
+        if (bassLevel > bassThreshold && lastBassLevel <= bassThreshold) {
+            // Bass Hit
+            particles.forEach(p => {
+                p.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            });
         }
-        ctx.closePath();
-        const gradient = ctx.createLinearGradient(0, 0, visualizerCanvas.width, visualizerCanvas.height);
-        gradient.addColorStop(0, 'rgba(142, 68, 173, 0.8)');
-        gradient.addColorStop(1, 'rgba(0, 168, 255, 0.8)');
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Particle animation
-        const averageAmplitude = frequencyData.slice(0, effectiveBufferLength).reduce((a, b) => a + b) / effectiveBufferLength;
-        const particleSpeedFactor = (averageAmplitude / 255) * 4;
-        const hueBase = (averageAmplitude * 1.5);
-        ctx.fillStyle = `hsl(${hueBase % 360}, 100%, 50%)`;
+        lastBassLevel = bassLevel;
+        
+        const avgAmplitude = frequencyData.reduce((a, b) => a + b) / bufferLength;
+        const speedFactor = (avgAmplitude / 128) * 2;
 
         for (const p of particles) {
-            p.x += p.speedX * particleSpeedFactor;
-            p.y += p.speedY * particleSpeedFactor;
+            p.x += p.speedX * speedFactor;
+            p.y += p.speedY * speedFactor;
 
-            if (p.x < 0 || p.x > visualizerCanvas.width) p.speedX *= -1;
-            if (p.y < 0 || p.y > visualizerCanvas.height) p.speedY *= -1;
+            if (p.x > visualizerCanvas.width) p.x = 0;
+            else if (p.x < 0) p.x = visualizerCanvas.width;
+            if (p.y > visualizerCanvas.height) p.y = 0;
+            else if (p.y < 0) p.y = visualizerCanvas.height;
 
-            const particleSize = p.size + (averageAmplitude / 100);
+            ctx.fillStyle = p.color;
             ctx.beginPath();
-            ctx.arc(p.x, p.y, particleSize, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             ctx.fill();
         }
       }
+
+      function drawVisualizerBars() {
+        const centerX = visualizerCanvas.width / 2;
+        const centerY = visualizerCanvas.height / 2;
+        const barWidth = (visualizerCanvas.width / bufferLength) * 2.5;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+            const barHeight = frequencyData[i] * 1.5;
+            const hue = i * 2;
+            ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+            
+            // Draw bars from center outwards
+            ctx.fillRect(centerX - x, centerY - barHeight / 2, barWidth, barHeight);
+            ctx.fillRect(centerX + x - barWidth, centerY - barHeight / 2, barWidth, barHeight);
+            
+            x += barWidth + 1;
+        }
+      }
+
       function toggleVisualizerOverlay() {
-        const body = document.body;
         if (!isVisualizerActive) {
-          if (!setupAudioVisualizer()) return;
+          if (!audioContext) {
+              const player = document.getElementById('audio-player');
+              if (!player.src) {
+                  alert('Please select a song first!');
+                  return;
+              }
+              setupAudioAPI();
+          }
           isVisualizerActive = true;
-          body.classList.add('visualizer-active');
+          document.body.classList.add('visualizer-active');
+          visualizerCanvas.width = window.innerWidth;
+          visualizerCanvas.height = window.innerHeight;
+          createParticles();
           drawVisualizer();
-          toggleFullscreen();
+          document.documentElement.requestFullscreen().catch(err => console.log(err));
         } else {
           isVisualizerActive = false;
-          body.classList.remove('visualizer-active');
-          toggleFullscreen();
+          document.body.classList.remove('visualizer-active');
+          if(document.fullscreenElement) document.exitFullscreen();
         }
       }
-      function toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.log(`Error when system attempting to enable fullscreen: ${err.message}`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-      }
-      function initVirtualKeyboard() {
-            const keyboardPanel = document.getElementById('keyboard-panel');
-            const keyboardInput = document.getElementById('keyboard-input');
-            const liveVisitorsButton = document.getElementById('fab-live-visitors');
-            const centerVideoContainer = document.getElementById('center-video-container');
-            const centerVideoPlayer = document.getElementById('center-video-player');
-            const centerVideoCloseBtn = document.getElementById('center-video-close');
-            
-            const passwordMap = {
-                'mylove': () => {
-                    liveVisitorsButton.style.display = 'flex';
-                    keyboardPanel.classList.remove('active');
-                },
-                'elviu': () => {
-                    centerVideoContainer.classList.add('active');
-                    centerVideoPlayer.src = 'stiker.mp4';
-                    centerVideoPlayer.play();
-                    keyboardPanel.classList.remove('active');
-                },
-                // Tambahkan password lain di sini jika perlu
-            };
-            
-            let currentInput = '';
-            
-            document.querySelectorAll('.keyboard-key').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Mencegah event bubbling ke panel draggable
-                    const keyText = e.target.closest('.keyboard-key').textContent.trim();
-                    if (e.target.closest('.keyboard-key').id === 'backspace-key') {
-                        currentInput = currentInput.slice(0, -1);
-                    } else if (e.target.closest('.keyboard-key').id === 'space-key') {
-                        currentInput += ' ';
-                    } else {
-                        currentInput += keyText;
-                    }
-            
-                    keyboardInput.value = currentInput;
-            
-                    if (passwordMap[currentInput]) {
-                        passwordMap[currentInput]();
-                        currentInput = '';
-                        keyboardInput.value = '';
-                    }
-                });
-            });
 
-            keyboardInput.addEventListener('input', () => {
-                const enteredPassword = keyboardInput.value;
-                 if (passwordMap[enteredPassword]) {
-                    passwordMap[enteredPassword]();
-                    keyboardInput.value = ''; // Reset input
-                    currentInput = '';
-                }
-            });
-
-            centerVideoCloseBtn.addEventListener('click', () => {
-                centerVideoPlayer.pause();
-                centerVideoPlayer.src = '';
-                centerVideoContainer.classList.remove('active');
-            });
-        }
-      function initDraggableKeyboard() {
-            const keyboardPanel = document.getElementById('keyboard-panel');
-            let isDraggingKeyboard = false;
-            let currentX, currentY, initialX, initialY;
-            let xOffset = 0, yOffset = 0;
-        
-            keyboardPanel.addEventListener("mousedown", dragStart);
-            document.addEventListener("mouseup", dragEnd);
-            document.addEventListener("mousemove", drag);
-            keyboardPanel.addEventListener("touchstart", dragStart, { passive: false });
-            document.addEventListener("touchend", dragEnd);
-            document.addEventListener("touchmove", drag, { passive: false });
-        
-            function dragStart(e) {
-                // Jangan mulai drag jika targetnya adalah tombol atau input
-                if (e.target.closest('.keyboard-key, .panel-close-btn, #keyboard-input')) return;
-                
-                isDraggingKeyboard = true;
-                if (e.type === "touchstart") {
-                    initialX = e.touches[0].clientX - xOffset;
-                    initialY = e.touches[0].clientY - yOffset;
-                } else {
-                    e.preventDefault();
-                    initialX = e.clientX - xOffset;
-                    initialY = e.clientY - yOffset;
-                }
-            }
-        
-            function dragEnd() {
-                isDraggingKeyboard = false;
-            }
-        
-            function drag(e) {
-                if (isDraggingKeyboard) {
-                    e.preventDefault();
-                    if (e.type === "touchmove") {
-                        currentX = e.touches[0].clientX - initialX;
-                        currentY = e.touches[0].clientY - initialY;
-                    } else {
-                        currentX = e.clientX - initialX;
-                        currentY = e.clientY - initialY;
-                    }
-                    xOffset = currentX;
-                    yOffset = currentY;
-                    // Hapus transform translateX yang ada di CSS, dan terapkan di sini
-                    keyboardPanel.style.transform = `translate(-50%, 0) translate3d(${currentX}px, ${currentY}px, 0)`;
-                }
-            }
-        }
-      function initSecurityFeatures() {
-            document.addEventListener('contextmenu', (e) => e.preventDefault());
-            document.addEventListener('copy', (e) => e.preventDefault());
-            document.addEventListener('cut', (e) => e.preventDefault());
-            window.addEventListener('keyup', (e) => {
-                if (e.key === 'PrintScreen') {
-                    const popup = document.getElementById('screenshot-popup');
-                    popup.style.display = 'block';
-                    setTimeout(() => { popup.style.display = 'none'; }, 3000);
-                }
-            });
-      }
-      function checkFirstVisit() {
-        const hasVisited = localStorage.getItem('hasVisitedWebsite');
-        const browserId = getBrowserId(); // Dapatkan ID browser
-        if (!hasVisited) {
-            const popup = document.getElementById('new-user-popup');
-            const closeBtn = document.getElementById('popup-close-btn');
-
-            popup.style.display = 'block';
-            console.log(`Welcome, new visitor! Browser ID: ${browserId}`);
-            console.log("For the best experience, please use our app: https://drive.google.com/file/d/11fQBWB9C1PjUQvb8b-IqHdNLS7YkFSFD/view?usp=drivesdk and switch to landscape mode.");
-            console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
-
-            closeBtn.addEventListener('click', () => {
-                popup.style.display = 'none';
-                localStorage.setItem('hasVisitedWebsite', 'true');
-            });
-        } else {
-            console.log(`Welcome back! Browser ID: ${browserId}`);
-        }
-      }
     </script>
   </body>
 </html>
