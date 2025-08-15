@@ -605,11 +605,8 @@
         max-width: 500px;
         height: auto;
         min-height: 300px;
-        background: rgba(255,255,255,0.9);
-        color: #333;
         border: 1px solid var(--border-color);
         border-radius: 10px;
-        padding: 15px;
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
       }
       #dashboard-content {
@@ -778,8 +775,8 @@
         </div>
         <div class="grid-block" id="block-2-5">
            <div class="grid-block-content">
-              <h3>Animasi Partikel</h3>
-              <iframe height="80%" style="width: 80%; border:none; border-radius:12px;" scrolling="no" title="Interactive Particles" src="https://codepen.io/hexagoncircle/embed/eYOMoqo?default-tab=result" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true"></iframe>
+              <h3>Radio Garden: Jelajahi Radio Dunia</h3>
+              <iframe src="http://radio.garden/visit/jakarta/aF7D5D1a" style="width:100%; height:100%; max-width: 800px; max-height:800px; border:none; border-radius:12px;"></iframe>
           </div>
         </div>    
         <div class="grid-block" id="block-3-1">
@@ -790,19 +787,9 @@
         </div>
         <div class="grid-block" id="block-3-2">
           <div class="grid-block-content">
-            <h3>Ayat Harian (Bible Gateway)</h3>
+            <h3>Ayat Hari Ini (YouVersion)</h3>
             <div id="bible-widget-container">
-              <script defer src="https://www.biblegateway.com/votd/votd.write.js"></script>
-              <script defer src="https://www.biblegateway.com/votd/themes/pre/bg_pre.js"></script>
-              <script>
-              (function(d, s, id) {
-                var js, fjs = d.getElementsByTagName(s)[0];
-                if (d.getElementById(id)) return;
-                js = d.createElement(s); js.id = id;
-                js.src = "//www.biblegateway.com/votd/votd.js?version=TB";
-                fjs.parentNode.insertBefore(js, fjs);
-              }(document, 'script', 'bible-gateway-votd'));
-              </script>
+                <iframe src="https://www.bible.com/verse-of-the-day/TB" width="100%" height="100%" style="border: none;"></iframe>
             </div>
           </div>
         </div>
@@ -848,8 +835,8 @@
         </div>
         <div class="grid-block" id="block-5-1">
            <div class="grid-block-content">
-            <h3>NASA's Mars Exploration</h3>
-            <iframe src="https://mars.nasa.gov/layout/embed/video/?v=1" width="100%" height="100%" style="max-width:800px; max-height:450px; border:none; border-radius:12px;" scrolling="no" frameborder="0" allowfullscreen></iframe>
+            <h3>ISS Live Stream</h3>
+            <iframe width="100%" height="100%" style="max-width:854px; max-height:480px; border:none; border-radius:12px;" src="https://www.youtube.com/embed/86YLFOog4GM?autoplay=1&mute=1" title="ISS Live Stream" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
         </div>
         <div class="grid-block" id="block-5-2">
@@ -1121,7 +1108,7 @@
         initSecurityFeatures();
         checkFirstVisit();
       });
-      
+
       function initSwipeGestures() {
         const matrixSound = document.getElementById('matrix-sound');
         const moveGrid = (x, y) => {
@@ -1132,7 +1119,8 @@
 
             if (oldX !== currentX || oldY !== currentY) {
               gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
-              console.log(`Grid moved to block (${currentX + 1}, ${currentY + 1})`);
+              // Log untuk memastikan deteksi berjalan
+              console.log(`Grid moved to block (${currentX + 1}, ${currentY + 1}). Playing sound.`);
               matrixSound.currentTime = 0;
               matrixSound.play().catch(e => console.error("Audio play failed:", e));
             }
