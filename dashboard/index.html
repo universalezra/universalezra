@@ -722,7 +722,7 @@
         Screenshot tidak diizinkan!
     </div>
     <canvas id="visualizer-canvas"></canvas>
-    <audio id="matrix-sound" src="https://www.myinstants.com/media/sounds/matrix-code.mp3" preload="auto"></audio>
+    <audio id="matrix-sound" src="matrix-code.mp3" preload="auto"></audio>
     <div id="main-viewport">
       <div id="grid-container">   
         <div class="grid-block" id="block-1-1">
@@ -741,8 +741,8 @@
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div>
           <div class="grid-block-content"><h1>Block (1,4)</h1></div>
         </div>
-        <div class="grid-block" id="block-1-5">
-           <div class="grid-block-content"><iframe width="100%" height="100%" src="https://embed.windy.com/embed2/windy/g/fs:!off/!p:off/?lat=-2.556&lon=118.066&detailLat=-6.175&detailLon=106.827&width=100%&height=100%&zoom=5&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=true&metricWind=default&metricTemp=default&radarRange=-1" frameborder="0"></iframe>
+          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div>
+          <div class="grid-block-content"><h1>Block (1,5)</h1></div>
            </div>
         </div>
         <div class="grid-block" id="block-2-1">
@@ -978,7 +978,7 @@
             <form id="moment-upload-form">
                 <input type="text" id="moment-title" placeholder="Title" required />
                 <textarea id="moment-description" placeholder="Describe" rows="3"></textarea>
-                <input type="file" id="moment-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" required/>
+                <input type="file" id="moment-file" accept="*/*" required/>
                 <button type="submit">Upload</button>
                 <p id="moment-upload-status" style="font-size: 0.9em; text-align: center; margin-top: 10px"></p>
             </form>
@@ -991,14 +991,14 @@
           <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Target Dashboard</h3>
           <p style="text-align: center; color: var(--text-secondary)">Ini adalah tampilan statis dari target-target masa depan.</p>
           <div class="dashboard-card">
-            <h4>噫 Proyek "Atlas"</h4>
+            <h4>Proyek "Atlas"</h4>
             <p>Menciptakan mesin pencari web 3.0 yang terdesentralisasi, aman, dan tanpa iklan yang mengganggu. Fitur: AI-powered indexing, user-owned data.</p>
             <div class="progress-bar-container">
               <div class="progress-bar" style="width: 25%;">25%</div>
             </div>
           </div>
           <div class="dashboard-card">
-            <h4>庁 Inisiatif "Project Athena"</h4>
+            <h4>Inisiatif "Project Athena"</h4>
             <p>Pengembangan sistem AI personal yang dapat mempersonalisasi konten dan memberikan wawasan mendalam tanpa menyimpan data pengguna di server terpusat. Fitur: Enkripsi end-to-end, model AI on-device.</p>
             <div class="progress-bar-container">
               <div class="progress-bar" style="width: 45%;">45%</div>
@@ -1012,7 +1012,7 @@
             </div>
           </div>
           <div class="dashboard-card">
-            <h4>迫 Integrasi "Omni-Connect"</h4>
+            <h4>Integrasi "Omni-Connect"</h4>
             <p>Menghubungkan semua aplikasi web pribadiku ke dalam satu ekosistem yang kohesif. Target: Sinkronisasi data real-time antar platform, notifikasi terpadu.</p>
             <div class="progress-bar-container">
               <div class="progress-bar" style="width: 70%;">70%</div>
@@ -1020,14 +1020,11 @@
           </div>
           <div class="dashboard-card">
             <h4>Proyek Tambahan 1</h4>
-            <p>Deskripsi untuk proyek tambahan agar konten menjadi lebih panjang dan scrollable.</p>
             <div class="progress-bar-container">
               <div class="progress-bar" style="width: 90%;">90%</div>
             </div>
           </div>
           <div class="dashboard-card">
-            <h4>Proyek Tambahan 2</h4>
-            <p>Deskripsi lainnya untuk memastikan fungsionalitas scroll berjalan dengan baik.</p>
              <div class="progress-bar-container">
               <div class="progress-bar" style="width: 5%;">5%</div>
             </div>
@@ -1444,7 +1441,7 @@
       }    
       async function fetchVisitorHistory() {
         const historyContainer = document.getElementById('visitor-history');
-        historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
+        historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history</p>';
         try {
             const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
             if (!response.ok) {
@@ -1696,7 +1693,7 @@
       async function editMoment(itemId, currentItems) {
         const password = prompt('Masukkan password untuk mengedit:');
         if (password !== MOMENT_VAULT_PASSWORD) {
-            alert('Password salah!');
+            alert('false');
             return;
         }
         const itemToEdit = currentItems.find((item) => item.id === itemId);
@@ -1737,7 +1734,7 @@
       async function deleteMoment(itemId) {
         const password = prompt('Masukkan password untuk menghapus:');
         if (password !== MOMENT_VAULT_PASSWORD) {
-            alert('Password salah!');
+            alert('false');
             return;
         }
         if (!confirm('Are you sure you want to delete? This action cannot be undone.')) {
@@ -2020,7 +2017,6 @@
             const passwordMap = {
                 'mylove': () => {
                     liveVisitorsButton.style.display = 'flex';
-                    alert('Live Visitors button unlocked!');
                 },
                 'elviu': () => {
                     centerVideoContainer.classList.add('active');
@@ -2036,7 +2032,6 @@
                             // Opsi untuk menghilangkan blur pada blok ini secara spesifik
                             backgroundDiv.style.filter = 'none';
                             backgroundDiv.style.webkitFilter = 'none';
-                            alert('Block 2-3 background has been changed.');
                         }
                     }
                 }
@@ -2079,7 +2074,7 @@
             const closeBtn = document.getElementById('popup-close-btn');
 
             popup.style.display = 'block';
-            console.log(`Welcome, new visitor! Browser ID: ${browserId}`);
+            console.log(`Welcome, new visitor Browser ID: ${browserId}`);
             console.log("For the best experience, please use our app: https://drive.google.com/file/d/11fQBWB9C1PjUQvb8b-IqHdNLS7YkFSFD/view?usp=drivesdk and switch to landscape mode.");
             console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
 
@@ -2088,7 +2083,7 @@
                 localStorage.setItem('hasVisitedWebsite', 'true');
             });
         } else {
-            console.log(`Welcome back! Browser ID: ${browserId}`);
+            console.log(`Welcome back ID: ${browserId}`);
         }
       }
     </script>
