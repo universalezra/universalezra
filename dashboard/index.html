@@ -287,23 +287,23 @@
         bottom: 20px;
         left: 20px;
       }
-      #keyboard-panel {
-        position: fixed;
-        width: 350px;
-        height: auto;
-        padding: 10px;
-        background: rgba(26, 26, 46, 0.9);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-        display: none;
-        flex-direction: column;
-        color: var(--text-primary);
-        z-index: 1011;
-        cursor: move;
-        top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+ #keyboard-panel {
+    position: absolute; /* Mengubah posisi agar relatif terhadap parent */
+    width: 350px;
+    height: auto;
+    padding: 10px;
+    background: rgba(26, 26, 46, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: none;
+    flex-direction: column;
+    color: var(--text-primary);
+    z-index: 1011;
+    cursor: move;
+    top: 50%;        /* Memposisikan panel di tengah vertikal */
+    left: 50%;       /* Memposisikan panel di tengah horizontal */
+    transform: translate(-50%, -50%); /* Menggeser kembali panel untuk memusatkannya */
 }
       #keyboard-panel.active {
           display: flex;
@@ -791,10 +791,15 @@
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=7');"></div>
           <div class="grid-block-content"><h1>Block (2,2)</h1></div>
         </div>
-        <div class="grid-block" id="block-2-3">
-          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=8');"></div>
-          <div class="grid-block-content"><h1>Block (2,3)</h1></div>
+       <div class="grid-block" id="block-2-3">
+    <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=8');"></div>
+    <div class="grid-block-content"><h1>Block (2,3)</h1></div>
+
+    <div class="panel" id="keyboard-panel">
+        <button class="panel-close-btn" data-panel="keyboard-panel"><i class="fas fa-times"></i></button>
+        <input type="text" id="keyboard-input" placeholder="Enter password..." readonly />
         </div>
+</div>
         <div class="grid-block" id="block-2-4">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=9');"></div>
           <div class="grid-block-content"><h1>Block (2,4)</h1></div>
