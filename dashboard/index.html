@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>universalezra</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -206,7 +208,7 @@
         justify-content: center;
         align-items: center;
       }
-      #visualizer-canvas {
+      #visualizer-canvas, #three-canvas {
         position: fixed;
         top: 0;
         left: 0;
@@ -215,10 +217,13 @@
         z-index: 99;
         display: none;
         background-color: transparent;
-      }
-      .visualizer-active #visualizer-canvas {
-        display: block;
         pointer-events: none;
+      }
+      .visualizer-active.mode-2d #visualizer-canvas {
+        display: block;
+      }
+       .visualizer-active.mode-3d #three-canvas {
+        display: block;
       }
       .panel-close-btn {
         position: absolute;
@@ -274,6 +279,11 @@
         transform: translateY(-50%);
       }
       #fab-visualizer {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-190%);
+      }
+      #fab-visualizer-toggle {
         bottom: 20px;
         left: 50%;
         transform: translateX(-120%);
@@ -437,7 +447,7 @@
         padding: 8px 12px;
         border-radius: 5px;
         cursor: pointer;
-        transition: background-color: 0.2s;
+        transition: background-color 0.2s;
       }
       .editor-toolbar button:hover {
         background: var(--primary);
@@ -482,7 +492,7 @@
           background: rgba(0, 0, 0, 0.5);
           backdrop-filter: blur(5px);
           -webkit-backdrop-filter: blur(5px);
-          transition: opacity: 0.3s ease;
+          transition: opacity 0.3s ease;
           opacity: 0;
       }
       #video-player-widget:hover .video-controls {
@@ -592,7 +602,6 @@
           border: none;
           z-index: 10;
       }
-      /* Style untuk Embed Sabda */
       #sabda-widget-container {
         width: 100%;
         max-width: 500px;
@@ -613,7 +622,7 @@
         padding: 20px;
         text-align: left;
         color: var(--text-primary);
-        overflow-y: auto; /* Memastikan dashboard bisa di-scroll */
+        overflow-y: auto;
       }
       .dashboard-card {
         background: rgba(0, 0, 0, 0.4);
@@ -644,7 +653,6 @@
         display: none;
         box-shadow: 0 0 20px rgba(0,0,0,0.5);
       }
-      /* Popup Pengguna Baru */
       #new-user-popup {
         position: fixed;
         top: 50%;
@@ -710,7 +718,10 @@
     <div class="screenshot-popup" id="screenshot-popup">
         Screenshot tidak diizinkan!
     </div>
+    
     <canvas id="visualizer-canvas"></canvas>
+    <canvas id="three-canvas"></canvas>
+    
     <audio id="matrix-sound" src="https://www.myinstants.com/media/sounds/matrix-code.mp3" preload="auto"></audio>
     <div id="main-viewport">
       <div id="grid-container">   
@@ -854,6 +865,11 @@
             ><i class="fas fa-book"></i
         ></a>
     </div>
+    <div class="fab-container" id="fab-visualizer-toggle">
+        <button class="fab" title="Toggle Visualizer Mode">
+            <i class="fas fa-cube"></i>
+        </button>
+    </div>
     <div class="fab-container" id="fab-visualizer">
         <button class="fab" data-panel="visualizer" title="Visualizer">
             <i class="fas fa-expand"></i>
@@ -874,7 +890,7 @@
             <i class="fas fa-keyboard"></i>
         </button>
     </div>
-    <div class="fab-container" id="fab-dashboard-toggle">
+    <div class="fab-dashboard-toggle" id="fab-dashboard-toggle">
         <button class="fab" data-panel="dashboard-panel" title="Target Dashboard">
             <i class="fas fa-bullseye"></i>
         </button>
@@ -1021,33 +1037,38 @@
       let isEzraLoggedIn = false;
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
-      
       const VISITOR_HISTORY_WORKER_URL =
         'https://visitor-history.ezvvel.workers.dev/';
-
       const VISITOR_HISTORY_EXPIRY_DAYS = 7;
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '樗';
       const MOMENT_VAULT_PASSWORD = 'vmoments';
       const CENTER_VIDEO_PASSWORD = 'elviu';
+      
+      // Variabel untuk Visualizer
       let isVisualizerActive = false;
-      let visualizerCanvas, ctx, audioContext, analyser, source;
+      let visualizerMode = '2d'; // '2d' atau '3d'
+      let animationFrameId;
+
+      // Variabel 2D
+      let visualizerCanvas, ctx;
       let particles = [];
-      let bufferLength, dataArray, frequencyData;
-      const PARTICLE_COUNT = 150; 
+      const PARTICLE_COUNT = 150;
       const PARTICLE_SPEED_MULTIPLIER = 0.4;
-      let gravity = { x: 0, y: 0 };   
+      let lastBassLevel = 0;
+      const BASS_CHANGE_THRESHOLD = 2; // Sensitivitas perubahan warna partikel
+
+      // Variabel Audio
+      let audioContext, analyser, source, bufferLength, frequencyData;
+      
+      // Variabel Three.js
+      let threeCanvas, scene, camera, renderer, pulsatingRing, originalPositions;
+
       let gridContainer, currentX = 2, currentY = 2;
       let isDragging = false;
       let startX = 0, startY = 0;
       const SWIPE_THRESHOLD = 50;
-
-      // Variabel baru untuk visualizer
-      let bassThreshold = 240; // Ambang batas bass (0-255), bisa disesuaikan
-      let particleColor = 'hsl(200, 100%, 50%)'; // Warna awal partikel
-      let lastBassHitTime = 0;
-      const BASS_COOLDOWN = 100; // Jeda antar deteksi bass dalam milidetik
-
+      
       document.addEventListener('DOMContentLoaded', () => {
         gridContainer = document.getElementById('grid-container');
         initPanelControls();
@@ -1056,12 +1077,13 @@
         initMusicPlayer();
         initWebsiteAgeDisplay();
         trackVisitor();
-        initVisualizer();
+        initVisualizers(); // Menginisialisasi kedua visualizer
         initSwipeGestures();
         initPasswordFeature();
         initSecurityFeatures();
         checkFirstVisit();
       });
+
       function initSwipeGestures() {
         const matrixSound = document.getElementById('matrix-sound');
         const moveGrid = (x, y) => {
@@ -1103,6 +1125,11 @@
         document.querySelectorAll('[data-panel]').forEach((button) => {
           button.addEventListener('click', (event) => {
             const panelId = button.getAttribute('data-panel');
+            if (panelId === 'visualizer') {
+              toggleVisualizerOverlay();
+              return;
+            }
+
             const panel = document.getElementById(panelId);
             if (panelId === 'live-visitors-panel') {
               const password = prompt('Please enter the password to unlock this feature:');
@@ -1123,8 +1150,6 @@
                 isEzraLoggedIn = false;
                 return;
               }
-            } else if (panelId === 'visualizer') {
-              toggleVisualizerOverlay();
             } else {
               panel.classList.toggle('active');
               if (panelId === 'contribution-panel' && panel.classList.contains('active')) {
@@ -1199,7 +1224,7 @@
           { name: 'Where We Are', url: 'Where-We-Are.mp3' },
           { name: 'Sekuat Hatimu', url: 'Sekuat Hatimu.mp3' },
         ];
-        songs.forEach((song, index) => {
+        songs.forEach((song) => {
           const item = document.createElement('div');
           item.textContent = song.name;
           item.style.cursor = 'pointer';
@@ -1246,7 +1271,6 @@
         };
         const saveCode = () => {
           localStorage.setItem('unified_editor_code', codeEditor.value);
-          console.log('Code saved successfully');
         };
         const loadCode = () => {
           codeEditor.value =
@@ -1257,7 +1281,7 @@
           historyPointer = 0;
         };
         const newDoc = () => {
-          codeEditor.value = `<!DOCTYPE html><html><head><title>New trial</title><style>body {font-family: Arial, sans-serif;background-color: #000000;color: #abb2bf;display: flex;justify-content: center;align-items: center;min-height: 100vh;margin: 0;}h1 {color: #61dafb;}</style></head><body><h1>Start Coding Here!l</h1><script>console.log("New document loaded.");<\/script></body></html>`;
+          codeEditor.value = `<!DOCTYPE html><html><head><title>New trial</title><style>body {font-family: Arial, sans-serif;background-color: #000000;color: #abb2bf;display: flex;justify-content: center;align-items: center;min-height: 100vh;margin: 0;}h1 {color: #61dafb;}</style></head><body><h1>Start Coding Here!</h1><script>console.log("New document loaded.");<\/script></body></html>`;
           runCode();
           history = [codeEditor.value];
           historyPointer = 0;
@@ -1357,10 +1381,6 @@
         updateWebsiteAge();
         setInterval(updateWebsiteAge, 1000);
       }
-      function checkEzraLoginAndShowVisitorsButton() {
-        const fabLiveVisitors = document.getElementById('fab-live-visitors');
-      }
-      document.addEventListener('DOMContentLoaded', checkEzraLoginAndShowVisitorsButton);
       async function fetchLiveVisitors() {
         const visitorList = document.getElementById('visitor-list');
         const lastUpdatedTime = document.getElementById('last-updated-time');
@@ -1378,29 +1398,19 @@
             visitorList.innerHTML = visitors
               .map((visitor) => {
                 const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
+                  hour: '2-digit', minute: '2-digit', second: '2-digit',
+                  day: '2-digit', month: '2-digit', year: 'numeric',
                 });
-                return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(
-                  0,
-                  10,
-                )}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span
-                  ><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`;
+                return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(0,10)}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`;
               })
               .join('');
           } else {
-            visitorList.innerHTML =
-              '<li style="text-align: center; color: var(--text-secondary);">No online</li>';
+            visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No online</li>';
           }
           lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
         } catch (error) {
           console.error('Error fetching live visitors:', error);
-          visitorList.innerHTML =
-            '<li style="text-align: center; color: var(--danger);">Failed</li>';
+          visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed</li>';
           lastUpdatedTime.textContent = 'Error';
         }
       }    
@@ -1409,9 +1419,7 @@
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
         try {
             const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             let history = await response.json();
             
             if (history && history.length > 0) {
@@ -1420,20 +1428,7 @@
                     return acc;
                 }, {});
 
-                const tableHeader = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Browser ID</th>
-                                <th>IP</th>
-                                <th>Referral</th>
-                                <th>Total Kunjungan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
+                const tableHeader = `<table><thead><tr><th>Timestamp</th><th>Browser ID</th><th>IP</th><th>Referral</th><th>Total Kunjungan</th></tr></thead><tbody>`;
                 const tableRows = history
                     .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) 
                     .map(visitor => {
@@ -1441,17 +1436,8 @@
                             year: 'numeric', month: '2-digit', day: '2-digit',
                             hour: '2-digit', minute: '2-digit'
                         });
-                        return `
-                            <tr>
-                                <td>${timestamp}</td>
-                                <td>${visitor.browserId.substring(0, 10)}...</td>
-                                <td>${visitor.ip || 'N/A'}</td>
-                                <td>${visitor.referrer || 'Direct'}</td>
-                                <td>${visitCounts[visitor.browserId] || 1}</td>
-                            </tr>
-                        `;
+                        return `<tr><td>${timestamp}</td><td>${visitor.browserId.substring(0, 10)}...</td><td>${visitor.ip || 'N/A'}</td><td>${visitor.referrer || 'Direct'}</td><td>${visitCounts[visitor.browserId] || 1}</td></tr>`;
                     }).join('');
-
                 const tableFooter = `</tbody></table>`;
                 historyContainer.innerHTML = tableHeader + tableRows + tableFooter;
             } else {
@@ -1483,13 +1469,9 @@
             console.warn('Could not fetch IP address:', ipError);
           }
           const data = {
-            browserId: browserId,
-            ip: ipAddress,
-            userAgent: navigator.userAgent,
-            timestamp: new Date().toISOString(),
-            referrer: referrer,
+            browserId: browserId, ip: ipAddress, userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString(), referrer: referrer,
           };        
-          
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1501,83 +1483,63 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data),
           }).catch((e) => console.error('Error sending to visitor history worker:', e));
-  
         } catch (e) {
           console.error('Error in trackVisitor:', e);
         }
       }
       async function fetchMomentVaultGallery() {
         const galleryContainer = document.getElementById('moment-vault-gallery');
-        galleryContainer.innerHTML =
-          '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
+        galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
         try {
           const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           const items = await response.json();
           if (items && items.length > 0) {
             items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            galleryContainer.innerHTML = items
-              .map((item) => {
+            galleryContainer.innerHTML = items.map((item) => {
                 let mediaHTML = '';
                 let fileExtension = item.fileUrl.split('.').pop().toLowerCase();
-                let iconClass = '';
-                if (item.fileType && item.fileType.startsWith('image/')) {
+                if (item.fileType?.startsWith('image/')) {
                   mediaHTML = `<img src="${item.fileUrl}" alt="${item.title}">`;
-                } else if (item.fileType && item.fileType.startsWith('video/')) {
+                } else if (item.fileType?.startsWith('video/')) {
                   mediaHTML = `<video src="${item.fileUrl}" controls></video>`;
-                } else if (item.fileType && item.fileType.startsWith('audio/')) {
+                } else if (item.fileType?.startsWith('audio/')) {
                   mediaHTML = `<audio src="${item.fileUrl}" controls></audio>`;
                 } else {
+                  let iconClass = 'fa-file';
                   if (fileExtension === 'pdf') iconClass = 'fa-file-pdf';
                   else if (fileExtension.startsWith('doc')) iconClass = 'fa-file-word';
                   else if (fileExtension === 'txt') iconClass = 'fa-file-alt';
-                  else iconClass = 'fa-file';
                   mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`;
                 }
                 const timestamp = new Date(item.timestamp).toLocaleString('id-ID', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
+                  day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
                 });
                 return `<div class="gallery-item" data-id="${item.id}"><div class="gallery-media">${mediaHTML}</div><strong>${item.title}</strong><p class="item-text">${item.description}</p><small class="item-date">${timestamp}</small><div class="item-actions"><button class="edit-moment-btn"><i class="fas fa-edit"></i></button><button class="delete-moment-btn"><i class="fas fa-trash-alt"></i></button></div></div>`;
-              })
-              .join('');
+              }).join('');
             galleryContainer.querySelectorAll('.edit-moment-btn').forEach((button) => {
-              button.addEventListener('click', (e) => {
-                const itemId = e.target.closest('.gallery-item').dataset.id;
-                editMoment(itemId, items);
-              });
+              button.addEventListener('click', (e) => editMoment(e.target.closest('.gallery-item').dataset.id, items));
             });
             galleryContainer.querySelectorAll('.delete-moment-btn').forEach((button) => {
-              button.addEventListener('click', (e) => {
-                const itemId = e.target.closest('.gallery-item').dataset.id;
-                deleteMoment(itemId);
-              });
+              button.addEventListener('click', (e) => deleteMoment(e.target.closest('.gallery-item').dataset.id));
             });
           } else {
-            galleryContainer.innerHTML =
-              '<p style="text-align: center; color: var(--text-secondary);">No uploaded yet</p>';
+            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No uploaded yet</p>';
           }
         } catch (error) {
           console.error('Error fetching Moment Vault gallery:', error);
-          galleryContainer.innerHTML =
-            '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>';
+          galleryContainer.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>';
         }
       }
       document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
       async function uploadMoment(e) {
         e.preventDefault();
         const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Uploading';
+        statusEl.textContent = 'Uploading...';
         statusEl.style.color = 'var(--text-secondary)';
         const title = document.getElementById('moment-title').value;
         const description = document.getElementById('moment-description').value;
-        const fileInput = document.getElementById('moment-file');
-        const file = fileInput.files[0];
+        const file = document.getElementById('moment-file').files[0];
         if (!file || !title) {
           statusEl.textContent = 'Title and file are required!';
           statusEl.style.color = 'var(--danger)';
@@ -1587,8 +1549,7 @@
         try {
           const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
           if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
-          const tokenData = await tokenResponse.json();
-          githubToken = tokenData.token;
+          githubToken = (await tokenResponse.json()).token;
           if (!githubToken) throw new Error('GitHub token not found in response');
         } catch (error) {
           console.error('Error getting GitHub token:', error);
@@ -1599,58 +1560,36 @@
         try {
           const filePath = `moments/${Date.now()}-${file.name}`;
           const fileContent = await readFileAsBase64(file);
-          const githubApiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
-          const uploadResponse = await fetch(githubApiUrl, {
+          const uploadResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`, {
             method: 'PUT',
-            headers: {
-              Authorization: `token ${githubToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              message: `Upload moment: ${title}`,
-              content: fileContent,
-              branch: 'main',
-            }),
+            headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: `Upload moment: ${title}`, content: fileContent, branch: 'main' }),
           });
-          if (!uploadResponse.ok) {
-            const errorText = await uploadResponse.text();
-            throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${errorText}`);
-          }
+          if (!uploadResponse.ok) throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${await uploadResponse.text()}`);
           const uploadData = await uploadResponse.json();
-          const rawFileUrl = uploadData.content.download_url;
           const momentData = {
             id: 'moment_' + Math.random().toString(36).substr(2, 9) + Date.now(),
-            title: title,
-            description: description,
-            fileUrl: rawFileUrl,
-            fileType: file.type,
-            timestamp: new Date().toISOString(),
+            title: title, description: description, fileUrl: uploadData.content.download_url,
+            fileType: file.type, timestamp: new Date().toISOString(),
           };
           const kvSaveResponse = await fetch(MOMENT_VAULT_WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(momentData),
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(momentData),
           });
-          if (!kvSaveResponse.ok) {
-            throw new Error('Failed to save moment metadata to KV');
-          }
-          statusEl.textContent = 'successfully';
+          if (!kvSaveResponse.ok) throw new Error('Failed to save moment metadata');
+          statusEl.textContent = 'Successfully uploaded!';
           statusEl.style.color = 'var(--success)';
           e.target.reset();
           fetchMomentVaultGallery();
         } catch (error) {
           console.error('Error uploading moment:', error);
-          statusEl.textContent = `Error uploading moment: ${error.message}`;
+          statusEl.textContent = `Error: ${error.message}`;
           statusEl.style.color = 'var(--danger)';
         }
       }
       function readFileAsBase64(file) {
           return new Promise((resolve, reject) => {
               const reader = new FileReader();
-              reader.onload = () => {
-                  const base64String = reader.result.split(',')[1];
-                  resolve(base64String);
-              };
+              reader.onload = () => resolve(reader.result.split(',')[1]);
               reader.onerror = (error) => reject(error);
               reader.readAsDataURL(file);
           });
@@ -1668,31 +1607,20 @@
         const newDescription = prompt('Edit Description:', itemToEdit.description);
         if (newDescription === null) return;
         const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Updating';
+        statusEl.textContent = 'Updating...';
         statusEl.style.color = 'var(--text-secondary)';
         try {
-          const updatedMomentData = {
-            id: itemId,
-            title: newTitle,
-            description: newDescription,
-            fileUrl: itemToEdit.fileUrl,
-            fileType: itemToEdit.fileType,
-            timestamp: itemToEdit.timestamp,
-          };
+          const updatedMomentData = { ...itemToEdit, title: newTitle, description: newDescription };
           const response = await fetch(MOMENT_VAULT_WORKER_URL, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedMomentData),
+            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedMomentData),
           });
-          if (!response.ok) {
-            throw new Error('Failed to update moment metadata');
-          }
-          statusEl.textContent = 'successfully';
+          if (!response.ok) throw new Error('Failed to update moment metadata');
+          statusEl.textContent = 'Successfully updated!';
           statusEl.style.color = 'var(--success)';
           fetchMomentVaultGallery();
         } catch (error) {
           console.error('Error updating moment:', error);
-          statusEl.textContent = `Error updating moment: ${error.message}`;
+          statusEl.textContent = `Error: ${error.message}`;
           statusEl.style.color = 'var(--danger)';
         }
       }
@@ -1702,106 +1630,101 @@
             alert('Password salah!');
             return;
         }
-        if (!confirm('Are you sure you want to delete? This action cannot be undone.')) {
-          return;
-        }
+        if (!confirm('Are you sure you want to delete this moment? This action cannot be undone.')) return;
+        
         const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Deleting';
+        statusEl.textContent = 'Deleting...';
         statusEl.style.color = 'var(--text-secondary)';
         try {
-          let githubToken;
-          try {
             const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
             if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
-            const tokenData = await tokenResponse.json();
-            githubToken = tokenData.token;
-            if (!githubToken) throw new Error('GitHub token not found in response');
-          } catch (error) {
-            console.error('Error getting GitHub token for delete:', error);
-            statusEl.textContent = `Error: Could not get GitHub token for deletion. ${error.message}`;
-            statusEl.style.color = 'var(--danger)';
-            return;
-          }
-          const galleryResponse = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
-          if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
-          const galleryItems = await galleryResponse.json();
-          const itemToDelete = galleryItems.find((item) => item.id === itemId);
-          if (!itemToDelete || !itemToDelete.fileUrl) {
-            throw new Error('its file URL not found.');
-          }
-          let filePathOnGithub;
-          const rawGithubContentBase = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/`;
-          if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) {
-            filePathOnGithub = itemToDelete.fileUrl.substring(rawGithubContentBase.length);
-          } else {
-            console.warn(
-              'Unexpected file URL format, attempting fallback path extraction:',
-              itemToDelete.fileUrl,
-            );
-            filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`;
-          }
-          const githubApiGetFileUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
-          const getFileResponse = await fetch(githubApiGetFileUrl, {
-            headers: {
-              Authorization: `token ${githubToken}`,
-              Accept: 'application/vnd.github.v3+json',
-            },
-          });
-          if (!getFileResponse.ok) {
-            const errorText = await getFileResponse.text();
-            throw new Error(`Failed to get file SHA from GitHub: ${getFileResponse.status} - ${errorText}`);
-          }
-          const fileMetaData = await getFileResponse.json();
-          const fileSha = fileMetaData.sha;
-          const githubDeleteUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
-          const deleteResponse = await fetch(githubDeleteUrl, {
-            method: 'DELETE',
-            headers: {
-              Authorization: `token ${githubToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              message: `Delete moment: ${itemToDelete.title}`,
-              sha: fileSha,
-              branch: 'main',
-            }),
-          });
-          if (!deleteResponse.ok) {
-            const errorText = await deleteResponse.text();
-            throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`);
-          }
-          const kvDeleteResponse = await fetch(
-            MOMENT_VAULT_WORKER_URL + `?delete_moment_id=${itemId}`,
-            {
-              method: 'DELETE',
-            },
-          );
-          if (!kvDeleteResponse.ok) {
-            throw new Error('Failed to delete');
-          }
-          statusEl.textContent = 'successfully';
-          statusEl.style.color = 'var(--success)';
-          fetchMomentVaultGallery();
+            const githubToken = (await tokenResponse.json()).token;
+
+            const galleryResponse = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
+            const itemToDelete = (await galleryResponse.json()).find(item => item.id === itemId);
+            if (!itemToDelete) throw new Error('Item not found');
+
+            const filePath = itemToDelete.fileUrl.split('/main/')[1];
+            const fileInfoResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`, {
+                headers: { 'Authorization': `token ${githubToken}` }
+            });
+            const fileSha = (await fileInfoResponse.json()).sha;
+            
+            await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `Delete moment: ${itemToDelete.title}`, sha: fileSha, branch: 'main' }),
+            });
+
+            await fetch(MOMENT_VAULT_WORKER_URL + `?delete_moment_id=${itemId}`, { method: 'DELETE' });
+            
+            statusEl.textContent = 'Successfully deleted!';
+            statusEl.style.color = 'var(--success)';
+            fetchMomentVaultGallery();
         } catch (error) {
-          console.error('Error deleting moment:', error);
-          statusEl.textContent = `Error deleting moment: ${error.message}`;
-          statusEl.style.color = 'var(--danger)';
+            console.error('Error deleting moment:', error);
+            statusEl.textContent = `Error: ${error.message}`;
+            statusEl.style.color = 'var(--danger)';
         }
       }
-      function initVisualizer() {
+      
+      // --- FUNGSI VISUALIZER BARU ---
+      function initVisualizers() {
         visualizerCanvas = document.getElementById('visualizer-canvas');
+        threeCanvas = document.getElementById('three-canvas');
         ctx = visualizerCanvas.getContext('2d');
-        resizeVisualizer();
-        window.addEventListener('resize', resizeVisualizer);
+
+        initThreeJSVisualizer();
+
+        document.getElementById('fab-visualizer-toggle').addEventListener('click', () => {
+            visualizerMode = visualizerMode === '2d' ? '3d' : '2d';
+            const icon = document.querySelector('#fab-visualizer-toggle i');
+            icon.className = visualizerMode === '2d' ? 'fas fa-cube' : 'fas fa-border-all';
+            
+            if (isVisualizerActive) {
+                const body = document.body;
+                body.classList.remove('mode-2d', 'mode-3d');
+                body.classList.add(`mode-${visualizerMode}`);
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            resizeVisualizer2D();
+            resizeVisualizer3D();
+        });
       }
-      function resizeVisualizer() {
-        visualizerCanvas.width = window.innerWidth;
-        visualizerCanvas.height = window.innerHeight;
-        if (isVisualizerActive) {
-          ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+
+      function initThreeJSVisualizer() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 100;
+
+        renderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const points = [];
+        const colors = [];
+        const numPoints = 256; 
+        for (let i = 0; i < numPoints; i++) {
+            const angle = (i / numPoints) * Math.PI * 2;
+            points.push(new THREE.Vector3(Math.cos(angle) * 50, Math.sin(angle) * 50, 0));
+            const color = new THREE.Color();
+            color.setHSL(i / numPoints, 1.0, 0.5);
+            colors.push(color.r, color.g, color.b);
         }
+        points.push(points[0]); // Menutup lingkaran
+
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        
+        originalPositions = geometry.attributes.position.clone();
+
+        const material = new THREE.LineBasicMaterial({ vertexColors: true, linewidth: 2 });
+        pulsatingRing = new THREE.Line(geometry, material);
+        scene.add(pulsatingRing);
       }
-      function setupAudioVisualizer() {
+
+      function setupAudioContext() {
         const audioPlayer = document.getElementById('audio-player');
         if (!audioPlayer.src) {
           alert('Pilih lagu terlebih dahulu');
@@ -1809,131 +1732,155 @@
         }
         if (!audioContext) {
           audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          analyser = audioContext.createAnalyser();
           source = audioContext.createMediaElementSource(audioPlayer);
+          analyser = audioContext.createAnalyser();
           source.connect(analyser);
           analyser.connect(audioContext.destination);
-          analyser.fftSize = 4096;
+          analyser.fftSize = 512;
           bufferLength = analyser.frequencyBinCount;
           frequencyData = new Uint8Array(bufferLength);
         }
         createParticles();
         return true;
       }
+
+      function resizeVisualizer2D() {
+        visualizerCanvas.width = window.innerWidth;
+        visualizerCanvas.height = window.innerHeight;
+      }
+
+      function resizeVisualizer3D() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      
       function createParticles() {
         particles = [];
-        const canvasWidth = visualizerCanvas.width;
-        const canvasHeight = visualizerCanvas.height;
+        const canvasWidth = window.innerWidth;
+        const canvasHeight = window.innerHeight;
         for (let i = 0; i < PARTICLE_COUNT; i++) {
           particles.push({
-            x: canvasWidth / 2,
-            y: canvasHeight / 2,
+            x: canvasWidth / 2, y: canvasHeight / 2,
             size: Math.random() * 2 + 1,
             speedX: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
             speedY: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
           });
         }
       }
-      // ================== FUNGSI VISUALIZER YANG DIPERBARUI ==================
-      function drawVisualizer() {
+
+      function animateVisualizers() {
         if (!isVisualizerActive) return;
-        requestAnimationFrame(drawVisualizer);
+        animationFrameId = requestAnimationFrame(animateVisualizers);
+        
         analyser.getByteFrequencyData(frequencyData);
+        
+        if (visualizerMode === '2d') {
+            drawVisualizer2D();
+        } else {
+            drawVisualizer3D();
+        }
+      }
+      
+      function drawVisualizer2D() {
         ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
-
-        const canvasWidth = visualizerCanvas.width;
-        const canvasHeight = visualizerCanvas.height;
-
-        // === Deteksi Bass untuk Perubahan Warna Partikel ===
-        const now = Date.now();
-        // Cek frekuensi bass (misal, 4 bin pertama)
-        const bassValue = (frequencyData[0] + frequencyData[1] + frequencyData[2] + frequencyData[3]) / 4;
-        if (bassValue > bassThreshold && (now - lastBassHitTime > BASS_COOLDOWN)) {
-            // Ubah warna partikel menjadi hue acak
-            particleColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            lastBassHitTime = now;
-        }
-
-        // === 1. Visualizer Batang Berwarna-warni (Baru) ===
-        const barCount = bufferLength * 0.4; // Jumlah batang yang akan digambar
-        const barWidth = canvasWidth / barCount;
-        for (let i = 0; i < barCount; i++) {
-            const barHeight = (frequencyData[i] / 255.0) * canvasHeight * 0.5; // Tinggi bar (setengah layar)
-            const hue = (i / barCount) * 360; // Membuat gradien warna pelangi
-            ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-            ctx.fillRect(i * barWidth, canvasHeight - barHeight, barWidth, barHeight);
-        }
         
-        // === 2. Visualizer Garis Melingkar (Lama) ===
-        const center_x = canvasWidth / 2;
-        const center_y = canvasHeight / 2;
+        const center_x = visualizerCanvas.width / 2;
+        const center_y = visualizerCanvas.height / 2;
         const radius = Math.min(center_x, center_y) * 0.35;
+        const effectiveBufferLength = bufferLength * 0.8;
         
-        const effectiveBufferLength = bufferLength * 0.2; // Fokus pada frekuensi rendah-menengah
-        const slice = (2 * Math.PI) / effectiveBufferLength;
-        
+        // Visualizer Garis
         ctx.beginPath();
-        let first = true;
         for (let i = 0; i < effectiveBufferLength; i++) {
             const v = frequencyData[i] / 255.0;
             const barHeight = v * 200;
-            const angle = slice * i;
+            const angle = (i / effectiveBufferLength) * Math.PI * 2;
             const x = center_x + Math.cos(angle) * (radius + barHeight);
             const y = center_y + Math.sin(angle) * (radius + barHeight);
-            if (first) {
-                ctx.moveTo(x, y);
-                first = false;
-            } else {
-                ctx.lineTo(x, y);
-            }
+            if (i === 0) { ctx.moveTo(x, y); } 
+            else { ctx.lineTo(x, y); }
         }
         ctx.closePath();
-        const gradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+        const gradient = ctx.createLinearGradient(0, 0, visualizerCanvas.width, visualizerCanvas.height);
         gradient.addColorStop(0, 'rgba(142, 68, 173, 0.8)');
         gradient.addColorStop(1, 'rgba(0, 168, 255, 0.8)');
         ctx.strokeStyle = gradient;
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // === 3. Animasi Partikel (dengan logika warna baru) ===
-        const averageAmplitude = frequencyData.slice(0, effectiveBufferLength).reduce((a, b) => a + b) / effectiveBufferLength;
-        const particleSpeedFactor = (averageAmplitude / 255) * 4;
+        // Partikel
+        const averageAmplitude = frequencyData.reduce((a, b) => a + b) / effectiveBufferLength;
+        const particleSpeedFactor = (averageAmplitude / 128) * 2;
         
-        // Gunakan variabel global particleColor yang diperbarui oleh deteksi bass
-        ctx.fillStyle = particleColor; 
+        // Deteksi hentakan bass untuk mengubah warna partikel
+        const averageBass = frequencyData.slice(0, 10).reduce((a,b) => a+b) / 10;
+        if (Math.abs(averageBass - lastBassLevel) > BASS_CHANGE_THRESHOLD) {
+            ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 60%)`;
+        }
+        lastBassLevel = averageBass;
 
         for (const p of particles) {
             p.x += p.speedX * particleSpeedFactor;
             p.y += p.speedY * particleSpeedFactor;
-
-            if (p.x < 0 || p.x > canvasWidth) p.speedX *= -1;
-            if (p.y < 0 || p.y > canvasHeight) p.speedY *= -1;
-
-            const particleSize = p.size + (averageAmplitude / 100);
+            if (p.x < 0 || p.x > visualizerCanvas.width) p.speedX *= -1;
+            if (p.y < 0 || p.y > visualizerCanvas.height) p.speedY *= -1;
             ctx.beginPath();
-            ctx.arc(p.x, p.y, particleSize, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, p.size + (averageAmplitude / 100), 0, Math.PI * 2);
             ctx.fill();
         }
       }
-      // =======================================================================
+
+      function drawVisualizer3D() {
+        const positions = pulsatingRing.geometry.attributes.position;
+        const colors = pulsatingRing.geometry.attributes.color;
+        const numPoints = positions.count -1;
+        
+        for(let i = 0; i < numPoints; i++) {
+            const freqIndex = Math.floor((i / numPoints) * (bufferLength * 0.8));
+            const v = frequencyData[freqIndex] / 255.0;
+            const pulseFactor = 1 + v * 0.5;
+
+            const originalPos = new THREE.Vector3().fromBufferAttribute(originalPositions, i);
+            const newPos = originalPos.clone().multiplyScalar(pulseFactor);
+            positions.setXYZ(i, newPos.x, newPos.y, newPos.z);
+            
+            const color = new THREE.Color();
+            color.setHSL((performance.now() / 5000 + i/numPoints) % 1, 1.0, 0.5 + v * 0.5);
+            colors.setXYZ(i, color.r, color.g, color.b);
+        }
+        // Update titik terakhir agar sama dengan titik pertama
+        positions.setXYZ(numPoints, positions.getX(0), positions.getY(0), positions.getZ(0));
+        
+        positions.needsUpdate = true;
+        colors.needsUpdate = true;
+        
+        pulsatingRing.rotation.z += 0.001;
+        renderer.render(scene, camera);
+      }
+
       function toggleVisualizerOverlay() {
         const body = document.body;
         if (!isVisualizerActive) {
-          if (!setupAudioVisualizer()) return;
+          if (!setupAudioContext()) return;
           isVisualizerActive = true;
-          body.classList.add('visualizer-active');
-          drawVisualizer();
+          body.classList.add('visualizer-active', `mode-${visualizerMode}`);
+          resizeVisualizer2D();
+          resizeVisualizer3D();
+          animateVisualizers();
           toggleFullscreen();
         } else {
           isVisualizerActive = false;
-          body.classList.remove('visualizer-active');
+          body.classList.remove('visualizer-active', 'mode-2d', 'mode-3d');
+          cancelAnimationFrame(animationFrameId);
           toggleFullscreen();
         }
       }
+
       function toggleFullscreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(err => {
-                console.log(`Error when system attempting to enable fullscreen: ${err.message}`);
+                console.log(`Error attempting to enable full-screen mode: ${err.message}`);
             });
         } else {
             if (document.exitFullscreen) {
@@ -1941,6 +1888,7 @@
             }
         }
       }
+      
       function initPasswordFeature() {
             const keyboardToggleButton = document.getElementById('fab-keyboard-toggle');
             const liveVisitorsButton = document.getElementById('fab-live-visitors');
@@ -1993,18 +1941,11 @@
         if (!hasVisited) {
             const popup = document.getElementById('new-user-popup');
             const closeBtn = document.getElementById('popup-close-btn');
-
             popup.style.display = 'block';
-            console.log(`Welcome, new visitor! Browser ID: ${browserId}`);
-            console.log("For the best experience, please use our app: https://drive.google.com/file/d/11fQBWB9C1PjUQvb8b-IqHdNLS7YkFSFD/view?usp=drivesdk and switch to landscape mode.");
-            console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
-
             closeBtn.addEventListener('click', () => {
                 popup.style.display = 'none';
                 localStorage.setItem('hasVisitedWebsite', 'true');
             });
-        } else {
-            console.log(`Welcome back! Browser ID: ${browserId}`);
         }
       }
     </script>
