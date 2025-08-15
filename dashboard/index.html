@@ -437,7 +437,7 @@
         padding: 8px 12px;
         border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.2s;
+        transition: background-color: 0.2s;
       }
       .editor-toolbar button:hover {
         background: var(--primary);
@@ -482,7 +482,7 @@
           background: rgba(0, 0, 0, 0.5);
           backdrop-filter: blur(5px);
           -webkit-backdrop-filter: blur(5px);
-          transition: opacity 0.3s ease;
+          transition: opacity: 0.3s ease;
           opacity: 0;
       }
       #video-player-widget:hover .video-controls {
@@ -1021,9 +1021,10 @@
       let isEzraLoggedIn = false;
       const LIVE_VISITORS_WORKER_URL =
         'https://live-visitors.ezvvel.workers.dev/';
-      // Mengubah URL worker untuk history agar terpisah
+      
       const VISITOR_HISTORY_WORKER_URL =
         'https://visitor-history.ezvvel.workers.dev/';
+
       const VISITOR_HISTORY_EXPIRY_DAYS = 7;
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '樗';
@@ -1033,13 +1034,20 @@
       let visualizerCanvas, ctx, audioContext, analyser, source;
       let particles = [];
       let bufferLength, dataArray, frequencyData;
-      const PARTICLE_COUNT = 150; // Optimasi: jumlah partikel dikurangi
+      const PARTICLE_COUNT = 150; 
       const PARTICLE_SPEED_MULTIPLIER = 0.4;
       let gravity = { x: 0, y: 0 };   
       let gridContainer, currentX = 2, currentY = 2;
       let isDragging = false;
       let startX = 0, startY = 0;
       const SWIPE_THRESHOLD = 50;
+
+      // Variabel baru untuk visualizer
+      let bassThreshold = 240; // Ambang batas bass (0-255), bisa disesuaikan
+      let particleColor = 'hsl(200, 100%, 50%)'; // Warna awal partikel
+      let lastBassHitTime = 0;
+      const BASS_COOLDOWN = 100; // Jeda antar deteksi bass dalam milidetik
+
       document.addEventListener('DOMContentLoaded', () => {
         gridContainer = document.getElementById('grid-container');
         initPanelControls();
@@ -1052,7 +1060,7 @@
         initSwipeGestures();
         initPasswordFeature();
         initSecurityFeatures();
-        checkFirstVisit(); // Panggil fungsi popup pengguna baru
+        checkFirstVisit();
       });
       function initSwipeGestures() {
         const matrixSound = document.getElementById('matrix-sound');
@@ -1064,7 +1072,6 @@
 
             if (oldX !== currentX || oldY !== currentY) {
               gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
-              // Mainkan suara Matrix
               matrixSound.currentTime = 0;
               matrixSound.play().catch(e => console.error("Audio play failed:", e));
             }
@@ -1323,7 +1330,7 @@
         });
       function initWebsiteAgeDisplay() {
         const websiteAgeDisplay = document.getElementById('website-age-display');
-        const creationDate = new Date(2006, 7, 7, 0, 0, 0); // Month is 0-indexed, so 7 is August
+        const creationDate = new Date(2006, 7, 7, 0, 0, 0); 
         function updateWebsiteAge() {
           const now = new Date();
           const diff = now.getTime() - creationDate.getTime();
@@ -1408,7 +1415,6 @@
             let history = await response.json();
             
             if (history && history.length > 0) {
-                // Proses data untuk menghitung jumlah kunjungan
                 const visitCounts = history.reduce((acc, visitor) => {
                     acc[visitor.browserId] = (acc[visitor.browserId] || 0) + 1;
                     return acc;
@@ -1429,7 +1435,7 @@
                 `;
                 
                 const tableRows = history
-                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // Urutkan dari yang terbaru
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) 
                     .map(visitor => {
                         const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
                             year: 'numeric', month: '2-digit', day: '2-digit',
@@ -1468,7 +1474,7 @@
         try {
           const browserId = getBrowserId();
           let ipAddress = 'unknown';
-          let referrer = document.referrer || 'direct'; // Mengambil data alamat web sebelumnya
+          let referrer = document.referrer || 'direct';
           try {
             const ipResponse = await fetch('https://api.ipify.org?format=json');
             const ipData = await ipResponse.json();
@@ -1483,6 +1489,7 @@
             timestamp: new Date().toISOString(),
             referrer: referrer,
           };        
+          
           fetch(LIVE_VISITORS_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1493,7 +1500,7 @@
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data),
-          }).catch((e) => console.error('Error sending to Google Sheet worker:', e));
+          }).catch((e) => console.error('Error sending to visitor history worker:', e));
   
         } catch (e) {
           console.error('Error in trackVisitor:', e);
@@ -1806,7 +1813,7 @@
           source = audioContext.createMediaElementSource(audioPlayer);
           source.connect(analyser);
           analyser.connect(audioContext.destination);
-          analyser.fftSize = 4096; // Optimasi: Ukuran FFT dikurangi
+          analyser.fftSize = 4096;
           bufferLength = analyser.frequencyBinCount;
           frequencyData = new Uint8Array(bufferLength);
         }
@@ -1827,20 +1834,44 @@
           });
         }
       }
+      // ================== FUNGSI VISUALIZER YANG DIPERBARUI ==================
       function drawVisualizer() {
         if (!isVisualizerActive) return;
         requestAnimationFrame(drawVisualizer);
         analyser.getByteFrequencyData(frequencyData);
         ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+
+        const canvasWidth = visualizerCanvas.width;
+        const canvasHeight = visualizerCanvas.height;
+
+        // === Deteksi Bass untuk Perubahan Warna Partikel ===
+        const now = Date.now();
+        // Cek frekuensi bass (misal, 4 bin pertama)
+        const bassValue = (frequencyData[0] + frequencyData[1] + frequencyData[2] + frequencyData[3]) / 4;
+        if (bassValue > bassThreshold && (now - lastBassHitTime > BASS_COOLDOWN)) {
+            // Ubah warna partikel menjadi hue acak
+            particleColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            lastBassHitTime = now;
+        }
+
+        // === 1. Visualizer Batang Berwarna-warni (Baru) ===
+        const barCount = bufferLength * 0.4; // Jumlah batang yang akan digambar
+        const barWidth = canvasWidth / barCount;
+        for (let i = 0; i < barCount; i++) {
+            const barHeight = (frequencyData[i] / 255.0) * canvasHeight * 0.5; // Tinggi bar (setengah layar)
+            const hue = (i / barCount) * 360; // Membuat gradien warna pelangi
+            ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+            ctx.fillRect(i * barWidth, canvasHeight - barHeight, barWidth, barHeight);
+        }
         
-        const center_x = visualizerCanvas.width / 2;
-        const center_y = visualizerCanvas.height / 2;
+        // === 2. Visualizer Garis Melingkar (Lama) ===
+        const center_x = canvasWidth / 2;
+        const center_y = canvasHeight / 2;
         const radius = Math.min(center_x, center_y) * 0.35;
         
         const effectiveBufferLength = bufferLength * 0.2; // Fokus pada frekuensi rendah-menengah
         const slice = (2 * Math.PI) / effectiveBufferLength;
         
-        // Circular visualizer
         ctx.beginPath();
         let first = true;
         for (let i = 0; i < effectiveBufferLength; i++) {
@@ -1857,25 +1888,26 @@
             }
         }
         ctx.closePath();
-        const gradient = ctx.createLinearGradient(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+        const gradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
         gradient.addColorStop(0, 'rgba(142, 68, 173, 0.8)');
         gradient.addColorStop(1, 'rgba(0, 168, 255, 0.8)');
         ctx.strokeStyle = gradient;
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Particle animation
+        // === 3. Animasi Partikel (dengan logika warna baru) ===
         const averageAmplitude = frequencyData.slice(0, effectiveBufferLength).reduce((a, b) => a + b) / effectiveBufferLength;
         const particleSpeedFactor = (averageAmplitude / 255) * 4;
-        const hueBase = (averageAmplitude * 1.5);
-        ctx.fillStyle = `hsl(${hueBase % 360}, 100%, 50%)`;
+        
+        // Gunakan variabel global particleColor yang diperbarui oleh deteksi bass
+        ctx.fillStyle = particleColor; 
 
         for (const p of particles) {
             p.x += p.speedX * particleSpeedFactor;
             p.y += p.speedY * particleSpeedFactor;
 
-            if (p.x < 0 || p.x > visualizerCanvas.width) p.speedX *= -1;
-            if (p.y < 0 || p.y > visualizerCanvas.height) p.speedY *= -1;
+            if (p.x < 0 || p.x > canvasWidth) p.speedX *= -1;
+            if (p.y < 0 || p.y > canvasHeight) p.speedY *= -1;
 
             const particleSize = p.size + (averageAmplitude / 100);
             ctx.beginPath();
@@ -1883,6 +1915,7 @@
             ctx.fill();
         }
       }
+      // =======================================================================
       function toggleVisualizerOverlay() {
         const body = document.body;
         if (!isVisualizerActive) {
@@ -1925,14 +1958,13 @@
                     centerVideoPlayer.src = 'stiker.mp4';
                     centerVideoPlayer.play();
                 },
-                // Tambahkan password lain di sini jika perlu
             };
 
             keyboardToggleButton.addEventListener('click', () => {
                 const enteredPassword = prompt("Please enter the password:");
                 if (enteredPassword && passwordMap[enteredPassword]) {
                     passwordMap[enteredPassword]();
-                } else if (enteredPassword !== null) { // Mencegah alert jika pengguna menekan 'cancel'
+                } else if (enteredPassword !== null) { 
                     alert('Incorrect password!');
                 }
             });
@@ -1957,7 +1989,7 @@
       }
       function checkFirstVisit() {
         const hasVisited = localStorage.getItem('hasVisitedWebsite');
-        const browserId = getBrowserId(); // Dapatkan ID browser
+        const browserId = getBrowserId();
         if (!hasVisited) {
             const popup = document.getElementById('new-user-popup');
             const closeBtn = document.getElementById('popup-close-btn');
