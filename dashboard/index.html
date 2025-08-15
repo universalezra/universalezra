@@ -32,22 +32,12 @@
         --accent: #00a8ff;
         --success: #2ecc71;
         --danger: #e74c3c;
-        --light: #ecf0f1;
         --dark: #1a1a2e;
         --bg-main: #16213e;
         --bg-panel: rgba(26, 26, 46, 0.9);
         --text-primary: #e0fbfc;
         --text-secondary: #98ded9;
         --border-color: rgba(0, 168, 255, 0.3);
-      }
-      html[data-theme='light'] {
-        --primary: #3498db;
-        --accent: #e67e22;
-        --bg-main: #ecf0f1;
-        --bg-panel: rgba(255, 255, 255, 0.9);
-        --text-primary: #2c3e50;
-        --text-secondary: #7f8c8d;
-        --border-color: rgba(52, 152, 219, 0.4);
       }
       * {
         box-sizing: border-box;
@@ -311,10 +301,10 @@
         color: var(--text-primary);
         z-index: 1011;
         cursor: move;
-        bottom: 160px; /* Posisi di atas FAB */
-        left: 50%;
-        transform: translateX(-50%); /* Dulu: translate(-50%, -50%) */
-      }
+        top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
       #keyboard-panel.active {
           display: flex;
       }
