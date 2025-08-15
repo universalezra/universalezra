@@ -104,6 +104,7 @@
         align-items: center;
         flex-direction: column;
         text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
       .grid-block-background {
         position: absolute;
@@ -123,6 +124,7 @@
         z-index: 2;
         color: white;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        padding: 20px;
       }
       .panel {
         position: fixed;
@@ -192,7 +194,7 @@
         align-items: center;
       }
       #dashboard-panel {
-        bottom: 0;
+        top: 0;
         left: 0;
         width: 100%;
         height: 100%;
@@ -297,7 +299,7 @@
       }
       #keyboard-panel {
         position: fixed;
-        width: 300px;
+        width: 350px;
         height: auto;
         padding: 10px;
         background: rgba(26, 26, 46, 0.9);
@@ -309,9 +311,9 @@
         color: var(--text-primary);
         z-index: 1011;
         cursor: move;
-        top: 50%;
+        bottom: 160px; /* Posisi di atas FAB */
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translateX(-50%); /* Dulu: translate(-50%, -50%) */
       }
       #keyboard-panel.active {
           display: flex;
@@ -356,7 +358,7 @@
       }
       #live-visitors-panel .live-visitors-content,
       #moment-vault-panel .moment-vault-content,
-      #dashboard-panel .dashboard-content {
+      #dashboard-panel .dashboard-content-wrapper {
           width: 100%;
           height: 100%;
           max-width: 1200px;
@@ -376,23 +378,25 @@
           grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
           gap: 15px;
       }
-      #visitor-history ul {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          max-height: 200px;
-          overflow-y: auto;
+      #visitor-history {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 0 10px;
       }
-      #visitor-history li {
-          background: rgba(142, 68, 173, 0.1);
-          border: 1px solid rgba(142, 68, 173, 0.2);
-          border-radius: 10px;
-          padding: 10px;
-          font-size: 0.8em;
-          color: var(--text-primary);
-          margin-bottom: 8px;
-          display: flex;
-          justify-content: space-between;
+      #visitor-history table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.85em;
+      }
+      #visitor-history th, #visitor-history td {
+          border: 1px solid var(--border-color);
+          padding: 8px;
+          text-align: left;
+      }
+      #visitor-history th {
+          background-color: rgba(0, 168, 255, 0.2);
+          position: sticky;
+          top: 0;
       }
       #moment-vault-gallery-container {
         flex-grow: 1; 
@@ -647,17 +651,28 @@
           border: none;
           z-index: 10;
       }
+      /* Style untuk Embed Sabda */
       #sabda-widget-container {
         width: 100%;
         max-width: 500px;
         height: 100%;
         max-height: 400px;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      }
+      #sabda-widget-container iframe {
+        border-radius: 5px;
       }
       #dashboard-content {
+        height: 100%;
+        width: 100%;
         padding: 20px;
         text-align: left;
         color: var(--text-primary);
-        overflow-y: auto;
+        overflow-y: auto; /* Memastikan dashboard bisa di-scroll */
       }
       .dashboard-card {
         background: rgba(0, 0, 0, 0.4);
@@ -688,13 +703,74 @@
         display: none;
         box-shadow: 0 0 20px rgba(0,0,0,0.5);
       }
+      /* Popup Pengguna Baru */
+      #new-user-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 500px;
+        background: var(--bg-panel);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        z-index: 10000;
+        padding: 25px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        display: none;
+        text-align: center;
+      }
+      #new-user-popup h3 {
+        margin-top: 0;
+        color: var(--accent);
+      }
+      #new-user-popup p {
+        margin-bottom: 15px;
+      }
+      #new-user-popup a {
+        color: var(--accent);
+      }
+      #popup-close-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.2s;
+      }
+      #popup-close-btn:hover {
+        background: var(--accent);
+      }
     </style>
   </head>
   <body>
+    <div id="new-user-popup">
+      <h3>Selamat Datang!</h3>
+      <p>Untuk pengalaman terbaik, kami merekomendasikan:</p>
+      <ul>
+        <li style="text-align: left; margin-bottom: 10px;">
+          Gunakan aplikasi kami untuk fitur penuh: 
+          <a href="https://drive.google.com/file/d/11fQBWB9C1PjUQvb8b-IqHdNLS7YkFSFD/view?usp=drivesdk" target="_blank">Download di sini</a>
+        </li>
+        <li style="text-align: left; margin-bottom: 10px;">
+          Putar layar Anda ke mode lanskap (landscape).
+        </li>
+      </ul>
+      <p>
+        Dengan melanjutkan, Anda setuju dengan 
+        <a href="#privacy" onclick="alert('Kebijakan Privasi: Kami mengumpulkan data anonim seperti ID browser dan alamat IP untuk analisis statistik pengunjung. Data ini tidak akan dibagikan dengan pihak ketiga.');">Kebijakan Privasi</a> kami.
+      </p>
+      <button id="popup-close-btn">Mengerti</button>
+    </div>
+
     <div class="screenshot-popup" id="screenshot-popup">
         Screenshot tidak diizinkan!
     </div>
-    <canvas id="visualizer-canvas"></canvas>  
+    <canvas id="visualizer-canvas"></canvas>
+    <audio id="matrix-sound" src="https://www.myinstants.com/media/sounds/matrix-code.mp3" preload="auto"></audio>
     <div id="main-viewport">
       <div id="grid-container">   
         <div class="grid-block" id="block-1-1">
@@ -738,13 +814,17 @@
           <div class="grid-block-content"><h1>Block (2,5)</h1></div>
         </div>    
         <div class="grid-block" id="block-3-1">
-          <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=11');"></div>
-          <div class="grid-block-content"><h1>Block (3,1)</h1></div>
+          <div class="grid-block-content">
+              <h3 style="margin-bottom: 20px;">Peta Bintang</h3>
+              <iframe src="https://stellarium-web.org/" width="80%" height="60%" frameborder="0" style="border-radius: 10px;"></iframe>
+          </div>
         </div>
         <div class="grid-block" id="block-3-2">
-          <h3>Ayat Hari Ini</h3>
-          <div id="sabda-widget-container">
-            <iframe src="https://alkitab.sabda.org/daily/widget.php" width="100%" height="100%" frameborder="0"></iframe>
+          <div class="grid-block-content">
+            <h3>Ayat Hari Ini</h3>
+            <div id="sabda-widget-container">
+              <iframe src="https://alkitab.sabda.org/daily/widget.php" width="100%" height="100%" frameborder="0"></iframe>
+            </div>
           </div>
         </div>
         <div class="grid-block" id="block-center">
@@ -772,13 +852,12 @@
           <div class="grid-block-content"><h1>Block (4,2)</h1></div>
         </div>
         <div class="grid-block" id="block-4-3">
-    <div class="grid-block-background">
-        <video autoplay loop muted playsinline>
-            <source src="bg.mp4" type="video/mp4">
-            </video>
-    </div>
-    <div class="grid-block-content">
-      </div>
+          <div class="grid-block-background">
+              <video autoplay loop muted playsinline>
+                  <source src="bg.mp4" type="video/mp4">
+              </video>
+          </div>
+          <div class="grid-block-content"></div>
         </div>
         <div class="grid-block" id="block-4-4">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=19');"></div>
@@ -918,21 +997,21 @@
         </div>
     </div>
     <div class="panel" id="live-visitors-panel">
-        <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
-        <div class="live-visitors-content">
-            <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Live Visitors</h3>
-            <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px">
-                <p style="text-align: center; color: var(--text-secondary)">visitor</p>
-                <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0"></ul>
-            </div>
-            <h4 style="margin-top: 20px; color: var(--primary); text-align: center;">Visitor History</h4>
-            <div id="visitor-history" style="flex-grow: 1; overflow-y: auto; padding-right: 10px; margin-top: 10px;">
-                <p style="text-align: center; color: var(--text-secondary);">Loading history</p>
-            </div>
-            <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary)">
-                updated: <span id="last-updated-time">N/A</span>
-            </div>
-        </div>
+      <button class="panel-close-btn" data-panel="live-visitors-panel"><i class="fas fa-times"></i></button>
+      <div class="live-visitors-content">
+          <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Live Visitors</h3>
+          <div id="mv-live-visitors-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 10px">
+              <p style="text-align: center; color: var(--text-secondary)">visitor</p>
+              <ul id="visitor-list" style="list-style: none; padding: 0; margin: 0"></ul>
+          </div>
+          <h4 style="margin-top: 20px; color: var(--primary); text-align: center;">Visitor History</h4>
+          <div id="visitor-history">
+              <p style="text-align: center; color: var(--text-secondary);">Loading history</p>
+          </div>
+          <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: var(--text-secondary)">
+              updated: <span id="last-updated-time">N/A</span>
+          </div>
+      </div>
     </div>
     <div class="panel" id="moment-vault-panel">
         <button class="panel-close-btn" data-panel="moment-vault-panel"><i class="fas fa-times"></i></button>
@@ -953,24 +1032,34 @@
     </div>
     <div class="panel" id="dashboard-panel">
       <button class="panel-close-btn" data-panel="dashboard-panel"><i class="fas fa-times"></i></button>
-      <div class="dashboard-content">
-        <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Target Dashboard</h3>
-        <p style="text-align: center; color: var(--text-secondary)">Ini adalah tampilan statis dari target-target masa depan.</p>
-        <div class="dashboard-card">
-          <h4>🚀 Proyek "Atlas"</h4>
-          <p>Menciptakan mesin pencari web 3.0 yang terdesentralisasi, aman, dan tanpa iklan yang mengganggu. Fitur: AI-powered indexing, user-owned data.</p>
-        </div>
-        <div class="dashboard-card">
-          <h4>💡 Inisiatif "Project Athena"</h4>
-          <p>Pengembangan sistem AI personal yang dapat mempersonalisasi konten dan memberikan wawasan mendalam tanpa menyimpan data pengguna di server terpusat. Fitur: Enkripsi end-to-end, model AI on-device.</p>
-        </div>
-        <div class="dashboard-card">
-          <h4>🌱 Misi "Gaia"</h4>
-          <p>Membangun platform edukasi interaktif untuk anak-anak, berfokus pada STEM dan kreativitas. Fitur: Augmented reality (AR) lessons, gamified learning path.</p>
-        </div>
-        <div class="dashboard-card">
-          <h4>🔗 Integrasi "Omni-Connect"</h4>
-          <p>Menghubungkan semua aplikasi web pribadiku ke dalam satu ekosistem yang kohesif. Target: Sinkronisasi data real-time antar platform, notifikasi terpadu.</p>
+      <div class="dashboard-content-wrapper">
+        <div id="dashboard-content">
+          <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Target Dashboard</h3>
+          <p style="text-align: center; color: var(--text-secondary)">Ini adalah tampilan statis dari target-target masa depan.</p>
+          <div class="dashboard-card">
+            <h4>噫 Proyek "Atlas"</h4>
+            <p>Menciptakan mesin pencari web 3.0 yang terdesentralisasi, aman, dan tanpa iklan yang mengganggu. Fitur: AI-powered indexing, user-owned data.</p>
+          </div>
+          <div class="dashboard-card">
+            <h4>庁 Inisiatif "Project Athena"</h4>
+            <p>Pengembangan sistem AI personal yang dapat mempersonalisasi konten dan memberikan wawasan mendalam tanpa menyimpan data pengguna di server terpusat. Fitur: Enkripsi end-to-end, model AI on-device.</p>
+          </div>
+          <div class="dashboard-card">
+            <h4>験 Misi "Gaia"</h4>
+            <p>Membangun platform edukasi interaktif untuk anak-anak, berfokus pada STEM dan kreativitas. Fitur: Augmented reality (AR) lessons, gamified learning path.</p>
+          </div>
+          <div class="dashboard-card">
+            <h4>迫 Integrasi "Omni-Connect"</h4>
+            <p>Menghubungkan semua aplikasi web pribadiku ke dalam satu ekosistem yang kohesif. Target: Sinkronisasi data real-time antar platform, notifikasi terpadu.</p>
+          </div>
+          <div class="dashboard-card">
+            <h4>Proyek Tambahan 1</h4>
+            <p>Deskripsi untuk proyek tambahan agar konten menjadi lebih panjang dan scrollable.</p>
+          </div>
+          <div class="dashboard-card">
+            <h4>Proyek Tambahan 2</h4>
+            <p>Deskripsi lainnya untuk memastikan fungsionalitas scroll berjalan dengan baik.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -1038,15 +1127,15 @@
         'https://visitor-history.ezvvel.workers.dev/';
       const VISITOR_HISTORY_EXPIRY_DAYS = 7;
       const REFRESH_INTERVAL_MS = 5000;
-      const LIVE_VISITORS_PASSWORD = '💔';
+      const LIVE_VISITORS_PASSWORD = '樗';
       const MOMENT_VAULT_PASSWORD = 'vmoments';
       const CENTER_VIDEO_PASSWORD = 'elviu';
       let isVisualizerActive = false;
       let visualizerCanvas, ctx, audioContext, analyser, source;
       let particles = [];
       let bufferLength, dataArray, frequencyData;
-      const PARTICLE_COUNT = 200;
-      const PARTICLE_SPEED_MULTIPLIER = 0.5;
+      const PARTICLE_COUNT = 150; // Optimasi: jumlah partikel dikurangi
+      const PARTICLE_SPEED_MULTIPLIER = 0.4;
       let gravity = { x: 0, y: 0 };   
       let gridContainer, currentX = 2, currentY = 2;
       let isDragging = false;
@@ -1065,12 +1154,22 @@
         initVirtualKeyboard();
         initSecurityFeatures();
         initDraggableKeyboard();
+        checkFirstVisit(); // Panggil fungsi popup pengguna baru
       });
       function initSwipeGestures() {
+        const matrixSound = document.getElementById('matrix-sound');
         const moveGrid = (x, y) => {
+            const oldX = currentX;
+            const oldY = currentY;
             currentX = Math.min(4, Math.max(0, currentX + x));
             currentY = Math.min(4, Math.max(0, currentY + y));
-            gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
+
+            if (oldX !== currentX || oldY !== currentY) {
+              gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
+              // Mainkan suara Matrix
+              matrixSound.currentTime = 0;
+              matrixSound.play().catch(e => console.error("Audio play failed:", e));
+            }
         };
         const handleStart = (e) => {
             isDragging = true;
@@ -1085,17 +1184,9 @@
             const dy = endY - startY;
             isDragging = false;
             if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
-                if (dx > 0) {
-                    moveGrid(-1, 0);
-                } else {
-                    moveGrid(1, 0);
-                }
+                moveGrid(dx > 0 ? -1 : 1, 0);
             } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > SWIPE_THRESHOLD) {
-                if (dy > 0) {
-                    moveGrid(0, -1);
-                } else {
-                    moveGrid(0, 1);
-                }
+                moveGrid(0, dy > 0 ? -1 : 1);
             }
         };
         document.addEventListener('mousedown', handleStart);
@@ -1334,7 +1425,7 @@
         });
       function initWebsiteAgeDisplay() {
         const websiteAgeDisplay = document.getElementById('website-age-display');
-        const creationDate = new Date(2006, 7, 07, 0, 0, 0);
+        const creationDate = new Date(2006, 7, 7, 0, 0, 0); // Month is 0-indexed, so 7 is August
         function updateWebsiteAge() {
           const now = new Date();
           const diff = now.getTime() - creationDate.getTime();
@@ -1408,38 +1499,63 @@
           lastUpdatedTime.textContent = 'Error';
         }
       }    
-      // Mengubah cara fetch history agar menggunakan Cloudflare worker yang terintegrasi dengan Google Sheet
       async function fetchVisitorHistory() {
         const historyContainer = document.getElementById('visitor-history');
         historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history...</p>';
         try {
-          // Ganti URL ini dengan Cloudflare Worker Anda yang terhubung ke Google Script
-          const workerUrl = 'https://visitor-history-to-google-sheet.universalezra.workers.dev/';
-          const response = await fetch(workerUrl + '?get_history=true');
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          let history = await response.json();      
-          if (history && history.length > 0) {
-            historyContainer.innerHTML = `<ul>${history
-              .map((visitor) => {
-                const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                });
-                return `<li><span>ID: ${visitor.browserId.substring(0, 10)}</span><span>IP: ${visitor.ip || 'N/A'}</span><span>${timestamp}</span></li>`;
-              })
-              .join('')}</ul>`;
-          } else {
-            historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>';
-          }
+            const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            let history = await response.json();
+            
+            if (history && history.length > 0) {
+                // Proses data untuk menghitung jumlah kunjungan
+                const visitCounts = history.reduce((acc, visitor) => {
+                    acc[visitor.browserId] = (acc[visitor.browserId] || 0) + 1;
+                    return acc;
+                }, {});
+
+                const tableHeader = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Browser ID</th>
+                                <th>IP</th>
+                                <th>Referral</th>
+                                <th>Total Kunjungan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                const tableRows = history
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // Urutkan dari yang terbaru
+                    .map(visitor => {
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', {
+                            year: 'numeric', month: '2-digit', day: '2-digit',
+                            hour: '2-digit', minute: '2-digit'
+                        });
+                        return `
+                            <tr>
+                                <td>${timestamp}</td>
+                                <td>${visitor.browserId.substring(0, 10)}...</td>
+                                <td>${visitor.ip || 'N/A'}</td>
+                                <td>${visitor.referrer || 'Direct'}</td>
+                                <td>${visitCounts[visitor.browserId] || 1}</td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                const tableFooter = `</tbody></table>`;
+                historyContainer.innerHTML = tableHeader + tableRows + tableFooter;
+            } else {
+                historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>';
+            }
         } catch (error) {
-          console.error('Failed to load visitor history:', error);
-          historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`;
+            console.error('Failed to load visitor history:', error);
+            historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`;
         }
       }
       function getBrowserId() {
@@ -1475,10 +1591,7 @@
             body: JSON.stringify(data),
           }).catch((e) => console.error('Error sending to live visitors worker:', e));       
           
-          // Mengirim data ke worker baru untuk Google Sheets
-          // Ganti URL ini dengan Cloudflare Worker Anda yang terhubung ke Google Script
-          const googleSheetWorkerUrl = 'https://visitor-history-to-google-sheet.universalezra.workers.dev/';
-          fetch(googleSheetWorkerUrl, {
+          fetch(VISITOR_HISTORY_WORKER_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data),
@@ -1625,6 +1738,17 @@
           statusEl.textContent = `Error uploading moment: ${error.message}`;
           statusEl.style.color = 'var(--danger)';
         }
+      }
+      function readFileAsBase64(file) {
+          return new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                  const base64String = reader.result.split(',')[1];
+                  resolve(base64String);
+              };
+              reader.onerror = (error) => reject(error);
+              reader.readAsDataURL(file);
+          });
       }
       async function editMoment(itemId, currentItems) {
         const password = prompt('Masukkan password untuk mengedit:');
@@ -1776,7 +1900,7 @@
         const audioPlayer = document.getElementById('audio-player');
         if (!audioPlayer.src) {
           alert('Pilih lagu terlebih dahulu');
-          return;
+          return false;
         }
         if (!audioContext) {
           audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1784,23 +1908,24 @@
           source = audioContext.createMediaElementSource(audioPlayer);
           source.connect(analyser);
           analyser.connect(audioContext.destination);
-          analyser.fftSize = 8192;
+          analyser.fftSize = 4096; // Optimasi: Ukuran FFT dikurangi
           bufferLength = analyser.frequencyBinCount;
           frequencyData = new Uint8Array(bufferLength);
         }
-        audioPlayer.play();
         createParticles();
+        return true;
       }
       function createParticles() {
         particles = [];
+        const canvasWidth = visualizerCanvas.width;
+        const canvasHeight = visualizerCanvas.height;
         for (let i = 0; i < PARTICLE_COUNT; i++) {
           particles.push({
-            x: visualizerCanvas.width / 2,
-            y: visualizerCanvas.height / 2,
+            x: canvasWidth / 2,
+            y: canvasHeight / 2,
             size: Math.random() * 2 + 1,
             speedX: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
             speedY: (Math.random() - 0.5) * PARTICLE_SPEED_MULTIPLIER,
-            color: `hsl(${Math.random() * 360}, 100%, 50%)`,
           });
         }
       }
@@ -1809,59 +1934,63 @@
         requestAnimationFrame(drawVisualizer);
         analyser.getByteFrequencyData(frequencyData);
         ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+        
         const center_x = visualizerCanvas.width / 2;
         const center_y = visualizerCanvas.height / 2;
-        const radius = Math.min(center_x, center_y) * 0.4;
-        const sampleRate = audioContext.sampleRate;
-        const maxFreq = 1000;
-        const maxIndex = Math.floor((maxFreq / (sampleRate / 2)) * bufferLength);
-        const effectiveBufferLength = maxIndex;
+        const radius = Math.min(center_x, center_y) * 0.35;
+        
+        const effectiveBufferLength = bufferLength * 0.2; // Fokus pada frekuensi rendah-menengah
         const slice = (2 * Math.PI) / effectiveBufferLength;
+        
+        // Circular visualizer
+        ctx.beginPath();
+        let first = true;
         for (let i = 0; i < effectiveBufferLength; i++) {
-            const barHeight = frequencyData[i] * 0.7;
+            const v = frequencyData[i] / 255.0;
+            const barHeight = v * 200;
             const angle = slice * i;
             const x = center_x + Math.cos(angle) * (radius + barHeight);
             const y = center_y + Math.sin(angle) * (radius + barHeight);
-            ctx.beginPath();
-            ctx.moveTo(center_x, center_y);
-            ctx.lineTo(x, y);
-            const hue = (i / effectiveBufferLength) * 360;
-            ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
+            if (first) {
+                ctx.moveTo(x, y);
+                first = false;
+            } else {
+                ctx.lineTo(x, y);
+            }
         }
+        ctx.closePath();
+        const gradient = ctx.createLinearGradient(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+        gradient.addColorStop(0, 'rgba(142, 68, 173, 0.8)');
+        gradient.addColorStop(1, 'rgba(0, 168, 255, 0.8)');
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Particle animation
         const averageAmplitude = frequencyData.slice(0, effectiveBufferLength).reduce((a, b) => a + b) / effectiveBufferLength;
-        const particleSpeedFactor = averageAmplitude / 255 * 3;
-        for (let i = 0; i < particles.length; i++) {
-          const p = particles[i];        
-          p.speedX += gravity.x * 0.05;
-          p.speedY += gravity.y * 0.05;
-          p.x += p.speedX * particleSpeedFactor;
-          p.y += p.speedY * particleSpeedFactor;
-          if (p.x < 0 || p.x > visualizerCanvas.width) p.speedX *= -1;
-          if (p.y < 0 || p.y > visualizerCanvas.height) p.speedY *= -1;
-          const colorHue = (averageAmplitude * 1.5 + (i * 360 / PARTICLE_COUNT));
-          p.color = `hsl(${colorHue % 360}, 100%, 50%)`;
-          const particleSize = p.size + (averageAmplitude / 100);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, particleSize, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
-          ctx.fill();
+        const particleSpeedFactor = (averageAmplitude / 255) * 4;
+        const hueBase = (averageAmplitude * 1.5);
+        ctx.fillStyle = `hsl(${hueBase % 360}, 100%, 50%)`;
+
+        for (const p of particles) {
+            p.x += p.speedX * particleSpeedFactor;
+            p.y += p.speedY * particleSpeedFactor;
+
+            if (p.x < 0 || p.x > visualizerCanvas.width) p.speedX *= -1;
+            if (p.y < 0 || p.y > visualizerCanvas.height) p.speedY *= -1;
+
+            const particleSize = p.size + (averageAmplitude / 100);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, particleSize, 0, Math.PI * 2);
+            ctx.fill();
         }
       }
       function toggleVisualizerOverlay() {
-        const audioPlayer = document.getElementById('audio-player');
         const body = document.body;
         if (!isVisualizerActive) {
-          if (!audioPlayer.src || audioPlayer.paused) {
-            alert('Putar musik terlebih dahulu');
-            return;
-          }
-          setupAudioVisualizer();
-          if (!analyser) return;
+          if (!setupAudioVisualizer()) return;
           isVisualizerActive = true;
           body.classList.add('visualizer-active');
-          createParticles();
           drawVisualizer();
           toggleFullscreen();
         } else {
@@ -1871,14 +2000,17 @@
         }
       }
       function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-            console.log(`Error when system attempting to enable fullscreen: ${err.message}`);
-        });
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();       }    }}
-        function initVirtualKeyboard() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log(`Error when system attempting to enable fullscreen: ${err.message}`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+      }
+      function initVirtualKeyboard() {
             const keyboardPanel = document.getElementById('keyboard-panel');
             const keyboardInput = document.getElementById('keyboard-input');
             const liveVisitorsButton = document.getElementById('fab-live-visitors');
@@ -1896,22 +2028,15 @@
                     centerVideoPlayer.src = 'stiker.mp4';
                     centerVideoPlayer.play();
                     keyboardPanel.classList.remove('active');
-                    keyboardInput.value = '';
                 },
-                'password3': () => { console.log('Fungsi password 3'); },
-                'password4': () => { console.log('Fungsi password 4'); },
-                'password5': () => { console.log('Fungsi password 5'); },
-                'password6': () => { console.log('Fungsi password 6'); },
-                'password7': () => { console.log('Fungsi password 7'); },
-                'password8': () => { console.log('Fungsi password 8'); },
-                'password9': () => { console.log('Fungsi password 9'); },
-                'password10': () => { console.log('Fungsi password 10'); },
+                // Tambahkan password lain di sini jika perlu
             };
             
             let currentInput = '';
             
             document.querySelectorAll('.keyboard-key').forEach(button => {
                 button.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Mencegah event bubbling ke panel draggable
                     const keyText = e.target.closest('.keyboard-key').textContent.trim();
                     if (e.target.closest('.keyboard-key').id === 'backspace-key') {
                         currentInput = currentInput.slice(0, -1);
@@ -1927,54 +2052,55 @@
                         passwordMap[currentInput]();
                         currentInput = '';
                         keyboardInput.value = '';
-                    } else {
-                        // Reset all buttons to hidden if the password is wrong
-                        liveVisitorsButton.style.display = 'none';
-                        // ... Tambahkan kode untuk menyembunyikan fitur lain di sini
                     }
                 });
             });
+
+            keyboardInput.addEventListener('input', () => {
+                const enteredPassword = keyboardInput.value;
+                 if (passwordMap[enteredPassword]) {
+                    passwordMap[enteredPassword]();
+                    keyboardInput.value = ''; // Reset input
+                    currentInput = '';
+                }
+            });
+
             centerVideoCloseBtn.addEventListener('click', () => {
                 centerVideoPlayer.pause();
                 centerVideoPlayer.src = '';
                 centerVideoContainer.classList.remove('active');
             });
         }
-        function initDraggableKeyboard() {
+      function initDraggableKeyboard() {
             const keyboardPanel = document.getElementById('keyboard-panel');
             let isDraggingKeyboard = false;
-            let currentX;
-            let currentY;
-            let initialX;
-            let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
+            let currentX, currentY, initialX, initialY;
+            let xOffset = 0, yOffset = 0;
         
             keyboardPanel.addEventListener("mousedown", dragStart);
-            keyboardPanel.addEventListener("mouseup", dragEnd);
-            keyboardPanel.addEventListener("mousemove", drag);
-            keyboardPanel.addEventListener("touchstart", dragStart);
-            keyboardPanel.addEventListener("touchend", dragEnd);
-            keyboardPanel.addEventListener("touchmove", drag);
+            document.addEventListener("mouseup", dragEnd);
+            document.addEventListener("mousemove", drag);
+            keyboardPanel.addEventListener("touchstart", dragStart, { passive: false });
+            document.addEventListener("touchend", dragEnd);
+            document.addEventListener("touchmove", drag, { passive: false });
         
             function dragStart(e) {
-                if (e.target.closest('.keyboard-key') || e.target.closest('.panel-close-btn') || e.target.id === 'keyboard-input') return;
+                // Jangan mulai drag jika targetnya adalah tombol atau input
+                if (e.target.closest('.keyboard-key, .panel-close-btn, #keyboard-input')) return;
+                
                 isDraggingKeyboard = true;
                 if (e.type === "touchstart") {
                     initialX = e.touches[0].clientX - xOffset;
                     initialY = e.touches[0].clientY - yOffset;
                 } else {
+                    e.preventDefault();
                     initialX = e.clientX - xOffset;
                     initialY = e.clientY - yOffset;
                 }
-                keyboardPanel.style.cursor = 'grabbing';
             }
         
-            function dragEnd(e) {
+            function dragEnd() {
                 isDraggingKeyboard = false;
-                initialX = currentX;
-                initialY = currentY;
-                keyboardPanel.style.cursor = 'grab';
             }
         
             function drag(e) {
@@ -1989,65 +2115,43 @@
                     }
                     xOffset = currentX;
                     yOffset = currentY;
-                    setTranslate(currentX, currentY, keyboardPanel);
+                    // Hapus transform translateX yang ada di CSS, dan terapkan di sini
+                    keyboardPanel.style.transform = `translate(-50%, 0) translate3d(${currentX}px, ${currentY}px, 0)`;
                 }
             }
-        
-            function setTranslate(xPos, yPos, el) {
-                el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-            }
-        
-            keyboardPanel.style.cursor = 'grab';
         }
-        function initSecurityFeatures() {
-            document.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                alert('Tindakan ini tidak diizinkan.');
-            });
-            document.addEventListener('copy', (e) => {
-                e.preventDefault();
-                alert('Menyalin konten tidak diizinkan.');
-            });
-            document.addEventListener('cut', (e) => {
-                e.preventDefault();
-                alert('Memotong konten tidak diizinkan.');
-            });
+      function initSecurityFeatures() {
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+            document.addEventListener('copy', (e) => e.preventDefault());
+            document.addEventListener('cut', (e) => e.preventDefault());
             window.addEventListener('keyup', (e) => {
-                if (e.key === 'PrintScreen' || e.key === 'Snapshot') {
+                if (e.key === 'PrintScreen') {
                     const popup = document.getElementById('screenshot-popup');
                     popup.style.display = 'block';
-                    setTimeout(() => {
-                        popup.style.display = 'none';
-                    }, 3000);
+                    setTimeout(() => { popup.style.display = 'none'; }, 3000);
                 }
             });
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'hidden') {
-                    setTimeout(() => {
-                        checkClipboardForScreenshot();
-                    }, 500);
-                }
+      }
+      function checkFirstVisit() {
+        const hasVisited = localStorage.getItem('hasVisitedWebsite');
+        const browserId = getBrowserId(); // Dapatkan ID browser
+        if (!hasVisited) {
+            const popup = document.getElementById('new-user-popup');
+            const closeBtn = document.getElementById('popup-close-btn');
+
+            popup.style.display = 'block';
+            console.log(`Welcome, new visitor! Browser ID: ${browserId}`);
+            console.log("For the best experience, please use our app: https://drive.google.com/file/d/11fQBWB9C1PjUQvb8b-IqHdNLS7YkFSFD/view?usp=drivesdk and switch to landscape mode.");
+            console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
+
+            closeBtn.addEventListener('click', () => {
+                popup.style.display = 'none';
+                localStorage.setItem('hasVisitedWebsite', 'true');
             });
-            async function checkClipboardForScreenshot() {
-                try {
-                    const clipboardItems = await navigator.clipboard.read();
-                    for (const clipboardItem of clipboardItems) {
-                        for (const type of clipboardItem.types) {
-                            if (type.startsWith('image/')) {
-                                const popup = document.getElementById('screenshot-popup');
-                                popup.style.display = 'block';
-                                setTimeout(() => {
-                                    popup.style.display = 'none';
-                                }, 3000);
-                                return;
-                            }
-                        }
-                    }
-                } catch (err) {
-                    console.error('Failed to read clipboard contents: ', err);
-                }
-            }
+        } else {
+            console.log(`Welcome back! Browser ID: ${browserId}`);
         }
+      }
     </script>
   </body>
 </html>
