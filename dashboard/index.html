@@ -41,15 +41,6 @@
         --text-secondary: #98ded9;
         --border-color: rgba(0, 168, 255, 0.3);
       }
-      html[data-theme='light'] {
-        --primary: #3498db;
-        --accent: #e67e22;
-        --bg-main: #ecf0f1;
-        --bg-panel: rgba(255, 255, 255, 0.9);
-        --text-primary: #2c3e50;
-        --text-secondary: #7f8c8d;
-        --border-color: rgba(52, 152, 219, 0.4);
-      }
       * {
         box-sizing: border-box;
       }
@@ -751,8 +742,10 @@
           <div class="grid-block-content"><h1>Block (1,4)</h1></div>
         </div>
         <div class="grid-block" id="block-1-5">
-           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div>
-           <div class="grid-block-content"><h1>Block (1,5)</h1></div>
+           <div class="grid-block-content">
+               <h3 style="margin-bottom: 20px;">Peta Cuaca</h3>
+               <iframe width="90%" height="80%" src="https://embed.windy.com/embed2/windy/g/fs:!off/!p:off/!m:eIXakQQ?lat=-6.175&lon=106.827&zoom=5&level=surface" frameborder="0" style="border:none; border-radius:10px;"></iframe>
+           </div>
         </div>
         <div class="grid-block" id="block-2-1">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div>
@@ -1960,7 +1953,7 @@
             const bar = wrapper.children[0];
             const dataIndex = startIndex + index;
             const amplitude = frequencyData[dataIndex] / 255;
-            const newScale = Math.max(0.05, amplitude * 2.5);
+            const newScale = Math.max(0.05, amplitude * 3.5);
             bar.scale.y = newScale;
         });
         frequencyBarsGroup.rotation.z -= 0.001;
@@ -1969,7 +1962,7 @@
         const overallAvg = lowerHalfArray.reduce((prev, curr) => prev + curr, 0) / lowerHalfArray.length;
         const bassAvg = frequencyData.slice(0, 10).reduce((prev, curr) => prev + curr, 0) / 10;
 
-        const pulse = 1 + (overallAvg / 255) * 0.5;
+        const pulse = 1 + (overallAvg / 255) * 0.8;
         icosahedron.scale.set(pulse, pulse, pulse);
         icosahedron.rotation.x += 0.002;
         icosahedron.rotation.y += 0.003;
