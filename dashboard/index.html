@@ -735,7 +735,99 @@
         </div>
         <div class="grid-block" id="block-1-3">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div>
-          <div class="grid-block-content"><h1>Block (1,3)</h1></div>
+          <div class="grid-block-content"><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informasi Cuaca & Angin</title>
+    <style>
+        /* CSS untuk tampilan website */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2c3e50;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px; /* Jarak antar widget */
+            width: 100%;
+            max-width: 1200px;
+        }
+        .widget {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: center;
+            min-width: 320px;
+        }
+        .widget h2 {
+            margin-top: 0;
+            color: #3498db;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        /* Style untuk peta angin agar responsif */
+        iframe {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Dashboard Cuaca Saat Ini</h1>
+        <p>Informasi cuaca dan peta arah angin real-time.</p>
+    </div>
+
+    <div class="container">
+        <div class="widget">
+            <h2>Cuaca Lokal (Jakarta)</h2>
+            <a class="weatherwidget-io" href="https://forecast7.com/en/n6d21106d82/jakarta/" data-label_1="JAKARTA" data-label_2="CUACA" data-theme="original" >JAKARTA WEATHER</a>
+            <script>
+            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+            </script>
+        </div>
+
+        <div class="widget">
+            <h2>Peta Arah Angin</h2>
+            <iframe
+                width="600"
+                height="450"
+                src="https://embed.windy.com/embed2.html?lat=-2.495&lon=118.213&detailLat=-6.215&detailLon=106.827&width=600&height=450&zoom=5&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=true&metricWind=default&metricTemp=default&radarRange=-1"
+                frameborder="0">
+            </iframe>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Website Cuaca Anda</p>
+    </div>
+
+</body>
+</html></div>
         </div>
         <div class="grid-block" id="block-1-4">
           <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div>
