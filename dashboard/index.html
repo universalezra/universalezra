@@ -2113,23 +2113,8 @@
                     centerVideoPlayer.src = 'stiker.mp4';
                     centerVideoPlayer.play();
                 },
-                'panis': () => {
-                    const block = document.getElementById('block-2-3');
-                    if (block) {
-                        const backgroundDiv = block.querySelector('.grid-block-background');
-                        if (backgroundDiv) {
-                            backgroundDiv.style.background = `url('panis.jpg') center center / cover no-repeat`;
-                            // Opsi untuk menghilangkan blur pada blok ini secara spesifik
-                            backgroundDiv.style.filter = 'none';
-                            backgroundDiv.style.webkitFilter = 'none';
-                        }
-                    }
-                }
-            };
-
-        
                 'elvi': () => {
-                    const block = document.getElementById('block-5-3');
+                    const block = document.getElementById('block-2-3');
                     if (block) {
                         const backgroundDiv = block.querySelector('.grid-block-background');
                         if (backgroundDiv) {
@@ -2141,7 +2126,6 @@
                     }
                 }
             };
-
             keyboardToggleButton.addEventListener('click', () => {
                 const enteredPassword = prompt("Please enter the password:");
                 if (enteredPassword && passwordMap[enteredPassword]) {
