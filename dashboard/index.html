@@ -991,7 +991,7 @@
     </div>
     <div class="social-links">
         <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://www.instagram.com/panisla_manik?igsh=MTVybmFrajI5bXB4bQ==" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.instagram.com/elvizill/?utm_source=ig_web_button_share_sheet" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a>
     </div>
     <div id="website-age-display"></div>
     <div class="panel" id="editor-panel">
@@ -1147,7 +1147,7 @@
       const REFRESH_INTERVAL_MS = 5000;
       const LIVE_VISITORS_PASSWORD = '💔';
       const MOMENT_VAULT_PASSWORD = 'vmoments';
-      const CENTER_VIDEO_PASSWORD = 'paniss';
+      const CENTER_VIDEO_PASSWORD = 'elvy';
       let isVisualizerActive = false;
       
       let visualizerCanvas, audioContext, analyser, source;
@@ -2108,7 +2108,7 @@
                 'mylove': () => {
                     liveVisitorsButton.style.display = 'flex';
                 },
-                'paniss': () => {
+                'elvy': () => {
                     centerVideoContainer.classList.add('active');
                     centerVideoPlayer.src = 'stiker.mp4';
                     centerVideoPlayer.play();
@@ -2119,6 +2119,16 @@
                         const backgroundDiv = block.querySelector('.grid-block-background');
                         if (backgroundDiv) {
                             backgroundDiv.style.background = `url('panis.jpg') center center / cover no-repeat`;
+                            // Opsi untuk menghilangkan blur pada blok ini secara spesifik
+                            backgroundDiv.style.filter = 'none';
+                            backgroundDiv.style.webkitFilter = 'none';
+                        },
+                      'elvi': () => {
+                    const block = document.getElementById('block-2-3');
+                    if (block) {
+                        const backgroundDiv = block.querySelector('.grid-block-background');
+                        if (backgroundDiv) {
+                            backgroundDiv.style.background = `url('elvi.jpg') center center / cover no-repeat`;
                             // Opsi untuk menghilangkan blur pada blok ini secara spesifik
                             backgroundDiv.style.filter = 'none';
                             backgroundDiv.style.webkitFilter = 'none';
