@@ -218,42 +218,20 @@
       .visualizer-active #visualizer-canvas {
         display: block;
         pointer-events: none;
- /* CSS BARU UNTUK HEADER PANEL */
-.panel-header {
-    display: flex;
-    justify-content: space-between; /* Mendorong item ke ujung */
-    align-items: center;
-    padding: 10px 15px;
-    background: rgba(0,0,0,0.3); /* Warna latar agar serasi */
-    flex-shrink: 0; /* Mencegah header menyusut */
-}
-
-.panel-title {
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-right: auto; /* Mendorong toolbar & tombol ke kanan */
-}
-
-/* Letakkan toolbar di tengah sebelum tombol close */
-.editor-toolbar {
-    padding: 0; /* Hapus padding lama */
-    margin: 0 15px; /* Beri jarak */
-}
-
-/* UBAH CSS TOMBOL CLOSE */
-.panel-close-btn {
-    position: static; /* HAPUS 'absolute' */
-    /* Hapus top, right, z-index */
-    background: none;
-    border: none;
-    color: #00ff00;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 5px; /* Beri area klik yang lebih baik */
-}
+      }
+      .panel-close-btn {
+        position: static; /* HAPUS 'absolute' */
+        background: none;
+        border: none;
+        color: #00ff00;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px; /* Beri area klik yang lebih baik */
+      }
       .fab-container {
         position: fixed;
         z-index: 1000;
+        display: flex; /* Tambahkan ini agar perataan berfungsi */
       }
       .fab, .fab-container a {
         background: rgba(142, 68, 173, 0.7);
@@ -415,6 +393,7 @@
         overflow: hidden;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
         border: 2px solid var(--border-color);
+        display: flex; /* Tambahkan ini agar tidak hilang saat disembunyikan */
       }
       #video-player-widget video {
         width: 100%;
@@ -430,6 +409,31 @@
         flex-direction: column;
         gap: 15px;
         z-index: 999;
+      }
+      /* HAPUS CSS UNTUK #website-age-display KARENA SUDAH DI-HANDLE DENGAN INLINE STYLE */
+      
+      /* CSS BARU UNTUK HEADER PANEL EDITOR */
+      .panel-header {
+        display: flex;
+        justify-content: space-between; /* Mendorong item ke ujung */
+        align-items: center;
+        padding: 10px 15px;
+        background: rgba(0,0,0,0.3); /* Warna latar agar serasi */
+        flex-shrink: 0; /* Mencegah header menyusut */
+      }
+      
+      .panel-title {
+        font-weight: bold;
+        font-size: 1.1em;
+        margin-right: auto; /* Mendorong toolbar & tombol ke kanan */
+      }
+      
+      .editor-toolbar {
+        padding: 0; /* Hapus padding lama */
+        margin: 0 15px; /* Beri jarak */
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
       }
       .editor-toolbar button {
         background: var(--accent);
@@ -873,7 +877,7 @@
           <div class="grid-block-background" id="interactive-bg" style="background-image: url('wallpaper.png');"></div>
           <div class="grid-block-content">
               <div class="central-message">
-                  <p>By <a href="/dashboard/secret.html" class="ezra-link">Ezra</a></p>
+                  <p>By <a href="secret.html" class="ezra-link">Ezra</a></p>
               </div>
               <div class="panel" id="contribution-panel-desktop" style="display: none"></div>
           </div>
@@ -994,19 +998,22 @@
     <div class="social-links">
         <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="https://www.instagram.com/elvizill/?utm_source=ig_web_button_share_sheet" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a>
-    </div><div class="panel" id="editor-panel">
-    <div class="panel-header">
-        <span class="panel-title">Code Editor</span> <div class="editor-toolbar">
-            <button id="editor-run"><i class="fas fa-play"></i> Run</button>
-            <button id="editor-save"><i class="fas fa-save"></i> Save</button>
-            <button id="editor-load"><i class="fas fa-folder-open"></i> Load</button>
-            <button id="editor-new"><i class="fas fa-file"></i> New</button>
-            <button id="editor-undo"><i class="fas fa-undo"></i> Undo</button>
-            <button id="editor-redo"><span><i class="fas fa-redo"></i> Redo</span></button>
-        </div>
-        <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
     </div>
-    <div class="editor-main">
+
+    <div class="panel" id="editor-panel">
+        <div class="panel-header">
+            <span class="panel-title">Code Editor</span>
+            <div class="editor-toolbar">
+                <button id="editor-run"><i class="fas fa-play"></i> Run</button>
+                <button id="editor-save"><i class="fas fa-save"></i> Save</button>
+                <button id="editor-load"><i class="fas fa-folder-open"></i> Load</button>
+                <button id="editor-new"><i class="fas fa-file"></i> New</button>
+                <button id="editor-undo"><i class="fas fa-undo"></i> Undo</button>
+                <button id="editor-redo"><span><i class="fas fa-redo"></i> Redo</span></button>
+            </div>
+            <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="editor-main">
             <div class="editor-code-area">
                 <textarea id="unified-code-editor" spellcheck="false"></textarea>
             </div>
@@ -1079,8 +1086,9 @@
     <div class="panel" id="dashboard-panel">
       <button class="panel-close-btn" data-panel="dashboard-panel"><i class="fas fa-times"></i></button>
       <div class="dashboard-content-wrapper">
-        <div id="dashboard-content">        
-    <div id="website-age-display"></div>
+        <div id="dashboard-content">
+          <div id="website-age-display" style="text-align: center; font-size: 1.2em; margin-bottom: 20px; color: var(--text-primary);"></div>
+          
           <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Target Dashboard</h3>
           <p style="text-align: center; color: var(--text-secondary)">Ini adalah tampilan statis dari target-target masa depan.</p>
           <div class="dashboard-card">
@@ -1152,7 +1160,38 @@
       const MOMENT_VAULT_PASSWORD = 'vmoments';
       const CENTER_VIDEO_PASSWORD = 'elvy';
       let isVisualizerActive = false;
-      let isElviModeActive = false;
+      
+      // -- START PERUBAHAN UNTUK FITUR 'elvi' --
+      let isElviModeActive = false; 
+
+      function hideUIElements() {
+          document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => {
+              el.style.display = 'none';
+          });
+      }
+
+      function showUIElements() {
+          document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => {
+              if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) {
+                // Gunakan 'flex' karena container-nya menggunakan flexbox
+                el.style.display = 'flex';
+              }
+          });
+      }
+
+      function updateUIVisibility() {
+        if (!isElviModeActive) return;
+
+        // Grid 5x5, blok (2,3) berarti baris ke-2, kolom ke-3
+        // Dalam indeks array (0-based), ini adalah y=1 dan x=2
+        if (currentY === 1 && currentX === 2) {
+            hideUIElements(); // Sembunyikan jika di blok (2,3)
+        } else {
+            showUIElements(); // Tampilkan jika di blok lain
+        }
+      }
+      // -- END PERUBAHAN UNTUK FITUR 'elvi' --
+
       let visualizerCanvas, audioContext, analyser, source;
       let frequencyData, bufferLength;
       let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
@@ -1161,10 +1200,13 @@
       const PARTICLE_COUNT = 500;
       const FREQ_RANGE_START_HZ = 20;
       const FREQ_RANGE_END_HZ = 1024;
+
+
       let gridContainer, currentX = 2, currentY = 2;
       let isDragging = false;
       let startX = 0, startY = 0;
       const SWIPE_THRESHOLD = 50;
+      
       document.addEventListener('DOMContentLoaded', () => {
         gridContainer = document.getElementById('grid-container');
         initPanelControls();
@@ -1194,7 +1236,8 @@
               matrixSound.currentTime = 0;
               matrixSound.play().catch(e => console.error("Audio play failed:", e));
             }
-          updateUIVisibility();
+            // PANGGIL FUNGSI UPDATE VISIBILITY SETIAP KALI GRID BERGERAK
+            updateUIVisibility();
         };
         const handleStart = (e) => {
             isDragging = true;
@@ -1218,28 +1261,6 @@
         document.addEventListener('mouseup', handleEnd);
         document.addEventListener('touchstart', handleStart);
         document.addEventListener('touchend', handleEnd);
-      }
-      
-      // TAMBAHKAN DUA FUNGSI BARU INI
-      function hideUIElements() {
-          document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => {
-              el.style.display = 'none';
-          });
-      }
-
-      function showUIElements() {
-          document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => {
-              // Hati-hati, #fab-live-visitors punya display sendiri
-              if (el.id !== 'fab-live-visitors') {
-                el.style.display = 'flex'; // atau 'block' sesuai defaultnya
-              }
-          });
-          // Kembalikan display untuk fab-container yang berisi fab-live-visitors jika diperlukan
-          const liveVisitorsFabContainer = document.getElementById('fab-live-visitors');
-          if (liveVisitorsFabContainer.style.display === 'none' && passwordMap['mylove']){
-              // Jika fitur mylove sudah di-unlock, tampilkan lagi
-              // Ini opsional, tergantung logika yang Anda inginkan
-          }
       }
       
       // ... (Sisa fungsi-fungsi JS tidak diubah, untuk keringkasan) ...
@@ -1343,9 +1364,9 @@
         const playlistEl = document.getElementById('playlist');
         const songTitleEl = document.getElementById('song-title');
         const songs = [
-          { name: 'On And On', url: 'dashboard/On-And-On.mp3' },
-          { name: 'Where We Are', url: 'dashboard/Where-We-Are.mp3' },
-          { name: 'Sekuat Hatimu', url: 'dashboard/Sekuat Hatimu.mp3' },
+          { name: 'On And On', url: 'On-And-On.mp3' },
+          { name: 'Where We Are', url: 'Where-We-Are.mp3' },
+          { name: 'Sekuat Hatimu', url: 'Sekuat Hatimu.mp3' },
         ];
         songs.forEach((song, index) => {
           const item = document.createElement('div');
@@ -2130,6 +2151,7 @@
             const passwordMap = {
                 'mylove': () => {
                     liveVisitorsButton.style.display = 'flex';
+                    liveVisitorsButton.setAttribute('data-unlocked', 'true');
                 },
                 'elvy': () => {
                     centerVideoContainer.classList.add('active');
@@ -2137,17 +2159,18 @@
                     centerVideoPlayer.play();
                 },
                 'elvi': () => {
+                    // MODIFIKASI FUNGSI 'elvi'
+                    isElviModeActive = true; 
                     const block = document.getElementById('block-2-3');
                     if (block) {
                         const backgroundDiv = block.querySelector('.grid-block-background');
                         if (backgroundDiv) {
                             backgroundDiv.style.background = `url('elvi.jpg') center center / cover no-repeat`;
-                            // Opsi untuk menghilangkan blur pada blok ini secara spesifik
                             backgroundDiv.style.filter = 'none';
                             backgroundDiv.style.webkitFilter = 'none';
                         }
                     }
-                  updateUIVisibility(); 
+                    updateUIVisibility(); 
                 }
             };
             keyboardToggleButton.addEventListener('click', () => {
@@ -2164,17 +2187,6 @@
                 centerVideoPlayer.src = '';
                 centerVideoContainer.classList.remove('active');
             });
-      }
-      function updateUIVisibility() {
-    if (!isElviModeActive) return; // Jika mode tidak aktif, jangan lakukan apa-apa
-
-    // Grid 5x5, block (2,3) berarti baris ke-2, kolom ke-3
-    // Dalam indeks array (0-based), ini adalah y=1 dan x=2
-    if (currentY === 1 && currentX === 2) {
-        hideUIElements(); // Sembunyikan jika di blok (2,3)
-    } else {
-        showUIElements(); // Tampilkan jika di blok lain
-    }
       }
 
       function initSecurityFeatures() {
