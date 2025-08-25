@@ -45,13 +45,13 @@
         #fab-dashboard-toggle { bottom: 20px; left: 20px; }
         #live-visitors-panel .live-visitors-content, #moment-vault-panel .moment-vault-content, #dashboard-panel .dashboard-content-wrapper { width: 100%; height: 100%; max-width: 1200px; background: var(--bg-panel); border-radius: 15px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); overflow: hidden; display: flex; flex-direction: column; padding: 20px; }
         #visitor-list ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-        #visitor-history { flex-grow: 1; overflow-y: auto; padding: 0 10px; }
+        #visitor-history { flex-grow: 1; overflow-y: auto; padding: 0 20px; }
         #visitor-history table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
         #visitor-history th, #visitor-history td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
         #visitor-history th { background-color: rgba(0, 168, 255, 0.2); position: sticky; top: 0; }
         #moment-vault-gallery-container { flex-grow: 1; overflow-y: auto; padding-right: 10px; }
         #moment-vault-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        #moment-upload-form input, #moment-upload-form textarea, #moment-upload-form button { margin-top: 10px; }
+        #moment-upload-form input, #moment-upload-form textarea, #moment-upload-form button { margin-top: 5px; }
         .gallery-item { background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; position: relative; }
         .gallery-media { width: 100%; height: 120px; display: flex; justify-content: center; align-items: center; overflow: hidden; border-radius: 5px; background-color: #333; }
         .gallery-media img, .gallery-media video, .gallery-media audio { width: 100%; height: 100%; object-fit: cover; }
@@ -170,7 +170,6 @@
     </div>
     <div class="panel" id="music-panel">
         <button class="panel-close-btn" data-panel="music-panel"><i class="fas fa-times"></i></button>
-        <h4>Now Playing</h4>
         <div id="music-player-content"><h5 id="song-title">Select a song</h5><audio id="audio-player" controls loop style="width: 100%"></audio><div id="playlist" style="max-height: 20vh; overflow-y: auto; margin-top: 10px"></div></div>
     </div>
     <div class="panel" id="contribution-panel">
