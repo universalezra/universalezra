@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-
-
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8" />
@@ -283,6 +281,7 @@
                     matrixSound.play().catch(e => console.error("Audio play failed:", e));
                 }
                 updateUIVisibility();
+                toggleFullscreen()
             };
             const handleStart = (e) => { isDragging = true; startX = e.clientX || e.touches[0].clientX; startY = e.clientY || e.touches[0].clientY; };
             const handleEnd = (e) => {
@@ -728,6 +727,7 @@
                         if (contentDiv) { contentDiv.style.display = 'none'; }
                     }
                     updateUIVisibility();
+                    toggleFullscreen()
                 }
             };
             keyboardToggleButton.addEventListener('click', () => {
