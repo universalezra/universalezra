@@ -240,7 +240,7 @@
         let isElviModeActive = false;
         function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
         function showUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
-        function updateUIVisibility() { if (!isElviModeActive) return; if (currentY === 1 && currentX === 2) { hideUIElements(); } else { showUIElements(); } }
+        function updateUIVisibility() { if (!isElviModeActive) return; if (currentY === 1 && currentX === 2) { hideUIElements(); toggleFullscreen() } else { showUIElements(); toggleFullscreen() } }
         let visualizerCanvas, audioContext, analyser, source;
         let frequencyData, bufferLength;
         let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
@@ -281,7 +281,6 @@
                     matrixSound.play().catch(e => console.error("Audio play failed:", e));
                 }
                 updateUIVisibility();
-                toggleFullscreen()
             };
             const handleStart = (e) => { isDragging = true; startX = e.clientX || e.touches[0].clientX; startY = e.clientY || e.touches[0].clientY; };
             const handleEnd = (e) => {
