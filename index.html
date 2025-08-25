@@ -218,18 +218,39 @@
       .visualizer-active #visualizer-canvas {
         display: block;
         pointer-events: none;
-      }
-      .panel-close-btn {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: none;
-        border: none;
-        color: #00ff00;
-        font-size: 1.5rem;
-        cursor: pointer;
-        z-index: 5;
-      }
+ /* CSS BARU UNTUK HEADER PANEL */
+.panel-header {
+    display: flex;
+    justify-content: space-between; /* Mendorong item ke ujung */
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(0,0,0,0.3); /* Warna latar agar serasi */
+    flex-shrink: 0; /* Mencegah header menyusut */
+}
+
+.panel-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-right: auto; /* Mendorong toolbar & tombol ke kanan */
+}
+
+/* Letakkan toolbar di tengah sebelum tombol close */
+.editor-toolbar {
+    padding: 0; /* Hapus padding lama */
+    margin: 0 15px; /* Beri jarak */
+}
+
+/* UBAH CSS TOMBOL CLOSE */
+.panel-close-btn {
+    position: static; /* HAPUS 'absolute' */
+    /* Hapus top, right, z-index */
+    background: none;
+    border: none;
+    color: #00ff00;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px; /* Beri area klik yang lebih baik */
+}
       .fab-container {
         position: fixed;
         z-index: 1000;
@@ -409,25 +430,6 @@
         flex-direction: column;
         gap: 15px;
         z-index: 999;
-      }
-      #website-age-display {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 0.8em;
-        color: #00ff00;
-        z-index: 10;
-        background: none;
-        padding: 0;
-        text-align: center;
-        white-space: nowrap;
-      }
-      .editor-toolbar {
-        padding: 10px;
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
       }
       .editor-toolbar button {
         background: var(--accent);
@@ -992,11 +994,9 @@
     <div class="social-links">
         <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="https://www.instagram.com/elvizill/?utm_source=ig_web_button_share_sheet" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a>
-    </div>
-    <div id="website-age-display"></div>
-    <div class="panel" id="editor-panel">
-        <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
-        <div class="editor-toolbar">
+    </div><div class="panel" id="editor-panel">
+    <div class="panel-header">
+        <span class="panel-title">Code Editor</span> <div class="editor-toolbar">
             <button id="editor-run"><i class="fas fa-play"></i> Run</button>
             <button id="editor-save"><i class="fas fa-save"></i> Save</button>
             <button id="editor-load"><i class="fas fa-folder-open"></i> Load</button>
@@ -1004,7 +1004,9 @@
             <button id="editor-undo"><i class="fas fa-undo"></i> Undo</button>
             <button id="editor-redo"><span><i class="fas fa-redo"></i> Redo</span></button>
         </div>
-        <div class="editor-main">
+        <button class="panel-close-btn" data-panel="editor-panel"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="editor-main">
             <div class="editor-code-area">
                 <textarea id="unified-code-editor" spellcheck="false"></textarea>
             </div>
@@ -1077,7 +1079,8 @@
     <div class="panel" id="dashboard-panel">
       <button class="panel-close-btn" data-panel="dashboard-panel"><i class="fas fa-times"></i></button>
       <div class="dashboard-content-wrapper">
-        <div id="dashboard-content">
+        <div id="dashboard-content">        
+    <div id="website-age-display"></div>
           <h3 style="margin-bottom: 15px; color: var(--accent); text-align: center">Target Dashboard</h3>
           <p style="text-align: center; color: var(--text-secondary)">Ini adalah tampilan statis dari target-target masa depan.</p>
           <div class="dashboard-card">
@@ -1149,7 +1152,7 @@
       const MOMENT_VAULT_PASSWORD = 'vmoments';
       const CENTER_VIDEO_PASSWORD = 'elvy';
       let isVisualizerActive = false;
-      
+      let isElviModeActive = false;
       let visualizerCanvas, audioContext, analyser, source;
       let frequencyData, bufferLength;
       let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
@@ -1158,13 +1161,10 @@
       const PARTICLE_COUNT = 500;
       const FREQ_RANGE_START_HZ = 20;
       const FREQ_RANGE_END_HZ = 1024;
-
-
       let gridContainer, currentX = 2, currentY = 2;
       let isDragging = false;
       let startX = 0, startY = 0;
       const SWIPE_THRESHOLD = 50;
-      
       document.addEventListener('DOMContentLoaded', () => {
         gridContainer = document.getElementById('grid-container');
         initPanelControls();
@@ -1194,6 +1194,7 @@
               matrixSound.currentTime = 0;
               matrixSound.play().catch(e => console.error("Audio play failed:", e));
             }
+          updateUIVisibility();
         };
         const handleStart = (e) => {
             isDragging = true;
@@ -1217,6 +1218,28 @@
         document.addEventListener('mouseup', handleEnd);
         document.addEventListener('touchstart', handleStart);
         document.addEventListener('touchend', handleEnd);
+      }
+      
+      // TAMBAHKAN DUA FUNGSI BARU INI
+      function hideUIElements() {
+          document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => {
+              el.style.display = 'none';
+          });
+      }
+
+      function showUIElements() {
+          document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => {
+              // Hati-hati, #fab-live-visitors punya display sendiri
+              if (el.id !== 'fab-live-visitors') {
+                el.style.display = 'flex'; // atau 'block' sesuai defaultnya
+              }
+          });
+          // Kembalikan display untuk fab-container yang berisi fab-live-visitors jika diperlukan
+          const liveVisitorsFabContainer = document.getElementById('fab-live-visitors');
+          if (liveVisitorsFabContainer.style.display === 'none' && passwordMap['mylove']){
+              // Jika fitur mylove sudah di-unlock, tampilkan lagi
+              // Ini opsional, tergantung logika yang Anda inginkan
+          }
       }
       
       // ... (Sisa fungsi-fungsi JS tidak diubah, untuk keringkasan) ...
@@ -2124,6 +2147,7 @@
                             backgroundDiv.style.webkitFilter = 'none';
                         }
                     }
+                  updateUIVisibility(); 
                 }
             };
             keyboardToggleButton.addEventListener('click', () => {
@@ -2140,6 +2164,17 @@
                 centerVideoPlayer.src = '';
                 centerVideoContainer.classList.remove('active');
             });
+      }
+      function updateUIVisibility() {
+    if (!isElviModeActive) return; // Jika mode tidak aktif, jangan lakukan apa-apa
+
+    // Grid 5x5, block (2,3) berarti baris ke-2, kolom ke-3
+    // Dalam indeks array (0-based), ini adalah y=1 dan x=2
+    if (currentY === 1 && currentX === 2) {
+        hideUIElements(); // Sembunyikan jika di blok (2,3)
+    } else {
+        showUIElements(); // Tampilkan jika di blok lain
+    }
       }
 
       function initSecurityFeatures() {
