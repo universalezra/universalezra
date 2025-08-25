@@ -808,7 +808,7 @@
             const closeBtn = document.getElementById('popup-close-btn');
             popup.style.display = 'block';
             console.log(`Welcome, new visitor Browser ID: ${browserId}`);
-            console.log("For the best experience, please use our app: https://drive.google.com/file/d/11fQBWB9C1PjUQvb8b-IqHdNLS7YkFSFD/view?usp=drivesdk and switch to landscape mode.");
+            console.log("For the best experience, please use our app: https://drive.google.com/file/d/1URJk46fP6cyzDoRRPUs83sDhHINpJDwJ/view?usp=drivesdk and switch to landscape mode.");
             console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
             closeBtn.addEventListener('click', () => { popup.style.display = 'none'; localStorage.setItem('hasVisitedWebsite', 'true'); });
         } else { console.log(`Welcome back ID: ${browserId}`); }
