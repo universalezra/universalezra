@@ -2169,6 +2169,9 @@
                             backgroundDiv.style.filter = 'none';
                             backgroundDiv.style.webkitFilter = 'none';
                         }
+                      const contentDiv = block.querySelector('.grid-block-content');
+        if (contentDiv) {
+            contentDiv.style.display = 'none';
                     }
                     updateUIVisibility(); 
                 }
