@@ -240,7 +240,7 @@
     let isElviModeActive = false;
     function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
     function showUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
-    function updateUIVisibility() { if (!isElviModeActive) return; if ((currentY === 1 && currentX === 2) || (currentY === 2 && currentX === 3)) { hideUIElements(); } else { showUIElements(); } }
+    function updateUIVisibility() { if (!isElviModeActive) return; if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { hideUIElements(); } else { showUIElements(); } }
     let visualizerCanvas, audioContext, analyser, source;
     let frequencyData, bufferLength;
     let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
@@ -283,7 +283,7 @@
                 matrixSound.play().catch(e => console.error("Audio play failed:", e));
             }
             updateUIVisibility();
-            if (isElviModeActive) { if ((currentY === 1 && currentX === 2) || (currentY === 2 && currentX === 3)) { enterFullscreen(); } else { exitFullscreen(); } }
+            if (isElviModeActive) { if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); } else { exitFullscreen(); } }
         };
         const handleStart = (e) => { isDragging = true; startX = e.clientX || e.touches[0].clientX; startY = e.clientY || e.touches[0].clientY; };
         const handleEnd = (e) => {
@@ -740,11 +740,11 @@
                         backgroundDiv.style.filter = 'none';
                         backgroundDiv.style.webkitFilter = 'none';
                     }
-                    const contentDiv = block34.querySelector('.grid-block-content');
+                    const contentDiv = block53.querySelector('.grid-block-content');
                     if (contentDiv) { contentDiv.style.display = 'none'; }
                 }
                 updateUIVisibility();
-                if ((currentY === 1 && currentX === 2) || (currentY === 2 && currentX === 3)) { enterFullscreen(); }
+                if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
             }
         };
         keyboardToggleButton.addEventListener('click', () => {
