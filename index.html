@@ -2124,32 +2124,47 @@
                     centerVideoPlayer.src = '/dashboard/stiker.mp4';
                     centerVideoPlayer.play();
                 },
-                'secret': () => {
-                    isElviModeActive = true;
-                    // MODIFICATION: Target both block 2-3 and 3-4
-                    ['block-2-3', 'block-3-4'].forEach(blockId => {
-                        const block = document.getElementById(blockId);
-                        if (block) {
-                            const backgroundDiv = block.querySelector('.grid-block-background');
-                            if (backgroundDiv) {
-                                backgroundDiv.style.background = `url('/dashboard/elvi.jpg') center center / cover no-repeat`;
-                                backgroundDiv.style.filter = 'none';
-                                backgroundDiv.style.webkitFilter = 'none';
-                            }
-                            const contentDiv = block.querySelector('.grid-block-content');
-                            if (contentDiv) {
-                                contentDiv.style.display = 'none';
-                            }
-                        }
-                    });
+              'secret': () => {
+    isElviModeActive = true;
 
-                    updateUIVisibility();
-                    // Check if already on one of the target blocks
-                    if ((currentY === 1 && currentX === 2) || (currentY === 2 && currentX === 3)) {
-                        enterFullscreen();
-                    }
-                }
-            };
+    // --- Pengaturan khusus untuk block 2-3 ---
+    const block23 = document.getElementById('block-2-3');
+    if (block23) {
+        const backgroundDiv = block23.querySelector('.grid-block-background');
+        if (backgroundDiv) {
+            // Menggunakan URL gambar "v.jpg"
+            backgroundDiv.style.background = `url('https://universalezra.netlify.app/moments/1751293320517-December%2013,%202024%20at%204.29%20AM%20(1).jpg') center center / cover no-repeat`;
+            backgroundDiv.style.filter = 'none';
+            backgroundDiv.style.webkitFilter = 'none';
+        }
+        const contentDiv = block23.querySelector('.grid-block-content');
+        if (contentDiv) {
+            contentDiv.style.display = 'none';
+        }
+    }
+
+    // --- Pengaturan khusus untuk block 3-4 ---
+    const block34 = document.getElementById('block-3-4');
+    if (block34) {
+        const backgroundDiv = block34.querySelector('.grid-block-background');
+        if (backgroundDiv) {
+            // Tetap menggunakan URL gambar "elvi.jpg"
+            backgroundDiv.style.background = `url('/dashboard/elvi.jpg') center center / cover no-repeat`;
+            backgroundDiv.style.filter = 'none';
+            backgroundDiv.style.webkitFilter = 'none';
+        }
+        const contentDiv = block34.querySelector('.grid-block-content');
+        if (contentDiv) {
+            contentDiv.style.display = 'none';
+        }
+    }
+
+    // Memanggil fungsi sisa yang berlaku untuk keduanya
+    updateUIVisibility();
+    if ((currentY === 1 && currentX === 2) || (currentY === 2 && currentX === 3)) {
+        enterFullscreen();
+    }
+}
             keyboardToggleButton.addEventListener('click', () => {
                 const enteredPassword = prompt("Please enter the password:");
                 if (enteredPassword && passwordMap[enteredPassword]) {
