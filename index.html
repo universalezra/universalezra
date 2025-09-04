@@ -62,7 +62,7 @@
         .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(0,0,0,0.3); flex-shrink: 0; }
         .panel-title { font-weight: bold; font-size: 1.1em; margin-right: auto; }
         .editor-toolbar { padding: 0; margin: 0 15px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .editor-toolbar button { background: var(--accent); color: var(--text-primary); border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; }
+        .editor-toolbar button { background: var(--accent); color: var(--text-primary); border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; transition: background-color: 0.2s; }
         .editor-toolbar button:hover { background: var(--primary); }
         .editor-main { display: flex; flex-grow: 1; gap: 10px; padding: 10px; }
         .editor-code-area, .editor-preview-area { flex: 1; border: 1px solid var(--border-color); border-radius: 5px; overflow: hidden; }
@@ -238,6 +238,13 @@
     const CENTER_VIDEO_PASSWORD = 'elvy';
     let isVisualizerActive = false;
     let isElviModeActive = false;
+    
+    // --- PENAMBAHAN UNTUK FITUR ZOOM ---
+    let isZoomModeActive = false;
+    let initialPixelRatio = window.devicePixelRatio;
+    const ZOOM_THRESHOLD = 0.1; // Sedikit toleransi sebelum dianggap zoom-in
+    // --- AKHIR PENAMBAHAN ---
+
     function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
     function showUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
     function updateUIVisibility() { if (!isElviModeActive) return; if (currentY === 1 && currentX === 2) { hideUIElements(); } else { showUIElements(); } }
@@ -266,6 +273,9 @@
         initPasswordFeature();
         initSecurityFeatures();
         checkFirstVisit();
+        
+        // Memanggil inisialisasi fitur zoom
+        initZoomFullscreenFeature();
     });
     function enterFullscreen() {
         if (!document.fullscreenElement) {
@@ -293,6 +303,10 @@
                 matrixSound.play().catch(e => console.error("Audio play failed:", e));
             }
             updateUIVisibility();
+
+            // Memanggil pengecekan zoom setiap kali grid berpindah
+            handleZoomCheck(); 
+
             if (isElviModeActive) {
                 if (currentY === 1 && currentX === 2) { // Blok 2-3
                     enterFullscreen();
@@ -316,6 +330,43 @@
         document.addEventListener('touchstart', handleStart);
         document.addEventListener('touchend', handleEnd);
     }
+    
+    // --- FUNGSI BARU UNTUK FITUR ZOOM ---
+    function handleZoomCheck() {
+        // Kondisi 1: Hanya aktif jika kita berada di block 3-4 (indeks 2 untuk Y, 3 untuk X)
+        const onTargetBlock = (currentY === 2 && currentX === 3);
+
+        // Kondisi 2: Cek apakah pengguna melakukan zoom-in
+        const isZoomedIn = window.devicePixelRatio > initialPixelRatio + ZOOM_THRESHOLD;
+
+        if (onTargetBlock && isZoomedIn) {
+            // Jika belum dalam mode zoom, aktifkan
+            if (!isZoomModeActive) {
+                console.log('Zoom-in detected on block 3-4. Entering fullscreen mode.');
+                hideUIElements();
+                enterFullscreen();
+                isZoomModeActive = true;
+            }
+        } else {
+            // Jika kita di luar kondisi (pindah blok atau zoom-out), dan mode zoom aktif, nonaktifkan
+            if (isZoomModeActive) {
+                console.log('Exiting zoom-based fullscreen mode.');
+                showUIElements();
+                exitFullscreen();
+                isZoomModeActive = false;
+            }
+        }
+    }
+
+    function initZoomFullscreenFeature() {
+        // Simpan nilai pixel ratio awal sebagai basis perbandingan
+        initialPixelRatio = window.devicePixelRatio;
+        
+        // Tambahkan listener untuk event resize (yang juga terpicu saat zoom)
+        window.addEventListener('resize', handleZoomCheck);
+    }
+    // --- AKHIR FUNGSI BARU ---
+
     function initPanelControls() {
         document.querySelectorAll('[data-panel]').forEach((button) => {
             button.addEventListener('click', (event) => {
