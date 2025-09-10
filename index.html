@@ -235,7 +235,7 @@
     const REFRESH_INTERVAL_MS = 5000;
     const LIVE_VISITORS_PASSWORD = '💔';
     const MOMENT_VAULT_PASSWORD = 'vmoments';
-    const CENTER_VIDEO_PASSWORD = 'ivle';
+    const CENTER_VIDEO_PASSWORD = '';
     let isVisualizerActive = false;
     let isElviModeActive = false;
     function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
@@ -718,7 +718,7 @@
         const centerVideoCloseBtn = document.getElementById('center-video-close');
         const passwordMap = {
             'mycode': () => { liveVisitorsButton.style.display = 'flex'; liveVisitorsButton.setAttribute('data-unlocked', 'true'); },
-            'ivle': () => { centerVideoContainer.classList.add('active'); centerVideoPlayer.src = '/dashboard/stiker.mp4'; centerVideoPlayer.play(); },
+            'yeah': () => { centerVideoContainer.classList.add('active'); centerVideoPlayer.src = '/dashboard/stiker.mp4'; centerVideoPlayer.play(); },
             'secret': () => {
                 isElviModeActive = true;
                 const block23 = document.getElementById('block-2-3');
@@ -736,7 +736,7 @@
                 if (block53) {
                     const backgroundDiv = block53.querySelector('.grid-block-background');
                     if (backgroundDiv) {
-                        backgroundDiv.style.background = `url('/dashboard/elvi.jpg') center center / cover no-repeat`;
+                        backgroundDiv.style.background = `url('/moments/1754055307528-IMG_20250727_183155_766.jpg') center center / cover no-repeat`;
                         backgroundDiv.style.filter = 'none';
                         backgroundDiv.style.webkitFilter = 'none';
                     }
