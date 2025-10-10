@@ -18,10 +18,10 @@ body {
 }
 .atn {
   font-family: 'courier new', Gadget, sans-serif;
-  font-size: 1.5em;
+  font-size: 1.0em;
   text-align: center;
   line-height: 1.2;
-  margin: 5px 0;
+  margin: 3px 0;
   cursor: default;
 }
 
@@ -66,8 +66,8 @@ body {
     text-shadow: 
       0 0 5px currentColor,
       0 0 10px currentColor,
-      0 0 20px currentColor,
-      0 0 40px currentColor; 
+      0 0 15px currentColor,
+      0 0 30px currentColor; 
   }
   100% {
     opacity: 0.8; 
