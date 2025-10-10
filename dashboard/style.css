@@ -17,8 +17,8 @@ body {
   padding: 20px;
 }
 .atn {
-  font-family: 'Arial Black', Gadget, sans-serif;
-  font-size: 1.5em;
+  font-family: 'courier new', Gadget, sans-serif;
+  font-size: 0.5em;
   text-align: center;
   line-height: 1.2;
   margin: 15px 0;
@@ -64,10 +64,10 @@ body {
   50% {
     opacity: 1;
     text-shadow: 
-      0 0 7px currentColor,
-      0 0 15px currentColor,
-      0 0 30px currentColor,
-      0 0 50px currentColor; 
+      0 0 5px currentColor,
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      0 0 40px currentColor; 
   }
   100% {
     opacity: 0.8; 
