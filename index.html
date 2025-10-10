@@ -97,6 +97,95 @@
         #popup-close-btn:hover { background: var(--accent); }
         .progress-bar-container { width: 100%; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; margin-top: 10px; overflow: hidden; border: 1px solid var(--border-color); }
         .progress-bar { background-color: var(--accent); padding: 4px 8px; text-align: right; color: white; font-size: 0.8em; font-weight: bold; white-space: nowrap; transition: width 0.8s ease-in-out; }
+ /* --- 1. Variabel Warna & Dasar --- */
+:root {
+  --neon-btn-color-start: #ff0077; /* Pink */
+  --neon-btn-color-end: #00eeff;   /* Biru */
+  --neon-gradient: linear-gradient(
+    90deg, 
+    #ff0077 0%, #ff9900 25%, #ccff00 50%, #00ffff 75%, #ff00ff 100%
+  );
+  --dark-bg: #1a1a1a;
+}
+
+body {
+  background-color: var(--dark-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 20px; /* Jarak antar tombol */
+}
+
+/* --- 2. Gaya Dasar Tombol Neon --- */
+.neon-button {
+  background: var(--neon-gradient); /* Gunakan gradien sebagai background */
+  background-size: 200% auto; /* Penting untuk animasi pergerakan warna */
+  border: none;
+  border-radius: 8px; /* Sudut sedikit membulat */
+  padding: 15px 30px;
+  color: #fff; /* Teks putih */
+  font-family: 'Arial Black', Gadget, sans-serif;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none; /* Untuk elemen <a> */
+  text-align: center;
+  
+  /* Efek awal glow (sedikit redup) */
+  box-shadow: 
+    0 0 5px var(--neon-btn-color-start), 
+    0 0 10px var(--neon-btn-color-end);
+  
+  transition: all 0.3s ease-in-out; /* Transisi untuk hover */
+  
+  /* Terapkan Animasi */
+  animation: 
+    neon-gradient-shift 3s linear infinite, /* Pergerakan warna */
+    neon-glow-pulse 1.5s ease-in-out infinite alternate; /* Denyutan glow */
+}
+
+/* --- 3. Efek Hover (Opsional) --- */
+.neon-button:hover {
+  transform: translateY(-3px) scale(1.02); /* Sedikit naik dan membesar */
+  /* Glow lebih kuat saat hover */
+  box-shadow: 
+    0 0 15px var(--neon-btn-color-start), 
+    0 0 30px var(--neon-btn-color-end),
+    0 0 50px rgba(255, 255, 255, 0.5); /* Glow putih tambahan */
+}
+
+/* --- 4. Definisi Keyframes --- */
+
+/* Animasi Pergeseran Warna Gradien */
+@keyframes neon-gradient-shift {
+  0% {
+    background-position: 0% center; /* Mulai gradien dari kiri */
+  }
+  100% {
+    background-position: 200% center; /* Geser gradien sepenuhnya ke kanan */
+  }
+}
+
+/* Animasi Denyutan Glow */
+@keyframes neon-glow-pulse {
+  0% {
+    box-shadow: 
+      0 0 5px var(--neon-btn-color-start), 
+      0 0 10px var(--neon-btn-color-end);
+  }
+  50% {
+    box-shadow: 
+      0 0 15px var(--neon-btn-color-start), 
+      0 0 30px var(--neon-btn-color-end),
+      0 0 50px var(--neon-btn-color-start); /* Puncak glow */
+  }
+  100% {
+    box-shadow: 
+      0 0 5px var(--neon-btn-color-start), 
+      0 0 10px var(--neon-btn-color-end);
+  }
+}
     </style>
 </head>
 <body>
@@ -141,18 +230,18 @@
             <div class="grid-block" id="block-5-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=24');"></div><div class="grid-block-content"><h1>Block (5,4)</h1></div></div>
             <div class="grid-block" id="block-5-5"><div class="grid-block-content"><h3>Spaceship 3D Model</h3><iframe title="Executor-Class Star Dreadnought" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/442c548d94744641ba279ae94b5f45ec/embed" style="width: 90%; height: 90%; border:none; border-radius:12px;"></iframe></div></div>
         </div>
-    </div>
-    <div class="fab-container" id="fab-editor"><button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
-    <div class="fab-container" id="fab-music"><button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
-    <div class="fab-container" id="fab-contribution"><button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
-    <div class="fab-container" id="fab-alkitab"><a class="fab" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
-    <div class="fab-container" id="fab-visualizer"><button class="fab" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
-    <div class="fab-container" id="fab-moment-vault"><button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
-    <div class="fab-container" id="fab-live-visitors"><button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
-    <div class="fab-container" id="fab-keyboard-toggle"><button class="fab" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
-    <div class="fab-container" id="fab-dashboard-toggle"><button class="fab" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
-    <div id="video-player-widget"><video id="widget-video" loop src="/dashboard/video.mp4"></video><div class="video-controls"><button id="video-play-pause"><i class="fas fa-play"></i></button><button id="video-mute"><i class="fas fa-volume-up"></i></button></div></div>
-    <div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
+    </div><div class="fab-container" id="fab-editor"><button class="fab neon-button" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
+<div class="fab-container" id="fab-music"><button class="fab neon-button" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
+<div class="fab-container" id="fab-contribution"><button class="fab neon-button" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
+<div class="fab-container" id="fab-alkitab"><a class="fab neon-button" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
+<div class="fab-container" id="fab-visualizer"><button class="fab neon-button" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
+<div class="fab-container" id="fab-moment-vault"><button class="fab neon-button" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
+<div class="fab-container" id="fab-live-visitors"><button class="fab neon-button" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
+<div class="fab-container" id="fab-keyboard-toggle"><button class="fab neon-button" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
+<div class="fab-container" id="fab-dashboard-toggle"><button class="fab neon-button" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
+
+<div id="video-player-widget"><video id="widget-video" loop src="/dashboard/video.mp4"></video><div class="video-controls"><button id="video-play-pause"><i class="fas fa-play"></i></button><button id="video-mute"><i class="fas fa-volume-up"></i></button></div></div>
+<div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
     <div class="panel" id="editor-panel">
         <div class="panel-header">
             <span class="panel-title">Code Editor</span>
