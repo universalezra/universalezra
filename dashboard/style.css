@@ -5,7 +5,6 @@
   --neon-color-3: #ccff00;
   --dark-bg: #1a1a1a;
 }
-
 body {
   background-color: var(--dark-bg);
   display: flex;
@@ -24,32 +23,25 @@ body {
   margin: 3px 0;
   cursor: default;
 }
-
 .neon-char {
   display: inline-block;
   opacity: 0;
-  
   animation-name: neon-glow-in;
   animation-duration: 1.5s;
   animation-fill-mode: forwards;
   animation-iteration-count: infinite;
   animation-direction: alternate;
-  
   animation-delay: calc(var(--i) * 0.1s);
 }
-
 .neon-char:nth-child(3n + 1) { 
   color: var(--neon-color-1);
 }
-
 .neon-char:nth-child(3n + 2) { 
   color: var(--neon-color-2);
 }
-
 .neon-char:nth-child(3n + 3) { 
   color: var(--neon-color-3);
 }
-
 @keyframes neon-glow-in {
   0% {
     opacity: 0;
@@ -67,10 +59,7 @@ body {
       0 0 5px currentColor,
       0 0 10px currentColor,
       0 0 15px currentColor,
-      0 0 30px currentColor; 
-  }
+      0 0 30px currentColor; }
   100% {
     opacity: 0.8; 
-    text-shadow: 0 0 3px currentColor, 0 0 6px currentColor, 0 0 12px currentColor;
-  }
-}
+    text-shadow: 0 0 3px currentColor, 0 0 6px currentColor, 0 0 12px currentColor; }}
