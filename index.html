@@ -14,7 +14,7 @@
         :root { --primary: #8e44ad; --accent: #00a8ff; --success: #2ecc71; --danger: #e74c3c; --light: #ecf0f1; --dark: #1a1a2e; --bg-main: #16213e; --bg-panel: rgba(26, 26, 46, 0.9); --text-primary: #e0fbfc; --text-secondary: #98ded9; --border-color: rgba(0, 168, 255, 0.3); }
         * { box-sizing: border-box; }
         html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Courier New', Courier, monospace; background-color: var(--bg-main); color: #00ff00; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        body::before { content: "panisla"; position: fixed; bottom: 10px; left: 10px; font-size: 1.5rem; color: rgba(255, 255, 255, 0.1); z-index: 999; pointer-events: none; opacity: 0.8; }
+        body::before { content: "Panisla Manik"; position: fixed; bottom: 10px; left: 10px; font-size: 1.5rem; color: rgba(255, 255, 255, 0.1); z-index: 999; pointer-events: none; opacity: 0.8; }
         #main-viewport { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: hidden; }
         #grid-container { width: 500vw; height: 500vh; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr 1fr 1fr; transform: translate3d(-200vw, -200vh, 0); transition: transform 0.7s cubic-bezier(0.86, 0, 0.07, 1); }
         .grid-block { width: 100vw; height: 100vh; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; }
@@ -221,7 +221,6 @@ body {
 <div class="fab-container" id="fab-live-visitors"><button class="fab neon-button" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
 <div class="fab-container" id="fab-keyboard-toggle"><button class="fab neon-button" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
 <div class="fab-container" id="fab-dashboard-toggle"><button class="fab neon-button" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
-
 <div id="video-player-widget"><video id="widget-video" loop src="/dashboard/video.mp4"></video><div class="video-controls"><button id="video-play-pause"><i class="fas fa-play"></i></button><button id="video-mute"><i class="fas fa-volume-up"></i></button></div></div>
 <div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
     <div class="panel" id="editor-panel">
@@ -848,3 +847,4 @@ body {
      crossorigin="anonymous"></script>
 </body>
 </html>
+
