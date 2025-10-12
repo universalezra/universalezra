@@ -24,20 +24,17 @@
             </div>
             <div class="status atn" id="status" aria-live="polite">Initializing system</div> 
         </header>
-
         <main class="auth-main">
             <div class="btn-container" id="btnContainer">
                 <button class="auth-btn" id="fallbackBtn"><span class="icon">✉️</span><span class="atn">Login</span></button>
                 <button class="auth-btn" id="visitBtn"><span class="icon">🚀</span><span class="atn">Dashboard</span></button>
                 <button class="auth-btn" id="webauthnBtn"><span class="icon">🔒</span><span class="atn">Login WebAuthn</span></button>
-            </div>
-            
+            </div>  
             <form id="loginForm" class="login-form" novalidate>
                 <div class="form-group">
                     <label for="email" class="atn">Username</label>
                     <input type="text" id="email" name="email" required aria-required="true" autocomplete="username" autocapitalize="off">
                 </div>
-                
                 <div class="form-group">
                     <label for="password" class="atn">Password</label>
                     <div class="password-wrapper">
@@ -48,16 +45,14 @@
                 <button type="submit" class="auth-btn primary" id="submitLogin">
     <span class="btn-text">Login</span>
     <span class="loading-spinner" id="loadingSpinner" aria-hidden="true"></span>
-</button>
+                </button>
                 <div id="errorMsg" class="error-msg atn" aria-live="assertive"></div>
             </form>
-            
             <div id="webauthnUnsupported" class="unsupported-warning" style="display: none;">
                 <p class="atn">Your browser doesn't support WebAuthn. login with username?. This application uses the WebAuthn API for passwordless authentication</p>
                 <a href="https://webauthn.me/browser-support" target="_blank" rel="noopener noreferrer" class="auth-btn atn">Browser Compatibility</a>
             </div>
         </main>
-        
         <footer class="auth-footer">
             <div class="ip-display atn" id="ipDisplay">Detecting</div>
 <div class="security-info">
