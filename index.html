@@ -422,111 +422,7 @@ body {
         <p class="developer-message">ATTEMPTED ACCESS VIOLATION DETECTED. ALL SESSIONS TERMINATED.</p>
     </div>
 </div>
-) => { const currentCode = codeEditor.value; if (currentCode !== history[historyPointer]) { if (historyPointer < history.length - 1) { history = history.slice(0, historyPointer + 1); } history.push(currentCode); historyPointer = history.length - 1; } };
-        const runCode = () => { const fullCode = codeEditor.value; const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i); const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i); const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i); const htmlContent = htmlMatch ? htmlMatch[1] : fullCode; const cssContent = cssMatch ? cssMatch[1] : ''; const jsContent = jsMatch ? jsMatch[1] : ''; const source = `<!DOCTYPE html><html><head><style>${cssContent}</style></head><body>${htmlContent}<script>${jsContent}<\/script></body></html>`; previewFrame.srcdoc = source; };
-        const saveCode = () => { localStorage.setItem('unified_editor_code', codeEditor.value); console.log('Code saved successfully'); };
-        const loadCode = () => { codeEditor.value = localStorage.getItem('unified_editor_code') || `<!DOCTYPE html><html><head><title>My trial</title><style>body {font-family: sans-serif;background-color: #000000;color: #259;text-align: center;padding-top: 50px;}h1 {color: var(--primary);}</style></head><body><h1>Hello Editor</h1><p id="message">Code Here</p><script>document.getElementById('message').onclick = function() {console.log('Paragraph clicked!');};<\/script></body></html>`; runCode(); history = [codeEditor.value]; historyPointer = 0; };
-        const newDoc = () => { codeEditor.value = `<!DOCTYPE html><html><head><title>New trial</title><style>body {font-family: Arial, sans-serif;background-color: #000000;color: #abb2bf;display: flex;justify-content: center;align-items: center;min-height: 100vh;margin: 0;}h1 {color: #61dafb;}</style></head><body><h1>Start Coding Here!l</h1><script>console.log("New document loaded.");<\/script></body></html>`; runCode(); history = [codeEditor.value]; historyPointer = 0; };
-        const undo = () => { if (historyPointer > 0) { historyPointer--; codeEditor.value = history[historyPointer]; runCode(); } };
-        const redo = () => { if (historyPointer < history.length - 1) { historyPointer++; codeEditor.value = history[historyPointer]; runCode(); } };
-        runBtn.addEventListener('click', runCode);
-        saveBtn.addEventListener('click', saveCode);
-        loadBtn.addEventListener('click', loadCode);
-        newBtn.addEventListener('click', newDoc);
-        undoBtn.addEventListener('click', undo);
-        redoBtn.addEventListener('click', redo);
-        codeEditor.addEventListener('input', updateHistory);
-        loadCode();
-    }
-    async function fetchContributions() {
-        const display = document.getElementById('contribution-display');
-        display.innerHTML = `<p>Loading</p>`;
-        try {
-            const response = await fetch(CONTRIBUTIONS_WORKER_URL);
-            const contributions = await response.json();
-            if (contributions && contributions.length > 0) { display.innerHTML = contributions.reverse().map((c) => { return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;"><p style="margin:0;">${c.text}</p><small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small></div>`; }).join(''); } else { display.innerHTML = `<p>Be the first to leave a message</p>`; }
-        } catch (e) { display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`; }
-    }
-    document.getElementById('contribution-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const statusEl = document.getElementById('contribution-status');
-        statusEl.textContent = 'Uploading';
-        const formData = new FormData();
-        formData.append('text', document.getElementById('contribution-text').value);
-        try {
-            const response = await fetch(CONTRIBUTIONS_WORKER_URL, { method: 'POST', body: formData, });
-            if (!response.ok) throw new Error('Upload failed');
-            statusEl.textContent = 'Message sent. Thank you.';
-            e.target.reset();
-            fetchContributions();
-        } catch (err) { statusEl.textContent = `Error: ${err.message}`; }
-    });
-    function initWebsiteAgeDisplay() {
-        const websiteAgeDisplay = document.getElementById('website-age-display');
-        const creationDate = new Date(2006, 7, 7, 0, 0, 0);
-        function updateWebsiteAge() {
-            const now = new Date();
-            const diff = now.getTime() - creationDate.getTime();
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(seconds / 60);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            const years = Math.floor(days / 365.25);
-            const remainingDaysAfterYears = Math.floor(days % 365.25);
-            const months = Math.floor(remainingDaysAfterYears / 30.44);
-            const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
-            const displaySeconds = seconds % 60;
-            const displayMinutes = minutes % 60;
-            const displayHours = hours % 24;
-            let ageString = '';
-            if (years > 0) ageString += `${years}T `;
-            if (months > 0 || years > 0) ageString += `${months}B `;
-            ageString += `${remainingDaysAfterMonths}H `;
-            ageString += `${displayHours.toString().padStart(2, '0')}:`;
-            ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
-            ageString += `${displaySeconds.toString().padStart(2, '0')}`;
-            websiteAgeDisplay.textContent = `${ageString}`;
-        }
-        updateWebsiteAge();
-        setInterval(updateWebsiteAge, 1000);
-    }
-    function checkEzraLoginAndShowVisitorsButton() { const fabLiveVisitors = document.getElementById('fab-live-visitors'); }
-    document.addEventListener('DOMContentLoaded', checkEzraLoginAndShowVisitorsButton);
-    async function fetchLiveVisitors() {
-        const visitorList = document.getElementById('visitor-list');
-        const lastUpdatedTime = document.getElementById('last-updated-time');
-        if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading visitors')) { visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading</li>'; }
-        try {
-            const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true');
-            if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-            const visitors = await response.json();
-            if (visitors && visitors.length > 0) { visitorList.innerHTML = visitors.map((visitor) => { const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', }); return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`; }).join(''); } else { visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No online</li>'; }
-            lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
-        } catch (error) { console.error('Error fetching live visitors:', error); visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed</li>'; lastUpdatedTime.textContent = 'Error'; }
-    }
-    async function fetchVisitorHistory() {
-        const historyContainer = document.getElementById('visitor-history');
-        historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history</p>';
-        try {
-            const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
-            if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-            let history = await response.json();
-            if (history && history.length > 0) {
-                const visitCounts = history.reduce((acc, visitor) => { acc[visitor.browserId] = (acc[visitor.browserId] || 0) + 1; return acc; }, {});
-                const tableHeader = `<table><thead><tr><th>Timestamp</th><th>Browser ID</th><th>IP</th><th>Referral</th><th>Total Kunjungan</th></tr></thead><tbody>`;
-                const tableRows = history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map(visitor => { const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); return `<tr><td>${timestamp}</td><td>${visitor.browserId.substring(0, 10)}...</td><td>${visitor.ip || 'N/A'}</td><td>${visitor.referrer || 'Direct'}</td><td>${visitCounts[visitor.browserId] || 1}</td></tr>`; }).join('');
-                const tableFooter = `</tbody></table>`;
-                historyContainer.innerHTML = tableHeader + tableRows + tableFooter;
-            } else { historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>'; }
-        } catch (error) { console.error('Failed to load visitor history:', error); historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`; }
-    }
-    function getBrowserId() { let browserId = localStorage.getItem('unique_browser_id'); if (!browserId) { browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now(); localStorage.setItem('unique_browser_id', browserId); } return browserId; }
-    async function trackVisitor() {
-        try {
-            const browserId = getBrowserId();
-            let ipAddress = 'unknown';
-            let referrer = document.referrer || 'direct';
-            try { const ipResponse = await fetch('https://api.ipify.org?format=json'); cons<script>
+<script>
     // =================================================================
     // KONSTANTA GLOBAL
     // =================================================================
@@ -1186,6 +1082,6 @@ body {
     }
     document.addEventListener('DOMContentLoaded',(()=>{const e=document.getElementById('typing-output'),t=document.getElementById('ezra-photo'),s=document.getElementById('time-and-slogan'),n=document.getElementById('daily-quote'),o=document.getElementById('bio-modal'),r=[{typing:"Selamat hari Minggu! Mulai pekan dengan mindset growth.",quote:"Tuhan adalah kekuatanku dan perisaiku; kepada-Nya hatiku percaya, dan aku tertolong."},{typing:"Hai! Aku Ezra, Developer yang mencintai Tantangan Senin.",quote:"Percayalah kepada Tuhan dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri."},{typing:"Code Architect here. Siap membangun solusi hari ini.",quote:"Amsal 21:5: Rencana orang rajin membawa kelimpahan, tetapi setiap orang yang tergesa-gesa hanya akan kekurangan."},{typing:"Mid-week check! Fokus pada performa dan skalabilitas.",quote:"Mazmur 37:5: Serahkanlah hidupmu kepada Tuhan dan percayalah kepada-Nya, dan Ia akan bertindak."},{typing:"Hello! Design, Build, Ship. It's the Dev cycle.",quote:"Amsal 16:3: Serahkanlah perbuatanmu kepada Tuhan, maka terlaksanalah segala rencanamu."},{typing:"Jumat! Sempurnakan kode, rayakan akhir pekan.",quote:"Berbahagialah orang yang mendapat hikmat, orang yang memperoleh kepandaian."},{typing:"Santai & Refleksi. Siap untuk inovasi minggu depan.",quote:"Mazmur 1:3: Ia seperti pohon yang ditanam di tepi aliran air, yang menghasilkan buah pada musimnya dan daunnya tidak layu."}],a=new Date().getDay(),d=r[a],c=[d.typing,"Seorang Digital Alchemist. Sentuh fotoku \ud83d\udc46","Where art meets engineering."],l=60,p=1800;let u=0,m=0;function g(){const r=c[u];if(m<r.length)e.textContent+=r.charAt(m),m++,setTimeout(g,l);else setTimeout(y,p);}function y(){u=(u+1)%c.length,m=0,e.textContent="",e.style.borderRightColor="transparent",setTimeout((()=>{e.style.borderRightColor="var(--neon-color)",g()}),1e3);}function h(){const r=getComputedStyle(document.documentElement).getPropertyValue('--secondary-neon').trim(),a=new Date(),d=String(a.getHours()).padStart(2,'0'),c=String(a.getMinutes()).padStart(2,'0'),l=String(a.getSeconds()).padStart(2,'0'),p=a.toLocaleDateString('id-ID',{weekday:'long'}),u=a.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}),m=`[ ${p}, ${u} ] | ${d}:${c}:${l} WIB`;s.innerHTML=`<span style="color: ${r};">[[ STATUS: CODE_MODE_ACTIVE ]]</span><br>${m}<br>Semoga hari-mu penuh hikmat dan kode yang bersih.`;}function v(){o.classList.add('show'),document.body.classList.add('body-transform'),setTimeout((()=>{document.body.style.transform='scale(0.9) rotate(3deg)'}),1900)}function x(){o.classList.remove('show'),document.body.style.transform='scale(1) rotate(0deg)',document.body.classList.remove('body-transform'),document.body.classList.remove('body-hyper-drive')}n.textContent=d.quote+" - Alkitab",g(),h(),setInterval(h,1e3),t.addEventListener('click',v),window.addEventListener('click',(e=>{e.target===o&&x();})),document.querySelector('.modal-content a').addEventListener('click',((e)=>{e.preventDefault();const t=e.currentTarget.href;document.body.classList.remove('body-transform'),document.body.classList.add('body-hyper-drive'),setTimeout((()=>{window.location.href=t}),2e3);}));}))
 </script>
-        </body>
+</body>
 </html>
 
