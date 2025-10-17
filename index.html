@@ -168,6 +168,117 @@ body {
       0 0 10px var(--neon-btn-color-end);
   }
 }
+:root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}#ultimate-widget{position:relative;width:202px;margin:50px auto 20px auto;padding:15px 0;background-color:transparent;border:none;box-shadow:none;z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}@keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}.typing-container{display:flex;align-items:flex-start;line-height:1.3;min-height:50px;margin-bottom:10px;}.neon-typing-text{color:var(--neon-color);text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);font-size:1.6em;overflow:visible;white-space:normal;max-width:200px;border-right:3px solid var(--neon-color);animation:terminal-blink .7s step-end infinite;}@keyframes terminal-blink{from,to{border-right-color:transparent;}50%{border-right-color:var(--neon-color);}}.profile-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:none;box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);margin:0 12px;cursor:pointer;transition:transform .3s,box-shadow .3s;}.profile-photo:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 0 10px var(--secondary-neon),0 0 30px var(--secondary-neon);}.holographic-text{font-size:.9em;color:#ccc;margin:5px 0 10px 0;padding:5px 0;text-shadow:0 0 2px rgba(255,255,255,.8);border-top:none;border-bottom:none;animation:glitch 5s infinite alternate;}@keyframes glitch{0%{text-shadow:0 0 5px #f0f;transform:skew(0deg);}20%{text-shadow:0 0 5px #0ff;transform:skew(-1deg);}40%{text-shadow:0 0 5px #f0f;transform:skew(2deg);}60%{text-shadow:0 0 5px #0ff;transform:skew(-3deg);}80%{text-shadow:0 0 5px #f0f;transform:skew(1deg);}100%{text-shadow:0 0 5px #0ff;transform:skew(0deg);}}.quote{font-style:italic;font-size:.8em;color:var(--quote-color);margin-top:10px;padding:5px 0;text-shadow:0 0 5px rgba(170,255,170,.5);min-height:40px;}#bio-modal{display:none;}#bio-modal.show{position:fixed;display:flex;z-index:11000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);justify-content:center;align-items:center;opacity:0;transition:opacity .4s;}#bio-modal.show{opacity:1;}.modal-content{background:url('elvi.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
+    /* EFEK KUNCI: ANIMASI ROTASI DAN ZOOM */
+@keyframes portal-rotate {
+    0% { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(0.9) rotate(3deg); } /* Zoom out 10% dan Rotasi 3 derajat */
+}
+
+/* Kelas yang Diterapkan pada <body> saat modal dibuka */
+.body-transform {
+    /* Memicu animasi */
+    animation: portal-rotate 2s forwards ease-in-out; 
+    /* Transisi untuk properti lain agar perputaran halus */
+    transition: transform 2s ease-in-out; 
+    /* Penting agar rotasi terjadi dari pusat layar */
+    transform-origin: center center; 
+}
+/* EFEK KUNCI: HYPER-DRIVE ROTASI 1440 DERAJAT */
+@keyframes hyper-drive {
+    0% { transform: scale(0.9) rotate(3deg); } /* Mulai dari posisi modal terbuka */
+    100% { transform: scale(0.1) rotate(1440deg); } /* Zoom out 90% dan Rotasi 4x360 */
+}
+
+/* Kelas yang Diterapkan pada <body> saat link ditekan */
+.body-hyper-drive {
+    animation: hyper-drive 2s forwards ease-in; /* 2 detik animasi */
+    transition: transform 2s ease-in; 
+    transform-origin: center center; 
+}
+/* Styling Awal untuk Overlay */
+#ezra-death-sequence-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000; /* Harus di atas segalanya */
+    pointer-events: none; /* Awalnya tidak dapat diklik */
+    overflow: hidden;
+    opacity: 0; /* Awalnya tersembunyi */
+    transition: opacity 0.5s;
+}
+
+/* Panel Pembelah */
+.split-panel {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background-color: #121212; /* Sesuaikan dengan warna background website Anda */
+    transition: transform 3s ease-in-out; 
+}
+
+.left-panel { left: 0; }
+.right-panel { right: 0; }
+
+/* Gambar Zoom In */
+#zoom-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px; 
+    height: auto;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+    transition: transform 2s ease-out, opacity 1s;
+    z-index: 10001;
+}
+
+/* Layar Error Palsu */
+#error-screen-ezra {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    color: #00FF00; /* Hijau neon */
+    font-family: 'Consolas', monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s;
+    z-index: 10002;
+    padding: 20px;
+    text-align: center;
+}
+
+.error-text { font-size: 3vw; margin-bottom: 10px; }
+.error-code { font-size: 2vw; animation: blink 0.5s infinite alternate; }
+.developer-message { font-size: 1.5vw; margin-top: 20px; }
+
+@keyframes blink {
+    from { opacity: 1; }
+    to { opacity: 0.3; }
+}
+
+/* KELAS AKTIF (DITAMBAHKAN OLEH JAVASCRIPT) */
+.split-open .left-panel { transform: translateX(-100vw); }
+.split-open .right-panel { transform: translateX(100vw); }
+
+.image-zoom #zoom-image {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(15); /* Nilai zoom yang besar */
+    pointer-events: auto;
+}
+
+.sequence-active { opacity: 1 !important; pointer-events: auto !important; }
+.hide-all-content > * { display: none !important; } /* Sembunyikan semua konten website lain */
     </style>
 </head>
 <body>
@@ -198,7 +309,15 @@ body {
             <div class="grid-block" id="block-2-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=10');"></div><div class="grid-block-content"><h1>Block (2,5)</h1></div></div>
             <div class="grid-block" id="block-3-1"><div class="grid-block-content"><h3 style="margin-bottom: 20px;">Peta Bintang</h3><iframe src="https://stellarium-web.org/" width="90%" height="80%" frameborder="0" style="border-radius: 10px; border:none;"></iframe></div></div>
             <div class="grid-block" id="block-3-2"><div class="grid-block-content"><h3>Ayat Hari Ini (YouVersion)</h3><div id="bible-widget-container"><iframe src="https://www.bible.com/verse-of-the-day/TB" width="100%" height="100%" style="border: none;"></iframe></div></div></div>
-            <div class="grid-block" id="block-center"><div class="grid-block-background" id="interactive-bg" style="background-image: url('/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg');"></div><div class="grid-block-content"><div class="central-message"><p>By <a href="/dashboard/secret.html" class="ezra-link">universalezra</a></p></div><div class="panel" id="contribution-panel-desktop" style="display: none"></div></div></div>
+            <div class="grid-block" id="block-center">
+    <div class="grid-block-background" id="interactive-bg" style="background-image: url('/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg');"></div>
+    <div class="grid-block-content">
+        
+        <div id="ultimate-widget"><div class="typing-container"><span id="typing-output" class="neon-typing-text"></span><img src="https://via.placeholder.com/40/ff0077/ffffff?text=E" alt="Foto Profil Ezra" class="profile-photo" id="ezra-photo"></div><p class="holographic-text" id="time-and-slogan">// STATUS: INIT...</p><p class="quote" id="daily-quote">Memuat kutipan hari ini...</p></div>
+        <div class="particle p1"></div><div class="particle p2"></div><div class="particle p3"></div><div class="particle p4"></div><div class="particle p5"></div><div id="bio-modal"><div class="modal-content"><h2>EZRA - Digital Alchemist</h2><p>Saya seorang <b>problem solver</b> yang memprioritaskan arsitektur kode yang bersih dan pengalaman pengguna yang luar biasa. Spesialisasi: <b>Scalable Applications & CI/CD Pipelines</b>.</p><p style="font-size: .9em;margin-top: 15px;color: var(--neon-color);"><a href="/dashboard/secret.html" style="color: inherit; text-decoration: none; text-shadow: inherit;">"Login?, jika kamu kenal pasti kamu tau"</a></p></div></div>
+    </div>
+</div>
+
             <div class="grid-block" id="block-3-4"><div class="grid-block-background"><video autoplay loop muted playsinline><source src="/dashboard/v.mp4" type="video/mp4"></video></div><div class="grid-block-content"></div></div>
             <div class="grid-block" id="block-3-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=15');"></div><div class="grid-block-content"><h1>Block (3,5)</h1></div></div>
             <div class="grid-block" id="block-4-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=16');"></div><div class="grid-block-content"><h1>Block (4,1)</h1></div></div>
@@ -291,6 +410,18 @@ body {
         <button id="center-video-close"><i class="fas fa-times"></i></button>
         <video id="center-video-player" loop playsinline></video>
     </div>
+    <div id="ezra-death-sequence-overlay">
+    <div class="split-panel left-panel"></div>
+    <div class="split-panel right-panel"></div>
+    
+    <img id="zoom-image" src="path/to/gambar-anda-1.jpg" alt="Zoom In Image" data-src="path/to/gambar-anda-1.jpg">
+    
+    <div id="error-screen-ezra">
+        <p class="error-text">INITIATING HARD DISCONNECT PROTOCOL...</p>
+        <p class="error-code">ACCESS DENIED. SYSTEM CORRUPTED.</p>
+        <p class="developer-message">ATTEMPTED ACCESS VIOLATION DETECTED. ALL SESSIONS TERMINATED.</p>
+    </div>
+</div>
 <script>
     const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
     const MOMENT_VAULT_WORKER_URL = 'https://moment-vault-worker-url.universalezra.workers.dev';
@@ -316,7 +447,7 @@ body {
     let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
     let lastBassLevel = 0;
     const BASS_BEAT_THRESHOLD = 1.4;
-    const PARTICLE_COUNT = 500;
+    const PARTICLE_COUNT = 2000;
     const FREQ_RANGE_START_HZ = 20;
     const FREQ_RANGE_END_HZ = 1024;
     let gridContainer, currentX = 2, currentY = 2;
@@ -815,6 +946,10 @@ body {
                 }
                 updateUIVisibility();
                 if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
+            },
+            'universalezra': () => {
+                // Panggil fungsi efek membelah dan error
+                startEzraDeathSequence();
             }
         };
         keyboardToggleButton.addEventListener('click', () => {
@@ -842,9 +977,54 @@ body {
             closeBtn.addEventListener('click', () => { popup.style.display = 'none'; localStorage.setItem('hasVisitedWebsite', 'true'); });
         } else { console.log(`Welcome back ID: ${browserId}`); }
     }
+    document.addEventListener('DOMContentLoaded',(()=>{const e=document.getElementById('typing-output'),t=document.getElementById('ezra-photo'),s=document.getElementById('time-and-slogan'),n=document.getElementById('daily-quote'),o=document.getElementById('bio-modal'),r=[{typing:"Selamat hari Minggu! Mulai pekan dengan mindset growth.",quote:"Tuhan adalah kekuatanku dan perisaiku; kepada-Nya hatiku percaya, dan aku tertolong."},{typing:"Hai! Aku Ezra, Developer yang mencintai Tantangan Senin.",quote:"Percayalah kepada Tuhan dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri."},{typing:"Code Architect here. Siap membangun solusi hari ini.",quote:"Amsal 21:5: Rencana orang rajin membawa kelimpahan, tetapi setiap orang yang tergesa-gesa hanya akan kekurangan."},{typing:"Mid-week check! Fokus pada performa dan skalabilitas.",quote:"Mazmur 37:5: Serahkanlah hidupmu kepada Tuhan dan percayalah kepada-Nya, dan Ia akan bertindak."},{typing:"Hello! Design, Build, Ship. It's the Dev cycle.",quote:"Amsal 16:3: Serahkanlah perbuatanmu kepada Tuhan, maka terlaksanalah segala rencanamu."},{typing:"Jumat! Sempurnakan kode, rayakan akhir pekan.",quote:"Berbahagialah orang yang mendapat hikmat, orang yang memperoleh kepandaian."},{typing:"Santai & Refleksi. Siap untuk inovasi minggu depan.",quote:"Mazmur 1:3: Ia seperti pohon yang ditanam di tepi aliran air, yang menghasilkan buah pada musimnya dan daunnya tidak layu."}],a=new Date().getDay(),d=r[a],c=[d.typing,"Seorang Digital Alchemist. Sentuh fotoku \ud83d\udc46","Where art meets engineering."],l=60,p=1800;let u=0,m=0;function g(){const r=c[u];if(m<r.length)e.textContent+=r.charAt(m),m++,setTimeout(g,l);else setTimeout(y,p);}function y(){u=(u+1)%c.length,m=0,e.textContent="",e.style.borderRightColor="transparent",setTimeout((()=>{e.style.borderRightColor="var(--neon-color)",g()}),1e3);}function h(){const r=getComputedStyle(document.documentElement).getPropertyValue('--secondary-neon').trim(),a=new Date(),d=String(a.getHours()).padStart(2,'0'),c=String(a.getMinutes()).padStart(2,'0'),l=String(a.getSeconds()).padStart(2,'0'),p=a.toLocaleDateString('id-ID',{weekday:'long'}),u=a.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}),m=`[ ${p}, ${u} ] | ${d}:${c}:${l} WIB`;s.innerHTML=`<span style="color: ${r};">[[ STATUS: CODE_MODE_ACTIVE ]]</span><br>${m}<br>Semoga hari-mu penuh hikmat dan kode yang bersih.`;}function v(){o.classList.add('show'),document.body.classList.add('body-transform'),setTimeout((()=>{document.body.style.transform='scale(0.9) rotate(3deg)'}),1900)}function x(){o.classList.remove('show'),document.body.style.transform='scale(1) rotate(0deg)',document.body.classList.remove('body-transform'),document.body.classList.remove('body-hyper-drive')}n.textContent=d.quote+" - Alkitab",g(),h(),setInterval(h,1e3),t.addEventListener('click',v),window.addEventListener('click',(e=>{e.target===o&&x();})),document.querySelector('.modal-content a').addEventListener('click',((e)=>{e.preventDefault();const t=e.currentTarget.href;document.body.classList.remove('body-transform'),document.body.classList.add('body-hyper-drive'),setTimeout((()=>{window.location.href=t}),2e3);}));}))
+// =================================================================
+// FUNGSI EFEK KHUSUS (EZRA DEATH SEQUENCE)
+// =================================================================
+function startEzraDeathSequence() {
+    const overlay = document.getElementById('ezra-death-sequence-overlay');
+    const zoomImage = document.getElementById('zoom-image');
+    const errorScreen = document.getElementById('error-screen-ezra');
+    const body = document.body;
+
+    // 1. Tampilkan Overlay dan Sembunyikan Konten Lain
+    body.classList.add('hide-all-content');
+    overlay.classList.add('sequence-active');
+    
+    // Pastikan gambar di-load sebelum memulai zoom
+    const imageUrl = zoomImage.getAttribute('data-src');
+    zoomImage.src = imageUrl;
+
+    // 2. Mulai Efek Membelah (3 detik)
+    setTimeout(() => {
+        body.classList.add('split-open');
+    }, 50); // Mulai segera
+
+    // 3. Mulai Zoom In (setelah 1 detik membelah, durasi 2 detik)
+    setTimeout(() => {
+        body.classList.add('image-zoom');
+    }, 1000); 
+
+    // 4. Tampilkan Layar Error Palsu (setelah 2 detik zoom, atau total 3 detik dari awal zoom)
+    setTimeout(() => {
+        zoomImage.style.opacity = '0'; // Fade out gambar zoom
+        zoomImage.style.zIndex = '10001';
+
+        // Tampilkan layar error
+        errorScreen.style.opacity = '1'; 
+
+        // 5. Batas Akhir: Tutup Visual atau Arahkan (3 detik setelah error muncul)
+        setTimeout(() => {
+            // Karena tidak bisa menutup tab secara paksa, kita arahkan ke halaman blank
+            // atau tampilkan pesan final dan hentikan animasi.
+            // window.location.href = 'about:blank'; // Alternatif dramatis
+            console.warn("SYSTEM TERMINATED. Manual closing is required.");
+        }, 3000); 
+
+    }, 3000); 
+}
+// =================================================================
 </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4025973997512443"
-     crossorigin="anonymous"></script>
 </body>
 </html>
 
