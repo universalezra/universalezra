@@ -35,6 +35,7 @@
         .panel-close-btn { position: static; background: none; border: none; color: #00ff00; font-size: 1.5rem; cursor: pointer; padding: 0px; }
         .fab-container { position: fixed; z-index: 1000; display: flex; }
         
+        /* FIX: FAB Styling: Animasi hanya di hover */
         .fab, .fab-container a { 
             background: rgba(142, 68, 173, 0.7); 
             background-size: 200% auto;
@@ -59,6 +60,7 @@
             box-shadow: 
                 0 0 15px var(--neon-btn-color-start, #ff0077), 
                 0 0 30px var(--neon-btn-color-end, #00eeff);
+            /* AKTIFKAN ANIMASI */
             animation: 
                 neon-gradient-shift 3s linear infinite,
                 neon-glow-pulse 1.5s ease-in-out infinite alternate;
@@ -82,7 +84,7 @@
         #fab-live-visitors { bottom: 90px; left: 50%; transform: translateX(-50%); display: none; }
         #fab-keyboard-toggle { bottom: 20px; right: 20px; }
         #fab-dashboard-toggle { bottom: 20px; left: 20px; }
-        #live-visitors-panel .live-visitors-content, #moment-vault-panel .moment-vault-content, #dashboard-panel .dashboard-content-wrapper { width: 100%; height: 100%; max-width: 1200px; background: var(--bg-panel); border-radius: 15px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); overflow: hidden; display: flex; flex-direction: column; color: #00ff00; }
+        #live-visitors-panel .live-visitors-content, #moment-vault-panel .moment-vault-content, #dashboard-panel .dashboard-content-wrapper { width: 100%; height: 100%; max-width: 1200px; background: var(--bg-panel); border-radius: 15px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); overflow: hidden; display: flex; flex-direction: column; padding: 20px; }
         #visitor-list ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
         #visitor-history { flex-grow: 1; overflow-y: auto; padding: 0 20px; }
         #visitor-history table { width: 90%; border-collapse: collapse; font-size: 0.85em; }
@@ -272,8 +274,18 @@
             transition: opacity 0.5s;
         }
 
-        /* Hapus split-panel karena tidak digunakan di alur baru */
-        .split-panel { display: none; } 
+        .split-panel {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background-color: var(--bg-main);
+            transition: transform 1s ease-in-out;
+            z-index: 10001;
+        }
+
+        .left-panel { left: 0; }
+        .right-panel { right: 0; }
 
         #zoom-image {
             position: absolute;
@@ -283,7 +295,7 @@
             height: auto;
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.1);
-            transition: transform 2s ease-out, opacity 1s; /* FIX: Durasi Zoom 2 detik */
+            transition: transform 2s ease-out, opacity 1s;
             z-index: 10002;
         }
 
@@ -559,7 +571,7 @@
     </div>
     
     <div id="ezra-death-sequence-overlay">
-        <div class="split-panel left-panel"></div> 
+        <div class="split-panel left-panel"></div>
         <div class="split-panel right-panel"></div>
         
         <img id="zoom-image" src="/dashboard/elvi.jpg" alt="Zoom In Image" data-src="/dashboard/elvi.jpg">
@@ -633,7 +645,7 @@
         function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(`Error when system attempting to enable fullscreen: ${err.message}`); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
 
         // =================================================================
-        // FIX: FUNGSI EZRA DEATH SEQUENCE (Alur Baru dan Ringkas)
+        // FIX: FUNGSI EZRA DEATH SEQUENCE (Logic Timing yang Diperbaiki)
         // =================================================================
         function startEzraDeathSequence() {
             const overlay = document.getElementById('ezra-death-sequence-overlay');
@@ -652,47 +664,54 @@
             const imageUrl = zoomImage.getAttribute('data-src');
             if (imageUrl) zoomImage.src = imageUrl;
 
-            // 1. Zoom Image (Durasi 2 detik)
+            // 1. Membelah Layar Vertikal (1 detik)
             setTimeout(() => {
-                body.classList.add('image-zoom');
-                console.log("Sequence: 1. Zoom Image (2s)");
+                body.classList.add('split-open');
+                console.log("Sequence: 1. Split Screen (1s)");
             }, 50);
 
-            // 2. Layar Blank Hitam (Setelah Zoom Selesai, total 2.05 detik, durasi 1 detik)
+            // 2. Zoom In Image (1 detik setelah split, durasi 2 detik)
+            setTimeout(() => {
+                body.classList.add('image-zoom');
+                console.log("Sequence: 2. Zoom Image (2s)");
+            }, 1000); 
+
+            // 3. Fade Image & Black Screen (Setelah Zoom Selesai, total 3.0 detik)
             setTimeout(() => {
                 // Sembunyikan elemen visual
                 zoomImage.style.opacity = '0';
+                document.querySelectorAll('.split-panel').forEach(p => p.style.opacity = 0);
                 
                 // Set body ke blank black
                 body.classList.add('final-blank-screen');
                 overlay.style.backgroundColor = 'black'; 
                 overlay.style.backgroundImage = 'none';
                 
-                console.log("Sequence: 2. Blackout/Blank Screen (1s)");
-            }, 2050); 
+                console.log("Sequence: 3. Fake Loss Connect / Black Screen (2s)");
+            }, 3000); // 1s (Split) + 2s (Zoom)
 
-            // 3. Termination Message (Setelah Blank Screen, total 3.05 detik)
+            // 4. Glitch & Pesan Goodbye (2 detik setelah Blank Screen dimulai)
             setTimeout(() => {
                 body.classList.remove('final-blank-screen');
                 body.style.backgroundColor = 'black';
                 
-                // Tampilkan Error Screen (untuk pesan terminated)
+                // Tampilkan Error Screen (untuk teks hijau)
                 errorScreen.style.opacity = '1';
 
-                // Aktifkan pesan final (Glitch/Goodbye)
+                // Aktifkan pesan final dengan glitch
                 finalMessage.classList.add('glitch-active');
                 
-                console.log("Sequence: 3. Termination Message/Glitch");
+                console.log("Sequence: 4. Glitch/Goodbye Message");
 
-            }, 3050); 
+            }, 5000); // 3s + 2s (Delay)
             
-            // 4. Final Termination (Tunggu 2 detik)
+            // 5. Final Termination (Tunggu 3 detik dari Glitch)
             setTimeout(() => {
                 console.warn("SYSTEM TERMINATED. Manual closing is required.");
-            }, 5050); 
+            }, 8000); // Total 8 detik
         }
         
-        // --- VISUALIZER LOGIC (Hanya 3D) ---
+        // --- VISUALIZER LOGIC (VISUALIZER KEDUA DIHAPUS) ---
         function setupAudioVisualizer() {
             const audioPlayer = document.getElementById('audio-player');
             if (!audioPlayer.src) { alert('Pilih lagu terlebih dahulu'); return false; }
@@ -972,6 +991,7 @@
             }
         }
         
+        // --- FUNGSI PENDUKUNG (Dipanggil di DOMContentLoaded) ---
         function initSwipeGestures() { 
             let isDragging = false;
             let startX = 0, startY = 0;
@@ -1067,17 +1087,603 @@
             });
         }
         
-        // --- Sisanya (Music, Editor, Visitor, etc. - Dipanggil di DOMContentLoaded) ---
-        // (Semua fungsi pendukung seperti fetchContributions, initMusicPlayer, dll. harus ada di sini)
-        function fetchContributions() { /* Placeholder */ }
-        function fetchLiveVisitors() { /* Placeholder */ }
-        function fetchVisitorHistory() { /* Placeholder */ }
-        function fetchMomentVaultGallery() { /* Placeholder */ }
-        function readFileAsBase64() { /* Placeholder */ }
-        function editMoment() { /* Placeholder */ }
-        function deleteMoment() { /* Placeholder */ }
+        function initVideoPlayer() {
+            const video = document.getElementById('widget-video');
+            const playBtn = document.getElementById('video-play-pause');
+            const muteBtn = document.getElementById('video-mute');
+
+            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+
+            playBtn.addEventListener('click', () => { 
+                if (video.paused) { 
+                    video.play(); 
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>'; 
+                } else { 
+                    video.pause(); 
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>'; 
+                } 
+            });
+            muteBtn.addEventListener('click', () => { 
+                video.muted = !video.muted; 
+                muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; 
+            });
+
+            video.pause();
+        }
+
+        function initEditor() {
+            const codeEditor = document.getElementById('unified-code-editor');
+            const previewFrame = document.getElementById('editor-preview');
+            const runBtn = document.getElementById('editor-run');
+            const saveBtn = document.getElementById('editor-save');
+            const loadBtn = document.getElementById('editor-load');
+            const newBtn = document.getElementById('editor-new');
+            const undoBtn = document.getElementById('editor-undo');
+            const redoBtn = document.getElementById('editor-redo');
+            let history = [''];
+            let historyPointer = 0;
+
+            const updateHistory = () => { 
+                const currentCode = codeEditor.value; 
+                if (currentCode !== history[historyPointer]) { 
+                    if (historyPointer < history.length - 1) { 
+                        history = history.slice(0, historyPointer + 1); 
+                    } 
+                    history.push(currentCode); 
+                    historyPointer = history.length - 1; 
+                } 
+            };
+            
+            const runCode = () => { 
+                const fullCode = codeEditor.value; 
+                const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i); 
+                const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i); 
+                const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i); 
+                
+                const htmlContent = htmlMatch ? htmlMatch[1] : fullCode; 
+                const cssContent = cssMatch ? cssMatch[1] : ''; 
+                const jsContent = jsMatch ? jsMatch[1] : ''; 
+                
+                const source = `<!DOCTYPE html><html><head><style>${cssContent}</style></head><body>${htmlContent}<script>${jsContent}<\/script></body></html>`; 
+                previewFrame.srcdoc = source; 
+            };
+            
+            const saveCode = () => { localStorage.setItem('unified_editor_code', codeEditor.value); console.log('Code saved successfully'); };
+            
+            const loadCode = () => { 
+                codeEditor.value = localStorage.getItem('unified_editor_code') || `<!DOCTYPE html><html><head><title>My trial</title><style>body {font-family: sans-serif;background-color: #000000;color: #259;text-align: center;padding-top: 50px;}h1 {color: var(--primary);}</style></head><body><h1>Hello Editor</h1><p id="message">Code Here</p><script>document.getElementById('message').onclick = function() {console.log('Paragraph clicked!');};<\/script></body></html>`; 
+                runCode(); 
+                history = [codeEditor.value]; 
+                historyPointer = 0; 
+            };
+            
+            const newDoc = () => { 
+                codeEditor.value = `<!DOCTYPE html><html><head><title>New trial</title><style>body {font-family: Arial, sans-serif;background-color: #000000;color: #abb2bf;display: flex;justify-content: center;align-items: center;min-height: 100vh;margin: 0;}h1 {color: #61dafb;}</style></head><body><h1>Start Coding Here!l</h1><script>console.log("New document loaded.");<\/script></body></html>`; 
+                runCode(); 
+                history = [codeEditor.value]; 
+                historyPointer = 0; 
+            };
+            
+            const undo = () => { 
+                if (historyPointer > 0) { 
+                    historyPointer--; 
+                    codeEditor.value = history[historyPointer]; 
+                    runCode(); 
+                } 
+            };
+            
+            const redo = () => { 
+                if (historyPointer < history.length - 1) { 
+                    historyPointer++; 
+                    codeEditor.value = history[historyPointer]; 
+                    runCode(); 
+                } 
+            };
+            
+            runBtn.addEventListener('click', runCode);
+            saveBtn.addEventListener('click', saveCode);
+            loadBtn.addEventListener('click', loadCode);
+            newBtn.addEventListener('click', newDoc);
+            undoBtn.addEventListener('click', undo);
+            redoBtn.addEventListener('click', redo);
+            codeEditor.addEventListener('input', updateHistory);
+            loadCode();
+        }
+
+        function initMusicPlayer() {
+            const player = document.getElementById('audio-player');
+            const playlistEl = document.getElementById('playlist');
+            const songTitleEl = document.getElementById('song-title');
+            const songs = [{ name: 'On And On', url: '/dashboard/On-And-On.mp3' }, { name: 'Where We Are', url: '/dashboard/Where-We-Are.mp3' }, { name: 'Sekuat Hatimu', url: '/dashboard/Sekuat Hatimu.mp3' }, ];
+            
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.textContent = song.name;
+                item.style.cursor = 'pointer';
+                item.style.padding = '8px';
+                item.style.transition = 'background 0.2s';
+                item.onmouseover = () => item.style.background = 'rgba(0, 168, 255, 0.1)';
+                item.onmouseout = () => item.style.background = 'none';
+                
+                item.onclick = () => { 
+                    player.src = song.url; 
+                    songTitleEl.textContent = song.name; 
+                    player.play(); 
+                };
+                playlistEl.appendChild(item);
+            });
+        }
         
-        function getBrowserId() { return localStorage.getItem('unique_browser_id') || 'browser_placeholder'; }
+        function initWebsiteAgeDisplay() {
+            const websiteAgeDisplay = document.getElementById('website-age-display');
+            const creationDate = new Date(2006, 7, 7, 0, 0, 0); 
+            
+            function updateWebsiteAge() {
+                const now = new Date();
+                const diff = now.getTime() - creationDate.getTime();
+                const seconds = Math.floor(diff / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                
+                const years = Math.floor(days / 365.25);
+                const remainingDaysAfterYears = Math.floor(days % 365.25);
+                const months = Math.floor(remainingDaysAfterYears / 30.44); 
+                const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
+                
+                const displaySeconds = seconds % 60;
+                const displayMinutes = minutes % 60;
+                const displayHours = hours % 24;
+                
+                let ageString = '';
+                if (years > 0) ageString += `${years}T `;
+                if (months > 0 || years > 0) ageString += `${months}B `;
+                ageString += `${remainingDaysAfterMonths}H `;
+                ageString += `${displayHours.toString().padStart(2, '0')}:`;
+                ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
+                ageString += `${displaySeconds.toString().padStart(2, '0')}`;
+                
+                websiteAgeDisplay.textContent = `${ageString}`;
+            }
+            
+            updateWebsiteAge();
+            setInterval(updateWebsiteAge, 1000);
+        }
+        
+        async function fetchContributions() {
+            const display = document.getElementById('contribution-display');
+            display.innerHTML = `<p>Loading</p>`;
+            try {
+                const response = await fetch(CONFIG.WORKERS.CONTRIBUTIONS);
+                const contributions = await response.json();
+                if (contributions && contributions.length > 0) { 
+                    display.innerHTML = contributions.reverse().map((c) => { 
+                        return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;"><p style="margin:0;">${c.text}</p><small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small></div>`; 
+                    }).join(''); 
+                } else { 
+                    display.innerHTML = `<p>Be the first to leave a message</p>`; 
+                }
+            } catch (e) { 
+                display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`; 
+            }
+        }
+        
+        document.getElementById('contribution-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('contribution-status');
+            statusEl.textContent = 'Uploading';
+            
+            const formData = new FormData();
+            formData.append('text', document.getElementById('contribution-text').value);
+            
+            try {
+                const response = await fetch(CONFIG.WORKERS.CONTRIBUTIONS, { 
+                    method: 'POST', 
+                    body: formData, 
+                });
+                
+                if (!response.ok) throw new Error('Upload failed');
+                
+                statusEl.textContent = 'Message sent. Thank you.';
+                e.target.reset();
+                fetchContributions();
+            } catch (err) { 
+                statusEl.textContent = `Error: ${err.message}`; 
+            }
+        });
+        
+        async function fetchLiveVisitors() {
+            const visitorList = document.getElementById('visitor-list');
+            const lastUpdatedTime = document.getElementById('last-updated-time');
+            if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading visitors')) { visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading</li>'; }
+            
+            try {
+                const response = await fetch(CONFIG.WORKERS.LIVE_VISITORS + '?get_visitors=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                const visitors = await response.json();
+                if (visitors && visitors.length > 0) { 
+                    visitorList.innerHTML = visitors.map((visitor) => { 
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', }); 
+                        return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`; 
+                    }).join(''); 
+                } else { 
+                    visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No online</li>'; 
+                }
+                lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
+            } catch (error) { 
+                console.error('Error fetching live visitors:', error); 
+                visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed</li>'; 
+                lastUpdatedTime.textContent = 'Error'; 
+            }
+        }
+
+        async function fetchVisitorHistory() {
+            const historyContainer = document.getElementById('visitor-history');
+            historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history</p>';
+            
+            try {
+                const response = await fetch(CONFIG.WORKERS.VISITOR_HISTORY + '?get_history=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                let history = await response.json();
+                if (history && history.length > 0) {
+                    const visitCounts = history.reduce((acc, visitor) => { acc[visitor.browserId] = (acc[visitor.browserId] || 0) + 1; return acc; }, {});
+                    const tableHeader = `<table><thead><tr><th>Timestamp</th><th>Browser ID</th><th>IP</th><th>Referral</th><th>Total Kunjungan</th></tr></thead><tbody>`;
+                    const tableRows = history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map(visitor => { 
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); 
+                        return `<tr><td>${timestamp}</td><td>${visitor.browserId.substring(0, 10)}...</td><td>${visitor.ip || 'N/A'}</td><td>${visitor.referrer || 'Direct'}</td><td>${visitCounts[visitor.browserId] || 1}</td></tr>`; 
+                    }).join('');
+                    const tableFooter = `</tbody></table>`;
+                    historyContainer.innerHTML = tableHeader + tableRows + tableFooter;
+                } else { 
+                    historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>'; 
+                }
+            } catch (error) { 
+                console.error('Failed to load visitor history:', error); 
+                historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`; 
+            }
+        }
+
+        function getBrowserId() { 
+            let browserId = localStorage.getItem('unique_browser_id'); 
+            if (!browserId) { 
+                browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now(); 
+                localStorage.setItem('unique_browser_id', browserId); 
+            } 
+            return browserId; 
+        }
+
+        async function trackVisitor() {
+            try {
+                const browserId = getBrowserId();
+                let ipAddress = 'unknown';
+                let referrer = document.referrer || 'direct';
+                
+                try { 
+                    const ipResponse = await fetch('https://api.ipify.org?format=json'); 
+                    const ipData = await ipResponse.json(); 
+                    ipAddress = ipData.ip; 
+                } catch (ipError) { 
+                    console.warn('Could not fetch IP address:', ipError); 
+                }
+                
+                const data = { 
+                    browserId: browserId, 
+                    ip: ipAddress, 
+                    userAgent: navigator.userAgent, 
+                    timestamp: new Date().toISOString(), 
+                    referrer: referrer, 
+                };
+                
+                fetch(CONFIG.WORKERS.LIVE_VISITORS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to live visitors worker:', e));
+                fetch(CONFIG.WORKERS.VISITOR_HISTORY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to visitor history worker:', e));
+            } catch (e) { 
+                console.error('Error in trackVisitor:', e); 
+            }
+        }
+        
+        async function fetchMomentVaultGallery() {
+            const galleryContainer = document.getElementById('moment-vault-gallery');
+            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
+            
+            try {
+                const response = await fetch(CONFIG.WORKERS.MOMENT_VAULT + '?get_gallery=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                const items = await response.json();
+                if (items && items.length > 0) {
+                    items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    galleryContainer.innerHTML = items.map((item) => {
+                        let mediaHTML = '';
+                        let fileExtension = item.fileUrl.split('.').pop().toLowerCase();
+                        let iconClass = '';
+                        
+                        if (item.fileType && item.fileType.startsWith('image/')) { mediaHTML = `<img src="${item.fileUrl}" alt="${item.title}">`; } 
+                        else if (item.fileType && item.fileType.startsWith('video/')) { mediaHTML = `<video src="${item.fileUrl}" controls></video>`; } 
+                        else if (item.fileType && item.fileType.startsWith('audio/')) { mediaHTML = `<audio src="${item.fileUrl}" controls></audio>`; } 
+                        else { 
+                            if (fileExtension === 'pdf') iconClass = 'fa-file-pdf'; 
+                            else if (fileExtension.startsWith('doc')) iconClass = 'fa-file-word'; 
+                            else if (fileExtension === 'txt') iconClass = 'fa-file-alt'; 
+                            else iconClass = 'fa-file'; 
+                            mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`; 
+                        }
+                        
+                        const timestamp = new Date(item.timestamp).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', });
+                        
+                        return `<div class="gallery-item" data-id="${item.id}">
+                                    <div class="gallery-media">${mediaHTML}</div>
+                                    <strong>${item.title}</strong>
+                                    <p class="item-text">${item.description}</p>
+                                    <small class="item-date">${timestamp}</small>
+                                    <div class="item-actions">
+                                        <button class="edit-moment-btn"><i class="fas fa-edit"></i></button>
+                                        <button class="delete-moment-btn"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </div>`;
+                    }).join('');
+                    
+                    galleryContainer.querySelectorAll('.edit-moment-btn').forEach((button) => { button.addEventListener('click', (e) => { const itemId = e.target.closest('.gallery-item').dataset.id; editMoment(itemId, items); }); });
+                    galleryContainer.querySelectorAll('.delete-moment-btn').forEach((button) => { button.addEventListener('click', (e) => { const itemId = e.target.closest('.gallery-item').dataset.id; deleteMoment(itemId); }); });
+                } else { 
+                    galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No uploaded yet</p>'; 
+                }
+            } catch (error) { 
+                console.error('Error fetching Moment Vault gallery:', error); 
+                galleryContainer.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>'; 
+            }
+        }
+        
+        document.getElementById('moment-upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Uploading';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            const title = document.getElementById('moment-title').value;
+            const description = document.getElementById('moment-description').value;
+            const fileInput = document.getElementById('moment-file');
+            const file = fileInput.files[0];
+            
+            if (!file || !title) { 
+                statusEl.textContent = 'Title and file are required!'; 
+                statusEl.style.color = 'var(--danger)'; 
+                return; 
+            }
+            
+            let githubToken;
+            try {
+                const tokenResponse = await fetch(CONFIG.WORKERS.GITHUB_TOKEN);
+                if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
+                const tokenData = await tokenResponse.json();
+                githubToken = tokenData.token;
+                if (!githubToken) throw new Error('GitHub token not found in response');
+            } catch (error) { 
+                console.error('Error getting GitHub token:', error); 
+                statusEl.textContent = `Error: Could not get GitHub token. ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+                return; 
+            }
+            
+            try {
+                const filePath = `moments/${Date.now()}-${file.name}`;
+                const fileContent = await readFileAsBase64(file);
+                const githubApiUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePath}`;
+                
+                const uploadResponse = await fetch(githubApiUrl, { 
+                    method: 'PUT', 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        'Content-Type': 'application/json', 
+                    }, 
+                    body: JSON.stringify({ 
+                        message: `Upload moment: ${title}`, 
+                        content: fileContent, 
+                        branch: 'main', 
+                    }), 
+                });
+                
+                if (!uploadResponse.ok) { 
+                    const errorText = await uploadResponse.text(); 
+                    throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${errorText}`); 
+                }
+                
+                const uploadData = await uploadResponse.json();
+                const rawFileUrl = uploadData.content.download_url;
+                
+                const momentData = { 
+                    id: 'moment_' + Math.random().toString(36).substr(2, 9) + Date.now(), 
+                    title: title, 
+                    description: description, 
+                    fileUrl: rawFileUrl, 
+                    fileType: file.type, 
+                    timestamp: new Date().toISOString(), 
+                };
+                
+                const kvSaveResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(momentData), 
+                });
+                
+                if (!kvSaveResponse.ok) { 
+                    throw new Error('Failed to save moment metadata to KV'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                e.target.reset();
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error uploading moment:', error); 
+                statusEl.textContent = `Error uploading moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        });
+
+        async function editMoment(itemId, currentItems) {
+            const password = prompt('Masukkan password untuk mengedit:');
+            if (password !== CONFIG.PASSWORDS.MOMENT_VAULT) { 
+                alert('false'); 
+                return; 
+            }
+            
+            const itemToEdit = currentItems.find((item) => item.id === itemId);
+            if (!itemToEdit) return;
+            
+            const newTitle = prompt('Edit Title:', itemToEdit.title);
+            if (newTitle === null) return;
+            
+            const newDescription = prompt('Edit Description:', itemToEdit.description);
+            if (newDescription === null) return;
+            
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Updating';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            try {
+                const updatedMomentData = { 
+                    id: itemId, 
+                    title: newTitle, 
+                    description: newDescription, 
+                    fileUrl: itemToEdit.fileUrl, 
+                    fileType: itemToEdit.fileType, 
+                    timestamp: itemToEdit.timestamp, 
+                };
+                
+                const response = await fetch(CONFIG.WORKERS.MOMENT_VAULT, { 
+                    method: 'PUT', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(updatedMomentData), 
+                });
+                
+                if (!response.ok) { 
+                    throw new Error('Failed to update moment metadata'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error updating moment:', error); 
+                statusEl.textContent = `Error updating moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        }
+
+        async function deleteMoment(itemId) {
+            const password = prompt('Masukkan password untuk menghapus:');
+            if (password !== CONFIG.PASSWORDS.MOMENT_VAULT) { 
+                alert('false'); 
+                return; 
+            }
+            
+            if (!confirm('Are you sure you want to delete? This action cannot be undone.')) { return; }
+            
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Deleting';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            try {
+                let githubToken;
+                try {
+                    const tokenResponse = await fetch(CONFIG.WORKERS.GITHUB_TOKEN);
+                    if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
+                    const tokenData = await tokenResponse.json();
+                    githubToken = tokenData.token;
+                    if (!githubToken) throw new Error('GitHub token not found in response');
+                } catch (error) { 
+                    console.error('Error getting GitHub token for delete:', error); 
+                    statusEl.textContent = `Error: Could not get GitHub token for deletion. ${error.message}`; 
+                    statusEl.style.color = 'var(--danger)'; 
+                    return; 
+                }
+                
+                const galleryResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT + '?get_gallery=true');
+                if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
+                
+                const galleryItems = await galleryResponse.json();
+                const itemToDelete = galleryItems.find((item) => item.id === itemId);
+                
+                if (!itemToDelete || !itemToDelete.fileUrl) { throw new Error('its file URL not found.'); }
+                
+                let filePathOnGithub;
+                const rawGithubContentBase = `https://raw.githubusercontent.com/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/main/`;
+                
+                if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) { 
+                    filePathOnGithub = itemToDelete.fileUrl.substring(rawGithubContentBase.length); 
+                } else { 
+                    console.warn('Unexpected file URL format, attempting fallback path extraction:', itemToDelete.fileUrl,); 
+                    filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`; 
+                }
+                
+                const githubApiGetFileUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePathOnGithub}`;
+                
+                const getFileResponse = await fetch(githubApiGetFileUrl, { 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        Accept: 'application/vnd.github.v3+json', 
+                    }, 
+                });
+                
+                if (!getFileResponse.ok) { 
+                    const errorText = await getFileResponse.text(); 
+                    throw new Error(`Failed to get file SHA from GitHub: ${getFileResponse.status} - ${errorText}`); 
+                }
+                
+                const fileMetaData = await getFileResponse.json();
+                const fileSha = fileMetaData.sha;
+                
+                const githubDeleteUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePathOnGithub}`;
+                
+                const deleteResponse = await fetch(githubDeleteUrl, { 
+                    method: 'DELETE', 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        'Content-Type': 'application/json', 
+                    }, 
+                    body: JSON.stringify({ 
+                        message: `Delete moment: ${itemToDelete.title}`, 
+                        sha: fileSha, 
+                        branch: 'main', 
+                    }), 
+                });
+                
+                if (!deleteResponse.ok) { 
+                    const errorText = await deleteResponse.text(); 
+                    throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`); 
+                }
+                
+                const kvDeleteResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT + `?delete_moment_id=${itemId}`, { 
+                    method: 'DELETE', 
+                });
+                
+                if (!kvDeleteResponse.ok) { 
+                    throw new Error('Failed to delete'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error deleting moment:', error); 
+                statusEl.textContent = `Error deleting moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        }
+        
+        function readFileAsBase64(file) { 
+            return new Promise((resolve, reject) => { 
+                const reader = new FileReader(); 
+                reader.onload = () => { 
+                    const base64String = reader.result.split(',')[1]; 
+                    resolve(base64String); 
+                }; 
+                reader.onerror = (error) => reject(error); 
+                reader.readAsDataURL(file); 
+            }); 
+        }
 
         // Kode Typing Widget
         (function(){
@@ -1095,13 +1701,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             gridContainer = document.getElementById('grid-container');
-            
-            // Inisialisasi fungsi yang dibutuhkan
-            // PENTING: Anda perlu memastikan semua fungsi di luar IIFE seperti fetchContributions, dll., 
-            // tersedia di scope global jika Anda tidak menyalinnya ke dalam IIFE.
-            // Untuk kode ini, saya menyertakan placeholder agar DOMContentLoaded berjalan.
-            // DI SINI SEMUA FUNGSI HARUS DIPANGGIL AGAR KODE BERJALAN.
-            
             initPanelControls();
             initVideoPlayer();
             initEditor();
@@ -1113,6 +1712,7 @@
             initSecurityFeatures();
             checkFirstVisit();
             
+            // Re-bind click event untuk tombol login di modal, memastikan transisi berjalan
             const loginLink = document.getElementById('login-link');
             if(loginLink) {
                 loginLink.addEventListener('click', (e) => {
@@ -1122,7 +1722,7 @@
                     document.body.classList.add('body-hyper-drive');
                     setTimeout(() => {
                         window.location.href = targetUrl;
-                    }, 2000); 
+                    }, 2000); // 2 detik untuk animasi hyper-drive
                 });
             }
         });
