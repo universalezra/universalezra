@@ -11,15 +11,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        /*
-         * GLOBAL STYLES & VARIABLE REFINEMENT
-         */
         :root { --primary: #8e44ad; --accent: #00a8ff; --success: #2ecc71; --danger: #e74c3c; --light: #ecf0f1; --dark: #1a1a2e; --bg-main: #16213e; --bg-panel: rgba(26, 26, 46, 0.9); --text-primary: #e0fbfc; --text-secondary: #98ded9; --border-color: rgba(0, 168, 255, 0.3); }
         * { box-sizing: border-box; }
         html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Courier New', Courier, monospace; background-color: var(--bg-main); color: #00ff00; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         body::before { content: "Panisla Manik"; position: fixed; bottom: 0px; left: 10px; font-size: 1rem; color: rgba(255, 255, 255, 0.5); z-index: 999; pointer-events: none; opacity: 0.5; }
         #main-viewport { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: hidden; }
-        /* Grid Transition Speed FIX: 0.7s -> 0.4s for snappier swipe UX */
         #grid-container { width: 500vw; height: 500vh; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr 1fr 1fr; transform: translate3d(-200vw, -200vh, 0); transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1); }
         .grid-block { width: 100vw; height: 100vh; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; }
         .grid-block-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: none; -webkit-filter: none; z-index: 1; }
@@ -32,15 +28,18 @@
         #live-visitors-panel, #moment-vault-panel, #dashboard-panel { top: 0; left: 0; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         #live-visitors-panel, #moment-vault-panel { transform: translateY(100%); }
         #dashboard-panel { transform: translateX(-100%); }
+        
+        /* VISUALIZER FIX: ADD SECOND VISUALIZER CANVAS */
         #visualizer-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; display: none; background-color: transparent; }
-        .visualizer-active #visualizer-canvas { display: block; pointer-events: none; }
+        #second-visualizer-canvas { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70vw; height: 70vh; max-width: 800px; max-height: 800px; z-index: 100; display: none; pointer-events: none; border-radius: 10px; border: 2px solid var(--accent); opacity: 0.8;}
+        .visualizer-active #visualizer-canvas, .visualizer-active #second-visualizer-canvas { display: block; }
+        
         .panel-close-btn { position: static; background: none; border: none; color: #00ff00; font-size: 1.5rem; cursor: pointer; padding: 0px; }
         .fab-container { position: fixed; z-index: 1000; display: flex; }
         
-        /* FIX: Menghapus animasi neon pada FAB secara default, hanya aktif saat hover */
         .fab, .fab-container a { 
             background: rgba(142, 68, 173, 0.7); 
-            background-size: 200% auto; /* Tetap pertahankan background-size untuk transisi hover */
+            background-size: 200% auto; 
             border: none; 
             border-radius: 50%; 
             color: #00ff00; 
@@ -54,10 +53,10 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
             transition: all 0.3s ease; 
             text-decoration: none; 
-            animation: none !important; /* MENGHAPUS SEMUA ANIMASI BAWAAN */
+            animation: none !important; 
         }
         .fab:hover, .fab-container a:hover { 
-            background: var(--neon-gradient, var(--accent)); /* Menggunakan neon gradient saat hover */
+            background: var(--neon-gradient, var(--accent)); 
             transform: scale(1.1);
             box-shadow: 
                 0 0 15px var(--neon-btn-color-start, #ff0077), 
@@ -120,7 +119,6 @@
         .dashboard-card p { margin-bottom: 0; font-size: 0.9em; }
         .screenshot-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 0, 0, 0.9); color: white; padding: 20px; border-radius: 10px; font-size: 1.2em; z-index: 9999; display: none; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         
-        /* FIX: Mengganti Modal New User dengan Toast Notification */
         #new-user-toast { 
             position: fixed; 
             bottom: 20px; 
@@ -159,138 +157,168 @@
 
         .progress-bar-container { width: 100%; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; margin-top: 10px; overflow: hidden; border: 1px solid var(--border-color); }
         .progress-bar { background-color: var(--accent); padding: 4px 8px; text-align: right; color: white; font-size: 0.8em; font-weight: bold; white-space: nowrap; transition: width 0.8s ease-in-out; }
-:root {
-  --neon-btn-color-start: #ff0077;
-  --neon-btn-color-end: #00eeff;
-  --neon-gradient: linear-gradient(
-    90deg, 
-    #ff0077 0%, #ff9900 25%, #ccff00 50%, #00ffff 75%, #ff00ff 100%
-  );
-  --dark-bg: #1a1a1a;
-}
-/* Hapus styling neon-button global karena sudah di pindahkan ke .fab:hover */
-body {
-  background-color: var(--dark-bg);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  gap: 20px;
-}
 
-/* Hapus keyframes neon-gradient-shift dan neon-glow-pulse global */
+        :root {
+          --neon-btn-color-start: #ff0077;
+          --neon-btn-color-end: #00eeff;
+          --neon-gradient: linear-gradient(
+            90deg, 
+            #ff0077 0%, #ff9900 25%, #ccff00 50%, #00ffff 75%, #ff00ff 100%
+          );
+          --dark-bg: #1a1a1a;
+        }
+        body {
+          background-color: var(--bg-main);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          gap: 20px;
+        }
 
-:root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}#ultimate-widget{position:relative;width:202px;margin:50px auto 20px auto;padding:15px 0;background-color:transparent;border:none;box-shadow:none;z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}@keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}.typing-container{display:flex;align-items:flex-start;line-height:1.3;min-height:50px;margin-bottom:10px;}.neon-typing-text{color:var(--neon-color);text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);font-size:1.6em;overflow:visible;white-space:normal;max-width:200px;border-right:3px solid var(--neon-color);animation:terminal-blink .7s step-end infinite;}@keyframes terminal-blink{from,to{border-right-color:transparent;}50%{border-right-color:var(--neon-color);}}.profile-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:none;box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);margin:0 12px;cursor:pointer;transition:transform .3s,box-shadow .3s;}.profile-photo:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 0 10px var(--secondary-neon),0 0 30px var(--secondary-neon);}.holographic-text{font-size:.9em;color:#ccc;margin:5px 0 10px 0;padding:5px 0;text-shadow:0 0 2px rgba(255,255,255,.8);border-top:none;border-bottom:none;animation:glitch 5s infinite alternate;}@keyframes glitch{0%{text-shadow:0 0 5px #f0f;transform:skew(0deg);}20%{text-shadow:0 0 5px #0ff;transform:skew(-1deg);}40%{text-shadow:0 0 5px #f0f;transform:skew(2deg);}60%{text-shadow:0 0 5px #0ff;transform:skew(-3deg);}80%{text-shadow:0 0 5px #f0f;transform:skew(1deg);}100%{text-shadow:0 0 5px #0ff;transform:skew(0deg);}}.quote{font-style:italic;font-size:.8em;color:var(--quote-color);margin-top:10px;padding:5px 0;text-shadow:0 0 5px rgba(170,255,170,.5);min-height:40px;}#bio-modal{display:none;}#bio-modal.show{position:fixed;display:flex;z-index:11000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);justify-content:center;align-items:center;opacity:0;transition:opacity .4s;}#bio-modal.show{opacity:1;}.modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
-    /* EFEK KUNCI: ANIMASI ROTASI DAN ZOOM */
-@keyframes portal-rotate {
-    0% { transform: scale(1) rotate(0deg); }
-    100% { transform: scale(0.9) rotate(3deg); } /* Zoom out 10% dan Rotasi 3 derajat */
-}
+        :root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}#ultimate-widget{position:relative;width:202px;margin:50px auto 20px auto;padding:15px 0;background-color:transparent;border:none;box-shadow:none;z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}@keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}.typing-container{display:flex;align-items:flex-start;line-height:1.3;min-height:50px;margin-bottom:10px;}.neon-typing-text{color:var(--neon-color);text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);font-size:1.6em;overflow:visible;white-space:normal;max-width:200px;border-right:3px solid var(--neon-color);animation:terminal-blink .7s step-end infinite;}@keyframes terminal-blink{from,to{border-right-color:transparent;}50%{border-right-color:var(--neon-color);}}.profile-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:none;box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);margin:0 12px;cursor:pointer;transition:transform .3s,box-shadow .3s;}.profile-photo:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 0 10px var(--secondary-neon),0 0 30px var(--secondary-neon);}.holographic-text{font-size:.9em;color:#ccc;margin:5px 0 10px 0;padding:5px 0;text-shadow:0 0 2px rgba(255,255,255,.8);border-top:none;border-bottom:none;animation:glitch 5s infinite alternate;}@keyframes glitch{0%{text-shadow:0 0 5px #f0f;transform:skew(0deg);}20%{text-shadow:0 0 5px #0ff;transform:skew(-1deg);}40%{text-shadow:0 0 5px #f0f;transform:skew(2deg);}60%{text-shadow:0 0 5px #0ff;transform:skew(-3deg);}80%{text-shadow:0 0 5px #f0f;transform:skew(1deg);}100%{text-shadow:0 0 5px #0ff;transform:skew(0deg);}}.quote{font-style:italic;font-size:.8em;color:var(--quote-color);margin-top:10px;padding:5px 0;text-shadow:0 0 5px rgba(170,255,170,.5);min-height:40px;}#bio-modal{display:none;}#bio-modal.show{position:fixed;display:flex;z-index:11000;left:0;top:0;width:100%;height:100%;/* background-color:rgba(0,0,0,.1); */ backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);justify-content:center;align-items:center;opacity:0;transition:opacity .4s;}#bio-modal.show{opacity:1;}.modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
+        /* FIX: BACKGROUND UNTUK ROTASI DAN MODAL BIO */
+        .body-transform, #bio-modal.show {
+            background-image: url('/dashboard/mygirl.jpg') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
 
-/* Kelas yang Diterapkan pada <body> saat modal dibuka */
-.body-transform {
-    /* Memicu animasi */
-    animation: portal-rotate 2s forwards ease-in-out; 
-    /* Transisi untuk properti lain agar perputaran halus */
-    transition: transform 2s ease-in-out; 
-    /* Penting agar rotasi terjadi dari pusat layar */
-    transform-origin: center center; 
-}
-/* EFEK KUNCI: HYPER-DRIVE ROTASI 1440 DERAJAT */
-@keyframes hyper-drive {
-    0% { transform: scale(0.9) rotate(3deg); } /* Mulai dari posisi modal terbuka */
-    100% { transform: scale(0.1) rotate(1440deg); } /* Zoom out 90% dan Rotasi 4x360 */
-}
+        @keyframes portal-rotate {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(0.9) rotate(3deg); }
+        }
 
-/* Kelas yang Diterapkan pada <body> saat link ditekan */
-.body-hyper-drive {
-    animation: hyper-drive 2s forwards ease-in; /* 2 detik animasi */
-    transition: transform 2s ease-in; 
-    transform-origin: center center; 
-}
-/* Styling Awal untuk Overlay */
-#ezra-death-sequence-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10000; /* Harus di atas segalanya */
-    pointer-events: none; /* Awalnya tidak dapat diklik */
-    overflow: hidden;
-    opacity: 0; /* Awalnya tersembunyi */
-    transition: opacity 0.5s;
-}
+        .body-transform {
+            animation: portal-rotate 2s forwards ease-in-out; 
+            transition: transform 2s ease-in-out; 
+            transform-origin: center center; 
+        }
 
-/* Panel Pembelah */
-.split-panel {
-    position: absolute;
-    top: 0;
-    width: 50%;
-    height: 100%;
-    background-color: #000000; /* Sesuaikan dengan warna background website Anda */
-    transition: transform 3s ease-in-out; 
-}
+        @keyframes hyper-drive {
+            0% { transform: scale(0.9) rotate(3deg); }
+            100% { transform: scale(0.1) rotate(1440deg); }
+        }
 
-.left-panel { left: 0; }
-.right-panel { right: 0; }
+        .body-hyper-drive {
+            animation: hyper-drive 2s forwards ease-in; 
+            transition: transform 2s ease-in; 
+            transform-origin: center center; 
+        }
 
-/* Gambar Zoom In */
-#zoom-image {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px; 
-    height: auto;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.1);
-    transition: transform 2s ease-out, opacity 1s;
-    z-index: 10001;
-}
+        #ezra-death-sequence-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
 
-/* Layar Error Palsu */
-#error-screen-ezra {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000000;
-    color: #00FF00; /* Hijau neon */
-    font-family: 'Consolas', monospace;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 1s;
-    z-index: 10002;
-    padding: 20px;
-    text-align: center;
-}
+        .split-panel {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background-color: var(--bg-main); /* Menggunakan warna background utama */
+            transition: transform 1s ease-in-out; /* FIX: Durasi split 1s */
+            z-index: 10001;
+        }
 
-.error-text { font-size: 3vw; margin-bottom: 10px; }
-.error-code { font-size: 2vw; animation: blink 0.5s infinite alternate; }
-.developer-message { font-size: 1.5vw; margin-top: 20px; }
+        .left-panel { left: 0; }
+        .right-panel { right: 0; }
 
-@keyframes blink {
-    from { opacity: 1; }
-    to { opacity: 0.3; }
-}
+        #zoom-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px; 
+            height: auto;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.1);
+            transition: transform 2s ease-out, opacity 1s; /* FIX: Durasi zoom 2s */
+            z-index: 10002;
+        }
 
-/* KELAS AKTIF (DITAMBAHKAN OLEH JAVASCRIPT) */
-.split-open .left-panel { transform: translateX(-100vw); }
-.split-open .right-panel { transform: translateX(100vw); }
+        /* FIX: LAYAR ERROR & GLITCH */
+        #error-screen-ezra {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            color: #00FF00;
+            font-family: 'Consolas', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s;
+            z-index: 10003;
+            padding: 20px;
+            text-align: center;
+        }
 
-.image-zoom #zoom-image {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(15); /* Nilai zoom yang besar */
-    pointer-events: auto;
-}
+        #final-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 0, 0, 0); /* Awalnya transparan */
+            font-size: 4vw;
+            z-index: 10004;
+            transition: color 1s ease-in;
+            opacity: 0;
+            pointer-events: none;
+            animation: none;
+        }
+        
+        .glitch-active #final-message {
+            opacity: 1;
+            color: rgba(255, 0, 0, 0.4); 
+            animation: text-glitch 0.5s infinite alternate; 
+        }
 
-.sequence-active { opacity: 1 !important; pointer-events: auto !important; }
-.hide-all-content > * { display: none !important; } /* Sembunyikan semua konten website lain */
+        @keyframes text-glitch {
+            0% { transform: translate(-50%, -50%) skew(2deg) translateX(3px); }
+            50% { transform: translate(-50%, -50%) skew(-1deg) translateX(-1px); }
+            100% { transform: translate(-50%, -50%) skew(0deg) translateX(0px); }
+        }
+
+        .error-text { font-size: 3vw; margin-bottom: 10px; }
+        .error-code { font-size: 2vw; animation: blink 0.5s infinite alternate; }
+        .developer-message { font-size: 1.5vw; margin-top: 20px; }
+
+        @keyframes blink {
+            from { opacity: 1; }
+            to { opacity: 0.3; }
+        }
+
+        /* KELAS AKTIF (DITAMBAHKAN OLEH JAVASCRIPT) */
+        .split-open .left-panel { transform: translateX(-100vw); }
+        .split-open .right-panel { transform: translateX(100vw); }
+
+        .image-zoom #zoom-image {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(15);
+            pointer-events: auto;
+        }
+        
+        .final-blank-screen {
+            background-color: black !important;
+            transition: background-color 1s;
+        }
+
+        .sequence-active { opacity: 1 !important; pointer-events: auto !important; }
+        .hide-all-content > * { display: none !important; } 
     </style>
 </head>
 <body>
@@ -307,26 +335,12 @@ body {
 
     <div class="screenshot-popup" id="screenshot-popup">Screenshot tidak diizinkan!</div>
     <canvas id="visualizer-canvas"></canvas>
-    <audio id="matrix-sound" src="/dashboard/matrix-code.mp3" preload="metadata"></audio>
+    <canvas id="second-visualizer-canvas"></canvas> <audio id="matrix-sound" src="/dashboard/matrix-code.mp3" preload="metadata"></audio>
     <div id="main-viewport">
         <div id="grid-container">
             <div class="grid-block" id="block-1-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div><div class="grid-block-content"><h1>Block (1,1)</h1></div></div>
             <div class="grid-block" id="block-1-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=2');"></div><div class="grid-block-content"><h1>Block (1,2)</h1></div></div>
-            
-            <div class="grid-block" id="block-1-3">
-                <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div>
-                <div class="grid-block-content">
-                    <h1>Dashboard Cuaca</h1>
-                    <a class="weatherwidget-io" href="https://forecast7.com/en/n6d21106d82/jakarta/" data-label_1="JAKARTA" data-label_2="CUACA" data-theme="original">JAKARTA WEATHER</a>
-                    <iframe width="90%" height="70%" 
-                            data-src="https://embed.windy.com/embed2.html?lat=-2.495&lon=118.213&detailLat=-6.215&detailLon=106.827&width=600&height=450&zoom=5&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=true&metricWind=default&metricTemp=default&radarRange=-1" 
-                            frameborder="0" style="border-radius: 10px; border:none; margin-top: 10px;"
-                            id="windy-iframe">
-                    </iframe>
-                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs)}}(document,'script','weatherwidget-io-js')</script>
-                </div>
-            </div>
-
+            <div class="grid-block" id="block-1-3"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div><div class="grid-block-content"><h1>Block (1,3)</h1><p>Random Pic</p></div></div>
             <div class="grid-block" id="block-1-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div><div class="grid-block-content"><h1>Block (1,4)</h1></div></div>
             <div class="grid-block" id="block-1-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div><div class="grid-block-content"><h1>Block (1,5)</h1></div></div>
             <div class="grid-block" id="block-2-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div><div class="grid-block-content"><h1>Block (2,1)</h1></div></div>
@@ -335,33 +349,13 @@ body {
             <div class="grid-block" id="block-2-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=9');"></div><div class="grid-block-content"><h1>Block (2,4)</h1></div></div>
             <div class="grid-block" id="block-2-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=10');"></div><div class="grid-block-content"><h1>Block (2,5)</h1></div></div>
             
-            <div class="grid-block" id="block-3-1">
-                <div class="grid-block-content">
-                    <h3 style="margin-bottom: 20px;">Peta Bintang</h3>
-                    <iframe data-src="https://stellarium-web.org/" width="90%" height="80%" frameborder="0" style="border-radius: 10px; border:none;" id="stellarium-iframe"></iframe>
-                </div>
-            </div>
-
-            <div class="grid-block" id="block-3-2">
-                <div class="grid-block-content">
-                    <h3>Ayat Hari Ini (YouVersion)</h3>
-                    <div id="bible-widget-container">
-                        <iframe data-src="https://www.bible.com/verse-of-the-day/TB" width="100%" height="100%" style="border: none;" id="bible-iframe"></iframe>
-                    </div>
-                </div>
-            </div>
-
+            <div class="grid-block" id="block-3-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=11');"></div><div class="grid-block-content"><h1>Block (3,1)</h1><p>Random Pic (Bintang)</p></div></div>
+            <div class="grid-block" id="block-3-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=12');"></div><div class="grid-block-content"><h1>Block (3,2)</h1><p>Random Pic (Alkitab)</p></div></div>
+            
             <div class="grid-block" id="block-center">
                 <div class="grid-block-background" id="interactive-bg" style="background-image: url('/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg');"></div>
                 <div class="grid-block-content">
-                    <div id="ultimate-widget">
-                        <div class="typing-container">
-                            <span id="typing-output" class="neon-typing-text"></span>
-                            <img src="https://via.placeholder.com/40/ff0077/ffffff?text=E" alt="Foto Profil Ezra" class="profile-photo" id="ezra-photo">
-                        </div>
-                        <p class="holographic-text" id="time-and-slogan">// STATUS: INITIATION</p>
-                        <p class="quote" id="daily-quote">Memuat kutipan hari ini...</p>
-                    </div>
+                    <div id="ultimate-widget"><div class="typing-container"><span id="typing-output" class="neon-typing-text"></span><img src="https://via.placeholder.com/40/ff0077/ffffff?text=E" alt="Foto Profil Ezra" class="profile-photo" id="ezra-photo"></div><p class="holographic-text" id="time-and-slogan">// STATUS: INITIATION</p><p class="quote" id="daily-quote">Memuat kutipan hari ini...</p></div>
                     <div class="particle p1"></div><div class="particle p2"></div><div class="particle p3"></div><div class="particle p4"></div><div class="particle p5"></div>
                     <div id="bio-modal">
                         <div class="modal-content">
@@ -384,38 +378,30 @@ body {
             <div class="grid-block" id="block-5-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=22');"></div><div class="grid-block-content"><h1>Block (5,2)</h1></div></div>
             <div class="grid-block" id="block-5-3"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=23');"></div><div class="grid-block-content"><h1>Block (5,3)</h1></div></div>
             <div class="grid-block" id="block-5-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=24');"></div><div class="grid-block-content"><h1>Block (5,4)</h1></div></div>
-            <div class="grid-block" id="block-5-5">
-                <div class="grid-block-content">
-                    <h3>Spaceship 3D Model</h3>
-                    <iframe title="Executor-Class Star Dreadnought" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share 
-                            data-src="https://sketchfab.com/models/442c548d94744641ba279ae94b5f45ec/embed" 
-                            style="width: 90%; height: 90%; border:none; border-radius:12px;"
-                            id="sketchfab-iframe">
-                    </iframe>
-                </div>
-            </div>
+            
+            <div class="grid-block" id="block-5-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=25');"></div><div class="grid-block-content"><h1>Block (5,5)</h1><p>Random Pic (Spaceship)</p></div></div>
         </div>
     </div>
     
     <div class="fab-container" id="fab-editor"><button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
-<div class="fab-container" id="fab-music"><button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
-<div class="fab-container" id="fab-contribution"><button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
-<div class="fab-container" id="fab-alkitab"><a class="fab" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
-<div class="fab-container" id="fab-visualizer"><button class="fab" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
-<div class="fab-container" id="fab-moment-vault"><button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
-<div class="fab-container" id="fab-live-visitors"><button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
-<div class="fab-container" id="fab-keyboard-toggle"><button class="fab" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
-<div class="fab-container" id="fab-dashboard-toggle"><button class="fab" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
+    <div class="fab-container" id="fab-music"><button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
+    <div class="fab-container" id="fab-contribution"><button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
+    <div class="fab-container" id="fab-alkitab"><a class="fab" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
+    <div class="fab-container" id="fab-visualizer"><button class="fab" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
+    <div class="fab-container" id="fab-moment-vault"><button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
+    <div class="fab-container" id="fab-live-visitors"><button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
+    <div class="fab-container" id="fab-keyboard-toggle"><button class="fab" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
+    <div class="fab-container" id="fab-dashboard-toggle"><button class="fab" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
 
-<div id="video-player-widget">
-    <video id="widget-video" loop src="/dashboard/video.mp4" muted></video> 
-    <div class="video-controls">
-        <button id="video-play-pause"><i class="fas fa-play"></i></button>
-        <button id="video-mute"><i class="fas fa-volume-up"></i></button>
+    <div id="video-player-widget">
+        <video id="widget-video" loop src="/dashboard/video.mp4" muted></video> 
+        <div class="video-controls">
+            <button id="video-play-pause"><i class="fas fa-play"></i></button>
+            <button id="video-mute"><i class="fas fa-volume-mute"></i></button>
+        </div>
     </div>
-</div>
 
-<div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
+    <div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
     
     <div class="panel" id="editor-panel">
         <div class="panel-header">
@@ -492,23 +478,26 @@ body {
         <button id="center-video-close"><i class="fas fa-times"></i></button>
         <video id="center-video-player" loop playsinline></video>
     </div>
+    
     <div id="ezra-death-sequence-overlay">
-    <div class="split-panel left-panel"></div>
-    <div class="split-panel right-panel"></div>
-    
-    <img id="zoom-image" src="/dashboard/elvi.jpg" alt="Zoom In Image" data-src="/dashboard/elvi.jpg">
-    
-    <div id="error-screen-ezra">
-        <p class="error-text">INITIATING HARD DISCONNECT PROTOCOL...</p>
-        <p class="error-code">ACCESS DENIED. SYSTEM CORRUPTED.</p>
-        <p class="developer-message">ATTEMPTED ACCESS VIOLATION DETECTED. ALL SESSIONS TERMINATED.</p>
+        <div class="split-panel left-panel"></div>
+        <div class="split-panel right-panel"></div>
+        
+        <img id="zoom-image" src="/dashboard/elvi.jpg" alt="Zoom In Image" data-src="/dashboard/elvi.jpg">
+        
+        <div id="error-screen-ezra">
+            <p class="error-text">INITIATING HARD DISCONNECT PROTOCOL...</p>
+            <p class="error-code">ACCESS DENIED. SYSTEM CORRUPTED.</p>
+            <p class="developer-message">ATTEMPTED ACCESS VIOLATION DETECTED. ALL SESSIONS TERMINATED.</p>
+        </div>
+        
+        <div id="final-message" class="glitch-active">Hmm Goodbye</div>
     </div>
-</div>
+    
 <script>
-    // FIX: Semua kode dibungkus dalam IIFE (Immediately Invoked Function Expression) untuk enkapsulasi.
     (function() {
         // =================================================================
-        // CONFIGURATION (MAINTAINABILITY FIX: Mengkonsolidasikan URL & Password)
+        // CONFIGURATION
         // =================================================================
         const CONFIG = {
             WORKERS: {
@@ -523,9 +512,9 @@ body {
                 REPO_NAME: 'universalezra',
             },
             PASSWORDS: {
-                LIVE_VISITORS: '💔', // Password untuk Live Visitors Panel
-                MOMENT_VAULT: 'vmoments', // Password untuk Moment Vault Edit/Delete
-                TOGGLE_MAP: { // Password untuk FAB Keyboard Toggle
+                LIVE_VISITORS: '💔',
+                MOMENT_VAULT: 'vmoments',
+                TOGGLE_MAP: {
                     'mycode': 'UNLOCK_LIVE_VISITORS',
                     'yeah': 'PLAY_CENTER_VIDEO',
                     'love': 'TOGGLE_ELVI_MODE',
@@ -533,7 +522,6 @@ body {
                 }
             },
             VISITOR: {
-                HISTORY_EXPIRY_DAYS: 7,
                 REFRESH_INTERVAL_MS: 5000,
             },
             VISUALIZER: {
@@ -541,6 +529,7 @@ body {
                 PARTICLE_COUNT: 2000,
                 FREQ_RANGE_START_HZ: 20,
                 FREQ_RANGE_END_HZ: 1024,
+                BAR_COUNT_2D: 64, // FIX: Jumlah bar untuk visualizer 2D
             },
             GRID: {
                 SWIPE_THRESHOLD: 50,
@@ -554,11 +543,18 @@ body {
         let isEzraLoggedIn = false;
         let isVisualizerActive = false;
         let isElviModeActive = false;
-        let visualizerInitialized = false; // FIX: State inisialisasi visualizer
+        let visualizerInitialized = false; 
+        
         let audioContext, analyser, source;
         let frequencyData, bufferLength;
+        
+        // 3D Visualizer
         let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
         let lastBassLevel = 0;
+        
+        // 2D Visualizer
+        let canvas2D, ctx2D; 
+
         let gridContainer, currentX = 2, currentY = 2;
 
         // =================================================================
@@ -572,41 +568,14 @@ body {
         function exitFullscreen() { if (document.fullscreenElement) { document.exitFullscreen(); } }
         function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(`Error when system attempting to enable fullscreen: ${err.message}`); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
 
-        /**
-         * FIX: Lazy load iframe saat block dijangkau
-         * @param {string} blockId 
-         * @param {string} iframeId 
-         */
-        function lazyLoadIframe(blockId, iframeId) {
-            const blockElement = document.getElementById(blockId);
-            const iframe = document.getElementById(iframeId);
-            if (!iframe || !blockElement) return;
-
-            const isBlockVisible = (currentX === parseInt(blockId.split('-')[1]) - 1) && (currentY === parseInt(blockId.split('-')[0]) - 1);
-            
-            if (isBlockVisible && iframe.getAttribute('data-src') && !iframe.src) {
-                console.log(`Loading iframe: ${iframeId}`);
-                iframe.src = iframe.getAttribute('data-src');
-                iframe.removeAttribute('data-src');
-            }
-        }
-        
-        /** FIX: Mengimplementasikan Lazy Loading untuk semua Iframe */
-        function checkAndLazyLoadIframe() {
-            lazyLoadIframe('block-1-3', 'windy-iframe');
-            lazyLoadIframe('block-3-1', 'stellarium-iframe');
-            lazyLoadIframe('block-3-2', 'bible-iframe');
-            lazyLoadIframe('block-5-5', 'sketchfab-iframe');
-        }
-
-
         // =================================================================
-        // FUNGSI EFEK KHUSUS (EZRA DEATH SEQUENCE)
+        // FUNGSI EFEK KHUSUS (EZRA DEATH SEQUENCE) FIX: LOGIKA URUTAN
         // =================================================================
         function startEzraDeathSequence() {
             const overlay = document.getElementById('ezra-death-sequence-overlay');
             const zoomImage = document.getElementById('zoom-image');
             const errorScreen = document.getElementById('error-screen-ezra');
+            const finalMessage = document.getElementById('final-message');
             const body = document.body;
 
             // 1. Tampilkan Overlay dan Sembunyikan Konten Lain
@@ -616,34 +585,55 @@ body {
             const imageUrl = zoomImage.getAttribute('data-src');
             if (imageUrl) zoomImage.src = imageUrl;
 
-            // 2. Mulai Efek Membelah (3 detik)
+            // 2. Mulai Efek Membelah (1 detik)
             setTimeout(() => {
                 body.classList.add('split-open');
+                console.log("Sequence: 1. Split Screen (1s)");
             }, 50);
 
-            // 3. Mulai Zoom In (setelah 1 detik membelah, durasi 2 detik)
+            // 3. Mulai Zoom In (setelah split, durasi 2 detik)
             setTimeout(() => {
                 body.classList.add('image-zoom');
+                console.log("Sequence: 2. Zoom Image (2s)");
             }, 1000); 
 
-            // 4. Tampilkan Layar Error Palsu (setelah 2 detik zoom, atau total 3 detik dari awal zoom)
+            // 4. Blank Screen/Fake Loss Connect (setelah Zoom selesai, durasi 2 detik)
             setTimeout(() => {
-                zoomImage.style.opacity = '0'; // Fade out gambar zoom
-                zoomImage.style.zIndex = '10001';
+                // Sembunyikan semua elemen overlay
+                zoomImage.style.opacity = '0';
+                document.querySelectorAll('.split-panel').forEach(p => p.style.opacity = 0);
+                
+                // Set body ke blank black
+                body.classList.add('final-blank-screen');
+                overlay.style.backgroundColor = 'black'; 
+                overlay.style.backgroundImage = 'none';
 
-                errorScreen.style.opacity = '1'; 
+                console.log("Sequence: 3. Fake Loss Connect (2s)");
+            }, 3000); // 1s (Split) + 2s (Zoom)
 
-                // 5. Batas Akhir: Tutup Visual (3 detik setelah error muncul)
-                setTimeout(() => {
-                    console.warn("SYSTEM TERMINATED. Manual closing is required.");
-                    // window.location.href = 'about:blank'; // Opsional: Alihkan ke blank page
-                }, 3000); 
+            // 5. Efek Glitch dan Pesan Goodbye (setelah Blank Screen, durasi ~1s)
+            setTimeout(() => {
+                body.classList.remove('final-blank-screen');
+                body.style.backgroundColor = 'black';
+                
+                // Aktifkan pesan final dengan glitch
+                finalMessage.classList.add('glitch-active');
+                
+                // Tampilkan Error Screen untuk efek transisi ke glitch text
+                errorScreen.style.opacity = '1';
+                
+                console.log("Sequence: 4. Glitch/Goodbye Message");
 
-            }, 3000); 
+            }, 5000); // 3s + 2s
+
+            // 6. Reset (Opsional)
+            setTimeout(() => {
+                console.warn("SYSTEM TERMINATED. Manual closing is required.");
+            }, 8000); 
         }
 
         // =================================================================
-        // VISUALIZER: MODIFIKASI (FIX: Defer Initialization)
+        // VISUALIZER: MODIFIKASI
         // =================================================================
 
         function setupAudioVisualizer() {
@@ -651,7 +641,6 @@ body {
             if (!audioPlayer.src) { alert('Pilih lagu terlebih dahulu'); return false; }
             
             if (!visualizerInitialized) {
-                // Initialize Three.js objects
                 initVisualizer();
             }
 
@@ -679,6 +668,7 @@ body {
             requestAnimationFrame(drawVisualizer);
             analyser.getByteFrequencyData(frequencyData);
 
+            // --- 3D Visualizer Logic ---
             const binWidth = analyser.context.sampleRate / analyser.fftSize;
             const startIndex = Math.ceil(CONFIG.VISUALIZER.FREQ_RANGE_START_HZ / binWidth);
 
@@ -686,7 +676,6 @@ body {
                 const bar = wrapper.children[0]; 
                 const dataIndex = startIndex + index; 
                 const amplitude = frequencyData[dataIndex] / 255; 
-                
                 const scaledAmplitude = Math.pow(amplitude, 2.0);
                 const newScale = Math.max(0.05, scaledAmplitude * 8.0); 
 
@@ -714,14 +703,61 @@ body {
                 const color = new THREE.Color();
                 for (let i = 0; i < CONFIG.VISUALIZER.PARTICLE_COUNT; i++) { color.setHSL(Math.random(), 1.0, 0.5); colors[i * 3] = color.r; colors[i * 3 + 1] = color.g; colors[i * 3 + 2] = color.b; }
                 particles3D.geometry.attributes.color.needsUpdate = true;
-                
                 icosahedron.rotation.z += 0.1; 
             }
 
             lastBassLevel = bassAvg;
             particles3D.rotation.y += 0.0005;
             renderer.render(scene, camera);
+            
+            // --- 2D Visualizer Logic (Bar Chart) ---
+            draw2DVisualizer();
         }
+        
+        function draw2DVisualizer() {
+            if (!ctx2D) return;
+            
+            canvas2D.width = canvas2D.offsetWidth;
+            canvas2D.height = canvas2D.offsetHeight;
+            
+            const WIDTH = canvas2D.width;
+            const HEIGHT = canvas2D.height;
+            const BAR_COUNT = CONFIG.VISUALIZER.BAR_COUNT_2D;
+            const barWidth = (WIDTH / BAR_COUNT) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            // Ambil data frekuensi (mengambil bagian tengah-atas untuk visual yang lebih jelas)
+            const dataArray = analyser.getByteFrequencyData(new Uint8Array(analyser.frequencyBinCount)).slice(0, analyser.frequencyBinCount / 2);
+            const step = Math.floor(dataArray.length / BAR_COUNT);
+
+            ctx2D.clearRect(0, 0, WIDTH, HEIGHT);
+            ctx2D.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx2D.fillRect(0, 0, WIDTH, HEIGHT);
+
+            for(let i = 0; i < BAR_COUNT; i++) {
+                const dataIndex = i * step;
+                let amp = dataArray[dataIndex] || 0;
+                
+                // FIX: Menendang/Dramatis
+                amp = Math.pow(amp / 255, 3) * 255; 
+                
+                barHeight = (amp / 255) * HEIGHT * 0.9;
+                
+                // Warna Gradien Neon dari Biru ke Pink
+                const hue = i * (360 / BAR_COUNT); 
+                const gradient = ctx2D.createLinearGradient(x, HEIGHT, x, HEIGHT - barHeight);
+                gradient.addColorStop(0, `hsl(${hue}, 80%, 40%)`);
+                gradient.addColorStop(0.5, `hsl(${hue + 30}, 90%, 60%)`);
+                gradient.addColorStop(1, `hsl(${hue + 60}, 100%, 70%)`);
+
+                ctx2D.fillStyle = gradient;
+                ctx2D.fillRect(x, HEIGHT - barHeight, barWidth * 0.8, barHeight);
+
+                x += barWidth;
+            }
+        }
+
 
         function toggleVisualizerOverlay() {
             const body = document.body;
@@ -744,18 +780,21 @@ body {
 
         document.addEventListener('DOMContentLoaded', () => {
             gridContainer = document.getElementById('grid-container');
+            
+            // Inisialisasi 2D Canvas Context
+            canvas2D = document.getElementById('second-visualizer-canvas');
+            ctx2D = canvas2D.getContext('2d');
+
             initPanelControls();
             initVideoPlayer();
             initEditor();
             initMusicPlayer();
             initWebsiteAgeDisplay();
             trackVisitor();
-            // initVisualizer(); // FIX: Dihapus dan dipindahkan ke setupAudioVisualizer
             initSwipeGestures();
             initPasswordFeature();
             initSecurityFeatures();
             checkFirstVisit();
-            checkAndLazyLoadIframe(); // Load iframe blok pusat saat start
         });
 
         function initSwipeGestures() {
@@ -774,8 +813,6 @@ body {
                     console.log(`Grid moved to block (${currentX + 1}, ${currentY + 1}). Playing sound.`);
                     matrixSound.currentTime = 0;
                     matrixSound.play().catch(e => console.error("Audio play failed:", e));
-                    
-                    checkAndLazyLoadIframe(); // FIX: Cek dan load iframe saat berpindah
                 }
                 updateUIVisibility();
                 if (isElviModeActive) { if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); } else { exitFullscreen(); } }
@@ -806,7 +843,6 @@ body {
                     const panel = document.getElementById(panelId);
                     
                     if (panelId === 'live-visitors-panel') {
-                        // FIX: Menggunakan Password dari CONFIG
                         const password = prompt('Please enter the password to unlock this feature:');
                         if (password === CONFIG.PASSWORDS.LIVE_VISITORS) {
                             isEzraLoggedIn = true;
@@ -829,11 +865,9 @@ body {
                             else { document.getElementById('moment-vault-gallery').innerHTML = ''; } 
                         }
 
-                        // Close other panels
                         document.querySelectorAll('.panel').forEach((otherPanel) => {
                             if (otherPanel.id !== panelId) {
                                 otherPanel.classList.remove('active');
-                                // Clean up other panels
                                 if (otherPanel.id === 'live-visitors-panel') { 
                                     clearInterval(liveVisitorRefreshInterval); 
                                     document.getElementById('visitor-list').innerHTML = ''; 
@@ -863,7 +897,6 @@ body {
             const playBtn = document.getElementById('video-play-pause');
             const muteBtn = document.getElementById('video-mute');
 
-            // FIX: Video di-mute secara default di HTML, jadi ikon awal harus Mute
             muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
 
             playBtn.addEventListener('click', () => { 
@@ -880,7 +913,6 @@ body {
                 muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; 
             });
 
-            // FIX: Secara default video dimulai PAUSED
             video.pause();
         }
 
@@ -991,7 +1023,6 @@ body {
             const display = document.getElementById('contribution-display');
             display.innerHTML = `<p>Loading</p>`;
             try {
-                // FIX: Menggunakan URL dari CONFIG
                 const response = await fetch(CONFIG.WORKERS.CONTRIBUTIONS);
                 const contributions = await response.json();
                 if (contributions && contributions.length > 0) { 
@@ -1015,7 +1046,6 @@ body {
             formData.append('text', document.getElementById('contribution-text').value);
             
             try {
-                // FIX: Menggunakan URL dari CONFIG
                 const response = await fetch(CONFIG.WORKERS.CONTRIBUTIONS, { 
                     method: 'POST', 
                     body: formData, 
@@ -1033,7 +1063,6 @@ body {
 
         function initWebsiteAgeDisplay() {
             const websiteAgeDisplay = document.getElementById('website-age-display');
-            // FIX: Menggunakan tanggal 7 Agustus 2006
             const creationDate = new Date(2006, 7, 7, 0, 0, 0); 
             
             function updateWebsiteAge() {
@@ -1046,7 +1075,6 @@ body {
                 
                 const years = Math.floor(days / 365.25);
                 const remainingDaysAfterYears = Math.floor(days % 365.25);
-                // Approx. months: Divide by average days in a month
                 const months = Math.floor(remainingDaysAfterYears / 30.44); 
                 const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
                 
@@ -1075,7 +1103,6 @@ body {
             if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading visitors')) { visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading</li>'; }
             
             try {
-                // FIX: Menggunakan URL dari CONFIG
                 const response = await fetch(CONFIG.WORKERS.LIVE_VISITORS + '?get_visitors=true');
                 if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
                 
@@ -1101,7 +1128,6 @@ body {
             historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history</p>';
             
             try {
-                // FIX: Menggunakan URL dari CONFIG
                 const response = await fetch(CONFIG.WORKERS.VISITOR_HISTORY + '?get_history=true');
                 if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
                 
@@ -1155,7 +1181,6 @@ body {
                     referrer: referrer, 
                 };
                 
-                // FIX: Menggunakan URL dari CONFIG
                 fetch(CONFIG.WORKERS.LIVE_VISITORS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to live visitors worker:', e));
                 fetch(CONFIG.WORKERS.VISITOR_HISTORY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to visitor history worker:', e));
             } catch (e) { 
@@ -1168,7 +1193,6 @@ body {
             galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
             
             try {
-                // FIX: Menggunakan URL dari CONFIG
                 const response = await fetch(CONFIG.WORKERS.MOMENT_VAULT + '?get_gallery=true');
                 if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
                 
@@ -1237,7 +1261,6 @@ body {
             
             let githubToken;
             try {
-                // FIX: Menggunakan URL dari CONFIG
                 const tokenResponse = await fetch(CONFIG.WORKERS.GITHUB_TOKEN);
                 if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
                 const tokenData = await tokenResponse.json();
@@ -1253,7 +1276,6 @@ body {
             try {
                 const filePath = `moments/${Date.now()}-${file.name}`;
                 const fileContent = await readFileAsBase64(file);
-                // FIX: Menggunakan URL dari CONFIG
                 const githubApiUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePath}`;
                 
                 const uploadResponse = await fetch(githubApiUrl, { 
@@ -1286,7 +1308,6 @@ body {
                     timestamp: new Date().toISOString(), 
                 };
                 
-                // FIX: Menggunakan URL dari CONFIG
                 const kvSaveResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT, { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
@@ -1321,7 +1342,6 @@ body {
         }
 
         async function editMoment(itemId, currentItems) {
-            // FIX: Menggunakan Password dari CONFIG
             const password = prompt('Masukkan password untuk mengedit:');
             if (password !== CONFIG.PASSWORDS.MOMENT_VAULT) { 
                 alert('false'); 
@@ -1351,7 +1371,6 @@ body {
                     timestamp: itemToEdit.timestamp, 
                 };
                 
-                // FIX: Menggunakan URL dari CONFIG
                 const response = await fetch(CONFIG.WORKERS.MOMENT_VAULT, { 
                     method: 'PUT', 
                     headers: { 'Content-Type': 'application/json' }, 
@@ -1373,7 +1392,6 @@ body {
         }
 
         async function deleteMoment(itemId) {
-            // FIX: Menggunakan Password dari CONFIG
             const password = prompt('Masukkan password untuk menghapus:');
             if (password !== CONFIG.PASSWORDS.MOMENT_VAULT) { 
                 alert('false'); 
@@ -1389,7 +1407,6 @@ body {
             try {
                 let githubToken;
                 try {
-                    // FIX: Menggunakan URL dari CONFIG
                     const tokenResponse = await fetch(CONFIG.WORKERS.GITHUB_TOKEN);
                     if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
                     const tokenData = await tokenResponse.json();
@@ -1402,7 +1419,6 @@ body {
                     return; 
                 }
                 
-                // FIX: Menggunakan URL dari CONFIG
                 const galleryResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT + '?get_gallery=true');
                 if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
                 
@@ -1412,7 +1428,6 @@ body {
                 if (!itemToDelete || !itemToDelete.fileUrl) { throw new Error('its file URL not found.'); }
                 
                 let filePathOnGithub;
-                // FIX: Menggunakan URL dari CONFIG
                 const rawGithubContentBase = `https://raw.githubusercontent.com/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/main/`;
                 
                 if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) { 
@@ -1422,7 +1437,6 @@ body {
                     filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`; 
                 }
                 
-                // FIX: Menggunakan URL dari CONFIG
                 const githubApiGetFileUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePathOnGithub}`;
                 
                 const getFileResponse = await fetch(githubApiGetFileUrl, { 
@@ -1440,7 +1454,6 @@ body {
                 const fileMetaData = await getFileResponse.json();
                 const fileSha = fileMetaData.sha;
                 
-                // FIX: Menggunakan URL dari CONFIG
                 const githubDeleteUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePathOnGithub}`;
                 
                 const deleteResponse = await fetch(githubDeleteUrl, { 
@@ -1461,7 +1474,6 @@ body {
                     throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`); 
                 }
                 
-                // FIX: Menggunakan URL dari CONFIG
                 const kvDeleteResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT + `?delete_moment_id=${itemId}`, { 
                     method: 'DELETE', 
                 });
@@ -1480,7 +1492,6 @@ body {
             }
         }
 
-        // FIX: Inisialisasi visualizer dipindahkan ke sini
         function initVisualizer() {
             visualizerCanvas = document.getElementById('visualizer-canvas');
             scene = new THREE.Scene();
@@ -1512,7 +1523,7 @@ body {
             scene.add(particles3D);
             
             window.addEventListener('resize', onWindowResize, false);
-            visualizerInitialized = true; // Set state to initialized
+            visualizerInitialized = true;
         }
 
         function createFrequencyBars(analyser) {
@@ -1553,9 +1564,13 @@ body {
             camera.aspect = window.innerWidth / window.innerHeight; 
             camera.updateProjectionMatrix(); 
             renderer.setSize(window.innerWidth, window.innerHeight); 
+            
+            if(canvas2D) {
+                canvas2D.width = canvas2D.offsetWidth;
+                canvas2D.height = canvas2D.offsetHeight;
+            }
         }
 
-        // FIX: Menggunakan map dan logika terpusat untuk password
         function handlePasswordAction(action) {
             const liveVisitorsButton = document.getElementById('fab-live-visitors');
             const centerVideoContainer = document.getElementById('center-video-container');
@@ -1674,7 +1689,7 @@ body {
         
         // Kode Widget Ultimate (Typing effect, Quote, Bio Modal)
         (function(){
-            const e=document.getElementById('typing-output'),t=document.getElementById('ezra-photo'),s=document.getElementById('time-and-slogan'),n=document.getElementById('daily-quote'),o=document.getElementById('bio-modal'),r=[{typing:"Selamat hari Minggu! Mulai pekan dengan mindset growth.",quote:"Tuhan adalah kekuatanku dan perisaiku; kepada-Nya hatiku percaya, dan aku tertolong."},{typing:"Hai! Aku Ezra, a Boy yang mencintai Tantangan Senin.",quote:"Percayalah kepada Tuhan dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri."},{typing:"Code Architect here. Siap membangun solusi hari ini.",quote:"Amsal 21:5: Rencana orang rajin membawa kelimpahan, tetapi setiap orang yang tergesa-gesa hanya akan kekurangan."},{typing:"Mid-week check! Fokus pada performa dan skalabilitas.",quote:"Mazmur 37:5: Serahkanlah hidupmu kepada Tuhan dan percayalah kepada-Nya, dan Ia akan bertindak."},{typing:"Hello! Design, Build, Ship. It's the Dev cycle.",quote:"Amsal 16:3: Serahkanlah perbuatanmu kepada Tuhan, maka terlaksanalah segala rencanamu."},{typing:"Jumat! Sempurnakan kode, rayakan akhir pekan.",quote:"Berbahagialah orang yang mendapat hikmat, orang yang memperoleh kepandaian."},{typing:"Santai & Refleksi. Siap untuk inovasi minggu depan.",quote:"Mazmur 1:3: Ia seperti pohon yang ditanam di tepi aliran air, yang menghasilkan buah pada musimnya dan daunnya tidak layu."}],a=new Date().getDay(),d=r[a],c=[d.typing,"Seorang Digital Alchemist. Sentuh fotoku \ud83d\udc46","Where art meets engineering."],l=40,p=1200; // FIX: Kecepatan ketik (l=60 -> 40), jeda (p=1800 -> 1200)
+            const e=document.getElementById('typing-output'),t=document.getElementById('ezra-photo'),s=document.getElementById('time-and-slogan'),n=document.getElementById('daily-quote'),o=document.getElementById('bio-modal'),r=[{typing:"Selamat hari Minggu! Mulai pekan dengan mindset growth.",quote:"Tuhan adalah kekuatanku dan perisaiku; kepada-Nya hatiku percaya, dan aku tertolong."},{typing:"Hai! Aku Ezra, a Boy yang mencintai Tantangan Senin.",quote:"Percayalah kepada Tuhan dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri."},{typing:"Code Architect here. Siap membangun solusi hari ini.",quote:"Amsal 21:5: Rencana orang rajin membawa kelimpahan, tetapi setiap orang yang tergesa-gesa hanya akan kekurangan."},{typing:"Mid-week check! Fokus pada performa dan skalabilitas.",quote:"Mazmur 37:5: Serahkanlah hidupmu kepada Tuhan dan percayalah kepada-Nya, dan Ia akan bertindak."},{typing:"Hello! Design, Build, Ship. It's the Dev cycle.",quote:"Amsal 16:3: Serahkanlah perbuatanmu kepada Tuhan, maka terlaksanalah segala rencanamu."},{typing:"Jumat! Sempurnakan kode, rayakan akhir pekan.",quote:"Berbahagialah orang yang mendapat hikmat, orang yang memperoleh kepandaian."},{typing:"Santai & Refleksi. Siap untuk inovasi minggu depan.",quote:"Mazmur 1:3: Ia seperti pohon yang ditanam di tepi aliran air, yang menghasilkan buah pada musimnya dan daunnya tidak layu."}],a=new Date().getDay(),d=r[a],c=[d.typing,"Seorang Digital Alchemist. Sentuh fotoku \ud83d\udc46","Where art meets engineering."],l=40,p=1200; 
             
             let u=0,m=0;
             function g(){const r=c[u];if(m<r.length)e.textContent+=r.charAt(m),m++,setTimeout(g,l);else setTimeout(y,p);}
