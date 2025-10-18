@@ -11,12 +11,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+        /*
+         * GLOBAL STYLES & VARIABLE REFINEMENT
+         */
         :root { --primary: #8e44ad; --accent: #00a8ff; --success: #2ecc71; --danger: #e74c3c; --light: #ecf0f1; --dark: #1a1a2e; --bg-main: #16213e; --bg-panel: rgba(26, 26, 46, 0.9); --text-primary: #e0fbfc; --text-secondary: #98ded9; --border-color: rgba(0, 168, 255, 0.3); }
         * { box-sizing: border-box; }
         html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Courier New', Courier, monospace; background-color: var(--bg-main); color: #00ff00; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         body::before { content: "Panisla Manik"; position: fixed; bottom: 0px; left: 10px; font-size: 1rem; color: rgba(255, 255, 255, 0.5); z-index: 999; pointer-events: none; opacity: 0.5; }
         #main-viewport { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: hidden; }
-        #grid-container { width: 500vw; height: 500vh; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr 1fr 1fr; transform: translate3d(-200vw, -200vh, 0); transition: transform 0.7s cubic-bezier(0.86, 0, 0.07, 1); }
+        /* Grid Transition Speed FIX: 0.7s -> 0.4s for snappier swipe UX */
+        #grid-container { width: 500vw; height: 500vh; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr 1fr 1fr; transform: translate3d(-200vw, -200vh, 0); transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1); }
         .grid-block { width: 100vw; height: 100vh; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; }
         .grid-block-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: none; -webkit-filter: none; z-index: 1; }
         .grid-block-content { position: relative; z-index: 2; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); padding: 20px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -32,8 +36,34 @@
         .visualizer-active #visualizer-canvas { display: block; pointer-events: none; }
         .panel-close-btn { position: static; background: none; border: none; color: #00ff00; font-size: 1.5rem; cursor: pointer; padding: 0px; }
         .fab-container { position: fixed; z-index: 1000; display: flex; }
-        .fab, .fab-container a { background: rgba(142, 68, 173, 0.7); color: #00ff00; width: 55px; height: 55px; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; text-decoration: none; }
-        .fab:hover, .fab-container a:hover { background: var(--accent); transform: scale(1.1); }
+        
+        /* FIX: Menghapus animasi neon pada FAB secara default, hanya aktif saat hover */
+        .fab, .fab-container a { 
+            background: rgba(142, 68, 173, 0.7); 
+            background-size: 200% auto; /* Tetap pertahankan background-size untuk transisi hover */
+            border: none; 
+            border-radius: 50%; 
+            color: #00ff00; 
+            width: 55px; 
+            height: 55px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 1.4rem; 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
+            transition: all 0.3s ease; 
+            text-decoration: none; 
+            animation: none !important; /* MENGHAPUS SEMUA ANIMASI BAWAAN */
+        }
+        .fab:hover, .fab-container a:hover { 
+            background: var(--neon-gradient, var(--accent)); /* Menggunakan neon gradient saat hover */
+            transform: scale(1.1);
+            box-shadow: 
+                0 0 15px var(--neon-btn-color-start, #ff0077), 
+                0 0 30px var(--neon-btn-color-end, #00eeff);
+        }
+
         #fab-editor { top: 20px; left: 20px; }
         #fab-music { top: 50%; left: 20px; transform: translateY(-50%); }
         #fab-alkitab { top: 20px; right: 20px; }
@@ -89,12 +119,44 @@
         .dashboard-card h4 { margin-top: 0; color: var(--accent); }
         .dashboard-card p { margin-bottom: 0; font-size: 0.9em; }
         .screenshot-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 0, 0, 0.9); color: white; padding: 20px; border-radius: 10px; font-size: 1.2em; z-index: 9999; display: none; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        #new-user-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 500px; background: var(--bg-panel); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 10px; z-index: 10000; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); display: none; text-align: center; }
-        #new-user-popup h3 { margin-top: 0; color: var(--accent); }
-        #new-user-popup p { margin-bottom: 15px; }
-        #new-user-popup a { color: var(--accent); }
-        #popup-close-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-        #popup-close-btn:hover { background: var(--accent); }
+        
+        /* FIX: Mengganti Modal New User dengan Toast Notification */
+        #new-user-toast { 
+            position: fixed; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 90%; 
+            max-width: 400px; 
+            background: var(--bg-panel); 
+            color: var(--text-primary); 
+            border: 1px solid var(--border-color); 
+            border-radius: 10px; 
+            z-index: 10000; 
+            padding: 15px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4); 
+            display: none; 
+            text-align: center; 
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        #new-user-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        #toast-close-btn { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            transition: background 0.2s; 
+            font-size: 0.9em;
+        }
+        #toast-close-btn:hover { background: var(--accent); }
+
         .progress-bar-container { width: 100%; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; margin-top: 10px; overflow: hidden; border: 1px solid var(--border-color); }
         .progress-bar { background-color: var(--accent); padding: 4px 8px; text-align: right; color: white; font-size: 0.8em; font-weight: bold; white-space: nowrap; transition: width 0.8s ease-in-out; }
 :root {
@@ -106,6 +168,7 @@
   );
   --dark-bg: #1a1a1a;
 }
+/* Hapus styling neon-button global karena sudah di pindahkan ke .fab:hover */
 body {
   background-color: var(--dark-bg);
   display: flex;
@@ -114,60 +177,9 @@ body {
   min-height: 100vh;
   gap: 20px;
 }
-.neon-button {
-  background: var(--neon-gradient);
-  background-size: 200% auto;
-  border: none;
-  border-radius: 8px;
-  padding: 15px 30px;
-  color: #fff;
-  font-family: 'Arial Black', Gadget, sans-serif;
-  font-size: 1.2em;
-  font-weight: bold;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
-  box-shadow: 
-    0 0 5px var(--neon-btn-color-start), 
-    0 0 10px var(--neon-btn-color-end);
-  transition: all 0.3s ease-in-out;
-  animation: 
-    neon-gradient-shift 3s linear infinite,
-    neon-glow-pulse 1.5s ease-in-out infinite alternate;
-}
-.neon-button:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 
-    0 0 15px var(--neon-btn-color-start), 
-    0 0 30px var(--neon-btn-color-end),
-    0 0 50px rgba(255, 255, 255, 0.5); /* Glow putih tambahan */
-}
-@keyframes neon-gradient-shift {
-  0% {
-    background-position: 0% center; /* Mulai gradien dari kiri */
-  }
-  100% {
-    background-position: 200% center; /* Geser gradien sepenuhnya ke kanan */
-  }
-}
-@keyframes neon-glow-pulse {
-  0% {
-    box-shadow: 
-      0 0 5px var(--neon-btn-color-start), 
-      0 0 10px var(--neon-btn-color-end);
-  }
-  50% {
-    box-shadow: 
-      0 0 15px var(--neon-btn-color-start), 
-      0 0 30px var(--neon-btn-color-end),
-      0 0 50px var(--neon-btn-color-start);
-  }
-  100% {
-    box-shadow: 
-      0 0 5px var(--neon-btn-color-start), 
-      0 0 10px var(--neon-btn-color-end);
-  }
-}
+
+/* Hapus keyframes neon-gradient-shift dan neon-glow-pulse global */
+
 :root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}#ultimate-widget{position:relative;width:202px;margin:50px auto 20px auto;padding:15px 0;background-color:transparent;border:none;box-shadow:none;z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}@keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}.typing-container{display:flex;align-items:flex-start;line-height:1.3;min-height:50px;margin-bottom:10px;}.neon-typing-text{color:var(--neon-color);text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);font-size:1.6em;overflow:visible;white-space:normal;max-width:200px;border-right:3px solid var(--neon-color);animation:terminal-blink .7s step-end infinite;}@keyframes terminal-blink{from,to{border-right-color:transparent;}50%{border-right-color:var(--neon-color);}}.profile-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:none;box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);margin:0 12px;cursor:pointer;transition:transform .3s,box-shadow .3s;}.profile-photo:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 0 10px var(--secondary-neon),0 0 30px var(--secondary-neon);}.holographic-text{font-size:.9em;color:#ccc;margin:5px 0 10px 0;padding:5px 0;text-shadow:0 0 2px rgba(255,255,255,.8);border-top:none;border-bottom:none;animation:glitch 5s infinite alternate;}@keyframes glitch{0%{text-shadow:0 0 5px #f0f;transform:skew(0deg);}20%{text-shadow:0 0 5px #0ff;transform:skew(-1deg);}40%{text-shadow:0 0 5px #f0f;transform:skew(2deg);}60%{text-shadow:0 0 5px #0ff;transform:skew(-3deg);}80%{text-shadow:0 0 5px #f0f;transform:skew(1deg);}100%{text-shadow:0 0 5px #0ff;transform:skew(0deg);}}.quote{font-style:italic;font-size:.8em;color:var(--quote-color);margin-top:10px;padding:5px 0;text-shadow:0 0 5px rgba(170,255,170,.5);min-height:40px;}#bio-modal{display:none;}#bio-modal.show{position:fixed;display:flex;z-index:11000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);justify-content:center;align-items:center;opacity:0;transition:opacity .4s;}#bio-modal.show{opacity:1;}.modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
     /* EFEK KUNCI: ANIMASI ROTASI DAN ZOOM */
 @keyframes portal-rotate {
@@ -282,24 +294,39 @@ body {
     </style>
 </head>
 <body>
-    <div id="new-user-popup">
-        <h3>Selamat Datang</h3>
+    <div id="new-user-toast" class="toast-notification">
+        <h3 style="color: var(--accent); margin-top: 0;">Selamat Datang</h3>
         <p>Untuk pengalaman terbaik, kami merekomendasikan:</p>
-        <ul>
-            <li style="text-align: left; margin-bottom: 10px;">Gunakan aplikasi kami untuk fitur penuh: <a href="https://drive.google.com/file/d/1URJk46fP6cyzDoRRPUs83sDhHINpJDwJ/view?usp=drivesdk" target="_blank">Download di sini</a></li>
+        <ul style="list-style: none; padding: 0;">
+            <li style="text-align: left; margin-bottom: 10px;">Gunakan aplikasi kami untuk fitur penuh: <a href="https://drive.google.com/file/d/1URJk46fP6cyzDoRRPUs83sDhHINpJDwJ/view?usp=drivesdk" target="_blank" style="color: var(--accent);">Download di sini</a></li>
             <li style="text-align: left; margin-bottom: 10px;">Putar layar Anda ke mode lanskap (landscape).</li>
         </ul>
-        <p>Dengan melanjutkan, Anda setuju dengan <a href="#privacy" onclick="alert('Kebijakan Privasi: Kami mengumpulkan data anonim seperti ID browser dan alamat IP untuk analisis statistik pengunjung. Data ini tidak akan dibagikan dengan pihak ketiga.');">Kebijakan Privasi</a> kami.</p>
-        <button id="popup-close-btn">Mengerti</button>
+        <p style="font-size: 0.8em; color: var(--text-secondary);">Dengan melanjutkan, Anda setuju dengan <a href="#privacy" onclick="alert('Kebijakan Privasi: Kami mengumpulkan data anonim seperti ID browser dan alamat IP untuk analisis statistik pengunjung. Data ini tidak akan dibagikan dengan pihak ketiga.');" style="color: var(--accent);">Kebijakan Privasi</a> kami.</p>
+        <button id="toast-close-btn">Mengerti</button>
     </div>
+
     <div class="screenshot-popup" id="screenshot-popup">Screenshot tidak diizinkan!</div>
     <canvas id="visualizer-canvas"></canvas>
-    <audio id="matrix-sound" src="/dashboard/matrix-code.mp3" preload="auto"></audio>
+    <audio id="matrix-sound" src="/dashboard/matrix-code.mp3" preload="metadata"></audio>
     <div id="main-viewport">
         <div id="grid-container">
             <div class="grid-block" id="block-1-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div><div class="grid-block-content"><h1>Block (1,1)</h1></div></div>
             <div class="grid-block" id="block-1-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=2');"></div><div class="grid-block-content"><h1>Block (1,2)</h1></div></div>
-            <div class="grid-block" id="block-1-3"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div><div class="grid-block-content"><!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Informasi Cuaca & Angin</title><style>body{font-family:'Courier New',Courier,monospace;background-color:#000;color:#333;margin:0;padding:0;display:flex;flex-direction:column;align-items:center}.header{text-align:center;margin-bottom:30px}.header h1{color:#2c3e50}.container{display:flex;flex-wrap:wrap;justify-content:center;gap:30px;width:100%;max-width:1200px}.widget{background-color:#fff;border-radius:0;box-shadow:0 0 0 rgba(0,0,0,.1);padding:0;text-align:center;min-width:320px}.widget h2{margin-top:0;color:#3498db;border-bottom:0 solid #ecf0f1;padding-bottom:0;margin-bottom:0}.footer{margin-top:40px;font-size:.9em;color:#7f8c8d}</style></head><body><div class="header"><h1>Dashboard Cuaca Saat Ini</h1><p>Informasi cuaca dan peta arah angin real-time.</p></div><div class="container"><div class="widget"><h2>Cuaca Lokal (Kota kamu)</h2><a class="weatherwidget-io" href="https://forecast7.com/en/n6d21106d82/jakarta/" data-label_1="JAKARTA" data-label_2="CUACA" data-theme="original">JAKARTA WEATHER</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs)}}(document,'script','weatherwidget-io-js')</script></div><div class="widget"><h2>Peta Arah Angin</h2><iframe width="600" height="450" src="https://embed.windy.com/embed2.html?lat=-2.495&lon=118.213&detailLat=-6.215&detailLon=106.827&width=600&height=450&zoom=5&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=true&metricWind=default&metricTemp=default&radarRange=-1" frameborder="0"></iframe></div></div><div class="footer"><p>&copy; 2024 Website Cuaca Anda</p></div></body></html></div></div>
+            
+            <div class="grid-block" id="block-1-3">
+                <div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div>
+                <div class="grid-block-content">
+                    <h1>Dashboard Cuaca</h1>
+                    <a class="weatherwidget-io" href="https://forecast7.com/en/n6d21106d82/jakarta/" data-label_1="JAKARTA" data-label_2="CUACA" data-theme="original">JAKARTA WEATHER</a>
+                    <iframe width="90%" height="70%" 
+                            data-src="https://embed.windy.com/embed2.html?lat=-2.495&lon=118.213&detailLat=-6.215&detailLon=106.827&width=600&height=450&zoom=5&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=true&metricWind=default&metricTemp=default&radarRange=-1" 
+                            frameborder="0" style="border-radius: 10px; border:none; margin-top: 10px;"
+                            id="windy-iframe">
+                    </iframe>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs)}}(document,'script','weatherwidget-io-js')</script>
+                </div>
+            </div>
+
             <div class="grid-block" id="block-1-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div><div class="grid-block-content"><h1>Block (1,4)</h1></div></div>
             <div class="grid-block" id="block-1-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div><div class="grid-block-content"><h1>Block (1,5)</h1></div></div>
             <div class="grid-block" id="block-2-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div><div class="grid-block-content"><h1>Block (2,1)</h1></div></div>
@@ -307,16 +334,44 @@ body {
             <div class="grid-block" id="block-2-3"><div class="grid-block-background" style="background-image: url('/dashboard/ruangsepiku.jpg');"></div><div class="grid-block-content"><h1>Block (2,3)</h1></div></div>
             <div class="grid-block" id="block-2-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=9');"></div><div class="grid-block-content"><h1>Block (2,4)</h1></div></div>
             <div class="grid-block" id="block-2-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=10');"></div><div class="grid-block-content"><h1>Block (2,5)</h1></div></div>
-            <div class="grid-block" id="block-3-1"><div class="grid-block-content"><h3 style="margin-bottom: 20px;">Peta Bintang</h3><iframe src="https://stellarium-web.org/" width="90%" height="80%" frameborder="0" style="border-radius: 10px; border:none;"></iframe></div></div>
-            <div class="grid-block" id="block-3-2"><div class="grid-block-content"><h3>Ayat Hari Ini (YouVersion)</h3><div id="bible-widget-container"><iframe src="https://www.bible.com/verse-of-the-day/TB" width="100%" height="100%" style="border: none;"></iframe></div></div></div>
+            
+            <div class="grid-block" id="block-3-1">
+                <div class="grid-block-content">
+                    <h3 style="margin-bottom: 20px;">Peta Bintang</h3>
+                    <iframe data-src="https://stellarium-web.org/" width="90%" height="80%" frameborder="0" style="border-radius: 10px; border:none;" id="stellarium-iframe"></iframe>
+                </div>
+            </div>
+
+            <div class="grid-block" id="block-3-2">
+                <div class="grid-block-content">
+                    <h3>Ayat Hari Ini (YouVersion)</h3>
+                    <div id="bible-widget-container">
+                        <iframe data-src="https://www.bible.com/verse-of-the-day/TB" width="100%" height="100%" style="border: none;" id="bible-iframe"></iframe>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid-block" id="block-center">
-    <div class="grid-block-background" id="interactive-bg" style="background-image: url('/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg');"></div>
-    <div class="grid-block-content">
-        
-        <div id="ultimate-widget"><div class="typing-container"><span id="typing-output" class="neon-typing-text"></span><img src="https://via.placeholder.com/40/ff0077/ffffff?text=E" alt="Foto Profil Ezra" class="profile-photo" id="ezra-photo"></div><p class="holographic-text" id="time-and-slogan">// STATUS: INITIATION</p><p class="quote" id="daily-quote">Memuat kutipan hari ini...</p></div>
-        <div class="particle p1"></div><div class="particle p2"></div><div class="particle p3"></div><div class="particle p4"></div><div class="particle p5"></div><div id="bio-modal"><div class="modal-content"><h2>EZRA - universalezra - 0838-4495-9380 </h2><p>Saya seorang <b>Life v project</b> Spesialisasi: <b>CI/CD Pipelines</b>.</p><p style="font-size: .9em;margin-top: 15px;color: var(--neon-color);"><a href="/dashboard/secret.html" style="color: inherit; text-decoration: none; text-shadow: inherit;">"Login? </a><b>Jika kamu kenal pasti kamu tau"</b></p></div></div>
-    </div>
-</div>
+                <div class="grid-block-background" id="interactive-bg" style="background-image: url('/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg');"></div>
+                <div class="grid-block-content">
+                    <div id="ultimate-widget">
+                        <div class="typing-container">
+                            <span id="typing-output" class="neon-typing-text"></span>
+                            <img src="https://via.placeholder.com/40/ff0077/ffffff?text=E" alt="Foto Profil Ezra" class="profile-photo" id="ezra-photo">
+                        </div>
+                        <p class="holographic-text" id="time-and-slogan">// STATUS: INITIATION</p>
+                        <p class="quote" id="daily-quote">Memuat kutipan hari ini...</p>
+                    </div>
+                    <div class="particle p1"></div><div class="particle p2"></div><div class="particle p3"></div><div class="particle p4"></div><div class="particle p5"></div>
+                    <div id="bio-modal">
+                        <div class="modal-content">
+                            <h2>EZRA - universalezra - 0838-4495-9380 </h2>
+                            <p>Saya seorang <b>Life v project</b> Spesialisasi: <b>CI/CD Pipelines</b>.</p>
+                            <p style="font-size: .9em;margin-top: 15px;color: var(--neon-color);"><a href="/dashboard/secret.html" style="color: inherit; text-decoration: none; text-shadow: inherit;">"Login? </a><b>Jika kamu kenal pasti kamu tau"</b></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="grid-block" id="block-3-4"><div class="grid-block-background"><video autoplay loop muted playsinline><source src="/dashboard/v.mp4" type="video/mp4"></video></div><div class="grid-block-content"></div></div>
             <div class="grid-block" id="block-3-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=15');"></div><div class="grid-block-content"><h1>Block (3,5)</h1></div></div>
@@ -329,19 +384,39 @@ body {
             <div class="grid-block" id="block-5-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=22');"></div><div class="grid-block-content"><h1>Block (5,2)</h1></div></div>
             <div class="grid-block" id="block-5-3"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=23');"></div><div class="grid-block-content"><h1>Block (5,3)</h1></div></div>
             <div class="grid-block" id="block-5-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=24');"></div><div class="grid-block-content"><h1>Block (5,4)</h1></div></div>
-            <div class="grid-block" id="block-5-5"><div class="grid-block-content"><h3>Spaceship 3D Model</h3><iframe title="Executor-Class Star Dreadnought" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/442c548d94744641ba279ae94b5f45ec/embed" style="width: 90%; height: 90%; border:none; border-radius:12px;"></iframe></div></div>
+            <div class="grid-block" id="block-5-5">
+                <div class="grid-block-content">
+                    <h3>Spaceship 3D Model</h3>
+                    <iframe title="Executor-Class Star Dreadnought" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share 
+                            data-src="https://sketchfab.com/models/442c548d94744641ba279ae94b5f45ec/embed" 
+                            style="width: 90%; height: 90%; border:none; border-radius:12px;"
+                            id="sketchfab-iframe">
+                    </iframe>
+                </div>
+            </div>
         </div>
-    </div><div class="fab-container" id="fab-editor"><button class="fab neon-button" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
-<div class="fab-container" id="fab-music"><button class="fab neon-button" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
-<div class="fab-container" id="fab-contribution"><button class="fab neon-button" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
-<div class="fab-container" id="fab-alkitab"><a class="fab neon-button" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
-<div class="fab-container" id="fab-visualizer"><button class="fab neon-button" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
-<div class="fab-container" id="fab-moment-vault"><button class="fab neon-button" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
-<div class="fab-container" id="fab-live-visitors"><button class="fab neon-button" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
-<div class="fab-container" id="fab-keyboard-toggle"><button class="fab neon-button" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
-<div class="fab-container" id="fab-dashboard-toggle"><button class="fab neon-button" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
-<div id="video-player-widget"><video id="widget-video" loop src="/dashboard/video.mp4"></video><div class="video-controls"><button id="video-play-pause"><i class="fas fa-play"></i></button><button id="video-mute"><i class="fas fa-volume-up"></i></button></div></div>
+    </div>
+    
+    <div class="fab-container" id="fab-editor"><button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
+<div class="fab-container" id="fab-music"><button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
+<div class="fab-container" id="fab-contribution"><button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
+<div class="fab-container" id="fab-alkitab"><a class="fab" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
+<div class="fab-container" id="fab-visualizer"><button class="fab" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
+<div class="fab-container" id="fab-moment-vault"><button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
+<div class="fab-container" id="fab-live-visitors"><button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
+<div class="fab-container" id="fab-keyboard-toggle"><button class="fab" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
+<div class="fab-container" id="fab-dashboard-toggle"><button class="fab" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
+
+<div id="video-player-widget">
+    <video id="widget-video" loop src="/dashboard/video.mp4" muted></video> 
+    <div class="video-controls">
+        <button id="video-play-pause"><i class="fas fa-play"></i></button>
+        <button id="video-mute"><i class="fas fa-volume-up"></i></button>
+    </div>
+</div>
+
 <div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
+    
     <div class="panel" id="editor-panel">
         <div class="panel-header">
             <span class="panel-title">Code Editor</span>
@@ -358,8 +433,15 @@ body {
         <div class="editor-main"><div class="editor-code-area"><textarea id="unified-code-editor" spellcheck="false"></textarea></div><div class="editor-preview-area"><iframe id="editor-preview"></iframe></div></div>
     </div>
     <div class="panel" id="music-panel">
-        <button class="panel-close-btn" data-panel="music-panel"><i class="fas fa-times"></i></button>
-        <div id="music-player-content"><h5 id="song-title">Select a song</h5><audio id="audio-player" controls loop style="width: 100%"></audio><div id="playlist" style="max-height: 20vh; overflow-y: auto; margin-top: 10px"></div></div>
+        <div class="panel-header">
+            <span class="panel-title">Music Player</span>
+            <button class="panel-close-btn" data-panel="music-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="music-player-content" style="padding: 15px;">
+            <h5 id="song-title">Select a song</h5>
+            <audio id="audio-player" controls loop style="width: 100%" preload="metadata"></audio>
+            <div id="playlist" style="max-height: 20vh; overflow-y: auto; margin-top: 10px"></div>
+        </div>
     </div>
     <div class="panel" id="contribution-panel">
         <button class="panel-close-btn" data-panel="contribution-panel"><i class="fas fa-times"></i></button>
@@ -423,664 +505,1188 @@ body {
     </div>
 </div>
 <script>
-    // =================================================================
-    // KONSTANTA GLOBAL
-    // =================================================================
-    const CONTRIBUTIONS_WORKER_URL = 'https://contributions-workerjs.ezvvel.workers.dev/';
-    const MOMENT_VAULT_WORKER_URL = 'https://moment-vault-worker-url.universalezra.workers.dev';
-    const GITHUB_REPO_OWNER = 'universalezra';
-    const GITHUB_REPO_NAME = 'universalezra';
-    const GITHUB_TOKEN_WORKER_URL = 'https://github-token-worker-url.universalezra.workers.dev';
-    let liveVisitorRefreshInterval;
-    let isEzraLoggedIn = false;
-    const LIVE_VISITORS_WORKER_URL = 'https://live-visitors.ezvvel.workers.dev/';
-    const VISITOR_HISTORY_WORKER_URL = 'https://visitor-history.universalezra.workers.dev/';
-    const VISITOR_HISTORY_EXPIRY_DAYS = 7;
-    const REFRESH_INTERVAL_MS = 5000;
-    const LIVE_VISITORS_PASSWORD = '💔';
-    const MOMENT_VAULT_PASSWORD = 'vmoments';
-    const CENTER_VIDEO_PASSWORD = '';
-    let isVisualizerActive = false;
-    let isElviModeActive = false;
-
-    // Visualizer Tuning (MODIFIKASI: Interaksi lebih nendang)
-    let visualizerCanvas, audioContext, analyser, source;
-    let frequencyData, bufferLength;
-    let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
-    let lastBassLevel = 0;
-    const BASS_BEAT_THRESHOLD = 1.4;
-    const PARTICLE_COUNT = 2000;
-    const FREQ_RANGE_START_HZ = 20;
-    const FREQ_RANGE_END_HZ = 1024;
-
-    let gridContainer, currentX = 2, currentY = 2;
-    let isDragging = false;
-    let startX = 0, startY = 0;
-    const SWIPE_THRESHOLD = 50;
-
-    // =================================================================
-    // FUNGSI UTILITY
-    // =================================================================
-
-    function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
-    function showUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
-    function updateUIVisibility() { if (!isElviModeActive) return; if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { hideUIElements(); } else { showUIElements(); } }
-    function enterFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.warn(`Gagal masuk mode fullscreen: ${err.message}`); }); } }
-    function exitFullscreen() { if (document.fullscreenElement) { document.exitFullscreen(); } }
-    function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(`Error when system attempting to enable fullscreen: ${err.message}`); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
-
-    // =================================================================
-    // FUNGSI EFEK KHUSUS (EZRA DEATH SEQUENCE)
-    // =================================================================
-    function startEzraDeathSequence() {
-        const overlay = document.getElementById('ezra-death-sequence-overlay');
-        const zoomImage = document.getElementById('zoom-image');
-        const errorScreen = document.getElementById('error-screen-ezra');
-        const body = document.body;
-
-        // 1. Tampilkan Overlay dan Sembunyikan Konten Lain
-        body.classList.add('hide-all-content');
-        overlay.classList.add('sequence-active');
-        
-        // Pastikan gambar di-load sebelum memulai zoom (ambil dari data-src)
-        const imageUrl = zoomImage.getAttribute('data-src');
-        if (imageUrl) zoomImage.src = imageUrl;
-
-        // 2. Mulai Efek Membelah (3 detik)
-        setTimeout(() => {
-            body.classList.add('split-open');
-        }, 50);
-
-        // 3. Mulai Zoom In (setelah 1 detik membelah, durasi 2 detik)
-        setTimeout(() => {
-            body.classList.add('image-zoom');
-        }, 1000); 
-
-        // 4. Tampilkan Layar Error Palsu (setelah 2 detik zoom, atau total 3 detik dari awal zoom)
-        setTimeout(() => {
-            zoomImage.style.opacity = '0'; // Fade out gambar zoom
-            zoomImage.style.zIndex = '10001';
-
-            // Tampilkan layar error
-            errorScreen.style.opacity = '1'; 
-
-            // 5. Batas Akhir: Tutup Visual (3 detik setelah error muncul)
-            setTimeout(() => {
-                console.warn("SYSTEM TERMINATED. Manual closing is required.");
-                // Jika Anda ingin mengarahkan ke halaman blank:
-                // window.location.href = 'about:blank'; 
-            }, 3000); 
-
-        }, 3000); 
-    }
-
-    // =================================================================
-    // VISUALIZER: MODIFIKASI
-    // =================================================================
-
-    function setupAudioVisualizer() {
-        const audioPlayer = document.getElementById('audio-player');
-        if (!audioPlayer.src) { alert('Pilih lagu terlebih dahulu'); return false; }
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            source = audioContext.createMediaElementSource(audioPlayer);
-            analyser = audioContext.createAnalyser();
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
-            
-            // MODIFIKASI: Nilai yang lebih responsif (Resolusi waktu tinggi)
-            analyser.fftSize = 2048; 
-            analyser.minDecibels = -90;
-            analyser.maxDecibels = -10;
-            analyser.smoothingTimeConstant = 0.6; // Menurunkan smoothing agar lebih reaktif
-            
-            bufferLength = analyser.frequencyBinCount;
-            frequencyData = new Uint8Array(bufferLength);
-            createFrequencyBars(analyser);
-        }
-        return true;
-    }
-
-    function drawVisualizer() {
-        if (!isVisualizerActive) return;
-        requestAnimationFrame(drawVisualizer);
-        analyser.getByteFrequencyData(frequencyData);
-
-        const binWidth = analyser.context.sampleRate / analyser.fftSize;
-        const startIndex = Math.ceil(FREQ_RANGE_START_HZ / binWidth);
-
-        // MODIFIKASI: Logika Skala Batang (Lebih panjang dan eksponensial)
-        frequencyBarsGroup.children.forEach((wrapper, index) => { 
-            const bar = wrapper.children[0]; 
-            const dataIndex = startIndex + index; 
-            const amplitude = frequencyData[dataIndex] / 255; 
-            
-            const scaledAmplitude = Math.pow(amplitude, 2.0); // Gunakan pangkat 2 untuk efek dramatis
-            const newScale = Math.max(0.05, scaledAmplitude * 8.0); // Faktor pengali yang lebih tinggi
-
-            bar.scale.y = newScale; 
-        });
-
-        frequencyBarsGroup.rotation.z -= 0.001;
-
-        const lowerHalfArray = frequencyData.slice(0, Math.floor(bufferLength / 4));
-        const overallAvg = lowerHalfArray.reduce((prev, curr) => prev + curr, 0) / lowerHalfArray.length;
-        const bassAvg = frequencyData.slice(0, 10).reduce((prev, curr) => prev + curr, 0) / 10;
-        
-        // Icosahedron Pulse (MODIFIKASI: Lebih agresif)
-        const pulse = 1 + (overallAvg / 255) * 1.5; // Meningkatkan faktor pulse dari 0.8 ke 1.5
-        icosahedron.scale.set(pulse, pulse, pulse);
-        icosahedron.rotation.x += 0.002;
-        icosahedron.rotation.y += 0.003;
-
-        // Camera Shake (MODIFIKASI: Efek Gocek Kamera)
-        const shakeFactor = (bassAvg / 255) * 0.05; // Faktor goyangan kamera ringan
-        camera.position.x = 5 + Math.sin(Date.now() * 0.005) * shakeFactor; 
-        camera.position.y = 5 + Math.cos(Date.now() * 0.004) * shakeFactor; 
-        camera.position.z = 5; 
-
-        if (bassAvg > lastBassLevel * BASS_BEAT_THRESHOLD && bassAvg > 60) {
-            const colors = particles3D.geometry.attributes.color.array;
-            const color = new THREE.Color();
-            for (let i = 0; i < PARTICLE_COUNT; i++) { color.setHSL(Math.random(), 1.0, 0.5); colors[i * 3] = color.r; colors[i * 3 + 1] = color.g; colors[i * 3 + 2] = color.b; }
-            particles3D.geometry.attributes.color.needsUpdate = true;
-            
-            // Tambahkan rotasi Icosahedron saat beat
-            icosahedron.rotation.z += 0.1; 
-        }
-
-        lastBassLevel = bassAvg;
-        particles3D.rotation.y += 0.0005;
-        renderer.render(scene, camera);
-    }
-
-    function toggleVisualizerOverlay() {
-        const body = document.body;
-        if (!isVisualizerActive) { if (!setupAudioVisualizer()) return; isVisualizerActive = true; body.classList.add('visualizer-active'); drawVisualizer(); toggleFullscreen(); } else { isVisualizerActive = false; body.classList.remove('visualizer-active'); toggleFullscreen(); }
-    }
-    
-    // =================================================================
-    // INICIALISASI
-    // =================================================================
-
-    document.addEventListener('DOMContentLoaded', () => {
-        gridContainer = document.getElementById('grid-container');
-        initPanelControls();
-        initVideoPlayer();
-        initEditor();
-        initMusicPlayer();
-        initWebsiteAgeDisplay();
-        trackVisitor();
-        initVisualizer();
-        initSwipeGestures();
-        initPasswordFeature();
-        initSecurityFeatures();
-        checkFirstVisit();
-    });
-
-    function initSwipeGestures() {
-        const matrixSound = document.getElementById('matrix-sound');
-        const moveGrid = (x, y) => {
-            const oldX = currentX;
-            const oldY = currentY;
-            currentX = Math.min(4, Math.max(0, currentX + x));
-            currentY = Math.min(4, Math.max(0, currentY + y));
-            if (oldX !== currentX || oldY !== currentY) {
-                gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
-                console.log(`Grid moved to block (${currentX + 1}, ${currentY + 1}). Playing sound.`);
-                matrixSound.currentTime = 0;
-                matrixSound.play().catch(e => console.error("Audio play failed:", e));
-            }
-            updateUIVisibility();
-            if (isElviModeActive) { if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); } else { exitFullscreen(); } }
-        };
-        const handleStart = (e) => { isDragging = true; startX = e.clientX || e.touches[0].clientX; startY = e.clientY || e.touches[0].clientY; };
-        const handleEnd = (e) => {
-            if (!isDragging) return;
-            const endX = e.clientX || e.changedTouches[0].clientX;
-            const endY = e.clientY || e.changedTouches[0].clientY;
-            const dx = endX - startX;
-            const dy = endY - startY;
-            isDragging = false;
-            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) { moveGrid(dx > 0 ? -1 : 1, 0); } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > SWIPE_THRESHOLD) { moveGrid(0, dy > 0 ? -1 : 1); }
-        };
-        document.addEventListener('mousedown', handleStart);
-        document.addEventListener('mouseup', handleEnd);
-        document.addEventListener('touchstart', handleStart);
-        document.addEventListener('touchend', handleEnd);
-    }
-    function initPanelControls() {
-        document.querySelectorAll('[data-panel]').forEach((button) => {
-            button.addEventListener('click', (event) => {
-                const panelId = button.getAttribute('data-panel');
-                if (panelId === 'visualizer') { toggleVisualizerOverlay(); return; }
-                const panel = document.getElementById(panelId);
-                if (panelId === 'live-visitors-panel') {
-                    const password = prompt('Please enter the password to unlock this feature:');
-                    if (password === LIVE_VISITORS_PASSWORD) {
-                        isEzraLoggedIn = true;
-                        panel.classList.toggle('active');
-                        if (panel.classList.contains('active')) {
-                            fetchLiveVisitors();
-                            fetchVisitorHistory();
-                            liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, REFRESH_INTERVAL_MS);
-                        } else {
-                            clearInterval(liveVisitorRefreshInterval);
-                            document.getElementById('visitor-list').innerHTML = '';
-                            document.getElementById('visitor-history').innerHTML = '';
-                        }
-                    } else { alert('Incorrect or blank password!'); isEzraLoggedIn = false; return; }
-                } else {
-                    panel.classList.toggle('active');
-                    if (panelId === 'contribution-panel' && panel.classList.contains('active')) { fetchContributions(); } else if (panelId === 'moment-vault-panel') { if (panel.classList.contains('active')) { fetchMomentVaultGallery(); } else { document.getElementById('moment-vault-gallery').innerHTML = ''; } }
-                    document.querySelectorAll('.panel').forEach((otherPanel) => {
-                        if (otherPanel.id !== panelId) {
-                            otherPanel.classList.remove('active');
-                            if (otherPanel.id === 'live-visitors-panel') { clearInterval(liveVisitorRefreshInterval); document.getElementById('visitor-list').innerHTML = ''; document.getElementById('visitor-history').innerHTML = ''; isEzraLoggedIn = false; }
-                            if (otherPanel.id === 'moment-vault-panel') { document.getElementById('moment-vault-gallery').innerHTML = ''; }
-                        }
-                    });
+    // FIX: Semua kode dibungkus dalam IIFE (Immediately Invoked Function Expression) untuk enkapsulasi.
+    (function() {
+        // =================================================================
+        // CONFIGURATION (MAINTAINABILITY FIX: Mengkonsolidasikan URL & Password)
+        // =================================================================
+        const CONFIG = {
+            WORKERS: {
+                CONTRIBUTIONS: 'https://contributions-workerjs.ezvvel.workers.dev/',
+                MOMENT_VAULT: 'https://moment-vault-worker-url.universalezra.workers.dev',
+                GITHUB_TOKEN: 'https://github-token-worker-url.universalezra.workers.dev',
+                LIVE_VISITORS: 'https://live-visitors.ezvvel.workers.dev/',
+                VISITOR_HISTORY: 'https://visitor-history.universalezra.workers.dev/',
+            },
+            GITHUB: {
+                REPO_OWNER: 'universalezra',
+                REPO_NAME: 'universalezra',
+            },
+            PASSWORDS: {
+                LIVE_VISITORS: '💔', // Password untuk Live Visitors Panel
+                MOMENT_VAULT: 'vmoments', // Password untuk Moment Vault Edit/Delete
+                TOGGLE_MAP: { // Password untuk FAB Keyboard Toggle
+                    'mycode': 'UNLOCK_LIVE_VISITORS',
+                    'yeah': 'PLAY_CENTER_VIDEO',
+                    'love': 'TOGGLE_ELVI_MODE',
+                    'universalezra': 'START_DEATH_SEQUENCE',
                 }
-            });
-        });
-        document.querySelectorAll('.panel-close-btn').forEach((button) => {
-            button.addEventListener('click', () => {
-                const panelId = button.getAttribute('data-panel');
-                const panel = document.getElementById(panelId);
-                panel.classList.remove('active');
-                if (panelId === 'live-visitors-panel') { clearInterval(liveVisitorRefreshInterval); document.getElementById('visitor-list').innerHTML = ''; document.getElementById('visitor-history').innerHTML = ''; isEzraLoggedIn = false; }
-                if (panelId === 'moment-vault-panel') { document.getElementById('moment-vault-gallery').innerHTML = ''; }
-            });
-        });
-    }
-    function initVideoPlayer() {
-        const video = document.getElementById('widget-video');
-        const playBtn = document.getElementById('video-play-pause');
-        const muteBtn = document.getElementById('video-mute');
-        playBtn.addEventListener('click', () => { if (video.paused) { video.play(); playBtn.innerHTML = '<i class="fas fa-pause"></i>'; } else { video.pause(); playBtn.innerHTML = '<i class="fas fa-play"></i>'; } });
-        muteBtn.addEventListener('click', () => { video.muted = !video.muted; muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; });
-    }
-    function initMusicPlayer() {
-        const player = document.getElementById('audio-player');
-        const playlistEl = document.getElementById('playlist');
-        const songTitleEl = document.getElementById('song-title');
-        const songs = [{ name: 'On And On', url: '/dashboard/On-And-On.mp3' }, { name: 'Where We Are', url: '/dashboard/Where-We-Are.mp3' }, { name: 'Sekuat Hatimu', url: '/dashboard/Sekuat Hatimu.mp3' }, ];
-        songs.forEach((song, index) => {
-            const item = document.createElement('div');
-            item.textContent = song.name;
-            item.style.cursor = 'pointer';
-            item.style.padding = '8px';
-            item.onclick = () => { player.src = song.url; songTitleEl.textContent = song.name; player.play(); };
-            playlistEl.appendChild(item);
-        });
-    }
-    function initEditor() {
-        const codeEditor = document.getElementById('unified-code-editor');
-        const previewFrame = document.getElementById('editor-preview');
-        const runBtn = document.getElementById('editor-run');
-        const saveBtn = document.getElementById('editor-save');
-        const loadBtn = document.getElementById('editor-load');
-        const newBtn = document.getElementById('editor-new');
-        const undoBtn = document.getElementById('editor-undo');
-        const redoBtn = document.getElementById('editor-redo');
-        let history = [''];
-        let historyPointer = 0;
-        const updateHistory = () => { const currentCode = codeEditor.value; if (currentCode !== history[historyPointer]) { if (historyPointer < history.length - 1) { history = history.slice(0, historyPointer + 1); } history.push(currentCode); historyPointer = history.length - 1; } };
-        const runCode = () => { const fullCode = codeEditor.value; const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i); const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i); const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i); const htmlContent = htmlMatch ? htmlMatch[1] : fullCode; const cssContent = cssMatch ? cssMatch[1] : ''; const jsContent = jsMatch ? jsMatch[1] : ''; const source = `<!DOCTYPE html><html><head><style>${cssContent}</style></head><body>${htmlContent}<script>${jsContent}<\/script></body></html>`; previewFrame.srcdoc = source; };
-        const saveCode = () => { localStorage.setItem('unified_editor_code', codeEditor.value); console.log('Code saved successfully'); };
-        const loadCode = () => { codeEditor.value = localStorage.getItem('unified_editor_code') || `<!DOCTYPE html><html><head><title>My trial</title><style>body {font-family: sans-serif;background-color: #000000;color: #259;text-align: center;padding-top: 50px;}h1 {color: var(--primary);}</style></head><body><h1>Hello Editor</h1><p id="message">Code Here</p><script>document.getElementById('message').onclick = function() {console.log('Paragraph clicked!');};<\/script></body></html>`; runCode(); history = [codeEditor.value]; historyPointer = 0; };
-        const newDoc = () => { codeEditor.value = `<!DOCTYPE html><html><head><title>New trial</title><style>body {font-family: Arial, sans-serif;background-color: #000000;color: #abb2bf;display: flex;justify-content: center;align-items: center;min-height: 100vh;margin: 0;}h1 {color: #61dafb;}</style></head><body><h1>Start Coding Here!l</h1><script>console.log("New document loaded.");<\/script></body></html>`; runCode(); history = [codeEditor.value]; historyPointer = 0; };
-        const undo = () => { if (historyPointer > 0) { historyPointer--; codeEditor.value = history[historyPointer]; runCode(); } };
-        const redo = () => { if (historyPointer < history.length - 1) { historyPointer++; codeEditor.value = history[historyPointer]; runCode(); } };
-        runBtn.addEventListener('click', runCode);
-        saveBtn.addEventListener('click', saveCode);
-        loadBtn.addEventListener('click', loadCode);
-        newBtn.addEventListener('click', newDoc);
-        undoBtn.addEventListener('click', undo);
-        redoBtn.addEventListener('click', redo);
-        codeEditor.addEventListener('input', updateHistory);
-        loadCode();
-    }
-    async function fetchContributions() {
-        const display = document.getElementById('contribution-display');
-        display.innerHTML = `<p>Loading</p>`;
-        try {
-            const response = await fetch(CONTRIBUTIONS_WORKER_URL);
-            const contributions = await response.json();
-            if (contributions && contributions.length > 0) { display.innerHTML = contributions.reverse().map((c) => { return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;"><p style="margin:0;">${c.text}</p><small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small></div>`; }).join(''); } else { display.innerHTML = `<p>Be the first to leave a message</p>`; }
-        } catch (e) { display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`; }
-    }
-    document.getElementById('contribution-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const statusEl = document.getElementById('contribution-status');
-        statusEl.textContent = 'Uploading';
-        const formData = new FormData();
-        formData.append('text', document.getElementById('contribution-text').value);
-        try {
-            const response = await fetch(CONTRIBUTIONS_WORKER_URL, { method: 'POST', body: formData, });
-            if (!response.ok) throw new Error('Upload failed');
-            statusEl.textContent = 'Message sent. Thank you.';
-            e.target.reset();
-            fetchContributions();
-        } catch (err) { statusEl.textContent = `Error: ${err.message}`; }
-    });
-    function initWebsiteAgeDisplay() {
-        const websiteAgeDisplay = document.getElementById('website-age-display');
-        const creationDate = new Date(2006, 7, 7, 0, 0, 0);
-        function updateWebsiteAge() {
-            const now = new Date();
-            const diff = now.getTime() - creationDate.getTime();
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(seconds / 60);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            const years = Math.floor(days / 365.25);
-            const remainingDaysAfterYears = Math.floor(days % 365.25);
-            const months = Math.floor(remainingDaysAfterYears / 30.44);
-            const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
-            const displaySeconds = seconds % 60;
-            const displayMinutes = minutes % 60;
-            const displayHours = hours % 24;
-            let ageString = '';
-            if (years > 0) ageString += `${years}T `;
-            if (months > 0 || years > 0) ageString += `${months}B `;
-            ageString += `${remainingDaysAfterMonths}H `;
-            ageString += `${displayHours.toString().padStart(2, '0')}:`;
-            ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
-            ageString += `${displaySeconds.toString().padStart(2, '0')}`;
-            websiteAgeDisplay.textContent = `${ageString}`;
+            },
+            VISITOR: {
+                HISTORY_EXPIRY_DAYS: 7,
+                REFRESH_INTERVAL_MS: 5000,
+            },
+            VISUALIZER: {
+                BASS_BEAT_THRESHOLD: 1.4,
+                PARTICLE_COUNT: 2000,
+                FREQ_RANGE_START_HZ: 20,
+                FREQ_RANGE_END_HZ: 1024,
+            },
+            GRID: {
+                SWIPE_THRESHOLD: 50,
+            }
+        };
+
+        // =================================================================
+        // GLOBAL STATE
+        // =================================================================
+        let liveVisitorRefreshInterval = null;
+        let isEzraLoggedIn = false;
+        let isVisualizerActive = false;
+        let isElviModeActive = false;
+        let visualizerInitialized = false; // FIX: State inisialisasi visualizer
+        let audioContext, analyser, source;
+        let frequencyData, bufferLength;
+        let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
+        let lastBassLevel = 0;
+        let gridContainer, currentX = 2, currentY = 2;
+
+        // =================================================================
+        // FUNGSI UTILITY
+        // =================================================================
+
+        function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
+        function showUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
+        function updateUIVisibility() { if (!isElviModeActive) return; if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { hideUIElements(); } else { showUIElements(); } }
+        function enterFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.warn(`Gagal masuk mode fullscreen: ${err.message}`); }); } }
+        function exitFullscreen() { if (document.fullscreenElement) { document.exitFullscreen(); } }
+        function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(`Error when system attempting to enable fullscreen: ${err.message}`); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
+
+        /**
+         * FIX: Lazy load iframe saat block dijangkau
+         * @param {string} blockId 
+         * @param {string} iframeId 
+         */
+        function lazyLoadIframe(blockId, iframeId) {
+            const blockElement = document.getElementById(blockId);
+            const iframe = document.getElementById(iframeId);
+            if (!iframe || !blockElement) return;
+
+            const isBlockVisible = (currentX === parseInt(blockId.split('-')[1]) - 1) && (currentY === parseInt(blockId.split('-')[0]) - 1);
+            
+            if (isBlockVisible && iframe.getAttribute('data-src') && !iframe.src) {
+                console.log(`Loading iframe: ${iframeId}`);
+                iframe.src = iframe.getAttribute('data-src');
+                iframe.removeAttribute('data-src');
+            }
         }
-        updateWebsiteAge();
-        setInterval(updateWebsiteAge, 1000);
-    }
-    function checkEzraLoginAndShowVisitorsButton() { const fabLiveVisitors = document.getElementById('fab-live-visitors'); }
-    document.addEventListener('DOMContentLoaded', checkEzraLoginAndShowVisitorsButton);
-    async function fetchLiveVisitors() {
-        const visitorList = document.getElementById('visitor-list');
-        const lastUpdatedTime = document.getElementById('last-updated-time');
-        if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading visitors')) { visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading</li>'; }
-        try {
-            const response = await fetch(LIVE_VISITORS_WORKER_URL + '?get_visitors=true');
-            if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-            const visitors = await response.json();
-            if (visitors && visitors.length > 0) { visitorList.innerHTML = visitors.map((visitor) => { const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', }); return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`; }).join(''); } else { visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No online</li>'; }
-            lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
-        } catch (error) { console.error('Error fetching live visitors:', error); visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed</li>'; lastUpdatedTime.textContent = 'Error'; }
-    }
-    async function fetchVisitorHistory() {
-        const historyContainer = document.getElementById('visitor-history');
-        historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history</p>';
-        try {
-            const response = await fetch(VISITOR_HISTORY_WORKER_URL + '?get_history=true');
-            if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-            let history = await response.json();
-            if (history && history.length > 0) {
-                const visitCounts = history.reduce((acc, visitor) => { acc[visitor.browserId] = (acc[visitor.browserId] || 0) + 1; return acc; }, {});
-                const tableHeader = `<table><thead><tr><th>Timestamp</th><th>Browser ID</th><th>IP</th><th>Referral</th><th>Total Kunjungan</th></tr></thead><tbody>`;
-                const tableRows = history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map(visitor => { const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); return `<tr><td>${timestamp}</td><td>${visitor.browserId.substring(0, 10)}...</td><td>${visitor.ip || 'N/A'}</td><td>${visitor.referrer || 'Direct'}</td><td>${visitCounts[visitor.browserId] || 1}</td></tr>`; }).join('');
-                const tableFooter = `</tbody></table>`;
-                historyContainer.innerHTML = tableHeader + tableRows + tableFooter;
-            } else { historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>'; }
-        } catch (error) { console.error('Failed to load visitor history:', error); historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`; }
-    }
-    function getBrowserId() { let browserId = localStorage.getItem('unique_browser_id'); if (!browserId) { browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now(); localStorage.setItem('unique_browser_id', browserId); } return browserId; }
-    async function trackVisitor() {
-        try {
-            const browserId = getBrowserId();
-            let ipAddress = 'unknown';
-            let referrer = document.referrer || 'direct';
-            try { const ipResponse = await fetch('https://api.ipify.org?format=json'); const ipData = await ipResponse.json(); ipAddress = ipData.ip; } catch (ipError) { console.warn('Could not fetch IP address:', ipError); }
-            const data = { browserId: browserId, ip: ipAddress, userAgent: navigator.userAgent, timestamp: new Date().toISOString(), referrer: referrer, };
-            fetch(LIVE_VISITORS_WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to live visitors worker:', e));
-            fetch(VISITOR_HISTORY_WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to visitor history worker:', e));
-        } catch (e) { console.error('Error in trackVisitor:', e); }
-    }
-    async function fetchMomentVaultGallery() {
-        const galleryContainer = document.getElementById('moment-vault-gallery');
-        galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
-        try {
-            const response = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
-            if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-            const items = await response.json();
-            if (items && items.length > 0) {
-                items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                galleryContainer.innerHTML = items.map((item) => {
-                    let mediaHTML = '';
-                    let fileExtension = item.fileUrl.split('.').pop().toLowerCase();
-                    let iconClass = '';
-                    if (item.fileType && item.fileType.startsWith('image/')) { mediaHTML = `<img src="${item.fileUrl}" alt="${item.title}">`; } else if (item.fileType && item.fileType.startsWith('video/')) { mediaHTML = `<video src="${item.fileUrl}" controls></video>`; } else if (item.fileType && item.fileType.startsWith('audio/')) { mediaHTML = `<audio src="${item.fileUrl}" controls></audio>`; } else { if (fileExtension === 'pdf') iconClass = 'fa-file-pdf'; else if (fileExtension.startsWith('doc')) iconClass = 'fa-file-word'; else if (fileExtension === 'txt') iconClass = 'fa-file-alt'; else iconClass = 'fa-file'; mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`; }
-                    const timestamp = new Date(item.timestamp).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', });
-                    return `<div class="gallery-item" data-id="${item.id}"><div class="gallery-media">${mediaHTML}</div><strong>${item.title}</strong><p class="item-text">${item.description}</p><small class="item-date">${timestamp}</small><div class="item-actions"><button class="edit-moment-btn"><i class="fas fa-edit"></i></button><button class="delete-moment-btn"><i class="fas fa-trash-alt"></i></button></div></div>`;
-                }).join('');
-                galleryContainer.querySelectorAll('.edit-moment-btn').forEach((button) => { button.addEventListener('click', (e) => { const itemId = e.target.closest('.gallery-item').dataset.id; editMoment(itemId, items); }); });
-                galleryContainer.querySelectorAll('.delete-moment-btn').forEach((button) => { button.addEventListener('click', (e) => { const itemId = e.target.closest('.gallery-item').dataset.id; deleteMoment(itemId); }); });
-            } else { galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No uploaded yet</p>'; }
-        } catch (error) { console.error('Error fetching Moment Vault gallery:', error); galleryContainer.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>'; }
-    }
-    document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
-    async function uploadMoment(e) {
-        e.preventDefault();
-        const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Uploading';
-        statusEl.style.color = 'var(--text-secondary)';
-        const title = document.getElementById('moment-title').value;
-        const description = document.getElementById('moment-description').value;
-        const fileInput = document.getElementById('moment-file');
-        const file = fileInput.files[0];
-        if (!file || !title) { statusEl.textContent = 'Title and file are required!'; statusEl.style.color = 'var(--danger)'; return; }
-        let githubToken;
-        try {
-            const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
-            if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
-            const tokenData = await tokenResponse.json();
-            githubToken = tokenData.token;
-            if (!githubToken) throw new Error('GitHub token not found in response');
-        } catch (error) { console.error('Error getting GitHub token:', error); statusEl.textContent = `Error: Could not get GitHub token. ${error.message}`; statusEl.style.color = 'var(--danger)'; return; }
-        try {
-            const filePath = `moments/${Date.now()}-${file.name}`;
-            const fileContent = await readFileAsBase64(file);
-            const githubApiUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
-            const uploadResponse = await fetch(githubApiUrl, { method: 'PUT', headers: { Authorization: `token ${githubToken}`, 'Content-Type': 'application/json', }, body: JSON.stringify({ message: `Upload moment: ${title}`, content: fileContent, branch: 'main', }), });
-            if (!uploadResponse.ok) { const errorText = await uploadResponse.text(); throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${errorText}`); }
-            const uploadData = await uploadResponse.json();
-            const rawFileUrl = uploadData.content.download_url;
-            const momentData = { id: 'moment_' + Math.random().toString(36).substr(2, 9) + Date.now(), title: title, description: description, fileUrl: rawFileUrl, fileType: file.type, timestamp: new Date().toISOString(), };
-            const kvSaveResponse = await fetch(MOMENT_VAULT_WORKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(momentData), });
-            if (!kvSaveResponse.ok) { throw new Error('Failed to save moment metadata to KV'); }
-            statusEl.textContent = 'successfully';
-            statusEl.style.color = 'var(--success)';
-            e.target.reset();
-            fetchMomentVaultGallery();
-        } catch (error) { console.error('Error uploading moment:', error); statusEl.textContent = `Error uploading moment: ${error.message}`; statusEl.style.color = 'var(--danger)'; }
-    }
-    function readFileAsBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => { const base64String = reader.result.split(',')[1]; resolve(base64String); }; reader.onerror = (error) => reject(error); reader.readAsDataURL(file); }); }
-    async function editMoment(itemId, currentItems) {
-        const password = prompt('Masukkan password untuk mengedit:');
-        if (password !== MOMENT_VAULT_PASSWORD) { alert('false'); return; }
-        const itemToEdit = currentItems.find((item) => item.id === itemId);
-        if (!itemToEdit) return;
-        const newTitle = prompt('Edit Title:', itemToEdit.title);
-        if (newTitle === null) return;
-        const newDescription = prompt('Edit Description:', itemToEdit.description);
-        if (newDescription === null) return;
-        const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Updating';
-        statusEl.style.color = 'var(--text-secondary)';
-        try {
-            const updatedMomentData = { id: itemId, title: newTitle, description: newDescription, fileUrl: itemToEdit.fileUrl, fileType: itemToEdit.fileType, timestamp: itemToEdit.timestamp, };
-            const response = await fetch(MOMENT_VAULT_WORKER_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedMomentData), });
-            if (!response.ok) { throw new Error('Failed to update moment metadata'); }
-            statusEl.textContent = 'successfully';
-            statusEl.style.color = 'var(--success)';
-            fetchMomentVaultGallery();
-        } catch (error) { console.error('Error updating moment:', error); statusEl.textContent = `Error updating moment: ${error.message}`; statusEl.style.color = 'var(--danger)'; }
-    }
-    async function deleteMoment(itemId) {
-        const password = prompt('Masukkan password untuk menghapus:');
-        if (password !== MOMENT_VAULT_PASSWORD) { alert('false'); return; }
-        if (!confirm('Are you sure you want to delete? This action cannot be undone.')) { return; }
-        const statusEl = document.getElementById('moment-upload-status');
-        statusEl.textContent = 'Deleting';
-        statusEl.style.color = 'var(--text-secondary)';
-        try {
+        
+        /** FIX: Mengimplementasikan Lazy Loading untuk semua Iframe */
+        function checkAndLazyLoadIframe() {
+            lazyLoadIframe('block-1-3', 'windy-iframe');
+            lazyLoadIframe('block-3-1', 'stellarium-iframe');
+            lazyLoadIframe('block-3-2', 'bible-iframe');
+            lazyLoadIframe('block-5-5', 'sketchfab-iframe');
+        }
+
+
+        // =================================================================
+        // FUNGSI EFEK KHUSUS (EZRA DEATH SEQUENCE)
+        // =================================================================
+        function startEzraDeathSequence() {
+            const overlay = document.getElementById('ezra-death-sequence-overlay');
+            const zoomImage = document.getElementById('zoom-image');
+            const errorScreen = document.getElementById('error-screen-ezra');
+            const body = document.body;
+
+            // 1. Tampilkan Overlay dan Sembunyikan Konten Lain
+            body.classList.add('hide-all-content');
+            overlay.classList.add('sequence-active');
+            
+            const imageUrl = zoomImage.getAttribute('data-src');
+            if (imageUrl) zoomImage.src = imageUrl;
+
+            // 2. Mulai Efek Membelah (3 detik)
+            setTimeout(() => {
+                body.classList.add('split-open');
+            }, 50);
+
+            // 3. Mulai Zoom In (setelah 1 detik membelah, durasi 2 detik)
+            setTimeout(() => {
+                body.classList.add('image-zoom');
+            }, 1000); 
+
+            // 4. Tampilkan Layar Error Palsu (setelah 2 detik zoom, atau total 3 detik dari awal zoom)
+            setTimeout(() => {
+                zoomImage.style.opacity = '0'; // Fade out gambar zoom
+                zoomImage.style.zIndex = '10001';
+
+                errorScreen.style.opacity = '1'; 
+
+                // 5. Batas Akhir: Tutup Visual (3 detik setelah error muncul)
+                setTimeout(() => {
+                    console.warn("SYSTEM TERMINATED. Manual closing is required.");
+                    // window.location.href = 'about:blank'; // Opsional: Alihkan ke blank page
+                }, 3000); 
+
+            }, 3000); 
+        }
+
+        // =================================================================
+        // VISUALIZER: MODIFIKASI (FIX: Defer Initialization)
+        // =================================================================
+
+        function setupAudioVisualizer() {
+            const audioPlayer = document.getElementById('audio-player');
+            if (!audioPlayer.src) { alert('Pilih lagu terlebih dahulu'); return false; }
+            
+            if (!visualizerInitialized) {
+                // Initialize Three.js objects
+                initVisualizer();
+            }
+
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                source = audioContext.createMediaElementSource(audioPlayer);
+                analyser = audioContext.createAnalyser();
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                
+                analyser.fftSize = 2048; 
+                analyser.minDecibels = -90;
+                analyser.maxDecibels = -10;
+                analyser.smoothingTimeConstant = 0.6;
+                
+                bufferLength = analyser.frequencyBinCount;
+                frequencyData = new Uint8Array(bufferLength);
+                createFrequencyBars(analyser);
+            }
+            return true;
+        }
+
+        function drawVisualizer() {
+            if (!isVisualizerActive) return;
+            requestAnimationFrame(drawVisualizer);
+            analyser.getByteFrequencyData(frequencyData);
+
+            const binWidth = analyser.context.sampleRate / analyser.fftSize;
+            const startIndex = Math.ceil(CONFIG.VISUALIZER.FREQ_RANGE_START_HZ / binWidth);
+
+            frequencyBarsGroup.children.forEach((wrapper, index) => { 
+                const bar = wrapper.children[0]; 
+                const dataIndex = startIndex + index; 
+                const amplitude = frequencyData[dataIndex] / 255; 
+                
+                const scaledAmplitude = Math.pow(amplitude, 2.0);
+                const newScale = Math.max(0.05, scaledAmplitude * 8.0); 
+
+                bar.scale.y = newScale; 
+            });
+
+            frequencyBarsGroup.rotation.z -= 0.001;
+
+            const lowerHalfArray = frequencyData.slice(0, Math.floor(bufferLength / 4));
+            const overallAvg = lowerHalfArray.reduce((prev, curr) => prev + curr, 0) / lowerHalfArray.length;
+            const bassAvg = frequencyData.slice(0, 10).reduce((prev, curr) => prev + curr, 0) / 10;
+            
+            const pulse = 1 + (overallAvg / 255) * 1.5; 
+            icosahedron.scale.set(pulse, pulse, pulse);
+            icosahedron.rotation.x += 0.002;
+            icosahedron.rotation.y += 0.003;
+
+            const shakeFactor = (bassAvg / 255) * 0.05; 
+            camera.position.x = 5 + Math.sin(Date.now() * 0.005) * shakeFactor; 
+            camera.position.y = 5 + Math.cos(Date.now() * 0.004) * shakeFactor; 
+            camera.position.z = 5; 
+
+            if (bassAvg > lastBassLevel * CONFIG.VISUALIZER.BASS_BEAT_THRESHOLD && bassAvg > 60) {
+                const colors = particles3D.geometry.attributes.color.array;
+                const color = new THREE.Color();
+                for (let i = 0; i < CONFIG.VISUALIZER.PARTICLE_COUNT; i++) { color.setHSL(Math.random(), 1.0, 0.5); colors[i * 3] = color.r; colors[i * 3 + 1] = color.g; colors[i * 3 + 2] = color.b; }
+                particles3D.geometry.attributes.color.needsUpdate = true;
+                
+                icosahedron.rotation.z += 0.1; 
+            }
+
+            lastBassLevel = bassAvg;
+            particles3D.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+
+        function toggleVisualizerOverlay() {
+            const body = document.body;
+            if (!isVisualizerActive) { 
+                if (!setupAudioVisualizer()) return; 
+                isVisualizerActive = true; 
+                body.classList.add('visualizer-active'); 
+                drawVisualizer(); 
+                toggleFullscreen(); 
+            } else { 
+                isVisualizerActive = false; 
+                body.classList.remove('visualizer-active'); 
+                toggleFullscreen(); 
+            }
+        }
+        
+        // =================================================================
+        // INICIALISASI
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            gridContainer = document.getElementById('grid-container');
+            initPanelControls();
+            initVideoPlayer();
+            initEditor();
+            initMusicPlayer();
+            initWebsiteAgeDisplay();
+            trackVisitor();
+            // initVisualizer(); // FIX: Dihapus dan dipindahkan ke setupAudioVisualizer
+            initSwipeGestures();
+            initPasswordFeature();
+            initSecurityFeatures();
+            checkFirstVisit();
+            checkAndLazyLoadIframe(); // Load iframe blok pusat saat start
+        });
+
+        function initSwipeGestures() {
+            let isDragging = false;
+            let startX = 0, startY = 0;
+            const matrixSound = document.getElementById('matrix-sound');
+            
+            const moveGrid = (x, y) => {
+                const oldX = currentX;
+                const oldY = currentY;
+                currentX = Math.min(4, Math.max(0, currentX + x));
+                currentY = Math.min(4, Math.max(0, currentY + y));
+                
+                if (oldX !== currentX || oldY !== currentY) {
+                    gridContainer.style.transform = `translate3d(-${currentX * 100}vw, -${currentY * 100}vh, 0)`;
+                    console.log(`Grid moved to block (${currentX + 1}, ${currentY + 1}). Playing sound.`);
+                    matrixSound.currentTime = 0;
+                    matrixSound.play().catch(e => console.error("Audio play failed:", e));
+                    
+                    checkAndLazyLoadIframe(); // FIX: Cek dan load iframe saat berpindah
+                }
+                updateUIVisibility();
+                if (isElviModeActive) { if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); } else { exitFullscreen(); } }
+            };
+            const handleStart = (e) => { isDragging = true; startX = e.clientX || e.touches[0].clientX; startY = e.clientY || e.touches[0].clientY; };
+            const handleEnd = (e) => {
+                if (!isDragging) return;
+                const endX = e.clientX || e.changedTouches[0].clientX;
+                const endY = e.clientY || e.changedTouches[0].clientY;
+                const dx = endX - startX;
+                const dy = endY - startY;
+                isDragging = false;
+                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > CONFIG.GRID.SWIPE_THRESHOLD) { moveGrid(dx > 0 ? -1 : 1, 0); } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > CONFIG.GRID.SWIPE_THRESHOLD) { moveGrid(0, dy > 0 ? -1 : 1); }
+            };
+            document.addEventListener('mousedown', handleStart);
+            document.addEventListener('mouseup', handleEnd);
+            document.addEventListener('touchstart', handleStart);
+            document.addEventListener('touchend', handleEnd);
+        }
+
+        function initPanelControls() {
+            const fabLiveVisitors = document.getElementById('fab-live-visitors');
+
+            document.querySelectorAll('[data-panel]').forEach((button) => {
+                button.addEventListener('click', (event) => {
+                    const panelId = button.getAttribute('data-panel');
+                    if (panelId === 'visualizer') { toggleVisualizerOverlay(); return; }
+                    const panel = document.getElementById(panelId);
+                    
+                    if (panelId === 'live-visitors-panel') {
+                        // FIX: Menggunakan Password dari CONFIG
+                        const password = prompt('Please enter the password to unlock this feature:');
+                        if (password === CONFIG.PASSWORDS.LIVE_VISITORS) {
+                            isEzraLoggedIn = true;
+                            panel.classList.toggle('active');
+                            if (panel.classList.contains('active')) {
+                                fetchLiveVisitors();
+                                fetchVisitorHistory();
+                                liveVisitorRefreshInterval = setInterval(fetchLiveVisitors, CONFIG.VISITOR.REFRESH_INTERVAL_MS);
+                            } else {
+                                clearInterval(liveVisitorRefreshInterval);
+                                document.getElementById('visitor-list').innerHTML = '';
+                                document.getElementById('visitor-history').innerHTML = '';
+                            }
+                        } else { alert('Incorrect or blank password!'); isEzraLoggedIn = false; return; }
+                    } else {
+                        panel.classList.toggle('active');
+                        if (panelId === 'contribution-panel' && panel.classList.contains('active')) { fetchContributions(); } 
+                        else if (panelId === 'moment-vault-panel') { 
+                            if (panel.classList.contains('active')) { fetchMomentVaultGallery(); } 
+                            else { document.getElementById('moment-vault-gallery').innerHTML = ''; } 
+                        }
+
+                        // Close other panels
+                        document.querySelectorAll('.panel').forEach((otherPanel) => {
+                            if (otherPanel.id !== panelId) {
+                                otherPanel.classList.remove('active');
+                                // Clean up other panels
+                                if (otherPanel.id === 'live-visitors-panel') { 
+                                    clearInterval(liveVisitorRefreshInterval); 
+                                    document.getElementById('visitor-list').innerHTML = ''; 
+                                    document.getElementById('visitor-history').innerHTML = ''; 
+                                    isEzraLoggedIn = false; 
+                                }
+                                if (otherPanel.id === 'moment-vault-panel') { document.getElementById('moment-vault-gallery').innerHTML = ''; }
+                            }
+                        });
+                    }
+                });
+            });
+
+            document.querySelectorAll('.panel-close-btn').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const panelId = button.getAttribute('data-panel');
+                    const panel = document.getElementById(panelId);
+                    panel.classList.remove('active');
+                    if (panelId === 'live-visitors-panel') { clearInterval(liveVisitorRefreshInterval); document.getElementById('visitor-list').innerHTML = ''; document.getElementById('visitor-history').innerHTML = ''; isEzraLoggedIn = false; }
+                    if (panelId === 'moment-vault-panel') { document.getElementById('moment-vault-gallery').innerHTML = ''; }
+                });
+            });
+        }
+
+        function initVideoPlayer() {
+            const video = document.getElementById('widget-video');
+            const playBtn = document.getElementById('video-play-pause');
+            const muteBtn = document.getElementById('video-mute');
+
+            // FIX: Video di-mute secara default di HTML, jadi ikon awal harus Mute
+            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+
+            playBtn.addEventListener('click', () => { 
+                if (video.paused) { 
+                    video.play(); 
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>'; 
+                } else { 
+                    video.pause(); 
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>'; 
+                } 
+            });
+            muteBtn.addEventListener('click', () => { 
+                video.muted = !video.muted; 
+                muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; 
+            });
+
+            // FIX: Secara default video dimulai PAUSED
+            video.pause();
+        }
+
+        function initMusicPlayer() {
+            const player = document.getElementById('audio-player');
+            const playlistEl = document.getElementById('playlist');
+            const songTitleEl = document.getElementById('song-title');
+            const songs = [{ name: 'On And On', url: '/dashboard/On-And-On.mp3' }, { name: 'Where We Are', url: '/dashboard/Where-We-Are.mp3' }, { name: 'Sekuat Hatimu', url: '/dashboard/Sekuat Hatimu.mp3' }, ];
+            
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.textContent = song.name;
+                item.style.cursor = 'pointer';
+                item.style.padding = '8px';
+                item.style.transition = 'background 0.2s';
+                item.onmouseover = () => item.style.background = 'rgba(0, 168, 255, 0.1)';
+                item.onmouseout = () => item.style.background = 'none';
+                
+                item.onclick = () => { 
+                    player.src = song.url; 
+                    songTitleEl.textContent = song.name; 
+                    player.play(); 
+                };
+                playlistEl.appendChild(item);
+            });
+        }
+        
+        function initEditor() {
+            const codeEditor = document.getElementById('unified-code-editor');
+            const previewFrame = document.getElementById('editor-preview');
+            const runBtn = document.getElementById('editor-run');
+            const saveBtn = document.getElementById('editor-save');
+            const loadBtn = document.getElementById('editor-load');
+            const newBtn = document.getElementById('editor-new');
+            const undoBtn = document.getElementById('editor-undo');
+            const redoBtn = document.getElementById('editor-redo');
+            let history = [''];
+            let historyPointer = 0;
+
+            const updateHistory = () => { 
+                const currentCode = codeEditor.value; 
+                if (currentCode !== history[historyPointer]) { 
+                    if (historyPointer < history.length - 1) { 
+                        history = history.slice(0, historyPointer + 1); 
+                    } 
+                    history.push(currentCode); 
+                    historyPointer = history.length - 1; 
+                } 
+            };
+            
+            const runCode = () => { 
+                const fullCode = codeEditor.value; 
+                const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i); 
+                const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i); 
+                const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i); 
+                
+                const htmlContent = htmlMatch ? htmlMatch[1] : fullCode; 
+                const cssContent = cssMatch ? cssMatch[1] : ''; 
+                const jsContent = jsMatch ? jsMatch[1] : ''; 
+                
+                const source = `<!DOCTYPE html><html><head><style>${cssContent}</style></head><body>${htmlContent}<script>${jsContent}<\/script></body></html>`; 
+                previewFrame.srcdoc = source; 
+            };
+            
+            const saveCode = () => { localStorage.setItem('unified_editor_code', codeEditor.value); console.log('Code saved successfully'); };
+            
+            const loadCode = () => { 
+                codeEditor.value = localStorage.getItem('unified_editor_code') || `<!DOCTYPE html><html><head><title>My trial</title><style>body {font-family: sans-serif;background-color: #000000;color: #259;text-align: center;padding-top: 50px;}h1 {color: var(--primary);}</style></head><body><h1>Hello Editor</h1><p id="message">Code Here</p><script>document.getElementById('message').onclick = function() {console.log('Paragraph clicked!');};<\/script></body></html>`; 
+                runCode(); 
+                history = [codeEditor.value]; 
+                historyPointer = 0; 
+            };
+            
+            const newDoc = () => { 
+                codeEditor.value = `<!DOCTYPE html><html><head><title>New trial</title><style>body {font-family: Arial, sans-serif;background-color: #000000;color: #abb2bf;display: flex;justify-content: center;align-items: center;min-height: 100vh;margin: 0;}h1 {color: #61dafb;}</style></head><body><h1>Start Coding Here!l</h1><script>console.log("New document loaded.");<\/script></body></html>`; 
+                runCode(); 
+                history = [codeEditor.value]; 
+                historyPointer = 0; 
+            };
+            
+            const undo = () => { 
+                if (historyPointer > 0) { 
+                    historyPointer--; 
+                    codeEditor.value = history[historyPointer]; 
+                    runCode(); 
+                } 
+            };
+            
+            const redo = () => { 
+                if (historyPointer < history.length - 1) { 
+                    historyPointer++; 
+                    codeEditor.value = history[historyPointer]; 
+                    runCode(); 
+                } 
+            };
+            
+            runBtn.addEventListener('click', runCode);
+            saveBtn.addEventListener('click', saveCode);
+            loadBtn.addEventListener('click', loadCode);
+            newBtn.addEventListener('click', newDoc);
+            undoBtn.addEventListener('click', undo);
+            redoBtn.addEventListener('click', redo);
+            codeEditor.addEventListener('input', updateHistory);
+            loadCode();
+        }
+
+        async function fetchContributions() {
+            const display = document.getElementById('contribution-display');
+            display.innerHTML = `<p>Loading</p>`;
+            try {
+                // FIX: Menggunakan URL dari CONFIG
+                const response = await fetch(CONFIG.WORKERS.CONTRIBUTIONS);
+                const contributions = await response.json();
+                if (contributions && contributions.length > 0) { 
+                    display.innerHTML = contributions.reverse().map((c) => { 
+                        return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;"><p style="margin:0;">${c.text}</p><small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small></div>`; 
+                    }).join(''); 
+                } else { 
+                    display.innerHTML = `<p>Be the first to leave a message</p>`; 
+                }
+            } catch (e) { 
+                display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`; 
+            }
+        }
+        
+        document.getElementById('contribution-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('contribution-status');
+            statusEl.textContent = 'Uploading';
+            
+            const formData = new FormData();
+            formData.append('text', document.getElementById('contribution-text').value);
+            
+            try {
+                // FIX: Menggunakan URL dari CONFIG
+                const response = await fetch(CONFIG.WORKERS.CONTRIBUTIONS, { 
+                    method: 'POST', 
+                    body: formData, 
+                });
+                
+                if (!response.ok) throw new Error('Upload failed');
+                
+                statusEl.textContent = 'Message sent. Thank you.';
+                e.target.reset();
+                fetchContributions();
+            } catch (err) { 
+                statusEl.textContent = `Error: ${err.message}`; 
+            }
+        });
+
+        function initWebsiteAgeDisplay() {
+            const websiteAgeDisplay = document.getElementById('website-age-display');
+            // FIX: Menggunakan tanggal 7 Agustus 2006
+            const creationDate = new Date(2006, 7, 7, 0, 0, 0); 
+            
+            function updateWebsiteAge() {
+                const now = new Date();
+                const diff = now.getTime() - creationDate.getTime();
+                const seconds = Math.floor(diff / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                
+                const years = Math.floor(days / 365.25);
+                const remainingDaysAfterYears = Math.floor(days % 365.25);
+                // Approx. months: Divide by average days in a month
+                const months = Math.floor(remainingDaysAfterYears / 30.44); 
+                const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
+                
+                const displaySeconds = seconds % 60;
+                const displayMinutes = minutes % 60;
+                const displayHours = hours % 24;
+                
+                let ageString = '';
+                if (years > 0) ageString += `${years}T `;
+                if (months > 0 || years > 0) ageString += `${months}B `;
+                ageString += `${remainingDaysAfterMonths}H `;
+                ageString += `${displayHours.toString().padStart(2, '0')}:`;
+                ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
+                ageString += `${displaySeconds.toString().padStart(2, '0')}`;
+                
+                websiteAgeDisplay.textContent = `${ageString}`;
+            }
+            
+            updateWebsiteAge();
+            setInterval(updateWebsiteAge, 1000);
+        }
+
+        async function fetchLiveVisitors() {
+            const visitorList = document.getElementById('visitor-list');
+            const lastUpdatedTime = document.getElementById('last-updated-time');
+            if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading visitors')) { visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading</li>'; }
+            
+            try {
+                // FIX: Menggunakan URL dari CONFIG
+                const response = await fetch(CONFIG.WORKERS.LIVE_VISITORS + '?get_visitors=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                const visitors = await response.json();
+                if (visitors && visitors.length > 0) { 
+                    visitorList.innerHTML = visitors.map((visitor) => { 
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', }); 
+                        return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`; 
+                    }).join(''); 
+                } else { 
+                    visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No online</li>'; 
+                }
+                lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
+            } catch (error) { 
+                console.error('Error fetching live visitors:', error); 
+                visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed</li>'; 
+                lastUpdatedTime.textContent = 'Error'; 
+            }
+        }
+
+        async function fetchVisitorHistory() {
+            const historyContainer = document.getElementById('visitor-history');
+            historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history</p>';
+            
+            try {
+                // FIX: Menggunakan URL dari CONFIG
+                const response = await fetch(CONFIG.WORKERS.VISITOR_HISTORY + '?get_history=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                let history = await response.json();
+                if (history && history.length > 0) {
+                    const visitCounts = history.reduce((acc, visitor) => { acc[visitor.browserId] = (acc[visitor.browserId] || 0) + 1; return acc; }, {});
+                    const tableHeader = `<table><thead><tr><th>Timestamp</th><th>Browser ID</th><th>IP</th><th>Referral</th><th>Total Kunjungan</th></tr></thead><tbody>`;
+                    const tableRows = history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map(visitor => { 
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); 
+                        return `<tr><td>${timestamp}</td><td>${visitor.browserId.substring(0, 10)}...</td><td>${visitor.ip || 'N/A'}</td><td>${visitor.referrer || 'Direct'}</td><td>${visitCounts[visitor.browserId] || 1}</td></tr>`; 
+                    }).join('');
+                    const tableFooter = `</tbody></table>`;
+                    historyContainer.innerHTML = tableHeader + tableRows + tableFooter;
+                } else { 
+                    historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>'; 
+                }
+            } catch (error) { 
+                console.error('Failed to load visitor history:', error); 
+                historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`; 
+            }
+        }
+
+        function getBrowserId() { 
+            let browserId = localStorage.getItem('unique_browser_id'); 
+            if (!browserId) { 
+                browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now(); 
+                localStorage.setItem('unique_browser_id', browserId); 
+            } 
+            return browserId; 
+        }
+
+        async function trackVisitor() {
+            try {
+                const browserId = getBrowserId();
+                let ipAddress = 'unknown';
+                let referrer = document.referrer || 'direct';
+                
+                try { 
+                    const ipResponse = await fetch('https://api.ipify.org?format=json'); 
+                    const ipData = await ipResponse.json(); 
+                    ipAddress = ipData.ip; 
+                } catch (ipError) { 
+                    console.warn('Could not fetch IP address:', ipError); 
+                }
+                
+                const data = { 
+                    browserId: browserId, 
+                    ip: ipAddress, 
+                    userAgent: navigator.userAgent, 
+                    timestamp: new Date().toISOString(), 
+                    referrer: referrer, 
+                };
+                
+                // FIX: Menggunakan URL dari CONFIG
+                fetch(CONFIG.WORKERS.LIVE_VISITORS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to live visitors worker:', e));
+                fetch(CONFIG.WORKERS.VISITOR_HISTORY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to visitor history worker:', e));
+            } catch (e) { 
+                console.error('Error in trackVisitor:', e); 
+            }
+        }
+
+        async function fetchMomentVaultGallery() {
+            const galleryContainer = document.getElementById('moment-vault-gallery');
+            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
+            
+            try {
+                // FIX: Menggunakan URL dari CONFIG
+                const response = await fetch(CONFIG.WORKERS.MOMENT_VAULT + '?get_gallery=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                const items = await response.json();
+                if (items && items.length > 0) {
+                    items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    galleryContainer.innerHTML = items.map((item) => {
+                        let mediaHTML = '';
+                        let fileExtension = item.fileUrl.split('.').pop().toLowerCase();
+                        let iconClass = '';
+                        
+                        if (item.fileType && item.fileType.startsWith('image/')) { mediaHTML = `<img src="${item.fileUrl}" alt="${item.title}">`; } 
+                        else if (item.fileType && item.fileType.startsWith('video/')) { mediaHTML = `<video src="${item.fileUrl}" controls></video>`; } 
+                        else if (item.fileType && item.fileType.startsWith('audio/')) { mediaHTML = `<audio src="${item.fileUrl}" controls></audio>`; } 
+                        else { 
+                            if (fileExtension === 'pdf') iconClass = 'fa-file-pdf'; 
+                            else if (fileExtension.startsWith('doc')) iconClass = 'fa-file-word'; 
+                            else if (fileExtension === 'txt') iconClass = 'fa-file-alt'; 
+                            else iconClass = 'fa-file'; 
+                            mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`; 
+                        }
+                        
+                        const timestamp = new Date(item.timestamp).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', });
+                        
+                        return `<div class="gallery-item" data-id="${item.id}">
+                                    <div class="gallery-media">${mediaHTML}</div>
+                                    <strong>${item.title}</strong>
+                                    <p class="item-text">${item.description}</p>
+                                    <small class="item-date">${timestamp}</small>
+                                    <div class="item-actions">
+                                        <button class="edit-moment-btn"><i class="fas fa-edit"></i></button>
+                                        <button class="delete-moment-btn"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </div>`;
+                    }).join('');
+                    
+                    galleryContainer.querySelectorAll('.edit-moment-btn').forEach((button) => { button.addEventListener('click', (e) => { const itemId = e.target.closest('.gallery-item').dataset.id; editMoment(itemId, items); }); });
+                    galleryContainer.querySelectorAll('.delete-moment-btn').forEach((button) => { button.addEventListener('click', (e) => { const itemId = e.target.closest('.gallery-item').dataset.id; deleteMoment(itemId); }); });
+                } else { 
+                    galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No uploaded yet</p>'; 
+                }
+            } catch (error) { 
+                console.error('Error fetching Moment Vault gallery:', error); 
+                galleryContainer.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>'; 
+            }
+        }
+        
+        document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
+
+        async function uploadMoment(e) {
+            e.preventDefault();
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Uploading';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            const title = document.getElementById('moment-title').value;
+            const description = document.getElementById('moment-description').value;
+            const fileInput = document.getElementById('moment-file');
+            const file = fileInput.files[0];
+            
+            if (!file || !title) { 
+                statusEl.textContent = 'Title and file are required!'; 
+                statusEl.style.color = 'var(--danger)'; 
+                return; 
+            }
+            
             let githubToken;
             try {
-                const tokenResponse = await fetch(GITHUB_TOKEN_WORKER_URL);
+                // FIX: Menggunakan URL dari CONFIG
+                const tokenResponse = await fetch(CONFIG.WORKERS.GITHUB_TOKEN);
                 if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
                 const tokenData = await tokenResponse.json();
                 githubToken = tokenData.token;
                 if (!githubToken) throw new Error('GitHub token not found in response');
-            } catch (error) { console.error('Error getting GitHub token for delete:', error); statusEl.textContent = `Error: Could not get GitHub token for deletion. ${error.message}`; statusEl.style.color = 'var(--danger)'; return; }
-            const galleryResponse = await fetch(MOMENT_VAULT_WORKER_URL + '?get_gallery=true');
-            if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
-            const galleryItems = await galleryResponse.json();
-            const itemToDelete = galleryItems.find((item) => item.id === itemId);
-            if (!itemToDelete || !itemToDelete.fileUrl) { throw new Error('its file URL not found.'); }
-            let filePathOnGithub;
-            const rawGithubContentBase = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/`;
-            if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) { filePathOnGithub = itemToDelete.fileUrl.substring(rawGithubContentBase.length); } else { console.warn('Unexpected file URL format, attempting fallback path extraction:', itemToDelete.fileUrl,); filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`; }
-            const githubApiGetFileUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
-            const getFileResponse = await fetch(githubApiGetFileUrl, { headers: { Authorization: `token ${githubToken}`, Accept: 'application/vnd.github.v3+json', }, });
-            if (!getFileResponse.ok) { const errorText = await getFileResponse.text(); throw new Error(`Failed to get file SHA from GitHub: ${getFileResponse.status} - ${errorText}`); }
-            const fileMetaData = await getFileResponse.json();
-            const fileSha = fileMetaData.sha;
-            const githubDeleteUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePathOnGithub}`;
-            const deleteResponse = await fetch(githubDeleteUrl, { method: 'DELETE', headers: { Authorization: `token ${githubToken}`, 'Content-Type': 'application/json', }, body: JSON.stringify({ message: `Delete moment: ${itemToDelete.title}`, sha: fileSha, branch: 'main', }), });
-            if (!deleteResponse.ok) { const errorText = await deleteResponse.text(); throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`); }
-            const kvDeleteResponse = await fetch(MOMENT_VAULT_WORKER_URL + `?delete_moment_id=${itemId}`, { method: 'DELETE', });
-            if (!kvDeleteResponse.ok) { throw new Error('Failed to delete'); }
-            statusEl.textContent = 'successfully';
-            statusEl.style.color = 'var(--success)';
-            fetchMomentVaultGallery();
-        } catch (error) { console.error('Error deleting moment:', error); statusEl.textContent = `Error deleting moment: ${error.message}`; statusEl.style.color = 'var(--danger)'; }
-    }
-    function initVisualizer() {
-        visualizerCanvas = document.getElementById('visualizer-canvas');
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 5;
-        renderer = new THREE.WebGLRenderer({ canvas: visualizerCanvas, alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 1);
-        const icosahedronColors = [];
-        const color = new THREE.Color();
-        for (let i = 0; i < icosahedronGeometry.attributes.position.count; i++) { color.setHSL(i / icosahedronGeometry.attributes.position.count, 0.7, 0.6); icosahedronColors.push(color.r, color.g, color.b); }
-        icosahedronGeometry.setAttribute('color', new THREE.Float32BufferAttribute(icosahedronColors, 3));
-        const icosahedronMaterial = new THREE.MeshBasicMaterial({ vertexColors: true, wireframe: true });
-        icosahedron = new THREE.Mesh(icosahedronGeometry, icosahedronMaterial);
-        scene.add(icosahedron);
-        frequencyBarsGroup = new THREE.Group();
-        scene.add(frequencyBarsGroup);
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, vertexColors: true });
-        const particlePositions = [];
-        const particleColors = [];
-        for (let i = 0; i < PARTICLE_COUNT; i++) { particlePositions.push((Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15); color.setHSL(Math.random(), 1.0, 0.5); particleColors.push(color.r, color.g, color.b); }
-        particlesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particlePositions, 3));
-        particlesGeometry.setAttribute('color', new THREE.Float32BufferAttribute(particleColors, 3));
-        particles3D = new THREE.Points(particlesGeometry, particlesMaterial);
-        scene.add(particles3D);
-        window.addEventListener('resize', onWindowResize, false);
-    }
-    function createFrequencyBars(analyser) {
-        while (frequencyBarsGroup.children.length > 0) { const obj = frequencyBarsGroup.children[0]; frequencyBarsGroup.remove(obj); }
-        const sampleRate = analyser.context.sampleRate;
-        // Gunakan FFT Size yang dimodifikasi (2048)
-        const fftSize = 2048; 
-        const binWidth = sampleRate / fftSize;
-        const startIndex = Math.ceil(FREQ_RANGE_START_HZ / binWidth);
-        const endIndex = Math.floor(FREQ_RANGE_END_HZ / binWidth);
-        const numBars = endIndex - startIndex + 1;
-        for (let i = 0; i < numBars; i++) {
-            const barHeight = 0.1;
-            const barWidth = 0.02;
-            const geometry = new THREE.PlaneGeometry(barWidth, barHeight);
-            const hue = 0.6 + (i / numBars) * 0.3;
-            const color = new THREE.Color().setHSL(hue, 0.8, 0.6);
-            const material = new THREE.MeshBasicMaterial({ color: color });
-            const bar = new THREE.Mesh(geometry, material);
-            const angle = (i / numBars) * Math.PI * 2;
-            const radius = 2.0;
-            const wrapper = new THREE.Object3D();
-            wrapper.position.x = Math.cos(angle) * radius;
-            wrapper.position.y = Math.sin(angle) * radius;
-            wrapper.rotation.z = angle + Math.PI / 2;
-            bar.position.y = barHeight / 2;
-            wrapper.add(bar);
-            frequencyBarsGroup.add(wrapper);
-        }
-    }
-    function onWindowResize() { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }  
-    function initPasswordFeature() {
-        const keyboardToggleButton = document.getElementById('fab-keyboard-toggle');
-        const liveVisitorsButton = document.getElementById('fab-live-visitors');
-        const centerVideoContainer = document.getElementById('center-video-container');
-        const centerVideoPlayer = document.getElementById('center-video-player');
-        const centerVideoCloseBtn = document.getElementById('center-video-close');
-        
-        // MODIFIKASI: Menambahkan koma yang hilang dan password baru
-        const passwordMap = {
-            'mycode': () => { liveVisitorsButton.style.display = 'flex'; liveVisitorsButton.setAttribute('data-unlocked', 'true'); },
-            'yeah': () => { centerVideoContainer.classList.add('active'); centerVideoPlayer.src = '/dashboard/stiker.mp4'; centerVideoPlayer.play(); },
-            'love': () => {
-                isElviModeActive = true;
-                const block23 = document.getElementById('block-2-3');
-                if (block23) {
-                    const backgroundDiv = block23.querySelector('.grid-block-background');
-                    if (backgroundDiv) {
-                        backgroundDiv.style.background = `url('https://universalezra.netlify.app/moments/1751293320517-December%2013,%202024%20at%204.29%20AM%20(1).jpg') center center / cover no-repeat`;
-                        backgroundDiv.style.filter = 'none';
-                        backgroundDiv.style.webkitFilter = 'none';
-                    }
-                    const contentDiv = block23.querySelector('.grid-block-content');
-                    if (contentDiv) { contentDiv.style.display = 'none'; }
-                }
-                const block53 = document.getElementById('block-5-3');
-                if (block53) {
-                    const backgroundDiv = block53.querySelector('.grid-block-background');
-                    if (backgroundDiv) {
-                        backgroundDiv.style.background = `url('/dashboard/mygirl.jpg') center center / cover no-repeat`;
-                        backgroundDiv.style.filter = 'none';
-                        backgroundDiv.style.webkitFilter = 'none';
-                    }
-                    const contentDiv = block53.querySelector('.grid-block-content');
-                    if (contentDiv) { contentDiv.style.display = 'none'; }
-                }
-                updateUIVisibility();
-                if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
-            }, // Koma ditambahkan di sini
-            'universalezra': () => {
-                // Panggil fungsi efek membelah dan error
-                startEzraDeathSequence();
+            } catch (error) { 
+                console.error('Error getting GitHub token:', error); 
+                statusEl.textContent = `Error: Could not get GitHub token. ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+                return; 
             }
-        };
+            
+            try {
+                const filePath = `moments/${Date.now()}-${file.name}`;
+                const fileContent = await readFileAsBase64(file);
+                // FIX: Menggunakan URL dari CONFIG
+                const githubApiUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePath}`;
+                
+                const uploadResponse = await fetch(githubApiUrl, { 
+                    method: 'PUT', 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        'Content-Type': 'application/json', 
+                    }, 
+                    body: JSON.stringify({ 
+                        message: `Upload moment: ${title}`, 
+                        content: fileContent, 
+                        branch: 'main', 
+                    }), 
+                });
+                
+                if (!uploadResponse.ok) { 
+                    const errorText = await uploadResponse.text(); 
+                    throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${errorText}`); 
+                }
+                
+                const uploadData = await uploadResponse.json();
+                const rawFileUrl = uploadData.content.download_url;
+                
+                const momentData = { 
+                    id: 'moment_' + Math.random().toString(36).substr(2, 9) + Date.now(), 
+                    title: title, 
+                    description: description, 
+                    fileUrl: rawFileUrl, 
+                    fileType: file.type, 
+                    timestamp: new Date().toISOString(), 
+                };
+                
+                // FIX: Menggunakan URL dari CONFIG
+                const kvSaveResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(momentData), 
+                });
+                
+                if (!kvSaveResponse.ok) { 
+                    throw new Error('Failed to save moment metadata to KV'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                e.target.reset();
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error uploading moment:', error); 
+                statusEl.textContent = `Error uploading moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        }
 
-        keyboardToggleButton.addEventListener('click', () => {
-            const enteredPassword = prompt("Please enter the password:");
-            if (enteredPassword && passwordMap[enteredPassword]) { passwordMap[enteredPassword](); } else if (enteredPassword !== null) { alert('Incorrect password!'); }
-        });
-        centerVideoCloseBtn.addEventListener('click', () => { centerVideoPlayer.pause(); centerVideoPlayer.src = ''; centerVideoContainer.classList.remove('active'); });
-    }
-    function initSecurityFeatures() {
-        document.addEventListener('contextmenu', (e) => e.preventDefault());
-        document.addEventListener('copy', (e) => e.preventDefault());
-        document.addEventListener('cut', (e) => e.preventDefault());
-        window.addEventListener('keyup', (e) => { if (e.key === 'PrintScreen') { const popup = document.getElementById('screenshot-popup'); popup.style.display = 'block'; setTimeout(() => { popup.style.display = 'none'; }, 3000); } });
-    }
-    function checkFirstVisit() {
-        const hasVisited = localStorage.getItem('hasVisitedWebsite');
-        const browserId = getBrowserId();
-        if (!hasVisited) {
-            const popup = document.getElementById('new-user-popup');
-            const closeBtn = document.getElementById('popup-close-btn');
-            popup.style.display = 'block';
-            console.log(`Welcome, new visitor Browser ID: ${browserId}`);
-            console.log("For the best experience, please use our app: https://drive.google.com/file/d/1URJk46fP6cyzDoRRPUs83sDhHINpJDwJ/view?usp=drivesdk and switch to landscape mode.");
-            console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
-            closeBtn.addEventListener('click', () => { popup.style.display = 'none'; localStorage.setItem('hasVisitedWebsite', 'true'); });
-        } else { console.log(`Welcome back ID: ${browserId}`); }
-    }
-    document.addEventListener('DOMContentLoaded',(()=>{const e=document.getElementById('typing-output'),t=document.getElementById('ezra-photo'),s=document.getElementById('time-and-slogan'),n=document.getElementById('daily-quote'),o=document.getElementById('bio-modal'),r=[{typing:"Selamat hari Minggu! Mulai pekan dengan mindset growth.",quote:"Tuhan adalah kekuatanku dan perisaiku; kepada-Nya hatiku percaya, dan aku tertolong."},{typing:"Hai! Aku Ezra, a Boy yang mencintai Tantangan Senin.",quote:"Percayalah kepada Tuhan dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri."},{typing:"Code Architect here. Siap membangun solusi hari ini.",quote:"Amsal 21:5: Rencana orang rajin membawa kelimpahan, tetapi setiap orang yang tergesa-gesa hanya akan kekurangan."},{typing:"Mid-week check! Fokus pada performa dan skalabilitas.",quote:"Mazmur 37:5: Serahkanlah hidupmu kepada Tuhan dan percayalah kepada-Nya, dan Ia akan bertindak."},{typing:"Hello! Design, Build, Ship. It's the Dev cycle.",quote:"Amsal 16:3: Serahkanlah perbuatanmu kepada Tuhan, maka terlaksanalah segala rencanamu."},{typing:"Jumat! Sempurnakan kode, rayakan akhir pekan.",quote:"Berbahagialah orang yang mendapat hikmat, orang yang memperoleh kepandaian."},{typing:"Santai & Refleksi. Siap untuk inovasi minggu depan.",quote:"Mazmur 1:3: Ia seperti pohon yang ditanam di tepi aliran air, yang menghasilkan buah pada musimnya dan daunnya tidak layu."}],a=new Date().getDay(),d=r[a],c=[d.typing,"Seorang Digital Alchemist. Sentuh fotoku \ud83d\udc46","Where art meets engineering."],l=60,p=1800;let u=0,m=0;function g(){const r=c[u];if(m<r.length)e.textContent+=r.charAt(m),m++,setTimeout(g,l);else setTimeout(y,p);}function y(){u=(u+1)%c.length,m=0,e.textContent="",e.style.borderRightColor="transparent",setTimeout((()=>{e.style.borderRightColor="var(--neon-color)",g()}),1e3);}function h(){const r=getComputedStyle(document.documentElement).getPropertyValue('--secondary-neon').trim(),a=new Date(),d=String(a.getHours()).padStart(2,'0'),c=String(a.getMinutes()).padStart(2,'0'),l=String(a.getSeconds()).padStart(2,'0'),p=a.toLocaleDateString('id-ID',{weekday:'long'}),u=a.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}),m=`[ ${p}, ${u} ] | ${d}:${c}:${l} WIB`;s.innerHTML=`<span style="color: ${r};">[[ STATUS: CODE_MODE_ACTIVE ]]</span><br>${m}<br>Semoga hari-mu penuh hikmat dan kode yang bersih.`;}function v(){o.classList.add('show'),document.body.classList.add('body-transform'),setTimeout((()=>{document.body.style.transform='scale(0.9) rotate(3deg)'}),1900)}function x(){o.classList.remove('show'),document.body.style.transform='scale(1) rotate(0deg)',document.body.classList.remove('body-transform'),document.body.classList.remove('body-hyper-drive')}n.textContent=d.quote+" - Alkitab",g(),h(),setInterval(h,1e3),t.addEventListener('click',v),window.addEventListener('click',(e=>{e.target===o&&x();})),document.querySelector('.modal-content a').addEventListener('click',((e)=>{e.preventDefault();const t=e.currentTarget.href;document.body.classList.remove('body-transform'),document.body.classList.add('body-hyper-drive'),setTimeout((()=>{window.location.href=t}),2e3);}));}))
+        function readFileAsBase64(file) { 
+            return new Promise((resolve, reject) => { 
+                const reader = new FileReader(); 
+                reader.onload = () => { 
+                    const base64String = reader.result.split(',')[1]; 
+                    resolve(base64String); 
+                }; 
+                reader.onerror = (error) => reject(error); 
+                reader.readAsDataURL(file); 
+            }); 
+        }
+
+        async function editMoment(itemId, currentItems) {
+            // FIX: Menggunakan Password dari CONFIG
+            const password = prompt('Masukkan password untuk mengedit:');
+            if (password !== CONFIG.PASSWORDS.MOMENT_VAULT) { 
+                alert('false'); 
+                return; 
+            }
+            
+            const itemToEdit = currentItems.find((item) => item.id === itemId);
+            if (!itemToEdit) return;
+            
+            const newTitle = prompt('Edit Title:', itemToEdit.title);
+            if (newTitle === null) return;
+            
+            const newDescription = prompt('Edit Description:', itemToEdit.description);
+            if (newDescription === null) return;
+            
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Updating';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            try {
+                const updatedMomentData = { 
+                    id: itemId, 
+                    title: newTitle, 
+                    description: newDescription, 
+                    fileUrl: itemToEdit.fileUrl, 
+                    fileType: itemToEdit.fileType, 
+                    timestamp: itemToEdit.timestamp, 
+                };
+                
+                // FIX: Menggunakan URL dari CONFIG
+                const response = await fetch(CONFIG.WORKERS.MOMENT_VAULT, { 
+                    method: 'PUT', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(updatedMomentData), 
+                });
+                
+                if (!response.ok) { 
+                    throw new Error('Failed to update moment metadata'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error updating moment:', error); 
+                statusEl.textContent = `Error updating moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        }
+
+        async function deleteMoment(itemId) {
+            // FIX: Menggunakan Password dari CONFIG
+            const password = prompt('Masukkan password untuk menghapus:');
+            if (password !== CONFIG.PASSWORDS.MOMENT_VAULT) { 
+                alert('false'); 
+                return; 
+            }
+            
+            if (!confirm('Are you sure you want to delete? This action cannot be undone.')) { return; }
+            
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Deleting';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            try {
+                let githubToken;
+                try {
+                    // FIX: Menggunakan URL dari CONFIG
+                    const tokenResponse = await fetch(CONFIG.WORKERS.GITHUB_TOKEN);
+                    if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
+                    const tokenData = await tokenResponse.json();
+                    githubToken = tokenData.token;
+                    if (!githubToken) throw new Error('GitHub token not found in response');
+                } catch (error) { 
+                    console.error('Error getting GitHub token for delete:', error); 
+                    statusEl.textContent = `Error: Could not get GitHub token for deletion. ${error.message}`; 
+                    statusEl.style.color = 'var(--danger)'; 
+                    return; 
+                }
+                
+                // FIX: Menggunakan URL dari CONFIG
+                const galleryResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT + '?get_gallery=true');
+                if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
+                
+                const galleryItems = await galleryResponse.json();
+                const itemToDelete = galleryItems.find((item) => item.id === itemId);
+                
+                if (!itemToDelete || !itemToDelete.fileUrl) { throw new Error('its file URL not found.'); }
+                
+                let filePathOnGithub;
+                // FIX: Menggunakan URL dari CONFIG
+                const rawGithubContentBase = `https://raw.githubusercontent.com/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/main/`;
+                
+                if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) { 
+                    filePathOnGithub = itemToDelete.fileUrl.substring(rawGithubContentBase.length); 
+                } else { 
+                    console.warn('Unexpected file URL format, attempting fallback path extraction:', itemToDelete.fileUrl,); 
+                    filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`; 
+                }
+                
+                // FIX: Menggunakan URL dari CONFIG
+                const githubApiGetFileUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePathOnGithub}`;
+                
+                const getFileResponse = await fetch(githubApiGetFileUrl, { 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        Accept: 'application/vnd.github.v3+json', 
+                    }, 
+                });
+                
+                if (!getFileResponse.ok) { 
+                    const errorText = await getFileResponse.text(); 
+                    throw new Error(`Failed to get file SHA from GitHub: ${getFileResponse.status} - ${errorText}`); 
+                }
+                
+                const fileMetaData = await getFileResponse.json();
+                const fileSha = fileMetaData.sha;
+                
+                // FIX: Menggunakan URL dari CONFIG
+                const githubDeleteUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePathOnGithub}`;
+                
+                const deleteResponse = await fetch(githubDeleteUrl, { 
+                    method: 'DELETE', 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        'Content-Type': 'application/json', 
+                    }, 
+                    body: JSON.stringify({ 
+                        message: `Delete moment: ${itemToDelete.title}`, 
+                        sha: fileSha, 
+                        branch: 'main', 
+                    }), 
+                });
+                
+                if (!deleteResponse.ok) { 
+                    const errorText = await deleteResponse.text(); 
+                    throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`); 
+                }
+                
+                // FIX: Menggunakan URL dari CONFIG
+                const kvDeleteResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT + `?delete_moment_id=${itemId}`, { 
+                    method: 'DELETE', 
+                });
+                
+                if (!kvDeleteResponse.ok) { 
+                    throw new Error('Failed to delete'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error deleting moment:', error); 
+                statusEl.textContent = `Error deleting moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        }
+
+        // FIX: Inisialisasi visualizer dipindahkan ke sini
+        function initVisualizer() {
+            visualizerCanvas = document.getElementById('visualizer-canvas');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+            renderer = new THREE.WebGLRenderer({ canvas: visualizerCanvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 1);
+            const icosahedronColors = [];
+            const color = new THREE.Color();
+            for (let i = 0; i < icosahedronGeometry.attributes.position.count; i++) { color.setHSL(i / icosahedronGeometry.attributes.position.count, 0.7, 0.6); icosahedronColors.push(color.r, color.g, color.b); }
+            icosahedronGeometry.setAttribute('color', new THREE.Float32BufferAttribute(icosahedronColors, 3));
+            const icosahedronMaterial = new THREE.MeshBasicMaterial({ vertexColors: true, wireframe: true });
+            icosahedron = new THREE.Mesh(icosahedronGeometry, icosahedronMaterial);
+            scene.add(icosahedron);
+            
+            frequencyBarsGroup = new THREE.Group();
+            scene.add(frequencyBarsGroup);
+            
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, vertexColors: true });
+            const particlePositions = [];
+            const particleColors = [];
+            for (let i = 0; i < CONFIG.VISUALIZER.PARTICLE_COUNT; i++) { particlePositions.push((Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15); color.setHSL(Math.random(), 1.0, 0.5); particleColors.push(color.r, color.g, color.b); }
+            particlesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particlePositions, 3));
+            particlesGeometry.setAttribute('color', new THREE.Float32BufferAttribute(particleColors, 3));
+            particles3D = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles3D);
+            
+            window.addEventListener('resize', onWindowResize, false);
+            visualizerInitialized = true; // Set state to initialized
+        }
+
+        function createFrequencyBars(analyser) {
+            while (frequencyBarsGroup.children.length > 0) { const obj = frequencyBarsGroup.children[0]; frequencyBarsGroup.remove(obj); }
+            
+            const sampleRate = analyser.context.sampleRate;
+            const fftSize = 2048; 
+            const binWidth = sampleRate / fftSize;
+            
+            const startIndex = Math.ceil(CONFIG.VISUALIZER.FREQ_RANGE_START_HZ / binWidth);
+            const endIndex = Math.floor(CONFIG.VISUALIZER.FREQ_RANGE_END_HZ / binWidth);
+            const numBars = endIndex - startIndex + 1;
+            
+            for (let i = 0; i < numBars; i++) {
+                const barHeight = 0.1;
+                const barWidth = 0.02;
+                const geometry = new THREE.PlaneGeometry(barWidth, barHeight);
+                const hue = 0.6 + (i / numBars) * 0.3;
+                const color = new THREE.Color().setHSL(hue, 0.8, 0.6);
+                const material = new THREE.MeshBasicMaterial({ color: color });
+                
+                const bar = new THREE.Mesh(geometry, material);
+                const angle = (i / numBars) * Math.PI * 2;
+                const radius = 2.0;
+                
+                const wrapper = new THREE.Object3D();
+                wrapper.position.x = Math.cos(angle) * radius;
+                wrapper.position.y = Math.sin(angle) * radius;
+                wrapper.rotation.z = angle + Math.PI / 2;
+                
+                bar.position.y = barHeight / 2;
+                wrapper.add(bar);
+                frequencyBarsGroup.add(wrapper);
+            }
+        }
+
+        function onWindowResize() { 
+            camera.aspect = window.innerWidth / window.innerHeight; 
+            camera.updateProjectionMatrix(); 
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+        }
+
+        // FIX: Menggunakan map dan logika terpusat untuk password
+        function handlePasswordAction(action) {
+            const liveVisitorsButton = document.getElementById('fab-live-visitors');
+            const centerVideoContainer = document.getElementById('center-video-container');
+            const centerVideoPlayer = document.getElementById('center-video-player');
+
+            switch (action) {
+                case 'UNLOCK_LIVE_VISITORS':
+                    liveVisitorsButton.style.display = 'flex'; 
+                    liveVisitorsButton.setAttribute('data-unlocked', 'true');
+                    alert('Live Visitors button unlocked!');
+                    break;
+                case 'PLAY_CENTER_VIDEO':
+                    centerVideoContainer.classList.add('active'); 
+                    centerVideoPlayer.src = '/dashboard/stiker.mp4'; 
+                    centerVideoPlayer.play();
+                    break;
+                case 'TOGGLE_ELVI_MODE':
+                    isElviModeActive = true;
+                    const block23 = document.getElementById('block-2-3');
+                    const block53 = document.getElementById('block-5-3');
+                    
+                    if (block23) {
+                        const bg23 = block23.querySelector('.grid-block-background');
+                        if (bg23) {
+                            bg23.style.background = `url('https://universalezra.netlify.app/moments/1751293320517-December%2013,%202024%20at%204.29%20AM%20(1).jpg') center center / cover no-repeat`;
+                            bg23.style.filter = 'none';
+                            bg23.style.webkitFilter = 'none';
+                        }
+                        const content23 = block23.querySelector('.grid-block-content');
+                        if (content23) { content23.style.display = 'none'; }
+                    }
+                    
+                    if (block53) {
+                        const bg53 = block53.querySelector('.grid-block-background');
+                        if (bg53) {
+                            bg53.style.background = `url('/dashboard/mygirl.jpg') center center / cover no-repeat`;
+                            bg53.style.filter = 'none';
+                            bg53.style.webkitFilter = 'none';
+                        }
+                        const content53 = block53.querySelector('.grid-block-content');
+                        if (content53) { content53.style.display = 'none'; }
+                    }
+                    
+                    updateUIVisibility();
+                    if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
+                    alert('ELVI MODE ACTIVATED. Enjoy the view.');
+                    break;
+                case 'START_DEATH_SEQUENCE':
+                    startEzraDeathSequence();
+                    break;
+                default:
+                    alert('Incorrect password!');
+            }
+        }
+
+        function initPasswordFeature() {
+            const keyboardToggleButton = document.getElementById('fab-keyboard-toggle');
+            const centerVideoContainer = document.getElementById('center-video-container');
+            const centerVideoPlayer = document.getElementById('center-video-player');
+            const centerVideoCloseBtn = document.getElementById('center-video-close');
+            
+            keyboardToggleButton.addEventListener('click', () => {
+                const enteredPassword = prompt("Please enter the password:");
+                if (enteredPassword && CONFIG.PASSWORDS.TOGGLE_MAP[enteredPassword]) { 
+                    handlePasswordAction(CONFIG.PASSWORDS.TOGGLE_MAP[enteredPassword]); 
+                } else if (enteredPassword !== null) { 
+                    alert('Incorrect password!'); 
+                }
+            });
+
+            centerVideoCloseBtn.addEventListener('click', () => { 
+                centerVideoPlayer.pause(); 
+                centerVideoPlayer.src = ''; 
+                centerVideoContainer.classList.remove('active'); 
+            });
+        }
+        
+        function initSecurityFeatures() {
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+            document.addEventListener('copy', (e) => e.preventDefault());
+            document.addEventListener('cut', (e) => e.preventDefault());
+            
+            window.addEventListener('keyup', (e) => { 
+                if (e.key === 'PrintScreen' || e.key === 'Snapshot') { 
+                    const popup = document.getElementById('screenshot-popup'); 
+                    popup.style.display = 'block'; 
+                    setTimeout(() => { popup.style.display = 'none'; }, 3000); 
+                } 
+            });
+        }
+
+        function checkFirstVisit() {
+            const hasVisited = localStorage.getItem('hasVisitedWebsite');
+            const browserId = getBrowserId();
+            
+            if (!hasVisited) {
+                const toast = document.getElementById('new-user-toast');
+                const closeBtn = document.getElementById('toast-close-btn');
+                
+                toast.style.display = 'block';
+                setTimeout(() => toast.classList.add('show'), 100);
+
+                console.log(`Welcome, new visitor Browser ID: ${browserId}`);
+                console.log("For the best experience, please use our app: https://drive.google.com/file/d/1URJk46fP6cyzDoRRPUs83sDhHINpJDwJ/view?usp=drivesdk and switch to landscape mode.");
+                console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
+                
+                closeBtn.addEventListener('click', () => { 
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.style.display = 'none', 500);
+                    localStorage.setItem('hasVisitedWebsite', 'true'); 
+                });
+            } else { 
+                console.log(`Welcome back ID: ${browserId}`); 
+            }
+        }
+        
+        // Kode Widget Ultimate (Typing effect, Quote, Bio Modal)
+        (function(){
+            const e=document.getElementById('typing-output'),t=document.getElementById('ezra-photo'),s=document.getElementById('time-and-slogan'),n=document.getElementById('daily-quote'),o=document.getElementById('bio-modal'),r=[{typing:"Selamat hari Minggu! Mulai pekan dengan mindset growth.",quote:"Tuhan adalah kekuatanku dan perisaiku; kepada-Nya hatiku percaya, dan aku tertolong."},{typing:"Hai! Aku Ezra, a Boy yang mencintai Tantangan Senin.",quote:"Percayalah kepada Tuhan dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri."},{typing:"Code Architect here. Siap membangun solusi hari ini.",quote:"Amsal 21:5: Rencana orang rajin membawa kelimpahan, tetapi setiap orang yang tergesa-gesa hanya akan kekurangan."},{typing:"Mid-week check! Fokus pada performa dan skalabilitas.",quote:"Mazmur 37:5: Serahkanlah hidupmu kepada Tuhan dan percayalah kepada-Nya, dan Ia akan bertindak."},{typing:"Hello! Design, Build, Ship. It's the Dev cycle.",quote:"Amsal 16:3: Serahkanlah perbuatanmu kepada Tuhan, maka terlaksanalah segala rencanamu."},{typing:"Jumat! Sempurnakan kode, rayakan akhir pekan.",quote:"Berbahagialah orang yang mendapat hikmat, orang yang memperoleh kepandaian."},{typing:"Santai & Refleksi. Siap untuk inovasi minggu depan.",quote:"Mazmur 1:3: Ia seperti pohon yang ditanam di tepi aliran air, yang menghasilkan buah pada musimnya dan daunnya tidak layu."}],a=new Date().getDay(),d=r[a],c=[d.typing,"Seorang Digital Alchemist. Sentuh fotoku \ud83d\udc46","Where art meets engineering."],l=40,p=1200; // FIX: Kecepatan ketik (l=60 -> 40), jeda (p=1800 -> 1200)
+            
+            let u=0,m=0;
+            function g(){const r=c[u];if(m<r.length)e.textContent+=r.charAt(m),m++,setTimeout(g,l);else setTimeout(y,p);}
+            function y(){u=(u+1)%c.length,m=0,e.textContent="",e.style.borderRightColor="transparent",setTimeout((()=>{e.style.borderRightColor="var(--neon-color)",g()}),1e3);}
+            function h(){const r=getComputedStyle(document.documentElement).getPropertyValue('--secondary-neon').trim(),a=new Date(),d=String(a.getHours()).padStart(2,'0'),c=String(a.getMinutes()).padStart(2,'0'),l=String(a.getSeconds()).padStart(2,'0'),p=a.toLocaleDateString('id-ID',{weekday:'long'}),u=a.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}),m=`[ ${p}, ${u} ] | ${d}:${c}:${l} WIB`;s.innerHTML=`<span style="color: ${r};">[[ STATUS: CODE_MODE_ACTIVE ]]</span><br>${m}<br>Semoga hari-mu penuh hikmat dan kode yang bersih.`;}
+            function v(){o.classList.add('show'),document.body.classList.add('body-transform'),setTimeout((()=>{document.body.style.transform='scale(0.9) rotate(3deg)'}),1900)}
+            function x(){o.classList.remove('show'),document.body.style.transform='scale(1) rotate(0deg)',document.body.classList.remove('body-transform'),document.body.classList.remove('body-hyper-drive')}
+            
+            n.textContent=d.quote+" - Alkitab",g(),h(),setInterval(h,1e3),t.addEventListener('click',v),window.addEventListener('click',(e=>{e.target===o&&x();})),document.querySelector('.modal-content a').addEventListener('click',((e)=>{e.preventDefault();const t=e.currentTarget.href;document.body.classList.remove('body-transform'),document.body.classList.add('body-hyper-drive'),setTimeout((()=>{window.location.href=t}),2e3);}));
+        })();
+
+    })(); // END IIFE
 </script>
 </body>
 </html>
