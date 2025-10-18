@@ -29,17 +29,16 @@
         #live-visitors-panel, #moment-vault-panel { transform: translateY(100%); }
         #dashboard-panel { transform: translateX(-100%); }
         
-        /* VISUALIZER FIX: ADD SECOND VISUALIZER CANVAS */
         #visualizer-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; display: none; background-color: transparent; }
-        #second-visualizer-canvas { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70vw; height: 70vh; max-width: 800px; max-height: 800px; z-index: 100; display: none; pointer-events: none; border-radius: 10px; border: 2px solid var(--accent); opacity: 0.8;}
-        .visualizer-active #visualizer-canvas, .visualizer-active #second-visualizer-canvas { display: block; }
+        .visualizer-active #visualizer-canvas { display: block; pointer-events: none; }
         
         .panel-close-btn { position: static; background: none; border: none; color: #00ff00; font-size: 1.5rem; cursor: pointer; padding: 0px; }
         .fab-container { position: fixed; z-index: 1000; display: flex; }
         
+        /* FIX: FAB Styling: Animasi hanya di hover */
         .fab, .fab-container a { 
             background: rgba(142, 68, 173, 0.7); 
-            background-size: 200% auto; 
+            background-size: 200% auto;
             border: none; 
             border-radius: 50%; 
             color: #00ff00; 
@@ -53,7 +52,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
             transition: all 0.3s ease; 
             text-decoration: none; 
-            animation: none !important; 
+            animation: none;
         }
         .fab:hover, .fab-container a:hover { 
             background: var(--neon-gradient, var(--accent)); 
@@ -61,6 +60,19 @@
             box-shadow: 
                 0 0 15px var(--neon-btn-color-start, #ff0077), 
                 0 0 30px var(--neon-btn-color-end, #00eeff);
+            /* AKTIFKAN ANIMASI */
+            animation: 
+                neon-gradient-shift 3s linear infinite,
+                neon-glow-pulse 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes neon-gradient-shift {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes neon-glow-pulse {
+            0% { box-shadow: 0 0 5px var(--neon-btn-color-start), 0 0 10px var(--neon-btn-color-end); }
+            50% { box-shadow: 0 0 15px var(--neon-btn-color-start), 0 0 30px var(--neon-btn-color-end), 0 0 50px var(--neon-btn-color-start); }
+            100% { box-shadow: 0 0 5px var(--neon-btn-color-start), 0 0 10px var(--neon-btn-color-end); }
         }
 
         #fab-editor { top: 20px; left: 20px; }
@@ -176,8 +188,50 @@
           gap: 20px;
         }
 
-        :root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}#ultimate-widget{position:relative;width:202px;margin:50px auto 20px auto;padding:15px 0;background-color:transparent;border:none;box-shadow:none;z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}@keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}.typing-container{display:flex;align-items:flex-start;line-height:1.3;min-height:50px;margin-bottom:10px;}.neon-typing-text{color:var(--neon-color);text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);font-size:1.6em;overflow:visible;white-space:normal;max-width:200px;border-right:3px solid var(--neon-color);animation:terminal-blink .7s step-end infinite;}@keyframes terminal-blink{from,to{border-right-color:transparent;}50%{border-right-color:var(--neon-color);}}.profile-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:none;box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);margin:0 12px;cursor:pointer;transition:transform .3s,box-shadow .3s;}.profile-photo:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 0 10px var(--secondary-neon),0 0 30px var(--secondary-neon);}.holographic-text{font-size:.9em;color:#ccc;margin:5px 0 10px 0;padding:5px 0;text-shadow:0 0 2px rgba(255,255,255,.8);border-top:none;border-bottom:none;animation:glitch 5s infinite alternate;}@keyframes glitch{0%{text-shadow:0 0 5px #f0f;transform:skew(0deg);}20%{text-shadow:0 0 5px #0ff;transform:skew(-1deg);}40%{text-shadow:0 0 5px #f0f;transform:skew(2deg);}60%{text-shadow:0 0 5px #0ff;transform:skew(-3deg);}80%{text-shadow:0 0 5px #f0f;transform:skew(1deg);}100%{text-shadow:0 0 5px #0ff;transform:skew(0deg);}}.quote{font-style:italic;font-size:.8em;color:var(--quote-color);margin-top:10px;padding:5px 0;text-shadow:0 0 5px rgba(170,255,170,.5);min-height:40px;}#bio-modal{display:none;}#bio-modal.show{position:fixed;display:flex;z-index:11000;left:0;top:0;width:100%;height:100%;/* background-color:rgba(0,0,0,.1); */ backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);justify-content:center;align-items:center;opacity:0;transition:opacity .4s;}#bio-modal.show{opacity:1;}.modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
-        /* FIX: BACKGROUND UNTUK ROTASI DAN MODAL BIO */
+        :root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}#ultimate-widget{position:relative;width:202px;margin:50px auto 20px auto;padding:15px 0;background-color:transparent;border:none;box-shadow:none;z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}@keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}.typing-container{display:flex;align-items:flex-start;line-height:1.3;min-height:50px;margin-bottom:10px;}.neon-typing-text{color:var(--neon-color);text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);font-size:1.6em;overflow:visible;white-space:normal;max-width:200px;border-right:3px solid var(--neon-color);animation:terminal-blink .7s step-end infinite;}@keyframes terminal-blink{from,to{border-right-color:transparent;}50%{border-right-color:var(--neon-color);}}.profile-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:none;box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);margin:0 12px;cursor:pointer;transition:transform .3s,box-shadow .3s;}.profile-photo:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 0 10px var(--secondary-neon),0 0 30px var(--secondary-neon);}.holographic-text{font-size:.9em;color:#ccc;margin:5px 0 10px 0;padding:5px 0;text-shadow:0 0 2px rgba(255,255,255,.8);border-top:none;border-bottom:none;animation:glitch 5s infinite alternate;}@keyframes glitch{0%{text-shadow:0 0 5px #f0f;transform:skew(0deg);}20%{text-shadow:0 0 5px #0ff;transform:skew(-1deg);}40%{text-shadow:0 0 5px #f0f;transform:skew(2deg);}60%{text-shadow:0 0 5px #0ff;transform:skew(-3deg);}80%{text-shadow:0 0 5px #f0f;transform:skew(1deg);}100%{text-shadow:0 0 5px #0ff;transform:skew(0deg);}}.quote{font-style:italic;font-size:.8em;color:var(--quote-color);margin-top:10px;padding:5px 0;text-shadow:0 0 5px rgba(170,255,170,.5);min-height:40px;}
+
+        /* FIX: BIO MODAL STYLE */
+        #bio-modal{display:none;}
+        #bio-modal.show{position:fixed;display:flex;z-index:11000;left:0;top:0;width:100%;height:100%;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);justify-content:center;align-items:center;opacity:0;transition:opacity .4s;}
+        #bio-modal.show{opacity:1;}
+        .modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
+        
+        /* RAINBOW TEXT FOR BIO MODAL HEADER */
+        .rainbow-text {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .rainbow-text span {
+            animation: rainbow-color 5s infinite;
+            display: inline-block;
+        }
+        @keyframes rainbow-color {
+            0% { color: #ff0077; }
+            25% { color: #ccff00; }
+            50% { color: #00ffff; }
+            75% { color: #ff00ff; }
+            100% { color: #ff0077; }
+        }
+
+        /* LOGIN BUTTON STYLE */
+        #login-button {
+            cursor: pointer;
+            color: var(--neon-color);
+            text-shadow: 0 0 5px var(--neon-color);
+            border: 1px solid var(--neon-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            transition: all 0.2s ease;
+        }
+        #login-button:hover {
+            background-color: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 15px var(--neon-color);
+        }
+
+        /* BACKGROUND UNTUK ROTASI DAN MODAL BIO */
         .body-transform, #bio-modal.show {
             background-image: url('/dashboard/mygirl.jpg') !important;
             background-size: cover !important;
@@ -225,8 +279,8 @@
             top: 0;
             width: 50%;
             height: 100%;
-            background-color: var(--bg-main); /* Menggunakan warna background utama */
-            transition: transform 1s ease-in-out; /* FIX: Durasi split 1s */
+            background-color: var(--bg-main);
+            transition: transform 1s ease-in-out;
             z-index: 10001;
         }
 
@@ -241,11 +295,10 @@
             height: auto;
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.1);
-            transition: transform 2s ease-out, opacity 1s; /* FIX: Durasi zoom 2s */
+            transition: transform 2s ease-out, opacity 1s;
             z-index: 10002;
         }
 
-        /* FIX: LAYAR ERROR & GLITCH */
         #error-screen-ezra {
             position: absolute;
             top: 0;
@@ -272,7 +325,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: rgba(255, 0, 0, 0); /* Awalnya transparan */
+            color: rgba(255, 0, 0, 0); 
             font-size: 4vw;
             z-index: 10004;
             transition: color 1s ease-in;
@@ -302,7 +355,6 @@
             to { opacity: 0.3; }
         }
 
-        /* KELAS AKTIF (DITAMBAHKAN OLEH JAVASCRIPT) */
         .split-open .left-panel { transform: translateX(-100vw); }
         .split-open .right-panel { transform: translateX(100vw); }
 
@@ -335,12 +387,12 @@
 
     <div class="screenshot-popup" id="screenshot-popup">Screenshot tidak diizinkan!</div>
     <canvas id="visualizer-canvas"></canvas>
-    <canvas id="second-visualizer-canvas"></canvas> <audio id="matrix-sound" src="/dashboard/matrix-code.mp3" preload="metadata"></audio>
+    <audio id="matrix-sound" src="/dashboard/matrix-code.mp3" preload="metadata"></audio>
     <div id="main-viewport">
         <div id="grid-container">
             <div class="grid-block" id="block-1-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div><div class="grid-block-content"><h1>Block (1,1)</h1></div></div>
             <div class="grid-block" id="block-1-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=2');"></div><div class="grid-block-content"><h1>Block (1,2)</h1></div></div>
-            <div class="grid-block" id="block-1-3"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div><div class="grid-block-content"><h1>Block (1,3)</h1><p>Random Pic</p></div></div>
+            <div class="grid-block" id="block-1-3"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=3');"></div><div class="grid-block-content"><h1>Block (1,3)</h1><p>Weather Placeholder</p></div></div>
             <div class="grid-block" id="block-1-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=4');"></div><div class="grid-block-content"><h1>Block (1,4)</h1></div></div>
             <div class="grid-block" id="block-1-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=5');"></div><div class="grid-block-content"><h1>Block (1,5)</h1></div></div>
             <div class="grid-block" id="block-2-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=6');"></div><div class="grid-block-content"><h1>Block (2,1)</h1></div></div>
@@ -348,9 +400,8 @@
             <div class="grid-block" id="block-2-3"><div class="grid-block-background" style="background-image: url('/dashboard/ruangsepiku.jpg');"></div><div class="grid-block-content"><h1>Block (2,3)</h1></div></div>
             <div class="grid-block" id="block-2-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=9');"></div><div class="grid-block-content"><h1>Block (2,4)</h1></div></div>
             <div class="grid-block" id="block-2-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=10');"></div><div class="grid-block-content"><h1>Block (2,5)</h1></div></div>
-            
-            <div class="grid-block" id="block-3-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=11');"></div><div class="grid-block-content"><h1>Block (3,1)</h1><p>Random Pic (Bintang)</p></div></div>
-            <div class="grid-block" id="block-3-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=12');"></div><div class="grid-block-content"><h1>Block (3,2)</h1><p>Random Pic (Alkitab)</p></div></div>
+            <div class="grid-block" id="block-3-1"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=11');"></div><div class="grid-block-content"><h1>Block (3,1)</h1><p>Stellarium Placeholder</p></div></div>
+            <div class="grid-block" id="block-3-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=12');"></div><div class="grid-block-content"><h1>Block (3,2)</h1><p>Bible Placeholder</p></div></div>
             
             <div class="grid-block" id="block-center">
                 <div class="grid-block-background" id="interactive-bg" style="background-image: url('/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg');"></div>
@@ -359,9 +410,50 @@
                     <div class="particle p1"></div><div class="particle p2"></div><div class="particle p3"></div><div class="particle p4"></div><div class="particle p5"></div>
                     <div id="bio-modal">
                         <div class="modal-content">
-                            <h2>EZRA - universalezra - 0838-4495-9380 </h2>
+                            <h2 class="rainbow-text">
+                                <span style="animation-delay: 0s;">E</span>
+                                <span style="animation-delay: 0.1s;">Z</span>
+                                <span style="animation-delay: 0.2s;">R</span>
+                                <span style="animation-delay: 0.3s;">A</span>
+                                <span> - </span>
+                                <span style="animation-delay: 0.4s;">u</span>
+                                <span style="animation-delay: 0.5s;">n</span>
+                                <span style="animation-delay: 0.6s;">i</span>
+                                <span style="animation-delay: 0.7s;">v</span>
+                                <span style="animation-delay: 0.8s;">e</span>
+                                <span style="animation-delay: 0.9s;">r</span>
+                                <span style="animation-delay: 1.0s;">s</span>
+                                <span style="animation-delay: 1.1s;">a</span>
+                                <span style="animation-delay: 1.2s;">l</span>
+                                <span style="animation-delay: 1.3s;">e</span>
+                                <span style="animation-delay: 1.4s;">z</span>
+                                <span style="animation-delay: 1.5s;">r</span>
+                                <span style="animation-delay: 1.6s;">a</span>
+                                <span> - </span>
+                                <span style="animation-delay: 1.7s;">0</span>
+                                <span style="animation-delay: 1.8s;">8</span>
+                                <span style="animation-delay: 1.9s;">3</span>
+                                <span style="animation-delay: 2.0s;">8</span>
+                                <span>-</span>
+                                <span style="animation-delay: 2.1s;">4</span>
+                                <span style="animation-delay: 2.2s;">4</span>
+                                <span style="animation-delay: 2.3s;">9</span>
+                                <span style="animation-delay: 2.4s;">5</span>
+                                <span>-</span>
+                                <span style="animation-delay: 2.5s;">9</span>
+                                <span style="animation-delay: 2.6s;">3</span>
+                                <span style="animation-delay: 2.7s;">8</span>
+                                <span style="animation-delay: 2.8s;">0</span>
+                            </h2>
                             <p>Saya seorang <b>Life v project</b> Spesialisasi: <b>CI/CD Pipelines</b>.</p>
-                            <p style="font-size: .9em;margin-top: 15px;color: var(--neon-color);"><a href="/dashboard/secret.html" style="color: inherit; text-decoration: none; text-shadow: inherit;">"Login? </a><b>Jika kamu kenal pasti kamu tau"</b></p>
+                            <p style="font-size: .9em;margin-top: 15px;color: var(--neon-color);">
+                                <a href="/dashboard/secret.html" id="login-link" style="color: inherit; text-decoration: none; text-shadow: inherit;">
+                                    <span id="login-button">"Login?"</span>
+                                </a>
+                            </p>
+                            <p style="font-size: .9em;color: var(--neon-color); margin-top: 5px;">
+                                <b>Jika kamu kenal pasti kamu tau"</b>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -378,8 +470,7 @@
             <div class="grid-block" id="block-5-2"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=22');"></div><div class="grid-block-content"><h1>Block (5,2)</h1></div></div>
             <div class="grid-block" id="block-5-3"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=23');"></div><div class="grid-block-content"><h1>Block (5,3)</h1></div></div>
             <div class="grid-block" id="block-5-4"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=24');"></div><div class="grid-block-content"><h1>Block (5,4)</h1></div></div>
-            
-            <div class="grid-block" id="block-5-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=25');"></div><div class="grid-block-content"><h1>Block (5,5)</h1><p>Random Pic (Spaceship)</p></div></div>
+            <div class="grid-block" id="block-5-5"><div class="grid-block-background" style="background-image: url('https://picsum.photos/1920/1080?random=25');"></div><div class="grid-block-content"><h1>Block (5,5)</h1><p>3D Model Placeholder</p></div></div>
         </div>
     </div>
     
@@ -491,14 +582,11 @@
             <p class="developer-message">ATTEMPTED ACCESS VIOLATION DETECTED. ALL SESSIONS TERMINATED.</p>
         </div>
         
-        <div id="final-message" class="glitch-active">Hmm Goodbye</div>
+        <div id="final-message">Hmm Goodbye</div>
     </div>
     
 <script>
     (function() {
-        // =================================================================
-        // CONFIGURATION
-        // =================================================================
         const CONFIG = {
             WORKERS: {
                 CONTRIBUTIONS: 'https://contributions-workerjs.ezvvel.workers.dev/',
@@ -529,16 +617,12 @@
                 PARTICLE_COUNT: 2000,
                 FREQ_RANGE_START_HZ: 20,
                 FREQ_RANGE_END_HZ: 1024,
-                BAR_COUNT_2D: 64, // FIX: Jumlah bar untuk visualizer 2D
             },
             GRID: {
                 SWIPE_THRESHOLD: 50,
             }
         };
 
-        // =================================================================
-        // GLOBAL STATE
-        // =================================================================
         let liveVisitorRefreshInterval = null;
         let isEzraLoggedIn = false;
         let isVisualizerActive = false;
@@ -548,18 +632,10 @@
         let audioContext, analyser, source;
         let frequencyData, bufferLength;
         
-        // 3D Visualizer
         let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
+
         let lastBassLevel = 0;
-        
-        // 2D Visualizer
-        let canvas2D, ctx2D; 
-
         let gridContainer, currentX = 2, currentY = 2;
-
-        // =================================================================
-        // FUNGSI UTILITY
-        // =================================================================
 
         function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
         function showUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
@@ -569,7 +645,7 @@
         function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(`Error when system attempting to enable fullscreen: ${err.message}`); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
 
         // =================================================================
-        // FUNGSI EFEK KHUSUS (EZRA DEATH SEQUENCE) FIX: LOGIKA URUTAN
+        // FIX: FUNGSI EZRA DEATH SEQUENCE (Logic Timing yang Diperbaiki)
         // =================================================================
         function startEzraDeathSequence() {
             const overlay = document.getElementById('ezra-death-sequence-overlay');
@@ -578,28 +654,31 @@
             const finalMessage = document.getElementById('final-message');
             const body = document.body;
 
-            // 1. Tampilkan Overlay dan Sembunyikan Konten Lain
+            // 0. RESET/INIT
             body.classList.add('hide-all-content');
             overlay.classList.add('sequence-active');
+            body.classList.remove('split-open', 'image-zoom', 'final-blank-screen');
+            errorScreen.style.opacity = '0';
+            finalMessage.classList.remove('glitch-active');
             
             const imageUrl = zoomImage.getAttribute('data-src');
             if (imageUrl) zoomImage.src = imageUrl;
 
-            // 2. Mulai Efek Membelah (1 detik)
+            // 1. Membelah Layar Vertikal (1 detik)
             setTimeout(() => {
                 body.classList.add('split-open');
                 console.log("Sequence: 1. Split Screen (1s)");
             }, 50);
 
-            // 3. Mulai Zoom In (setelah split, durasi 2 detik)
+            // 2. Zoom In Image (1 detik setelah split, durasi 2 detik)
             setTimeout(() => {
                 body.classList.add('image-zoom');
                 console.log("Sequence: 2. Zoom Image (2s)");
             }, 1000); 
 
-            // 4. Blank Screen/Fake Loss Connect (setelah Zoom selesai, durasi 2 detik)
+            // 3. Fade Image & Black Screen (Setelah Zoom Selesai, total 3.0 detik)
             setTimeout(() => {
-                // Sembunyikan semua elemen overlay
+                // Sembunyikan elemen visual
                 zoomImage.style.opacity = '0';
                 document.querySelectorAll('.split-panel').forEach(p => p.style.opacity = 0);
                 
@@ -607,35 +686,32 @@
                 body.classList.add('final-blank-screen');
                 overlay.style.backgroundColor = 'black'; 
                 overlay.style.backgroundImage = 'none';
-
-                console.log("Sequence: 3. Fake Loss Connect (2s)");
+                
+                console.log("Sequence: 3. Fake Loss Connect / Black Screen (2s)");
             }, 3000); // 1s (Split) + 2s (Zoom)
 
-            // 5. Efek Glitch dan Pesan Goodbye (setelah Blank Screen, durasi ~1s)
+            // 4. Glitch & Pesan Goodbye (2 detik setelah Blank Screen dimulai)
             setTimeout(() => {
                 body.classList.remove('final-blank-screen');
                 body.style.backgroundColor = 'black';
                 
+                // Tampilkan Error Screen (untuk teks hijau)
+                errorScreen.style.opacity = '1';
+
                 // Aktifkan pesan final dengan glitch
                 finalMessage.classList.add('glitch-active');
                 
-                // Tampilkan Error Screen untuk efek transisi ke glitch text
-                errorScreen.style.opacity = '1';
-                
                 console.log("Sequence: 4. Glitch/Goodbye Message");
 
-            }, 5000); // 3s + 2s
-
-            // 6. Reset (Opsional)
+            }, 5000); // 3s + 2s (Delay)
+            
+            // 5. Final Termination (Tunggu 3 detik dari Glitch)
             setTimeout(() => {
                 console.warn("SYSTEM TERMINATED. Manual closing is required.");
-            }, 8000); 
+            }, 8000); // Total 8 detik
         }
-
-        // =================================================================
-        // VISUALIZER: MODIFIKASI
-        // =================================================================
-
+        
+        // --- VISUALIZER LOGIC (VISUALIZER KEDUA DIHAPUS) ---
         function setupAudioVisualizer() {
             const audioPlayer = document.getElementById('audio-player');
             if (!audioPlayer.src) { alert('Pilih lagu terlebih dahulu'); return false; }
@@ -668,7 +744,6 @@
             requestAnimationFrame(drawVisualizer);
             analyser.getByteFrequencyData(frequencyData);
 
-            // --- 3D Visualizer Logic ---
             const binWidth = analyser.context.sampleRate / analyser.fftSize;
             const startIndex = Math.ceil(CONFIG.VISUALIZER.FREQ_RANGE_START_HZ / binWidth);
 
@@ -709,55 +784,7 @@
             lastBassLevel = bassAvg;
             particles3D.rotation.y += 0.0005;
             renderer.render(scene, camera);
-            
-            // --- 2D Visualizer Logic (Bar Chart) ---
-            draw2DVisualizer();
         }
-        
-        function draw2DVisualizer() {
-            if (!ctx2D) return;
-            
-            canvas2D.width = canvas2D.offsetWidth;
-            canvas2D.height = canvas2D.offsetHeight;
-            
-            const WIDTH = canvas2D.width;
-            const HEIGHT = canvas2D.height;
-            const BAR_COUNT = CONFIG.VISUALIZER.BAR_COUNT_2D;
-            const barWidth = (WIDTH / BAR_COUNT) * 2.5;
-            let barHeight;
-            let x = 0;
-
-            // Ambil data frekuensi (mengambil bagian tengah-atas untuk visual yang lebih jelas)
-            const dataArray = analyser.getByteFrequencyData(new Uint8Array(analyser.frequencyBinCount)).slice(0, analyser.frequencyBinCount / 2);
-            const step = Math.floor(dataArray.length / BAR_COUNT);
-
-            ctx2D.clearRect(0, 0, WIDTH, HEIGHT);
-            ctx2D.fillStyle = 'rgba(0, 0, 0, 0.2)';
-            ctx2D.fillRect(0, 0, WIDTH, HEIGHT);
-
-            for(let i = 0; i < BAR_COUNT; i++) {
-                const dataIndex = i * step;
-                let amp = dataArray[dataIndex] || 0;
-                
-                // FIX: Menendang/Dramatis
-                amp = Math.pow(amp / 255, 3) * 255; 
-                
-                barHeight = (amp / 255) * HEIGHT * 0.9;
-                
-                // Warna Gradien Neon dari Biru ke Pink
-                const hue = i * (360 / BAR_COUNT); 
-                const gradient = ctx2D.createLinearGradient(x, HEIGHT, x, HEIGHT - barHeight);
-                gradient.addColorStop(0, `hsl(${hue}, 80%, 40%)`);
-                gradient.addColorStop(0.5, `hsl(${hue + 30}, 90%, 60%)`);
-                gradient.addColorStop(1, `hsl(${hue + 60}, 100%, 70%)`);
-
-                ctx2D.fillStyle = gradient;
-                ctx2D.fillRect(x, HEIGHT - barHeight, barWidth * 0.8, barHeight);
-
-                x += barWidth;
-            }
-        }
-
 
         function toggleVisualizerOverlay() {
             const body = document.body;
@@ -774,30 +801,198 @@
             }
         }
         
-        // =================================================================
-        // INICIALISASI
-        // =================================================================
-
-        document.addEventListener('DOMContentLoaded', () => {
-            gridContainer = document.getElementById('grid-container');
+        function initVisualizer() {
+            visualizerCanvas = document.getElementById('visualizer-canvas');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+            renderer = new THREE.WebGLRenderer({ canvas: visualizerCanvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
             
-            // Inisialisasi 2D Canvas Context
-            canvas2D = document.getElementById('second-visualizer-canvas');
-            ctx2D = canvas2D.getContext('2d');
+            const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 1);
+            const icosahedronColors = [];
+            const color = new THREE.Color();
+            for (let i = 0; i < icosahedronGeometry.attributes.position.count; i++) { color.setHSL(i / icosahedronGeometry.attributes.position.count, 0.7, 0.6); icosahedronColors.push(color.r, color.g, color.b); }
+            icosahedronGeometry.setAttribute('color', new THREE.Float32BufferAttribute(icosahedronColors, 3));
+            const icosahedronMaterial = new THREE.MeshBasicMaterial({ vertexColors: true, wireframe: true });
+            icosahedron = new THREE.Mesh(icosahedronGeometry, icosahedronMaterial);
+            scene.add(icosahedron);
+            
+            frequencyBarsGroup = new THREE.Group();
+            scene.add(frequencyBarsGroup);
+            
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, vertexColors: true });
+            const particlePositions = [];
+            const particleColors = [];
+            for (let i = 0; i < CONFIG.VISUALIZER.PARTICLE_COUNT; i++) { particlePositions.push((Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15); color.setHSL(Math.random(), 1.0, 0.5); particleColors.push(color.r, color.g, color.b); }
+            particlesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particlePositions, 3));
+            particlesGeometry.setAttribute('color', new THREE.Float32BufferAttribute(particleColors, 3));
+            particles3D = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles3D);
+            
+            window.addEventListener('resize', onWindowResize, false);
+            visualizerInitialized = true;
+        }
 
-            initPanelControls();
-            initVideoPlayer();
-            initEditor();
-            initMusicPlayer();
-            initWebsiteAgeDisplay();
-            trackVisitor();
-            initSwipeGestures();
-            initPasswordFeature();
-            initSecurityFeatures();
-            checkFirstVisit();
-        });
+        function createFrequencyBars(analyser) {
+            while (frequencyBarsGroup.children.length > 0) { const obj = frequencyBarsGroup.children[0]; frequencyBarsGroup.remove(obj); }
+            
+            const sampleRate = analyser.context.sampleRate;
+            const fftSize = 2048; 
+            const binWidth = sampleRate / fftSize;
+            
+            const startIndex = Math.ceil(CONFIG.VISUALIZER.FREQ_RANGE_START_HZ / binWidth);
+            const endIndex = Math.floor(CONFIG.VISUALIZER.FREQ_RANGE_END_HZ / binWidth);
+            const numBars = endIndex - startIndex + 1;
+            
+            for (let i = 0; i < numBars; i++) {
+                const barHeight = 0.1;
+                const barWidth = 0.02;
+                const geometry = new THREE.PlaneGeometry(barWidth, barHeight);
+                const hue = 0.6 + (i / numBars) * 0.3;
+                const color = new THREE.Color().setHSL(hue, 0.8, 0.6);
+                const material = new THREE.MeshBasicMaterial({ color: color });
+                
+                const bar = new THREE.Mesh(geometry, material);
+                const angle = (i / numBars) * Math.PI * 2;
+                const radius = 2.0;
+                
+                const wrapper = new THREE.Object3D();
+                wrapper.position.x = Math.cos(angle) * radius;
+                wrapper.position.y = Math.sin(angle) * radius;
+                wrapper.rotation.z = angle + Math.PI / 2;
+                
+                bar.position.y = barHeight / 2;
+                wrapper.add(bar);
+                frequencyBarsGroup.add(wrapper);
+            }
+        }
 
-        function initSwipeGestures() {
+        function onWindowResize() { 
+            camera.aspect = window.innerWidth / window.innerHeight; 
+            camera.updateProjectionMatrix(); 
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+        }
+
+        function handlePasswordAction(action) {
+            const liveVisitorsButton = document.getElementById('fab-live-visitors');
+            const centerVideoContainer = document.getElementById('center-video-container');
+            const centerVideoPlayer = document.getElementById('center-video-player');
+
+            switch (action) {
+                case 'UNLOCK_LIVE_VISITORS':
+                    liveVisitorsButton.style.display = 'flex'; 
+                    liveVisitorsButton.setAttribute('data-unlocked', 'true');
+                    alert('Live Visitors button unlocked!');
+                    break;
+                case 'PLAY_CENTER_VIDEO':
+                    centerVideoContainer.classList.add('active'); 
+                    centerVideoPlayer.src = '/dashboard/stiker.mp4'; 
+                    centerVideoPlayer.play();
+                    break;
+                case 'TOGGLE_ELVI_MODE':
+                    isElviModeActive = true;
+                    const block23 = document.getElementById('block-2-3');
+                    const block53 = document.getElementById('block-5-3');
+                    
+                    if (block23) {
+                        const bg23 = block23.querySelector('.grid-block-background');
+                        if (bg23) {
+                            bg23.style.background = `url('https://universalezra.netlify.app/moments/1751293320517-December%2013,%202024%20at%204.29%20AM%20(1).jpg') center center / cover no-repeat`;
+                            bg23.style.filter = 'none';
+                            bg23.style.webkitFilter = 'none';
+                        }
+                        const content23 = block23.querySelector('.grid-block-content');
+                        if (content23) { content23.style.display = 'none'; }
+                    }
+                    
+                    if (block53) {
+                        const bg53 = block53.querySelector('.grid-block-background');
+                        if (bg53) {
+                            bg53.style.background = `url('/dashboard/mygirl.jpg') center center / cover no-repeat`;
+                            bg53.style.filter = 'none';
+                            bg53.style.webkitFilter = 'none';
+                        }
+                        const content53 = block53.querySelector('.grid-block-content');
+                        if (content53) { content53.style.display = 'none'; }
+                    }
+                    
+                    updateUIVisibility();
+                    if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
+                    alert('ELVI MODE ACTIVATED. Enjoy the view.');
+                    break;
+                case 'START_DEATH_SEQUENCE':
+                    startEzraDeathSequence();
+                    break;
+                default:
+                    alert('Incorrect password!');
+            }
+        }
+
+        function initPasswordFeature() {
+            const keyboardToggleButton = document.getElementById('fab-keyboard-toggle');
+            const centerVideoContainer = document.getElementById('center-video-container');
+            const centerVideoPlayer = document.getElementById('center-video-player');
+            const centerVideoCloseBtn = document.getElementById('center-video-close');
+            
+            keyboardToggleButton.addEventListener('click', () => {
+                const enteredPassword = prompt("Please enter the password:");
+                if (enteredPassword && CONFIG.PASSWORDS.TOGGLE_MAP[enteredPassword]) { 
+                    handlePasswordAction(CONFIG.PASSWORDS.TOGGLE_MAP[enteredPassword]); 
+                } else if (enteredPassword !== null) { 
+                    alert('Incorrect password!'); 
+                }
+            });
+
+            centerVideoCloseBtn.addEventListener('click', () => { 
+                centerVideoPlayer.pause(); 
+                centerVideoPlayer.src = ''; 
+                centerVideoContainer.classList.remove('active'); 
+            });
+        }
+        
+        function initSecurityFeatures() {
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+            document.addEventListener('copy', (e) => e.preventDefault());
+            document.addEventListener('cut', (e) => e.preventDefault());
+            
+            window.addEventListener('keyup', (e) => { 
+                if (e.key === 'PrintScreen' || e.key === 'Snapshot') { 
+                    const popup = document.getElementById('screenshot-popup'); 
+                    popup.style.display = 'block'; 
+                    setTimeout(() => { popup.style.display = 'none'; }, 3000); 
+                } 
+            });
+        }
+
+        function checkFirstVisit() {
+            const hasVisited = localStorage.getItem('hasVisitedWebsite');
+            const browserId = getBrowserId();
+            
+            if (!hasVisited) {
+                const toast = document.getElementById('new-user-toast');
+                const closeBtn = document.getElementById('toast-close-btn');
+                
+                toast.style.display = 'block';
+                setTimeout(() => toast.classList.add('show'), 100);
+
+                console.log(`Welcome, new visitor Browser ID: ${browserId}`);
+                console.log("For the best experience, please use our app: https://drive.google.com/file/d/1URJk46fP6cyzDoRRPUs83sDhHINpJDwJ/view?usp=drivesdk and switch to landscape mode.");
+                console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
+                
+                closeBtn.addEventListener('click', () => { 
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.style.display = 'none', 500);
+                    localStorage.setItem('hasVisitedWebsite', 'true'); 
+                });
+            } else { 
+                console.log(`Welcome back ID: ${browserId}`); 
+            }
+        }
+        
+        // --- FUNGSI PENDUKUNG (Dipanggil di DOMContentLoaded) ---
+        function initSwipeGestures() { 
             let isDragging = false;
             let startX = 0, startY = 0;
             const matrixSound = document.getElementById('matrix-sound');
@@ -891,7 +1086,7 @@
                 });
             });
         }
-
+        
         function initVideoPlayer() {
             const video = document.getElementById('widget-video');
             const playBtn = document.getElementById('video-play-pause');
@@ -916,30 +1111,6 @@
             video.pause();
         }
 
-        function initMusicPlayer() {
-            const player = document.getElementById('audio-player');
-            const playlistEl = document.getElementById('playlist');
-            const songTitleEl = document.getElementById('song-title');
-            const songs = [{ name: 'On And On', url: '/dashboard/On-And-On.mp3' }, { name: 'Where We Are', url: '/dashboard/Where-We-Are.mp3' }, { name: 'Sekuat Hatimu', url: '/dashboard/Sekuat Hatimu.mp3' }, ];
-            
-            songs.forEach((song, index) => {
-                const item = document.createElement('div');
-                item.textContent = song.name;
-                item.style.cursor = 'pointer';
-                item.style.padding = '8px';
-                item.style.transition = 'background 0.2s';
-                item.onmouseover = () => item.style.background = 'rgba(0, 168, 255, 0.1)';
-                item.onmouseout = () => item.style.background = 'none';
-                
-                item.onclick = () => { 
-                    player.src = song.url; 
-                    songTitleEl.textContent = song.name; 
-                    player.play(); 
-                };
-                playlistEl.appendChild(item);
-            });
-        }
-        
         function initEditor() {
             const codeEditor = document.getElementById('unified-code-editor');
             const previewFrame = document.getElementById('editor-preview');
@@ -1019,6 +1190,66 @@
             loadCode();
         }
 
+        function initMusicPlayer() {
+            const player = document.getElementById('audio-player');
+            const playlistEl = document.getElementById('playlist');
+            const songTitleEl = document.getElementById('song-title');
+            const songs = [{ name: 'On And On', url: '/dashboard/On-And-On.mp3' }, { name: 'Where We Are', url: '/dashboard/Where-We-Are.mp3' }, { name: 'Sekuat Hatimu', url: '/dashboard/Sekuat Hatimu.mp3' }, ];
+            
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.textContent = song.name;
+                item.style.cursor = 'pointer';
+                item.style.padding = '8px';
+                item.style.transition = 'background 0.2s';
+                item.onmouseover = () => item.style.background = 'rgba(0, 168, 255, 0.1)';
+                item.onmouseout = () => item.style.background = 'none';
+                
+                item.onclick = () => { 
+                    player.src = song.url; 
+                    songTitleEl.textContent = song.name; 
+                    player.play(); 
+                };
+                playlistEl.appendChild(item);
+            });
+        }
+        
+        function initWebsiteAgeDisplay() {
+            const websiteAgeDisplay = document.getElementById('website-age-display');
+            const creationDate = new Date(2006, 7, 7, 0, 0, 0); 
+            
+            function updateWebsiteAge() {
+                const now = new Date();
+                const diff = now.getTime() - creationDate.getTime();
+                const seconds = Math.floor(diff / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                
+                const years = Math.floor(days / 365.25);
+                const remainingDaysAfterYears = Math.floor(days % 365.25);
+                const months = Math.floor(remainingDaysAfterYears / 30.44); 
+                const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
+                
+                const displaySeconds = seconds % 60;
+                const displayMinutes = minutes % 60;
+                const displayHours = hours % 24;
+                
+                let ageString = '';
+                if (years > 0) ageString += `${years}T `;
+                if (months > 0 || years > 0) ageString += `${months}B `;
+                ageString += `${remainingDaysAfterMonths}H `;
+                ageString += `${displayHours.toString().padStart(2, '0')}:`;
+                ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
+                ageString += `${displaySeconds.toString().padStart(2, '0')}`;
+                
+                websiteAgeDisplay.textContent = `${ageString}`;
+            }
+            
+            updateWebsiteAge();
+            setInterval(updateWebsiteAge, 1000);
+        }
+        
         async function fetchContributions() {
             const display = document.getElementById('contribution-display');
             display.innerHTML = `<p>Loading</p>`;
@@ -1060,43 +1291,7 @@
                 statusEl.textContent = `Error: ${err.message}`; 
             }
         });
-
-        function initWebsiteAgeDisplay() {
-            const websiteAgeDisplay = document.getElementById('website-age-display');
-            const creationDate = new Date(2006, 7, 7, 0, 0, 0); 
-            
-            function updateWebsiteAge() {
-                const now = new Date();
-                const diff = now.getTime() - creationDate.getTime();
-                const seconds = Math.floor(diff / 1000);
-                const minutes = Math.floor(seconds / 60);
-                const hours = Math.floor(minutes / 60);
-                const days = Math.floor(hours / 24);
-                
-                const years = Math.floor(days / 365.25);
-                const remainingDaysAfterYears = Math.floor(days % 365.25);
-                const months = Math.floor(remainingDaysAfterYears / 30.44); 
-                const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
-                
-                const displaySeconds = seconds % 60;
-                const displayMinutes = minutes % 60;
-                const displayHours = hours % 24;
-                
-                let ageString = '';
-                if (years > 0) ageString += `${years}T `;
-                if (months > 0 || years > 0) ageString += `${months}B `;
-                ageString += `${remainingDaysAfterMonths}H `;
-                ageString += `${displayHours.toString().padStart(2, '0')}:`;
-                ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
-                ageString += `${displaySeconds.toString().padStart(2, '0')}`;
-                
-                websiteAgeDisplay.textContent = `${ageString}`;
-            }
-            
-            updateWebsiteAge();
-            setInterval(updateWebsiteAge, 1000);
-        }
-
+        
         async function fetchLiveVisitors() {
             const visitorList = document.getElementById('visitor-list');
             const lastUpdatedTime = document.getElementById('last-updated-time');
@@ -1187,7 +1382,7 @@
                 console.error('Error in trackVisitor:', e); 
             }
         }
-
+        
         async function fetchMomentVaultGallery() {
             const galleryContainer = document.getElementById('moment-vault-gallery');
             galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
@@ -1240,9 +1435,7 @@
             }
         }
         
-        document.getElementById('moment-upload-form').addEventListener('submit', uploadMoment);
-
-        async function uploadMoment(e) {
+        document.getElementById('moment-upload-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const statusEl = document.getElementById('moment-upload-status');
             statusEl.textContent = 'Uploading';
@@ -1327,19 +1520,7 @@
                 statusEl.textContent = `Error uploading moment: ${error.message}`; 
                 statusEl.style.color = 'var(--danger)'; 
             }
-        }
-
-        function readFileAsBase64(file) { 
-            return new Promise((resolve, reject) => { 
-                const reader = new FileReader(); 
-                reader.onload = () => { 
-                    const base64String = reader.result.split(',')[1]; 
-                    resolve(base64String); 
-                }; 
-                reader.onerror = (error) => reject(error); 
-                reader.readAsDataURL(file); 
-            }); 
-        }
+        });
 
         async function editMoment(itemId, currentItems) {
             const password = prompt('Masukkan password untuk mengedit:');
@@ -1491,203 +1672,20 @@
                 statusEl.style.color = 'var(--danger)'; 
             }
         }
-
-        function initVisualizer() {
-            visualizerCanvas = document.getElementById('visualizer-canvas');
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 5;
-            renderer = new THREE.WebGLRenderer({ canvas: visualizerCanvas, alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            
-            const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 1);
-            const icosahedronColors = [];
-            const color = new THREE.Color();
-            for (let i = 0; i < icosahedronGeometry.attributes.position.count; i++) { color.setHSL(i / icosahedronGeometry.attributes.position.count, 0.7, 0.6); icosahedronColors.push(color.r, color.g, color.b); }
-            icosahedronGeometry.setAttribute('color', new THREE.Float32BufferAttribute(icosahedronColors, 3));
-            const icosahedronMaterial = new THREE.MeshBasicMaterial({ vertexColors: true, wireframe: true });
-            icosahedron = new THREE.Mesh(icosahedronGeometry, icosahedronMaterial);
-            scene.add(icosahedron);
-            
-            frequencyBarsGroup = new THREE.Group();
-            scene.add(frequencyBarsGroup);
-            
-            const particlesGeometry = new THREE.BufferGeometry();
-            const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, vertexColors: true });
-            const particlePositions = [];
-            const particleColors = [];
-            for (let i = 0; i < CONFIG.VISUALIZER.PARTICLE_COUNT; i++) { particlePositions.push((Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15); color.setHSL(Math.random(), 1.0, 0.5); particleColors.push(color.r, color.g, color.b); }
-            particlesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particlePositions, 3));
-            particlesGeometry.setAttribute('color', new THREE.Float32BufferAttribute(particleColors, 3));
-            particles3D = new THREE.Points(particlesGeometry, particlesMaterial);
-            scene.add(particles3D);
-            
-            window.addEventListener('resize', onWindowResize, false);
-            visualizerInitialized = true;
-        }
-
-        function createFrequencyBars(analyser) {
-            while (frequencyBarsGroup.children.length > 0) { const obj = frequencyBarsGroup.children[0]; frequencyBarsGroup.remove(obj); }
-            
-            const sampleRate = analyser.context.sampleRate;
-            const fftSize = 2048; 
-            const binWidth = sampleRate / fftSize;
-            
-            const startIndex = Math.ceil(CONFIG.VISUALIZER.FREQ_RANGE_START_HZ / binWidth);
-            const endIndex = Math.floor(CONFIG.VISUALIZER.FREQ_RANGE_END_HZ / binWidth);
-            const numBars = endIndex - startIndex + 1;
-            
-            for (let i = 0; i < numBars; i++) {
-                const barHeight = 0.1;
-                const barWidth = 0.02;
-                const geometry = new THREE.PlaneGeometry(barWidth, barHeight);
-                const hue = 0.6 + (i / numBars) * 0.3;
-                const color = new THREE.Color().setHSL(hue, 0.8, 0.6);
-                const material = new THREE.MeshBasicMaterial({ color: color });
-                
-                const bar = new THREE.Mesh(geometry, material);
-                const angle = (i / numBars) * Math.PI * 2;
-                const radius = 2.0;
-                
-                const wrapper = new THREE.Object3D();
-                wrapper.position.x = Math.cos(angle) * radius;
-                wrapper.position.y = Math.sin(angle) * radius;
-                wrapper.rotation.z = angle + Math.PI / 2;
-                
-                bar.position.y = barHeight / 2;
-                wrapper.add(bar);
-                frequencyBarsGroup.add(wrapper);
-            }
-        }
-
-        function onWindowResize() { 
-            camera.aspect = window.innerWidth / window.innerHeight; 
-            camera.updateProjectionMatrix(); 
-            renderer.setSize(window.innerWidth, window.innerHeight); 
-            
-            if(canvas2D) {
-                canvas2D.width = canvas2D.offsetWidth;
-                canvas2D.height = canvas2D.offsetHeight;
-            }
-        }
-
-        function handlePasswordAction(action) {
-            const liveVisitorsButton = document.getElementById('fab-live-visitors');
-            const centerVideoContainer = document.getElementById('center-video-container');
-            const centerVideoPlayer = document.getElementById('center-video-player');
-
-            switch (action) {
-                case 'UNLOCK_LIVE_VISITORS':
-                    liveVisitorsButton.style.display = 'flex'; 
-                    liveVisitorsButton.setAttribute('data-unlocked', 'true');
-                    alert('Live Visitors button unlocked!');
-                    break;
-                case 'PLAY_CENTER_VIDEO':
-                    centerVideoContainer.classList.add('active'); 
-                    centerVideoPlayer.src = '/dashboard/stiker.mp4'; 
-                    centerVideoPlayer.play();
-                    break;
-                case 'TOGGLE_ELVI_MODE':
-                    isElviModeActive = true;
-                    const block23 = document.getElementById('block-2-3');
-                    const block53 = document.getElementById('block-5-3');
-                    
-                    if (block23) {
-                        const bg23 = block23.querySelector('.grid-block-background');
-                        if (bg23) {
-                            bg23.style.background = `url('https://universalezra.netlify.app/moments/1751293320517-December%2013,%202024%20at%204.29%20AM%20(1).jpg') center center / cover no-repeat`;
-                            bg23.style.filter = 'none';
-                            bg23.style.webkitFilter = 'none';
-                        }
-                        const content23 = block23.querySelector('.grid-block-content');
-                        if (content23) { content23.style.display = 'none'; }
-                    }
-                    
-                    if (block53) {
-                        const bg53 = block53.querySelector('.grid-block-background');
-                        if (bg53) {
-                            bg53.style.background = `url('/dashboard/mygirl.jpg') center center / cover no-repeat`;
-                            bg53.style.filter = 'none';
-                            bg53.style.webkitFilter = 'none';
-                        }
-                        const content53 = block53.querySelector('.grid-block-content');
-                        if (content53) { content53.style.display = 'none'; }
-                    }
-                    
-                    updateUIVisibility();
-                    if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
-                    alert('ELVI MODE ACTIVATED. Enjoy the view.');
-                    break;
-                case 'START_DEATH_SEQUENCE':
-                    startEzraDeathSequence();
-                    break;
-                default:
-                    alert('Incorrect password!');
-            }
-        }
-
-        function initPasswordFeature() {
-            const keyboardToggleButton = document.getElementById('fab-keyboard-toggle');
-            const centerVideoContainer = document.getElementById('center-video-container');
-            const centerVideoPlayer = document.getElementById('center-video-player');
-            const centerVideoCloseBtn = document.getElementById('center-video-close');
-            
-            keyboardToggleButton.addEventListener('click', () => {
-                const enteredPassword = prompt("Please enter the password:");
-                if (enteredPassword && CONFIG.PASSWORDS.TOGGLE_MAP[enteredPassword]) { 
-                    handlePasswordAction(CONFIG.PASSWORDS.TOGGLE_MAP[enteredPassword]); 
-                } else if (enteredPassword !== null) { 
-                    alert('Incorrect password!'); 
-                }
-            });
-
-            centerVideoCloseBtn.addEventListener('click', () => { 
-                centerVideoPlayer.pause(); 
-                centerVideoPlayer.src = ''; 
-                centerVideoContainer.classList.remove('active'); 
-            });
-        }
         
-        function initSecurityFeatures() {
-            document.addEventListener('contextmenu', (e) => e.preventDefault());
-            document.addEventListener('copy', (e) => e.preventDefault());
-            document.addEventListener('cut', (e) => e.preventDefault());
-            
-            window.addEventListener('keyup', (e) => { 
-                if (e.key === 'PrintScreen' || e.key === 'Snapshot') { 
-                    const popup = document.getElementById('screenshot-popup'); 
-                    popup.style.display = 'block'; 
-                    setTimeout(() => { popup.style.display = 'none'; }, 3000); 
-                } 
-            });
+        function readFileAsBase64(file) { 
+            return new Promise((resolve, reject) => { 
+                const reader = new FileReader(); 
+                reader.onload = () => { 
+                    const base64String = reader.result.split(',')[1]; 
+                    resolve(base64String); 
+                }; 
+                reader.onerror = (error) => reject(error); 
+                reader.readAsDataURL(file); 
+            }); 
         }
 
-        function checkFirstVisit() {
-            const hasVisited = localStorage.getItem('hasVisitedWebsite');
-            const browserId = getBrowserId();
-            
-            if (!hasVisited) {
-                const toast = document.getElementById('new-user-toast');
-                const closeBtn = document.getElementById('toast-close-btn');
-                
-                toast.style.display = 'block';
-                setTimeout(() => toast.classList.add('show'), 100);
-
-                console.log(`Welcome, new visitor Browser ID: ${browserId}`);
-                console.log("For the best experience, please use our app: https://drive.google.com/file/d/1URJk46fP6cyzDoRRPUs83sDhHINpJDwJ/view?usp=drivesdk and switch to landscape mode.");
-                console.log("Privacy Policy: We collect anonymous data like browser ID and IP address for statistical analysis. This data will not be shared.");
-                
-                closeBtn.addEventListener('click', () => { 
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.style.display = 'none', 500);
-                    localStorage.setItem('hasVisitedWebsite', 'true'); 
-                });
-            } else { 
-                console.log(`Welcome back ID: ${browserId}`); 
-            }
-        }
-        
-        // Kode Widget Ultimate (Typing effect, Quote, Bio Modal)
+        // Kode Typing Widget
         (function(){
             const e=document.getElementById('typing-output'),t=document.getElementById('ezra-photo'),s=document.getElementById('time-and-slogan'),n=document.getElementById('daily-quote'),o=document.getElementById('bio-modal'),r=[{typing:"Selamat hari Minggu! Mulai pekan dengan mindset growth.",quote:"Tuhan adalah kekuatanku dan perisaiku; kepada-Nya hatiku percaya, dan aku tertolong."},{typing:"Hai! Aku Ezra, a Boy yang mencintai Tantangan Senin.",quote:"Percayalah kepada Tuhan dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri."},{typing:"Code Architect here. Siap membangun solusi hari ini.",quote:"Amsal 21:5: Rencana orang rajin membawa kelimpahan, tetapi setiap orang yang tergesa-gesa hanya akan kekurangan."},{typing:"Mid-week check! Fokus pada performa dan skalabilitas.",quote:"Mazmur 37:5: Serahkanlah hidupmu kepada Tuhan dan percayalah kepada-Nya, dan Ia akan bertindak."},{typing:"Hello! Design, Build, Ship. It's the Dev cycle.",quote:"Amsal 16:3: Serahkanlah perbuatanmu kepada Tuhan, maka terlaksanalah segala rencanamu."},{typing:"Jumat! Sempurnakan kode, rayakan akhir pekan.",quote:"Berbahagialah orang yang mendapat hikmat, orang yang memperoleh kepandaian."},{typing:"Santai & Refleksi. Siap untuk inovasi minggu depan.",quote:"Mazmur 1:3: Ia seperti pohon yang ditanam di tepi aliran air, yang menghasilkan buah pada musimnya dan daunnya tidak layu."}],a=new Date().getDay(),d=r[a],c=[d.typing,"Seorang Digital Alchemist. Sentuh fotoku \ud83d\udc46","Where art meets engineering."],l=40,p=1200; 
             
@@ -1698,8 +1696,36 @@
             function v(){o.classList.add('show'),document.body.classList.add('body-transform'),setTimeout((()=>{document.body.style.transform='scale(0.9) rotate(3deg)'}),1900)}
             function x(){o.classList.remove('show'),document.body.style.transform='scale(1) rotate(0deg)',document.body.classList.remove('body-transform'),document.body.classList.remove('body-hyper-drive')}
             
-            n.textContent=d.quote+" - Alkitab",g(),h(),setInterval(h,1e3),t.addEventListener('click',v),window.addEventListener('click',(e=>{e.target===o&&x();})),document.querySelector('.modal-content a').addEventListener('click',((e)=>{e.preventDefault();const t=e.currentTarget.href;document.body.classList.remove('body-transform'),document.body.classList.add('body-hyper-drive'),setTimeout((()=>{window.location.href=t}),2e3);}));
+            n.textContent=d.quote+" - Alkitab",g(),h(),setInterval(h,1e3),t.addEventListener('click',v),window.addEventListener('click',(e=>{e.target===o&&x();})),document.getElementById('login-link').addEventListener('click',((e)=>{e.preventDefault();const t=e.currentTarget.href;document.body.classList.remove('body-transform'),document.body.classList.add('body-hyper-drive'),setTimeout((()=>{window.location.href=t}),2e3);}));
         })();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            gridContainer = document.getElementById('grid-container');
+            initPanelControls();
+            initVideoPlayer();
+            initEditor();
+            initMusicPlayer();
+            initWebsiteAgeDisplay();
+            trackVisitor();
+            initSwipeGestures();
+            initPasswordFeature();
+            initSecurityFeatures();
+            checkFirstVisit();
+            
+            // Re-bind click event untuk tombol login di modal, memastikan transisi berjalan
+            const loginLink = document.getElementById('login-link');
+            if(loginLink) {
+                loginLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetUrl = e.currentTarget.href;
+                    document.body.classList.remove('body-transform');
+                    document.body.classList.add('body-hyper-drive');
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 2000); // 2 detik untuk animasi hyper-drive
+                });
+            }
+        });
 
     })(); // END IIFE
 </script>
