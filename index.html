@@ -225,7 +225,7 @@
         #bio-modal{display:none;}
         #bio-modal.show{position:fixed;display:flex;z-index:11000;left:0;top:0;width:100%;height:100%;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);justify-content:center;align-items:center;opacity:0;transition:opacity .4s;}
         #bio-modal.show{opacity:1;}
-        .modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
+        .modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:200px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
         
         /* RAINBOW TEXT FOR BIO MODAL HEADER */
         .rainbow-text {
@@ -248,7 +248,7 @@
         #login-button {
             cursor: pointer;
             color: black; /* FIX: Teks ungu */
-            background-color: red; /* FIX: Latar belakang merah */
+            background-color: green; /* FIX: Latar belakang merah */
             text-shadow: 0 0 5px purple; /* FIX: Bayangan ungu */
             border: 1px solid purple; /* FIX: Border ungu */
             padding: 5px 10px;
@@ -570,7 +570,7 @@
         </div>
     </div>
 
-    <div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
+    <div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/panisla_manik" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
     
     <div class="panel" id="editor-panel">
         <div class="panel-header">
@@ -990,7 +990,40 @@
                 case 'TOGGLE_PANIS_MODE': // FIX: Renamed from TOGGLE__MODE
                     isPanisModeActive = true; // FIX: Renamed from isModeActive
                     
-                    // FIX: Removed logic for block-2-3 and block-5-3 as requested
+                    //...
+                case 'TOGGLE_PANIS_MODE': // FIX: Renamed from TOGGLE_ELVI_MODE
+                    isPanisModeActive = true; // FIX: Renamed from isElviModeActive
+                    
+                    // --- KODE TAMBAHAN MULAI ---
+                    
+                    // Ganti gambar untuk block 2-3
+                    const block13Bg = document.querySelector('#block-1-3 .grid-block-background');
+                    if (block13Bg) {
+                        // GANTI URL INI dengan path foto pertama Anda
+                        block13Bg.style.backgroundImage = "url('/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg')"; 
+                        block13Bg.style.filter = 'none';
+                        block13Bg.style.webkitFilter = 'none';
+                    }
+                    // Sembunyikan konten (tulisan h1) di block 1-3
+                    const block13Content = document.querySelector('#block-1-3 .grid-block-content');
+                    if (block13Content) {
+                        block13Content.style.display = 'none';
+                    }
+
+                    // Ganti gambar untuk block 5-3
+                    const block53Bg = document.querySelector('#block-5-3 .grid-block-background');
+                    if (block53Bg) {
+                        // GANTI URL INI dengan path foto kedua Anda
+                        block53Bg.style.backgroundImage = "url('/dashboard/mygirl.jpg')"; 
+                        block53Bg.style.filter = 'none';
+                        block53Bg.style.webkitFilter = 'none';
+                    }
+                    // Sembunyikan konten (tulisan h1) di block 5-3
+                    const block53Content = document.querySelector('#block-5-3 .grid-block-content');
+                    if (block53Content) {
+                        block53Content.style.display = 'none';
+                    }
+                    // --- KODE TAMBAHAN SELESAI ---
                     
                     updateUIVisibility();
                     if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
