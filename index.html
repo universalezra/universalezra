@@ -25,7 +25,7 @@
         #editor-panel { top: 0; left: 0; width: 100%; height: 100%; transform: translateX(-100%); }
         #music-panel { bottom: 0; left: 0; width: 100%; height: auto; max-height: 50vh; border-top: 1px solid var(--border-color); transform: translateY(100%); padding: 15px; }
         #contribution-panel { top: 0; right: 0; width: 400px; max-width: 90vw; height: 100%; transform: translateX(100%); padding: 20px; }
-        #live-visitors-panel, #dashboard-panel { top: 0; left: 0; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #live-visitors-panel, #moment-vault-panel, #dashboard-panel { top: 0; left: 0; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         #live-visitors-panel, #moment-vault-panel { transform: translateY(100%); }
         #dashboard-panel { transform: translateX(-100%); }
         
@@ -33,16 +33,32 @@
         .visualizer-active #visualizer-canvas { display: block; pointer-events: none; }
         
         .panel-close-btn { position: static; background: none; border: none; color: #00ff00; font-size: 1.5rem; cursor: pointer; padding: 0px; }
+        
+        /* FIX: FAB Container - Bar Vertikal Kiri */
+        #left-fab-strip {
+            position: fixed;
+            top: 50%; /* Pusatkan vertikal */
+            transform: translateY(-50%); /* Penyesuaian untuk pemusatan */
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+        }
+        .fab-container { 
+            position: static; /* Hapus posisi fixed individual */
+            transform: none; /* Hapus transform individual */
+            z-index: 1000; 
+            display: flex; 
+        }
 
-        /* FIX: FAB CONTAINER - SUSUN VERTIKAL KIRI */
-        .fab-container { position: fixed; z-index: 1000; left: 20px; width: 55px; height: auto; display: flex; flex-direction: column; gap: 10px; }
-        .social-links { position: fixed; z-index: 1000; left: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; }
-
-        /* FIX: FAB Styling - Cyber Grey Theme */
+        /* FIX: FAB Styling: Tema Cyber Abu-abu */
         .fab, .fab-container a { 
-            background: rgba(100, 100, 100, 0.7); /* Cyber Grey */
+            background: rgba(100, 110, 120, 0.7); /* Cyber Abu-abu */
             background-size: 200% auto;
-            border: none; 
+            border: 1px solid rgba(150, 150, 150, 0.5); /* Border abu-abu */
             border-radius: 50%; 
             color: #00ff00; 
             width: 55px; 
@@ -56,36 +72,19 @@
             transition: all 0.3s ease; 
             text-decoration: none; 
             animation: none;
-            position: static !important; /* Hilangkan posisi absolut/fixed bawaan */
-            transform: none !important; /* Hilangkan transform bawaan */
-            margin: 0; /* Hilangkan margin bawaan */
         }
-        
-        /* Posisi FAB Vertikal (Diatur berdasarkan urutan di HTML) */
-        #fab-editor { top: 20px; position: fixed; }
-        #fab-music { top: 85px; position: fixed; }
-        #fab-contribution { top: 150px; position: fixed; }
-        #fab-alkitab { top: 215px; position: fixed; }
-        
-        /* Pindahkan sisanya ke bawah */
-        #fab-dashboard-toggle { bottom: 20px; position: fixed; }
-        #fab-keyboard-toggle { bottom: 85px; position: fixed; }
-        #fab-moment-vault { bottom: 150px; position: fixed; }
-        #fab-visualizer { bottom: 215px; position: fixed; }
-        #fab-live-visitors { bottom: 280px; position: fixed; }
-
-        /* FAB HOVER - Mengaktifkan Kedua Animasi */
-        .fab:hover, .fab-container a:hover, .social-links a:hover { 
+        .fab:hover, .fab-container a:hover { 
             background: var(--neon-gradient, var(--accent)); 
             transform: scale(1.1);
+            border-color: var(--accent); /* Ganti border color saat hover */
             box-shadow: 
                 0 0 15px var(--neon-btn-color-start, #ff0077), 
                 0 0 30px var(--neon-btn-color-end, #00eeff);
+            /* AKTIFKAN ANIMASI (Sudah benar) */
             animation: 
                 neon-gradient-shift 3s linear infinite,
                 neon-glow-pulse 1.5s ease-in-out infinite alternate;
         }
-
         @keyframes neon-gradient-shift {
             0% { background-position: 0% center; }
             100% { background-position: 200% center; }
@@ -95,6 +94,19 @@
             50% { box-shadow: 0 0 15px var(--neon-btn-color-start), 0 0 30px var(--neon-btn-color-end), 0 0 50px var(--neon-btn-color-start); }
             100% { box-shadow: 0 0 5px var(--neon-btn-color-start), 0 0 10px var(--neon-btn-color-end); }
         }
+
+        /* Hapus CSS Posisi Individual FAB */
+        #fab-editor, #fab-music, #fab-alkitab, #fab-contribution, 
+        #fab-visualizer, #fab-moment-vault, #fab-live-visitors, 
+        #fab-keyboard-toggle, #fab-dashboard-toggle {
+            top: auto;
+            left: auto;
+            right: auto;
+            bottom: auto;
+            transform: none;
+        }
+
+        #fab-live-visitors { display: none; } /* Tetap tersembunyi */
 
         #live-visitors-panel .live-visitors-content, #moment-vault-panel .moment-vault-content, #dashboard-panel .dashboard-content-wrapper { width: 100%; height: 100%; max-width: 1200px; background: var(--bg-panel); border-radius: 15px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); overflow: hidden; display: flex; flex-direction: column; padding: 20px; }
         #visitor-list ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
@@ -112,15 +124,31 @@
         #video-player-widget { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999; width: 150px; height: 150px; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); border: 2px solid var(--border-color); display: flex; }
         #video-player-widget video { width: 100%; height: 100%; object-fit: cover; }
         
-        /* FIX: SOSIAL MEDIA DIBUAT SATU BARIS KE KIRI */
-        .social-links { position: fixed; left: 20px; top: auto; bottom: 345px; transform: none; display: flex; flex-direction: column; gap: 10px; z-index: 999; }
-        .social-links a { 
-             background: rgba(100, 100, 100, 0.7); /* Cyber Grey */
-             width: 55px; height: 55px; 
-             border-radius: 50%;
-             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
-             color: #00ff00;
+        /* FIX: Social Links Position */
+        .social-links { 
+            position: static; /* Hapus posisi fixed */
+            transform: none; /* Hapus transform */
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            z-index: auto;
         }
+        /* Pastikan ikon di dalam social links mengikuti style FAB */
+        .social-links a {
+            background: rgba(100, 110, 120, 0.7);
+            border: 1px solid rgba(150, 150, 150, 0.5);
+            font-size: 1.4rem; /* Samakan ukuran ikon */
+            width: 55px;
+            height: 55px;
+        }
+        .social-links a:hover {
+            background: var(--neon-gradient, var(--accent));
+            transform: scale(1.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--neon-btn-color-start, #ff0077), 0 0 30px var(--neon-btn-color-end, #00eeff);
+            animation: neon-gradient-shift 3s linear infinite, neon-glow-pulse 1.5s ease-in-out infinite alternate;
+        }
+
 
         .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(0,0,0,0.3); flex-shrink: 0; }
         .panel-title { font-weight: bold; font-size: 1.1em; margin-right: auto; }
@@ -212,39 +240,62 @@
 
         :root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}
         
-        /* FIX: ULTIMATE WIDGET STYLING */
+        /* FIX: Ultimate Widget Styling (Rounded) */
         #ultimate-widget{
-            position:relative;width:202px;margin:50px auto 20px auto;padding:15px 0;
-            background-color:rgba(0, 0, 0, 0.3); /* Tambah background */
-            border:1px solid var(--border-color); /* Tambah border */
-            box-shadow:0 0 10px rgba(0, 255, 255, 0.3); 
-            z-index:1200;text-align:left;
-            transform:scale(.85);transform-origin:center center;
+            position:relative;
+            width: 232px; /* Disesuaikan untuk padding 202 + 15*2 + 1*2 */
+            margin:50px auto 20px auto;
+            padding: 15px; /* Ditambahkan padding */
+            background-color: rgba(0, 255, 255, 0.05); /* Latar belakang tembus pandang */
+            border: 1px solid var(--neon-color); /* Border neon */
+            border-radius: 15px; /* Border bulat */
+            box-shadow: 0 0 10px var(--neon-color), 0 0 20px rgba(0, 255, 255, 0.1) inset; /* Bayangan neon */
+            z-index:1200;
+            text-align:left;
+            transform:scale(.85);
+            transform-origin:center center;
             animation:float-subtle 10s infinite ease-in-out;
             font-family:'Share Tech Mono',monospace;
-            border-radius: 15px; /* FIX: Buat border bulat */
-            padding: 20px;
         }
-        @keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}.typing-container{display:flex;align-items:flex-start;line-height:1.3;min-height:50px;margin-bottom:10px;}
+        @keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}
         
-        .neon-typing-text{color:var(--neon-color);text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);font-size:1.6em;overflow:visible;white-space:normal;max-width:200px;border-right:3px solid var(--neon-color);animation:terminal-blink .7s step-end infinite;}
+        /* FIX: Typing Container (Wrap) */
+        .typing-container{
+            display:flex;
+            flex-wrap: wrap; /* Izinkan wrap */
+            align-items:flex-start;
+            line-height:1.3;
+            min-height:50px;
+            margin-bottom:10px;
+        }
+        /* FIX: Typing Text (Grow) */
+        .neon-typing-text{
+            color:var(--neon-color);
+            text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);
+            font-size:1.6em;
+            overflow:visible;
+            white-space:normal;
+            /* max-width:200px; */ /* DIHAPUS */
+            flex-grow: 1; /* BIARKAN TUMBUH */
+            min-width: 50px; /* Lebar minimum sebelum foto wrap */
+            border-right:3px solid var(--neon-color);
+            animation:terminal-blink .7s step-end infinite;
+        }
         @keyframes terminal-blink{from,to{border-right-color:transparent;}50%{border-right-color:var(--neon-color);}}
         
-        /* FIX: Pindah Foto ke Baris Baru */
+        /* FIX: Profile Photo (No Shrink) */
         .profile-photo{
-            width:40px;height:40px;border-radius:50%;object-fit:cover;border:none;
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            object-fit:cover;
+            border:none;
             box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);
-            margin-top: 10px; /* Jarak dari teks di atasnya */
-            margin-bottom: 5px;
+            margin: 0 0 0 12px; /* Margin hanya di kiri */
             cursor:pointer;
             transition:transform .3s,box-shadow .3s;
-            display: block; /* Memastikan foto di baris baru */
+            flex-shrink: 0; /* Jangan biarkan foto mengecil */
         }
-        .typing-container {
-            flex-direction: column; /* Mengubah container menjadi vertikal */
-            align-items: center;
-        }
-        
         .profile-photo:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 0 10px var(--secondary-neon),0 0 30px var(--secondary-neon);}.holographic-text{font-size:.9em;color:#ccc;margin:5px 0 10px 0;padding:5px 0;text-shadow:0 0 2px rgba(255,255,255,.8);border-top:none;border-bottom:none;animation:glitch 5s infinite alternate;}@keyframes glitch{0%{text-shadow:0 0 5px #f0f;transform:skew(0deg);}20%{text-shadow:0 0 5px #0ff;transform:skew(-1deg);}40%{text-shadow:0 0 5px #f0f;transform:skew(2deg);}60%{text-shadow:0 0 5px #0ff;transform:skew(-3deg);}80%{text-shadow:0 0 5px #f0f;transform:skew(1deg);}100%{text-shadow:0 0 5px #0ff;transform:skew(0deg);}}.quote{font-style:italic;font-size:.8em;color:var(--quote-color);margin-top:10px;padding:5px 0;text-shadow:0 0 5px rgba(170,255,170,.5);min-height:40px;}
 
         /* FIX: BIO MODAL STYLE */
@@ -254,8 +305,14 @@
         .modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
         
         /* RAINBOW TEXT FOR BIO MODAL HEADER */
-        .rainbow-text { font-size: 1.2em; font-weight: bold; }
-        .rainbow-text span { animation: rainbow-color 5s infinite; display: inline-block; }
+        .rainbow-text {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .rainbow-text span {
+            animation: rainbow-color 5s infinite;
+            display: inline-block;
+        }
         @keyframes rainbow-color {
             0% { color: #ff0077; }
             25% { color: #ccff00; }
@@ -311,7 +368,8 @@
             transition: transform 2s ease-in; 
             transform-origin: center center; 
         }
-
+        
+        /* FIX: DEATH SEQUENCE STYLING */
         #ezra-death-sequence-overlay {
             position: fixed;
             top: 0;
@@ -323,6 +381,7 @@
             overflow: hidden;
             opacity: 0;
             transition: opacity 0.5s;
+            background-color: #000; /* Mulai dengan hitam */
         }
 
         .split-panel {
@@ -342,26 +401,13 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 100px; 
+            width: 100px; /* Ukuran dasar, akan di-scale */
             height: auto;
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.1);
-            transition: transform 2s ease-out, opacity 1s;
+            transition: transform 2s ease-out, opacity 1s, width 0s, height 0s, object-fit 0s;
             z-index: 10002;
-        }
-        
-        /* FIX: Tambahkan container untuk foto panis.jpg agar bisa di-display full screen */
-        #panis-photo-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 0.3s ease-in;
-            z-index: 10004;
+            object-fit: contain; /* Jaga rasio aspek */
         }
 
         #error-screen-ezra {
@@ -380,7 +426,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 1s;
-            z-index: 10005; /* Z-index lebih tinggi */
+            z-index: 10003;
             padding: 20px;
             text-align: center;
         }
@@ -392,13 +438,22 @@
             transform: translate(-50%, -50%);
             color: rgba(255, 0, 0, 0); 
             font-size: 4vw;
-            z-index: 10006;
-            transition: color 1s ease-in;
+            z-index: 10004;
+            transition: color 1s ease-in, opacity 0.5s;
             opacity: 0;
             pointer-events: none;
             animation: none;
         }
         
+        /* Pesan "TERMINATED" (merah solid) */
+        .terminated-message #final-message {
+            opacity: 1;
+            color: rgba(255, 0, 0, 0.8);
+            font-size: 6vw;
+            animation: none;
+        }
+
+        /* Pesan "Goodbye" (glitchy) */
         .glitch-active #final-message {
             opacity: 1;
             color: rgba(255, 0, 0, 0.4); 
@@ -419,13 +474,24 @@
             from { opacity: 1; }
             to { opacity: 0.3; }
         }
+        
+        /* Style untuk "Lost Connect" */
+        #error-screen-ezra.lost-connect .error-code,
+        #error-screen-ezra.lost-connect .developer-message { 
+            display: none; 
+        }
+        #error-screen-ezra.lost-connect .error-text {
+            font-size: 4vw;
+            animation: blink 1.5s infinite alternate;
+        }
+
 
         .split-open .left-panel { transform: translateX(-100vw); }
         .split-open .right-panel { transform: translateX(100vw); }
 
         .image-zoom #zoom-image {
             opacity: 1;
-            transform: translate(-50%, -50%) scale(15);
+            transform: translate(-50%, -50%) scale(15); /* Skala besar untuk menutupi */
             pointer-events: auto;
         }
         
@@ -436,9 +502,31 @@
 
         .sequence-active { opacity: 1 !important; pointer-events: auto !important; }
         .hide-all-content > * { display: none !important; } 
+
+        /* Tampilkan strip FAB di atas konten yang tersembunyi */
+        .hide-all-content #left-fab-strip {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
+    <div id="left-fab-strip">
+        <div class="fab-container" id="fab-editor"><button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
+        <div class="fab-container" id="fab-music"><button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
+        <div class="fab-container" id="fab-contribution"><button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
+        <div class="fab-container" id="fab-alkitab"><a class="fab" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
+        <div class="fab-container" id="fab-visualizer"><button class="fab" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
+        <div class="fab-container" id="fab-moment-vault"><button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
+        <div class="fab-container" id="fab-live-visitors"><button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
+        <div class="fab-container" id="fab-keyboard-toggle"><button class="fab" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
+        <div class="fab-container" id="fab-dashboard-toggle"><button class="fab" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
+
+        <div class="social-links">
+            <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+    
     <div id="new-user-toast" class="toast-notification">
         <h3 style="color: var(--accent); margin-top: 0;">Selamat Datang</h3>
         <p>Untuk pengalaman terbaik, kami merekomendasikan:</p>
@@ -539,22 +627,6 @@
         </div>
     </div>
     
-    <div class="fab-container" id="fab-editor"><button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
-    <div class="fab-container" id="fab-music"><button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
-    <div class="fab-container" id="fab-contribution"><button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
-    <div class="fab-container" id="fab-alkitab"><a class="fab" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
-    
-    <div class="social-links">
-        <a class="fab" href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-        <a class="fab" href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a>
-    </div>
-
-    <div class="fab-container" id="fab-visualizer"><button class="fab" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
-    <div class="fab-container" id="fab-moment-vault"><button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
-    <div class="fab-container" id="fab-live-visitors"><button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
-    <div class="fab-container" id="fab-keyboard-toggle"><button class="fab" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
-    <div class="fab-container" id="fab-dashboard-toggle"><button class="fab" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
-
     <div id="video-player-widget">
         <video id="widget-video" loop src="/dashboard/video.mp4" muted></video> 
         <div class="video-controls">
@@ -563,7 +635,6 @@
         </div>
     </div>
 
-    
     <div class="panel" id="editor-panel">
         <div class="panel-header">
             <span class="panel-title">Code Editor</span>
@@ -641,12 +712,10 @@
     </div>
     
     <div id="ezra-death-sequence-overlay">
-        <div class="split-panel left-panel"></div> 
+        <div class="split-panel left-panel"></div>
         <div class="split-panel right-panel"></div>
         
-        <img id="zoom-image" src="/dashboard/elvi.jpg" alt="Zoom In Image" data-src="/dashboard/elvi.jpg">
-        
-        <div id="panis-photo-container"></div>
+        <img id="zoom-image" src="/dashboard/panis.jpg" alt="Zoom In Image" data-src="/dashboard/panis.jpg">
         
         <div id="error-screen-ezra">
             <p class="error-text">INITIATING HARD DISCONNECT PROTOCOL...</p>
@@ -654,7 +723,7 @@
             <p class="developer-message">ATTEMPTED ACCESS VIOLATION DETECTED. ALL SESSIONS TERMINATED.</p>
         </div>
         
-        <div id="final-message">Hmm Goodbye</div>
+        <div id="final-message">TERMINATED</div>
     </div>
     
 <script>
@@ -677,7 +746,7 @@
                 TOGGLE_MAP: {
                     'mycode': 'UNLOCK_LIVE_VISITORS',
                     'yeah': 'PLAY_CENTER_VIDEO',
-                    'love': 'TOGGLE_PANIS_MODE', // FIX: Ganti ke TOGGLE_PANIS_MODE
+                    'love': 'TOGGLE_PANIS_MODE', // FIX: Diganti dari TOGGLE_ELVI_MODE
                     'universalezra': 'START_DEATH_SEQUENCE',
                 }
             },
@@ -698,31 +767,39 @@
         let liveVisitorRefreshInterval = null;
         let isEzraLoggedIn = false;
         let isVisualizerActive = false;
-        let isPanisModeActive = false; // FIX: Ganti nama variabel
+        let isPanisModeActive = false; // FIX: Diganti dari isElviModeActive
         let visualizerInitialized = false; 
         
         let audioContext, analyser, source;
         let frequencyData, bufferLength;
         
         let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
+        let torusKnot; // FIX: Variabel baru untuk visualizer
 
         let lastBassLevel = 0;
         let gridContainer, currentX = 2, currentY = 2;
 
-        function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
-        function showUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
-        function updateUIVisibility() { if (!isPanisModeActive) return; if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { hideUIElements(); } else { showUIElements(); } }
+        function hideUIElements() { document.querySelectorAll('#left-fab-strip, #video-player-widget').forEach(el => { el.style.display = 'none'; }); }
+        function showUIElements() { document.querySelectorAll('#left-fab-strip, #video-player-widget').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
+        
+        function updateUIVisibility() { 
+            if (!isPanisModeActive) return; // FIX: Diganti dari isElviModeActive
+            if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { 
+                hideUIElements(); 
+            } else { 
+                showUIElements(); 
+            } 
+        }
         function enterFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.warn(`Gagal masuk mode fullscreen: ${err.message}`); }); } }
         function exitFullscreen() { if (document.fullscreenElement) { document.exitFullscreen(); } }
         function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(`Error when system attempting to enable fullscreen: ${err.message}`); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
 
         // =================================================================
-        // FIX: FUNGSI EZRA DEATH SEQUENCE (Logic Timing yang Diperbaiki)
+        // FIX: FUNGSI EZRA DEATH SEQUENCE (Logika Baru)
         // =================================================================
         function startEzraDeathSequence() {
             const overlay = document.getElementById('ezra-death-sequence-overlay');
             const zoomImage = document.getElementById('zoom-image');
-            const panisPhotoContainer = document.getElementById('panis-photo-container');
             const errorScreen = document.getElementById('error-screen-ezra');
             const finalMessage = document.getElementById('final-message');
             const body = document.body;
@@ -730,75 +807,50 @@
             // 0. RESET/INIT
             body.classList.add('hide-all-content');
             overlay.classList.add('sequence-active');
-            body.classList.remove('split-open', 'image-zoom', 'final-blank-screen');
-            errorScreen.style.opacity = '0';
-            finalMessage.classList.remove('glitch-active');
-            panisPhotoContainer.style.opacity = '0'; // Sembunyikan foto panis
-
-            const panisPhotoUrl = '/dashboard/panis.jpg'; // URL foto panis
-            if (panisPhotoUrl) panisPhotoContainer.style.backgroundImage = `url(${panisPhotoUrl})`;
+            overlay.style.backgroundColor = 'black'; // Mulai dengan hitam
             
-            const imageUrl = zoomImage.getAttribute('data-src');
-            if (imageUrl) zoomImage.src = imageUrl;
+            body.classList.remove('split-open', 'image-zoom', 'final-blank-screen', 'terminated-message', 'glitch-active');
+            errorScreen.style.opacity = '0';
+            errorScreen.classList.remove('lost-connect');
+            finalMessage.classList.remove('glitch-active');
+            zoomImage.style.opacity = '0';
+            
+            // Pastikan gambar baru diatur
+            const newImageUrl = '/dashboard/panis.jpg';
+            zoomImage.src = newImageUrl;
+            zoomImage.setAttribute('data-src', newImageUrl);
 
-            // 1. Zoom Image (Durasi 2 detik)
+            // 1. Layar Hitam (Durasi 1 detik)
+            console.log("Sequence: 1. Black Screen (1s)");
+            
+            // 2. Pesan Terminated (Mulai setelah 1 detik, durasi 2 detik)
             setTimeout(() => {
-                body.classList.add('image-zoom');
-                console.log("Sequence: 1. Zoom Image (2s)");
-            }, 50);
+                console.log("Sequence: 2. Terminated Message (2s)");
+                body.classList.add('terminated-message');
+            }, 1000);
 
-            // 2. Layar Blank Hitam (Setelah Zoom Selesai, total 2.05 detik, durasi 1 detik)
+            // 3. Tampilkan Foto (Mulai setelah 1+2=3 detik, durasi 3 detik)
             setTimeout(() => {
-                // Sembunyikan elemen visual
+                console.log("Sequence: 3. Fullscreen Photo (3s)");
+                body.classList.remove('terminated-message'); // Sembunyikan pesan
+                body.classList.add('image-zoom'); // Tampilkan gambar
+            }, 3000); // 1s + 2s
+
+            // 4. Efek Lost Connect (Mulai setelah 1+2+3=6 detik)
+            setTimeout(() => {
+                console.log("Sequence: 4. Fake Lost Connect");
+                body.classList.remove('image-zoom'); // Sembunyikan foto
                 zoomImage.style.opacity = '0';
                 
-                // Set body ke blank black
-                body.classList.add('final-blank-screen');
-                overlay.style.backgroundColor = 'black'; 
-                overlay.style.backgroundImage = 'none';
-                
-                console.log("Sequence: 2. Blackout/Blank Screen (1s)");
-            }, 2050); 
-
-            // 3. Termination Message (Setelah Blank Screen, total 3.05 detik, durasi 2 detik)
-            setTimeout(() => {
-                body.classList.remove('final-blank-screen');
-                body.style.backgroundColor = 'black';
-                
-                // Tampilkan Error Screen (untuk pesan terminated)
+                // Tampilkan Error Screen (versi simplified)
+                errorScreen.classList.add('lost-connect');
+                errorScreen.querySelector('.error-text').textContent = 'CONNECTION TERMINATED';
                 errorScreen.style.opacity = '1';
 
-                console.log("Sequence: 3. Termination Message (2s)");
-
-            }, 3050); 
-            
-            // 4. Tampilkan Foto Penuh (Setelah Termination Message, total 5.05 detik, durasi 3 detik)
-            setTimeout(() => {
-                errorScreen.style.opacity = '0';
-                panisPhotoContainer.style.opacity = '1';
-
-                console.log("Sequence: 4. Display Panis Photo (3s)");
-            }, 5050);
-
-            // 5. Lost Connect Palsu (Glitch) (Setelah Foto Penuh, total 8.05 detik)
-            setTimeout(() => {
-                panisPhotoContainer.style.opacity = '0';
-                body.style.backgroundColor = 'black';
-                
-                errorScreen.style.opacity = '1'; // Tampilkan lagi layar error
-                finalMessage.classList.add('glitch-active'); // Aktifkan glitch
-                
-                console.log("Sequence: 5. Lost Connect Palsu (Glitch)");
-
-            }, 8050);
-
-            // 6. Final Termination (Tunggu 2 detik)
-            setTimeout(() => {
-                console.warn("SYSTEM TERMINATED. Manual closing is required.");
-            }, 10050); 
+            }, 6000); // 3s + 3s
         }
         
-        // --- VISUALIZER LOGIC ---
+        // --- VISUALIZER LOGIC (VISUALIZER KEDUA DIHAPUS) ---
         function setupAudioVisualizer() {
             const audioPlayer = document.getElementById('audio-player');
             if (!audioPlayer.src) { alert('Pilih lagu terlebih dahulu'); return false; }
@@ -814,7 +866,6 @@
                 source.connect(analyser);
                 analyser.connect(audioContext.destination);
                 
-                // Parameter 'nendang'
                 analyser.fftSize = 2048; 
                 analyser.minDecibels = -90;
                 analyser.maxDecibels = -10;
@@ -856,6 +907,12 @@
             icosahedron.rotation.x += 0.002;
             icosahedron.rotation.y += 0.003;
 
+            // FIX: Animasi TorusKnot baru
+            const torusPulse = 1.0 + (bassAvg / 255) * 1.5;
+            torusKnot.scale.set(torusPulse, torusPulse, torusPulse);
+            torusKnot.rotation.z -= 0.01;
+            torusKnot.rotation.y += 0.005;
+
             const shakeFactor = (bassAvg / 255) * 0.05; 
             camera.position.x = 5 + Math.sin(Date.now() * 0.005) * shakeFactor; 
             camera.position.y = 5 + Math.cos(Date.now() * 0.004) * shakeFactor; 
@@ -867,6 +924,7 @@
                 for (let i = 0; i < CONFIG.VISUALIZER.PARTICLE_COUNT; i++) { color.setHSL(Math.random(), 1.0, 0.5); colors[i * 3] = color.r; colors[i * 3 + 1] = color.g; colors[i * 3 + 2] = color.b; }
                 particles3D.geometry.attributes.color.needsUpdate = true;
                 icosahedron.rotation.z += 0.1; 
+                torusKnot.material.color.setHSL(Math.random(), 0.8, 0.6); // Ganti warna torus
             }
 
             lastBassLevel = bassAvg;
@@ -906,6 +964,12 @@
             icosahedron = new THREE.Mesh(icosahedronGeometry, icosahedronMaterial);
             scene.add(icosahedron);
             
+            // FIX: Tambahkan TorusKnot
+            const torusGeo = new THREE.TorusKnotGeometry(0.7, 0.1, 100, 16);
+            const torusMat = new THREE.MeshBasicMaterial({ color: 0xff0077, wireframe: true });
+            torusKnot = new THREE.Mesh(torusGeo, torusMat);
+            scene.add(torusKnot);
+
             frequencyBarsGroup = new THREE.Group();
             scene.add(frequencyBarsGroup);
             
@@ -979,8 +1043,8 @@
                     centerVideoPlayer.src = '/dashboard/stiker.mp4'; 
                     centerVideoPlayer.play();
                     break;
-                case 'TOGGLE_PANIS_MODE': // FIX: Ganti ke PANIS_MODE
-                    isPanisModeActive = true;
+                case 'TOGGLE_PANIS_MODE': // FIX: Diganti dari TOGGLE_ELVI_MODE
+                    isPanisModeActive = true; // FIX: Diganti dari isElviModeActive
                     const block23 = document.getElementById('block-2-3');
                     const block53 = document.getElementById('block-5-3');
                     
@@ -1008,7 +1072,7 @@
                     
                     updateUIVisibility();
                     if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
-                    alert('PANIS MODE ACTIVATED. Enjoy the view.'); // FIX: Ganti pesan
+                    alert('PANIS MODE ACTIVATED. Enjoy the view.'); // FIX: Teks diubah
                     break;
                 case 'START_DEATH_SEQUENCE':
                     startEzraDeathSequence();
@@ -1098,7 +1162,13 @@
                     matrixSound.play().catch(e => console.error("Audio play failed:", e));
                 }
                 updateUIVisibility();
-                if (isPanisModeActive) { if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); } else { exitFullscreen(); } }
+                if (isPanisModeActive) { // FIX: Diganti dari isElviModeActive
+                    if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { 
+                        enterFullscreen(); 
+                    } else { 
+                        exitFullscreen(); 
+                    } 
+                }
             };
             const handleStart = (e) => { isDragging = true; startX = e.clientX || e.touches[0].clientX; startY = e.clientY || e.touches[0].clientY; };
             const handleEnd = (e) => {
@@ -1175,16 +1245,603 @@
             });
         }
         
-        // FUNGSI PENDUKUNG LAINNYA (DARI KODE SEBELUMNYA)
-        function fetchContributions() { console.log('Fetching contributions...'); }
-        function fetchLiveVisitors() { console.log('Fetching live visitors...'); }
-        function fetchVisitorHistory() { console.log('Fetching visitor history...'); }
-        function fetchMomentVaultGallery() { console.log('Fetching moment vault...'); }
-        function readFileAsBase64() { return Promise.resolve(''); }
-        function editMoment() { console.log('Editing moment...'); }
-        function deleteMoment() { console.log('Deleting moment...'); }
-        function getBrowserId() { return localStorage.getItem('unique_browser_id') || 'browser_placeholder'; }
+        function initVideoPlayer() {
+            const video = document.getElementById('widget-video');
+            const playBtn = document.getElementById('video-play-pause');
+            const muteBtn = document.getElementById('video-mute');
 
+            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+
+            playBtn.addEventListener('click', () => { 
+                if (video.paused) { 
+                    video.play(); 
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>'; 
+                } else { 
+                    video.pause(); 
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>'; 
+                } 
+            });
+            muteBtn.addEventListener('click', () => { 
+                video.muted = !video.muted; 
+                muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; 
+            });
+
+            video.pause();
+        }
+
+        function initEditor() {
+            const codeEditor = document.getElementById('unified-code-editor');
+            const previewFrame = document.getElementById('editor-preview');
+            const runBtn = document.getElementById('editor-run');
+            const saveBtn = document.getElementById('editor-save');
+            const loadBtn = document.getElementById('editor-load');
+            const newBtn = document.getElementById('editor-new');
+            const undoBtn = document.getElementById('editor-undo');
+            const redoBtn = document.getElementById('editor-redo');
+            let history = [''];
+            let historyPointer = 0;
+
+            const updateHistory = () => { 
+                const currentCode = codeEditor.value; 
+                if (currentCode !== history[historyPointer]) { 
+                    if (historyPointer < history.length - 1) { 
+                        history = history.slice(0, historyPointer + 1); 
+                    } 
+                    history.push(currentCode); 
+                    historyPointer = history.length - 1; 
+                } 
+            };
+            
+            const runCode = () => { 
+                const fullCode = codeEditor.value; 
+                const htmlMatch = fullCode.match(/<body>([\s\S]*?)<\/body>/i); 
+                const cssMatch = fullCode.match(/<style>([\s\S]*?)<\/style>/i); 
+                const jsMatch = fullCode.match(/<script>([\s\S]*?)<\/script>/i); 
+                
+                const htmlContent = htmlMatch ? htmlMatch[1] : fullCode; 
+                const cssContent = cssMatch ? cssMatch[1] : ''; 
+                const jsContent = jsMatch ? jsMatch[1] : ''; 
+                
+                const source = `<!DOCTYPE html><html><head><style>${cssContent}</style></head><body>${htmlContent}<script>${jsContent}<\/script></body></html>`; 
+                previewFrame.srcdoc = source; 
+            };
+            
+            const saveCode = () => { localStorage.setItem('unified_editor_code', codeEditor.value); console.log('Code saved successfully'); };
+            
+            const loadCode = () => { 
+                codeEditor.value = localStorage.getItem('unified_editor_code') || `<!DOCTYPE html><html><head><title>My trial</title><style>body {font-family: sans-serif;background-color: #000000;color: #259;text-align: center;padding-top: 50px;}h1 {color: var(--primary);}</style></head><body><h1>Hello Editor</h1><p id="message">Code Here</p><script>document.getElementById('message').onclick = function() {console.log('Paragraph clicked!');};<\/script></body></html>`; 
+                runCode(); 
+                history = [codeEditor.value]; 
+                historyPointer = 0; 
+            };
+            
+            const newDoc = () => { 
+                codeEditor.value = `<!DOCTYPE html><html><head><title>New trial</title><style>body {font-family: Arial, sans-serif;background-color: #000000;color: #abb2bf;display: flex;justify-content: center;align-items: center;min-height: 100vh;margin: 0;}h1 {color: #61dafb;}</style></head><body><h1>Start Coding Here!l</h1><script>console.log("New document loaded.");<\/script></body></html>`; 
+                runCode(); 
+                history = [codeEditor.value]; 
+                historyPointer = 0; 
+            };
+            
+            const undo = () => { 
+                if (historyPointer > 0) { 
+                    historyPointer--; 
+                    codeEditor.value = history[historyPointer]; 
+                    runCode(); 
+                } 
+            };
+            
+            const redo = () => { 
+                if (historyPointer < history.length - 1) { 
+                    historyPointer++; 
+                    codeEditor.value = history[historyPointer]; 
+                    runCode(); 
+                } 
+            };
+            
+            runBtn.addEventListener('click', runCode);
+            saveBtn.addEventListener('click', saveCode);
+            loadBtn.addEventListener('click', loadCode);
+            newBtn.addEventListener('click', newDoc);
+            undoBtn.addEventListener('click', undo);
+            redoBtn.addEventListener('click', redo);
+            codeEditor.addEventListener('input', updateHistory);
+            loadCode();
+        }
+
+        function initMusicPlayer() {
+            const player = document.getElementById('audio-player');
+            const playlistEl = document.getElementById('playlist');
+            const songTitleEl = document.getElementById('song-title');
+            const songs = [{ name: 'On And On', url: '/dashboard/On-And-On.mp3' }, { name: 'Where We Are', url: '/dashboard/Where-We-Are.mp3' }, { name: 'Sekuat Hatimu', url: '/dashboard/Sekuat Hatimu.mp3' }, ];
+            
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.textContent = song.name;
+                item.style.cursor = 'pointer';
+                item.style.padding = '8px';
+                item.style.transition = 'background 0.2s';
+                item.onmouseover = () => item.style.background = 'rgba(0, 168, 255, 0.1)';
+                item.onmouseout = () => item.style.background = 'none';
+                
+                item.onclick = () => { 
+                    player.src = song.url; 
+                    songTitleEl.textContent = song.name; 
+                    player.play(); 
+                };
+                playlistEl.appendChild(item);
+            });
+        }
+        
+        function initWebsiteAgeDisplay() {
+            const websiteAgeDisplay = document.getElementById('website-age-display');
+            const creationDate = new Date(2006, 7, 7, 0, 0, 0); 
+            
+            function updateWebsiteAge() {
+                const now = new Date();
+                const diff = now.getTime() - creationDate.getTime();
+                const seconds = Math.floor(diff / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                
+                const years = Math.floor(days / 365.25);
+                const remainingDaysAfterYears = Math.floor(days % 365.25);
+                const months = Math.floor(remainingDaysAfterYears / 30.44); 
+                const remainingDaysAfterMonths = Math.floor(remainingDaysAfterYears % 30.44);
+                
+                const displaySeconds = seconds % 60;
+                const displayMinutes = minutes % 60;
+                const displayHours = hours % 24;
+                
+                let ageString = '';
+                if (years > 0) ageString += `${years}T `;
+                if (months > 0 || years > 0) ageString += `${months}B `;
+                ageString += `${remainingDaysAfterMonths}H `;
+                ageString += `${displayHours.toString().padStart(2, '0')}:`;
+                ageString += `${displayMinutes.toString().padStart(2, '0')}:`;
+                ageString += `${displaySeconds.toString().padStart(2, '0')}`;
+                
+                websiteAgeDisplay.textContent = `${ageString}`;
+            }
+            
+            updateWebsiteAge();
+            setInterval(updateWebsiteAge, 1000);
+        }
+        
+        async function fetchContributions() {
+            const display = document.getElementById('contribution-display');
+            display.innerHTML = `<p>Loading</p>`;
+            try {
+                const response = await fetch(CONFIG.WORKERS.CONTRIBUTIONS);
+                const contributions = await response.json();
+                if (contributions && contributions.length > 0) { 
+                    display.innerHTML = contributions.reverse().map((c) => { 
+                        return `<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:5px;margin-bottom:10px;"><p style="margin:0;">${c.text}</p><small style="color:var(--text-secondary);">${new Date(c.timestamp).toLocaleString()}</small></div>`; 
+                    }).join(''); 
+                } else { 
+                    display.innerHTML = `<p>Be the first to leave a message</p>`; 
+                }
+            } catch (e) { 
+                display.innerHTML = `<p style="color:var(--danger);">Could not load contributions.</p>`; 
+            }
+        }
+        
+        document.getElementById('contribution-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('contribution-status');
+            statusEl.textContent = 'Uploading';
+            
+            const formData = new FormData();
+            formData.append('text', document.getElementById('contribution-text').value);
+            
+            try {
+                const response = await fetch(CONFIG.WORKERS.CONTRIBUTIONS, { 
+                    method: 'POST', 
+                    body: formData, 
+                });
+                
+                if (!response.ok) throw new Error('Upload failed');
+                
+                statusEl.textContent = 'Message sent. Thank you.';
+                e.target.reset();
+                fetchContributions();
+            } catch (err) { 
+                statusEl.textContent = `Error: ${err.message}`; 
+            }
+        });
+        
+        async function fetchLiveVisitors() {
+            const visitorList = document.getElementById('visitor-list');
+            const lastUpdatedTime = document.getElementById('last-updated-time');
+            if (!visitorList.innerHTML.trim() || visitorList.innerHTML.includes('Loading visitors')) { visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">Loading</li>'; }
+            
+            try {
+                const response = await fetch(CONFIG.WORKERS.LIVE_VISITORS + '?get_visitors=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                const visitors = await response.json();
+                if (visitors && visitors.length > 0) { 
+                    visitorList.innerHTML = visitors.map((visitor) => { 
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric', }); 
+                        return `<li><strong>ID:</strong> <span>${visitor.browserId.substring(0, 10)}</span><br><strong>IP:</strong> <span>${visitor.ip || 'N/A'}</span><br><strong>Waktu:</strong> <span>${timestamp}</span></li>`; 
+                    }).join(''); 
+                } else { 
+                    visitorList.innerHTML = '<li style="text-align: center; color: var(--text-secondary);">No online</li>'; 
+                }
+                lastUpdatedTime.textContent = new Date().toLocaleTimeString('id-ID');
+            } catch (error) { 
+                console.error('Error fetching live visitors:', error); 
+                visitorList.innerHTML = '<li style="text-align: center; color: var(--danger);">Failed</li>'; 
+                lastUpdatedTime.textContent = 'Error'; 
+            }
+        }
+
+        async function fetchVisitorHistory() {
+            const historyContainer = document.getElementById('visitor-history');
+            historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading history</p>';
+            
+            try {
+                const response = await fetch(CONFIG.WORKERS.VISITOR_HISTORY + '?get_history=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                let history = await response.json();
+                if (history && history.length > 0) {
+                    const visitCounts = history.reduce((acc, visitor) => { acc[visitor.browserId] = (acc[visitor.browserId] || 0) + 1; return acc; }, {});
+                    const tableHeader = `<table><thead><tr><th>Timestamp</th><th>Browser ID</th><th>IP</th><th>Referral</th><th>Total Kunjungan</th></tr></thead><tbody>`;
+                    const tableRows = history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map(visitor => { 
+                        const timestamp = new Date(visitor.timestamp).toLocaleString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); 
+                        return `<tr><td>${timestamp}</td><td>${visitor.browserId.substring(0, 10)}...</td><td>${visitor.ip || 'N/A'}</td><td>${visitor.referrer || 'Direct'}</td><td>${visitCounts[visitor.browserId] || 1}</td></tr>`; 
+                    }).join('');
+                    const tableFooter = `</tbody></table>`;
+                    historyContainer.innerHTML = tableHeader + tableRows + tableFooter;
+                } else { 
+                    historyContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No visitor history yet</p>'; 
+                }
+            } catch (error) { 
+                console.error('Failed to load visitor history:', error); 
+                historyContainer.innerHTML = `<p style="text-align: center; color: var(--danger);">Sistem lagi crash</p>`; 
+            }
+        }
+
+        function getBrowserId() { 
+            let browserId = localStorage.getItem('unique_browser_id'); 
+            if (!browserId) { 
+                browserId = 'browser_' + Math.random().toString(36).substr(2, 9) + Date.now(); 
+                localStorage.setItem('unique_browser_id', browserId); 
+            } 
+            return browserId; 
+        }
+
+        async function trackVisitor() {
+            try {
+                const browserId = getBrowserId();
+                let ipAddress = 'unknown';
+                let referrer = document.referrer || 'direct';
+                
+                try { 
+                    const ipResponse = await fetch('https://api.ipify.org?format=json'); 
+                    const ipData = await ipResponse.json(); 
+                    ipAddress = ipData.ip; 
+                } catch (ipError) { 
+                    console.warn('Could not fetch IP address:', ipError); 
+                }
+                
+                const data = { 
+                    browserId: browserId, 
+                    ip: ipAddress, 
+                    userAgent: navigator.userAgent, 
+                    timestamp: new Date().toISOString(), 
+                    referrer: referrer, 
+                };
+                
+                fetch(CONFIG.WORKERS.LIVE_VISITORS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to live visitors worker:', e));
+                fetch(CONFIG.WORKERS.VISITOR_HISTORY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), }).catch((e) => console.error('Error sending to visitor history worker:', e));
+            } catch (e) { 
+                console.error('Error in trackVisitor:', e); 
+            }
+        }
+        
+        async function fetchMomentVaultGallery() {
+            const galleryContainer = document.getElementById('moment-vault-gallery');
+            galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading</p>';
+            
+            try {
+                const response = await fetch(CONFIG.WORKERS.MOMENT_VAULT + '?get_gallery=true');
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                
+                const items = await response.json();
+                if (items && items.length > 0) {
+                    items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    galleryContainer.innerHTML = items.map((item) => {
+                        let mediaHTML = '';
+                        let fileExtension = item.fileUrl.split('.').pop().toLowerCase();
+                        let iconClass = '';
+                        
+                        if (item.fileType && item.fileType.startsWith('image/')) { mediaHTML = `<img src="${item.fileUrl}" alt="${item.title}">`; } 
+                        else if (item.fileType && item.fileType.startsWith('video/')) { mediaHTML = `<video src="${item.fileUrl}" controls></video>`; } 
+                        else if (item.fileType && item.fileType.startsWith('audio/')) { mediaHTML = `<audio src="${item.fileUrl}" controls></audio>`; } 
+                        else { 
+                            if (fileExtension === 'pdf') iconClass = 'fa-file-pdf'; 
+                            else if (fileExtension.startsWith('doc')) iconClass = 'fa-file-word'; 
+                            else if (fileExtension === 'txt') iconClass = 'fa-file-alt'; 
+                            else iconClass = 'fa-file'; 
+                            mediaHTML = `<i class="fas ${iconClass} file-icon"></i>`; 
+                        }
+                        
+                        const timestamp = new Date(item.timestamp).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', });
+                        
+                        return `<div class="gallery-item" data-id="${item.id}">
+                                    <div class="gallery-media">${mediaHTML}</div>
+                                    <strong>${item.title}</strong>
+                                    <p class="item-text">${item.description}</p>
+                                    <small class="item-date">${timestamp}</small>
+                                    <div class="item-actions">
+                                        <button class="edit-moment-btn"><i class="fas fa-edit"></i></button>
+                                        <button class="delete-moment-btn"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </div>`;
+                    }).join('');
+                    
+                    galleryContainer.querySelectorAll('.edit-moment-btn').forEach((button) => { button.addEventListener('click', (e) => { const itemId = e.target.closest('.gallery-item').dataset.id; editMoment(itemId, items); }); });
+                    galleryContainer.querySelectorAll('.delete-moment-btn').forEach((button) => { button.addEventListener('click', (e) => { const itemId = e.target.closest('.gallery-item').dataset.id; deleteMoment(itemId); }); });
+                } else { 
+                    galleryContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No uploaded yet</p>'; 
+                }
+            } catch (error) { 
+                console.error('Error fetching Moment Vault gallery:', error); 
+                galleryContainer.innerHTML = '<p style="text-align: center; color: var(--danger);">Failed to load gallery items.</p>'; 
+            }
+        }
+        
+        document.getElementById('moment-upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Uploading';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            const title = document.getElementById('moment-title').value;
+            const description = document.getElementById('moment-description').value;
+            const fileInput = document.getElementById('moment-file');
+            const file = fileInput.files[0];
+            
+            if (!file || !title) { 
+                statusEl.textContent = 'Title and file are required!'; 
+                statusEl.style.color = 'var(--danger)'; 
+                return; 
+            }
+            
+            let githubToken;
+            try {
+                const tokenResponse = await fetch(CONFIG.WORKERS.GITHUB_TOKEN);
+                if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
+                const tokenData = await tokenResponse.json();
+                githubToken = tokenData.token;
+                if (!githubToken) throw new Error('GitHub token not found in response');
+            } catch (error) { 
+                console.error('Error getting GitHub token:', error); 
+                statusEl.textContent = `Error: Could not get GitHub token. ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+                return; 
+            }
+            
+            try {
+                const filePath = `moments/${Date.now()}-${file.name}`;
+                const fileContent = await readFileAsBase64(file);
+                const githubApiUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePath}`;
+                
+                const uploadResponse = await fetch(githubApiUrl, { 
+                    method: 'PUT', 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        'Content-Type': 'application/json', 
+                    }, 
+                    body: JSON.stringify({ 
+                        message: `Upload moment: ${title}`, 
+                        content: fileContent, 
+                        branch: 'main', 
+                    }), 
+                });
+                
+                if (!uploadResponse.ok) { 
+                    const errorText = await uploadResponse.text(); 
+                    throw new Error(`GitHub upload failed: ${uploadResponse.status} - ${errorText}`); 
+                }
+                
+                const uploadData = await uploadResponse.json();
+                const rawFileUrl = uploadData.content.download_url;
+                
+                const momentData = { 
+                    id: 'moment_' + Math.random().toString(36).substr(2, 9) + Date.now(), 
+                    title: title, 
+                    description: description, 
+                    fileUrl: rawFileUrl, 
+                    fileType: file.type, 
+                    timestamp: new Date().toISOString(), 
+                };
+                
+                const kvSaveResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(momentData), 
+                });
+                
+                if (!kvSaveResponse.ok) { 
+                    throw new Error('Failed to save moment metadata to KV'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                e.target.reset();
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error uploading moment:', error); 
+                statusEl.textContent = `Error uploading moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        });
+
+        async function editMoment(itemId, currentItems) {
+            const password = prompt('Masukkan password untuk mengedit:');
+            if (password !== CONFIG.PASSWORDS.MOMENT_VAULT) { 
+                alert('false'); 
+                return; 
+            }
+            
+            const itemToEdit = currentItems.find((item) => item.id === itemId);
+            if (!itemToEdit) return;
+            
+            const newTitle = prompt('Edit Title:', itemToEdit.title);
+            if (newTitle === null) return;
+            
+            const newDescription = prompt('Edit Description:', itemToEdit.description);
+            if (newDescription === null) return;
+            
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Updating';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            try {
+                const updatedMomentData = { 
+                    id: itemId, 
+                    title: newTitle, 
+                    description: newDescription, 
+                    fileUrl: itemToEdit.fileUrl, 
+                    fileType: itemToEdit.fileType, 
+                    timestamp: itemToEdit.timestamp, 
+                };
+                
+                const response = await fetch(CONFIG.WORKERS.MOMENT_VAULT, { 
+                    method: 'PUT', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(updatedMomentData), 
+                });
+                
+                if (!response.ok) { 
+                    throw new Error('Failed to update moment metadata'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error updating moment:', error); 
+                statusEl.textContent = `Error updating moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        }
+
+        async function deleteMoment(itemId) {
+            const password = prompt('Masukkan password untuk menghapus:');
+            if (password !== CONFIG.PASSWORDS.MOMENT_VAULT) { 
+                alert('false'); 
+                return; 
+            }
+            
+            if (!confirm('Are you sure you want to delete? This action cannot be undone.')) { return; }
+            
+            const statusEl = document.getElementById('moment-upload-status');
+            statusEl.textContent = 'Deleting';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            try {
+                let githubToken;
+                try {
+                    const tokenResponse = await fetch(CONFIG.WORKERS.GITHUB_TOKEN);
+                    if (!tokenResponse.ok) throw new Error('Failed to fetch GitHub token');
+                    const tokenData = await tokenResponse.json();
+                    githubToken = tokenData.token;
+                    if (!githubToken) throw new Error('GitHub token not found in response');
+                } catch (error) { 
+                    console.error('Error getting GitHub token for delete:', error); 
+                    statusEl.textContent = `Error: Could not get GitHub token for deletion. ${error.message}`; 
+                    statusEl.style.color = 'var(--danger)'; 
+                    return; 
+                }
+                
+                const galleryResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT + '?get_gallery=true');
+                if (!galleryResponse.ok) throw new Error('Failed to fetch gallery to find file path');
+                
+                const galleryItems = await galleryResponse.json();
+                const itemToDelete = galleryItems.find((item) => item.id === itemId);
+                
+                if (!itemToDelete || !itemToDelete.fileUrl) { throw new Error('its file URL not found.'); }
+                
+                let filePathOnGithub;
+                const rawGithubContentBase = `https://raw.githubusercontent.com/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/main/`;
+                
+                if (itemToDelete.fileUrl.startsWith(rawGithubContentBase)) { 
+                    filePathOnGithub = itemToDelete.fileUrl.substring(rawGithubContentBase.length); 
+                } else { 
+                    console.warn('Unexpected file URL format, attempting fallback path extraction:', itemToDelete.fileUrl,); 
+                    filePathOnGithub = `moments/${itemToDelete.fileUrl.split('/').pop()}`; 
+                }
+                
+                const githubApiGetFileUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePathOnGithub}`;
+                
+                const getFileResponse = await fetch(githubApiGetFileUrl, { 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        Accept: 'application/vnd.github.v3+json', 
+                    }, 
+                });
+                
+                if (!getFileResponse.ok) { 
+                    const errorText = await getFileResponse.text(); 
+                    throw new Error(`Failed to get file SHA from GitHub: ${getFileResponse.status} - ${errorText}`); 
+                }
+                
+                const fileMetaData = await getFileResponse.json();
+                const fileSha = fileMetaData.sha;
+                
+                const githubDeleteUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO_OWNER}/${CONFIG.GITHUB.REPO_NAME}/contents/${filePathOnGithub}`;
+                
+                const deleteResponse = await fetch(githubDeleteUrl, { 
+                    method: 'DELETE', 
+                    headers: { 
+                        Authorization: `token ${githubToken}`, 
+                        'Content-Type': 'application/json', 
+                    }, 
+                    body: JSON.stringify({ 
+                        message: `Delete moment: ${itemToDelete.title}`, 
+                        sha: fileSha, 
+                        branch: 'main', 
+                    }), 
+                });
+                
+                if (!deleteResponse.ok) { 
+                    const errorText = await deleteResponse.text(); 
+                    throw new Error(`GitHub deletion failed: ${deleteResponse.status} - ${errorText}`); 
+                }
+                
+                const kvDeleteResponse = await fetch(CONFIG.WORKERS.MOMENT_VAULT + `?delete_moment_id=${itemId}`, { 
+                    method: 'DELETE', 
+                });
+                
+                if (!kvDeleteResponse.ok) { 
+                    throw new Error('Failed to delete'); 
+                }
+                
+                statusEl.textContent = 'successfully';
+                statusEl.style.color = 'var(--success)';
+                fetchMomentVaultGallery();
+            } catch (error) { 
+                console.error('Error deleting moment:', error); 
+                statusEl.textContent = `Error deleting moment: ${error.message}`; 
+                statusEl.style.color = 'var(--danger)'; 
+            }
+        }
+        
+        function readFileAsBase64(file) { 
+            return new Promise((resolve, reject) => { 
+                const reader = new FileReader(); 
+                reader.onload = () => { 
+                    const base64String = reader.result.split(',')[1]; 
+                    resolve(base64String); 
+                }; 
+                reader.onerror = (error) => reject(error); 
+                reader.readAsDataURL(file); 
+            }); 
+        }
 
         // Kode Typing Widget
         (function(){
@@ -1213,6 +1870,7 @@
             initSecurityFeatures();
             checkFirstVisit();
             
+            // Re-bind click event untuk tombol login di modal, memastikan transisi berjalan
             const loginLink = document.getElementById('login-link');
             if(loginLink) {
                 loginLink.addEventListener('click', (e) => {
