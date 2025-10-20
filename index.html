@@ -33,34 +33,15 @@
         .visualizer-active #visualizer-canvas { display: block; pointer-events: none; }
         
         .panel-close-btn { position: static; background: none; border: none; color: #00ff00; font-size: 1.5rem; cursor: pointer; padding: 0px; }
+        .fab-container { position: fixed; z-index: 1000; display: flex; }
         
-        /* FIX: FAB Container - Bar Vertikal Kiri */
-        #left-fab-strip {
-            position: fixed;
-            top: 50%; /* Pusatkan vertikal */
-            transform: translateY(-50%); /* Penyesuaian untuk pemusatan */
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            z-index: 1000;
-        }
-        .fab-container { 
-            position: static; /* Hapus posisi fixed individual */
-            transform: none; /* Hapus transform individual */
-            z-index: 1000; 
-            display: flex; 
-        }
-
-        /* FIX: FAB Styling: Tema Cyber Abu-abu */
-        .fab, .fab-container a { 
-            background: rgba(100, 110, 120, 0.7); /* Cyber Abu-abu */
+        /* FIX: FAB Styling: Cyber Gray Theme & Hover Animation */
+        .fab, .fab-container a, .social-links a { 
+            background: var(--fab-cyber-bg); 
             background-size: 200% auto;
-            border: 1px solid rgba(150, 150, 150, 0.5); /* Border abu-abu */
+            border: 1px solid var(--fab-cyber-border); 
             border-radius: 50%; 
-            color: #00ff00; 
+            color: var(--fab-cyber-icon); 
             width: 55px; 
             height: 55px; 
             cursor: pointer; 
@@ -68,19 +49,19 @@
             justify-content: center; 
             align-items: center; 
             font-size: 1.4rem; 
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
+            box-shadow: 0 4px 12px var(--fab-cyber-shadow), inset 0 0 4px rgba(200, 220, 255, 0.1);
             transition: all 0.3s ease; 
             text-decoration: none; 
-            animation: none;
+            animation: none; /* Animasi hanya di hover */
         }
-        .fab:hover, .fab-container a:hover { 
-            background: var(--neon-gradient, var(--accent)); 
+        .fab:hover, .fab-container a:hover, .social-links a:hover { 
+            background: var(--neon-gradient, var(--accent)); /* This is the gradient shift, user wants it */
             transform: scale(1.1);
-            border-color: var(--accent); /* Ganti border color saat hover */
             box-shadow: 
-                0 0 15px var(--neon-btn-color-start, #ff0077), 
-                0 0 30px var(--neon-btn-color-end, #00eeff);
-            /* AKTIFKAN ANIMASI (Sudah benar) */
+                0 0 15px var(--fab-hover-glow-start), 
+                0 0 30px var(--fab-hover-glow-end);
+            
+            /* AKTIFKAN ANIMASI GRADIENT SHIFT & PULSE */
             animation: 
                 neon-gradient-shift 3s linear infinite,
                 neon-glow-pulse 1.5s ease-in-out infinite alternate;
@@ -90,24 +71,23 @@
             100% { background-position: 200% center; }
         }
         @keyframes neon-glow-pulse {
-            0% { box-shadow: 0 0 5px var(--neon-btn-color-start), 0 0 10px var(--neon-btn-color-end); }
-            50% { box-shadow: 0 0 15px var(--neon-btn-color-start), 0 0 30px var(--neon-btn-color-end), 0 0 50px var(--neon-btn-color-start); }
-            100% { box-shadow: 0 0 5px var(--neon-btn-color-start), 0 0 10px var(--neon-btn-color-end); }
+            0% { box-shadow: 0 0 5px var(--fab-hover-glow-start), 0 0 10px var(--fab-hover-glow-end); }
+            50% { box-shadow: 0 0 15px var(--fab-hover-glow-start), 0 0 30px var(--fab-hover-glow-end), 0 0 50px var(--fab-hover-glow-start); }
+            100% { box-shadow: 0 0 5px var(--fab-hover-glow-start), 0 0 10px var(--fab-hover-glow-end); }
         }
 
-        /* Hapus CSS Posisi Individual FAB */
-        #fab-editor, #fab-music, #fab-alkitab, #fab-contribution, 
-        #fab-visualizer, #fab-moment-vault, #fab-live-visitors, 
-        #fab-keyboard-toggle, #fab-dashboard-toggle {
-            top: auto;
-            left: auto;
-            right: auto;
-            bottom: auto;
-            transform: none;
-        }
-
-        #fab-live-visitors { display: none; } /* Tetap tersembunyi */
-
+        /* FIX: FAB Positions */
+        #fab-editor { top: 20px; left: 20px; }
+        #fab-music { top: 90px; left: 20px; transform: none; }
+        #fab-contribution { top: 160px; left: 20px; transform: none; }
+        #fab-alkitab { top: 230px; left: 20px; }
+        #fab-visualizer { top: 300px; left: 20px; transform: none; }
+        #fab-moment-vault { top: 370px; left: 20px; transform: none; }
+        #fab-dashboard-toggle { top: 440px; left: 20px; }
+        #fab-keyboard-toggle { top: 510px; left: 20px; }
+        
+        #fab-live-visitors { bottom: 20px; left: 50%; transform: translateX(-50%); display: none; } /* Center Bottom */
+        
         #live-visitors-panel .live-visitors-content, #moment-vault-panel .moment-vault-content, #dashboard-panel .dashboard-content-wrapper { width: 100%; height: 100%; max-width: 1200px; background: var(--bg-panel); border-radius: 15px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); overflow: hidden; display: flex; flex-direction: column; padding: 20px; }
         #visitor-list ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
         #visitor-history { flex-grow: 1; overflow-y: auto; padding: 0 20px; }
@@ -125,31 +105,8 @@
         #video-player-widget video { width: 100%; height: 100%; object-fit: cover; }
         
         /* FIX: Social Links Position */
-        .social-links { 
-            position: static; /* Hapus posisi fixed */
-            transform: none; /* Hapus transform */
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-            z-index: auto;
-        }
-        /* Pastikan ikon di dalam social links mengikuti style FAB */
-        .social-links a {
-            background: rgba(100, 110, 120, 0.7);
-            border: 1px solid rgba(150, 150, 150, 0.5);
-            font-size: 1.4rem; /* Samakan ukuran ikon */
-            width: 55px;
-            height: 55px;
-        }
-        .social-links a:hover {
-            background: var(--neon-gradient, var(--accent));
-            transform: scale(1.1);
-            border-color: var(--accent);
-            box-shadow: 0 0 15px var(--neon-btn-color-start, #ff0077), 0 0 30px var(--neon-btn-color-end, #00eeff);
-            animation: neon-gradient-shift 3s linear infinite, neon-glow-pulse 1.5s ease-in-out infinite alternate;
-        }
-
-
+        .social-links { position: fixed; top: 580px; left: 20px; transform: none; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
+        
         .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(0,0,0,0.3); flex-shrink: 0; }
         .panel-title { font-weight: bold; font-size: 1.1em; margin-right: auto; }
         .editor-toolbar { padding: 0; margin: 0 15px; display: flex; gap: 10px; flex-wrap: wrap; }
@@ -228,6 +185,14 @@
             #ff0077 0%, #ff9900 25%, #ccff00 50%, #00ffff 75%, #ff00ff 100%
           );
           --dark-bg: #1a1a1a;
+          
+          /* FIX: Cyber FAB Theme Vars */
+          --fab-cyber-bg: rgba(100, 110, 120, 0.6);
+          --fab-cyber-border: rgba(150, 200, 255, 0.3);
+          --fab-cyber-icon: #00e5ff;
+          --fab-cyber-shadow: rgba(0, 0, 0, 0.4);
+          --fab-hover-glow-start: #00e5ff;
+          --fab-hover-glow-end: #0099ff;
         }
         body {
           background-color: var(--bg-main);
@@ -240,62 +205,20 @@
 
         :root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}
         
-        /* FIX: Ultimate Widget Styling (Rounded) */
-        #ultimate-widget{
-            position:relative;
-            width: 232px; /* Disesuaikan untuk padding 202 + 15*2 + 1*2 */
-            margin:50px auto 20px auto;
-            padding: 15px; /* Ditambahkan padding */
-            background-color: rgba(0, 255, 255, 0.05); /* Latar belakang tembus pandang */
-            border: 1px solid var(--neon-color); /* Border neon */
-            border-radius: 15px; /* Border bulat */
-            box-shadow: 0 0 10px var(--neon-color), 0 0 20px rgba(0, 255, 255, 0.1) inset; /* Bayangan neon */
-            z-index:1200;
-            text-align:left;
-            transform:scale(.85);
-            transform-origin:center center;
-            animation:float-subtle 10s infinite ease-in-out;
-            font-family:'Share Tech Mono',monospace;
-        }
+        /* FIX: Ultimate Widget rounded border */
+        #ultimate-widget{position:relative;/* width:202px; */ width: auto; max-width: 280px; margin:50px auto 20px auto;/* padding:15px 0; */ padding: 20px; /* background-color:transparent; */ background-color: rgba(26, 26, 46, 0.7); /* border:none; */ border: 1px solid var(--border-color); border-radius: 20px; /* box-shadow:none; */ box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}
+        
         @keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}
         
-        /* FIX: Typing Container (Wrap) */
-        .typing-container{
-            display:flex;
-            flex-wrap: wrap; /* Izinkan wrap */
-            align-items:flex-start;
-            line-height:1.3;
-            min-height:50px;
-            margin-bottom:10px;
-        }
-        /* FIX: Typing Text (Grow) */
-        .neon-typing-text{
-            color:var(--neon-color);
-            text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);
-            font-size:1.6em;
-            overflow:visible;
-            white-space:normal;
-            /* max-width:200px; */ /* DIHAPUS */
-            flex-grow: 1; /* BIARKAN TUMBUH */
-            min-width: 50px; /* Lebar minimum sebelum foto wrap */
-            border-right:3px solid var(--neon-color);
-            animation:terminal-blink .7s step-end infinite;
-        }
+        /* FIX: Typing container flex-wrap */
+        .typing-container{display:flex;align-items:flex-start; flex-wrap: wrap; line-height:1.3;min-height:50px;margin-bottom:10px;}
+        .neon-typing-text{color:var(--neon-color);text-shadow:0 0 7px rgba(0,255,255,var(--shadow-intensity)),0 0 10px rgba(0,255,255,.5);font-size:1.6em;overflow:visible;white-space:normal;/* max-width:200px; */ flex-basis: 150px; flex-grow: 1; word-wrap: break-word; border-right:3px solid var(--neon-color);animation:terminal-blink .7s step-end infinite;}
+        
         @keyframes terminal-blink{from,to{border-right-color:transparent;}50%{border-right-color:var(--neon-color);}}
         
-        /* FIX: Profile Photo (No Shrink) */
-        .profile-photo{
-            width:40px;
-            height:40px;
-            border-radius:50%;
-            object-fit:cover;
-            border:none;
-            box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);
-            margin: 0 0 0 12px; /* Margin hanya di kiri */
-            cursor:pointer;
-            transition:transform .3s,box-shadow .3s;
-            flex-shrink: 0; /* Jangan biarkan foto mengecil */
-        }
+        /* FIX: Profile photo flex-wrap */
+        .profile-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:none;box-shadow:0 0 5px var(--secondary-neon),0 0 15px var(--secondary-neon);/* margin:0 12px; */ margin: 0 0 0 12px; flex-shrink: 0; cursor:pointer;transition:transform .3s,box-shadow .3s;}
+        
         .profile-photo:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 0 10px var(--secondary-neon),0 0 30px var(--secondary-neon);}.holographic-text{font-size:.9em;color:#ccc;margin:5px 0 10px 0;padding:5px 0;text-shadow:0 0 2px rgba(255,255,255,.8);border-top:none;border-bottom:none;animation:glitch 5s infinite alternate;}@keyframes glitch{0%{text-shadow:0 0 5px #f0f;transform:skew(0deg);}20%{text-shadow:0 0 5px #0ff;transform:skew(-1deg);}40%{text-shadow:0 0 5px #f0f;transform:skew(2deg);}60%{text-shadow:0 0 5px #0ff;transform:skew(-3deg);}80%{text-shadow:0 0 5px #f0f;transform:skew(1deg);}100%{text-shadow:0 0 5px #0ff;transform:skew(0deg);}}.quote{font-style:italic;font-size:.8em;color:var(--quote-color);margin-top:10px;padding:5px 0;text-shadow:0 0 5px rgba(170,255,170,.5);min-height:40px;}
 
         /* FIX: BIO MODAL STYLE */
@@ -368,8 +291,10 @@
             transition: transform 2s ease-in; 
             transform-origin: center center; 
         }
-        
-        /* FIX: DEATH SEQUENCE STYLING */
+
+        /*
+         * FIX: DEATH SEQUENCE STYLES
+         */
         #ezra-death-sequence-overlay {
             position: fixed;
             top: 0;
@@ -381,7 +306,7 @@
             overflow: hidden;
             opacity: 0;
             transition: opacity 0.5s;
-            background-color: #000; /* Mulai dengan hitam */
+            background-color: #000; /* Start black */
         }
 
         .split-panel {
@@ -392,6 +317,8 @@
             background-color: var(--bg-main);
             transition: transform 1s ease-in-out;
             z-index: 10001;
+            /* Hide by default for new sequence */
+            display: none; 
         }
 
         .left-panel { left: 0; }
@@ -401,13 +328,28 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 100px; /* Ukuran dasar, akan di-scale */
+            width: 100px; 
             height: auto;
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.1);
-            transition: transform 2s ease-out, opacity 1s, width 0s, height 0s, object-fit 0s;
+            transition: transform 2s ease-out, opacity 1s;
             z-index: 10002;
-            object-fit: contain; /* Jaga rasio aspek */
+            /* Hide by default for new sequence */
+            display: none;
+        }
+
+        /* NEW: Panis fullscreen image */
+        #panis-fullscreen-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 10005;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
 
         #error-screen-ezra {
@@ -439,23 +381,16 @@
             color: rgba(255, 0, 0, 0); 
             font-size: 4vw;
             z-index: 10004;
-            transition: color 1s ease-in, opacity 0.5s;
+            transition: color 1s ease-in;
             opacity: 0;
             pointer-events: none;
             animation: none;
+            display: none; /* Hide by default */
         }
         
-        /* Pesan "TERMINATED" (merah solid) */
-        .terminated-message #final-message {
-            opacity: 1;
-            color: rgba(255, 0, 0, 0.8);
-            font-size: 6vw;
-            animation: none;
-        }
-
-        /* Pesan "Goodbye" (glitchy) */
         .glitch-active #final-message {
             opacity: 1;
+            display: block; /* Show */
             color: rgba(255, 0, 0, 0.4); 
             animation: text-glitch 0.5s infinite alternate; 
         }
@@ -474,59 +409,26 @@
             from { opacity: 1; }
             to { opacity: 0.3; }
         }
-        
-        /* Style untuk "Lost Connect" */
-        #error-screen-ezra.lost-connect .error-code,
-        #error-screen-ezra.lost-connect .developer-message { 
-            display: none; 
-        }
-        #error-screen-ezra.lost-connect .error-text {
-            font-size: 4vw;
-            animation: blink 1.5s infinite alternate;
-        }
 
-
+        /* These are from old sequence, keep them but they won't be used by new sequence */
         .split-open .left-panel { transform: translateX(-100vw); }
         .split-open .right-panel { transform: translateX(100vw); }
-
         .image-zoom #zoom-image {
             opacity: 1;
-            transform: translate(-50%, -50%) scale(15); /* Skala besar untuk menutupi */
+            transform: translate(-50%, -50%) scale(15);
             pointer-events: auto;
         }
-        
         .final-blank-screen {
             background-color: black !important;
             transition: background-color 1s;
         }
+        /* --- */
 
         .sequence-active { opacity: 1 !important; pointer-events: auto !important; }
         .hide-all-content > * { display: none !important; } 
-
-        /* Tampilkan strip FAB di atas konten yang tersembunyi */
-        .hide-all-content #left-fab-strip {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
-    <div id="left-fab-strip">
-        <div class="fab-container" id="fab-editor"><button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
-        <div class="fab-container" id="fab-music"><button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
-        <div class="fab-container" id="fab-contribution"><button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
-        <div class="fab-container" id="fab-alkitab"><a class="fab" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
-        <div class="fab-container" id="fab-visualizer"><button class="fab" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
-        <div class="fab-container" id="fab-moment-vault"><button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
-        <div class="fab-container" id="fab-live-visitors"><button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
-        <div class="fab-container" id="fab-keyboard-toggle"><button class="fab" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
-        <div class="fab-container" id="fab-dashboard-toggle"><button class="fab" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
-
-        <div class="social-links">
-            <a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a>
-        </div>
-    </div>
-    
     <div id="new-user-toast" class="toast-notification">
         <h3 style="color: var(--accent); margin-top: 0;">Selamat Datang</h3>
         <p>Untuk pengalaman terbaik, kami merekomendasikan:</p>
@@ -627,6 +529,16 @@
         </div>
     </div>
     
+    <div class="fab-container" id="fab-editor"><button class="fab" data-panel="editor-panel" title="Code Editor"><i class="fas fa-code"></i></button></div>
+    <div class="fab-container" id="fab-music"><button class="fab" data-panel="music-panel" title="Music Player"><i class="fas fa-music"></i></button></div>
+    <div class="fab-container" id="fab-contribution"><button class="fab" data-panel="contribution-panel" title="Leave a Message"><i class="fas fa-feather-alt"></i></button></div>
+    <div class="fab-container" id="fab-alkitab"><a class="fab" href="https://alkitab.me/in-tb/Matius/5/13" target="_blank" title="Alkitab"><i class="fas fa-book"></i></a></div>
+    <div class="fab-container" id="fab-visualizer"><button class="fab" data-panel="visualizer" title="Visualizer"><i class="fas fa-expand"></i></button></div>
+    <div class="fab-container" id="fab-moment-vault"><button class="fab" data-panel="moment-vault-panel" title="Moment Vault"><i class="fas fa-archive"></i></button></div>
+    <div class="fab-container" id="fab-live-visitors"><button class="fab" data-panel="live-visitors-panel" title="Live Visitors"><i class="fas fa-eye"></i></button></div>
+    <div class="fab-container" id="fab-keyboard-toggle"><button class="fab" title="Enter Password"><i class="fas fa-keyboard"></i></button></div>
+    <div class="fab-container" id="fab-dashboard-toggle"><button class="fab" data-panel="dashboard-panel" title="Target Dashboard"><i class="fas fa-bullseye"></i></button></div>
+
     <div id="video-player-widget">
         <video id="widget-video" loop src="/dashboard/video.mp4" muted></video> 
         <div class="video-controls">
@@ -635,6 +547,8 @@
         </div>
     </div>
 
+    <div class="social-links"><a href="https://wa.me/6283844959380" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="https://www.instagram.com/universalezra" target="_blank" title=" My Instagram Girl"><i class="fab fa-instagram"></i></a></div>
+    
     <div class="panel" id="editor-panel">
         <div class="panel-header">
             <span class="panel-title">Code Editor</span>
@@ -714,8 +628,9 @@
     <div id="ezra-death-sequence-overlay">
         <div class="split-panel left-panel"></div>
         <div class="split-panel right-panel"></div>
+        <img id="zoom-image" src="/dashboard/elvi.jpg" alt="Zoom In Image" data-src="/dashboard/elvi.jpg">
         
-        <img id="zoom-image" src="/dashboard/panis.jpg" alt="Zoom In Image" data-src="/dashboard/panis.jpg">
+        <img id="panis-fullscreen-image" src="/dashboard/panis.jpg" alt="Panis" style="display: none;">
         
         <div id="error-screen-ezra">
             <p class="error-text">INITIATING HARD DISCONNECT PROTOCOL...</p>
@@ -723,7 +638,7 @@
             <p class="developer-message">ATTEMPTED ACCESS VIOLATION DETECTED. ALL SESSIONS TERMINATED.</p>
         </div>
         
-        <div id="final-message">TERMINATED</div>
+        <div id="final-message">Hmm Goodbye</div>
     </div>
     
 <script>
@@ -746,7 +661,7 @@
                 TOGGLE_MAP: {
                     'mycode': 'UNLOCK_LIVE_VISITORS',
                     'yeah': 'PLAY_CENTER_VIDEO',
-                    'love': 'TOGGLE_PANIS_MODE', // FIX: Diganti dari TOGGLE_ELVI_MODE
+                    'panis': 'TOGGLE_PANIS_MODE', // FIX: Renamed from 'love' and 'TOGGLE_ELVI_MODE'
                     'universalezra': 'START_DEATH_SEQUENCE',
                 }
             },
@@ -754,8 +669,8 @@
                 REFRESH_INTERVAL_MS: 5000,
             },
             VISUALIZER: {
-                BASS_BEAT_THRESHOLD: 1.4,
-                PARTICLE_COUNT: 2000,
+                BASS_BEAT_THRESHOLD: 1.2, // FIX: More sensitive
+                PARTICLE_COUNT: 5000, // FIX: More particles
                 FREQ_RANGE_START_HZ: 20,
                 FREQ_RANGE_END_HZ: 1024,
             },
@@ -767,90 +682,90 @@
         let liveVisitorRefreshInterval = null;
         let isEzraLoggedIn = false;
         let isVisualizerActive = false;
-        let isPanisModeActive = false; // FIX: Diganti dari isElviModeActive
+        let isPanisModeActive = false; // FIX: Renamed from isElviModeActive
         let visualizerInitialized = false; 
         
         let audioContext, analyser, source;
         let frequencyData, bufferLength;
         
         let scene, camera, renderer, icosahedron, particles3D, frequencyBarsGroup;
-        let torusKnot; // FIX: Variabel baru untuk visualizer
 
         let lastBassLevel = 0;
         let gridContainer, currentX = 2, currentY = 2;
 
-        function hideUIElements() { document.querySelectorAll('#left-fab-strip, #video-player-widget').forEach(el => { el.style.display = 'none'; }); }
-        function showUIElements() { document.querySelectorAll('#left-fab-strip, #video-player-widget').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
-        
-        function updateUIVisibility() { 
-            if (!isPanisModeActive) return; // FIX: Diganti dari isElviModeActive
-            if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { 
-                hideUIElements(); 
-            } else { 
-                showUIElements(); 
-            } 
-        }
+        function hideUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { el.style.display = 'none'; }); }
+        function showUIElements() { document.querySelectorAll('.fab-container, #video-player-widget, .social-links').forEach(el => { if (el.id !== 'fab-live-visitors' || (el.id === 'fab-live-visitors' && el.style.display !== 'none' && el.getAttribute('data-unlocked') === 'true')) { el.style.display = 'flex'; } }); }
+        function updateUIVisibility() { if (!isPanisModeActive) return; if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { hideUIElements(); } else { showUIElements(); } } // FIX: Renamed from isElviModeActive
         function enterFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.warn(`Gagal masuk mode fullscreen: ${err.message}`); }); } }
         function exitFullscreen() { if (document.fullscreenElement) { document.exitFullscreen(); } }
         function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(`Error when system attempting to enable fullscreen: ${err.message}`); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
 
         // =================================================================
-        // FIX: FUNGSI EZRA DEATH SEQUENCE (Logika Baru)
+        // FIX: FUNGSI PANIS DEATH SEQUENCE (Logic Timing Baru)
         // =================================================================
-        function startEzraDeathSequence() {
+        function startPanisDeathSequence() {
             const overlay = document.getElementById('ezra-death-sequence-overlay');
-            const zoomImage = document.getElementById('zoom-image');
             const errorScreen = document.getElementById('error-screen-ezra');
+            const panisImage = document.getElementById('panis-fullscreen-image');
             const finalMessage = document.getElementById('final-message');
             const body = document.body;
 
             // 0. RESET/INIT
             body.classList.add('hide-all-content');
             overlay.classList.add('sequence-active');
-            overlay.style.backgroundColor = 'black'; // Mulai dengan hitam
+            overlay.style.backgroundColor = 'black'; // Start with black
             
-            body.classList.remove('split-open', 'image-zoom', 'final-blank-screen', 'terminated-message', 'glitch-active');
-            errorScreen.style.opacity = '0';
-            errorScreen.classList.remove('lost-connect');
+            // Hide all sub-elements
+            document.querySelectorAll('#ezra-death-sequence-overlay > *').forEach(el => {
+                if (el.style) {
+                    el.style.display = 'none';
+                    el.style.opacity = '0';
+                }
+            });
             finalMessage.classList.remove('glitch-active');
-            zoomImage.style.opacity = '0';
             
-            // Pastikan gambar baru diatur
-            const newImageUrl = '/dashboard/panis.jpg';
-            zoomImage.src = newImageUrl;
-            zoomImage.setAttribute('data-src', newImageUrl);
-
-            // 1. Layar Hitam (Durasi 1 detik)
             console.log("Sequence: 1. Black Screen (1s)");
             
-            // 2. Pesan Terminated (Mulai setelah 1 detik, durasi 2 detik)
+            // 1. Black screen (is active for 1s)
+            
+            // 2. Pesan terminated (2 detik)
             setTimeout(() => {
                 console.log("Sequence: 2. Terminated Message (2s)");
-                body.classList.add('terminated-message');
-            }, 1000);
+                errorScreen.style.display = 'flex'; // Show error screen
+                // Change text to "Terminated"
+                errorScreen.querySelector('.error-text').textContent = 'SYSTEM TERMINATED';
+                errorScreen.querySelector('.error-code').textContent = 'ERROR: 0xDEADBEEF';
+                errorScreen.querySelector('.developer-message').textContent = 'SESSION CLOSED.';
+                errorScreen.style.opacity = '1';
+            }, 1000); // After 1s of black
 
-            // 3. Tampilkan Foto (Mulai setelah 1+2=3 detik, durasi 3 detik)
+            // 3. Menampilkan foto panis.jpg (3 detik)
             setTimeout(() => {
-                console.log("Sequence: 3. Fullscreen Photo (3s)");
-                body.classList.remove('terminated-message'); // Sembunyikan pesan
-                body.classList.add('image-zoom'); // Tampilkan gambar
-            }, 3000); // 1s + 2s
+                console.log("Sequence: 3. Fullscreen Image (3s)");
+                errorScreen.style.opacity = '0'; // Hide error screen
+                panisImage.style.display = 'block'; // Show panis image
+                setTimeout(() => panisImage.style.opacity = '1', 50); // Fade in
+            }, 3000); // 1s (black) + 2s (terminated) = 3s
 
-            // 4. Efek Lost Connect (Mulai setelah 1+2+3=6 detik)
+            // 4. Efek lost connect palsu
             setTimeout(() => {
                 console.log("Sequence: 4. Fake Lost Connect");
-                body.classList.remove('image-zoom'); // Sembunyikan foto
-                zoomImage.style.opacity = '0';
+                panisImage.style.opacity = '0'; // Hide panis image
                 
-                // Tampilkan Error Screen (versi simplified)
-                errorScreen.classList.add('lost-connect');
-                errorScreen.querySelector('.error-text').textContent = 'CONNECTION TERMINATED';
+                // Show error screen again, with "lost connect" message
+                errorScreen.querySelector('.error-text').textContent = 'CONNECTION LOST...';
+                errorScreen.querySelector('.error-code').textContent = 'RECONNECTING... (ATTEMPT 1/3)';
+                errorScreen.querySelector('.developer-message').textContent = 'PLEASE CHECK YOUR NETWORK CABLE.';
                 errorScreen.style.opacity = '1';
 
-            }, 6000); // 3s + 3s
+                // Show the "Hmm Goodbye" message with glitch
+                finalMessage.style.display = 'block';
+                finalMessage.classList.add('glitch-active');
+
+            }, 6000); // 3s (steps 1,2) + 3s (panis image) = 6s
         }
         
-        // --- VISUALIZER LOGIC (VISUALIZER KEDUA DIHAPUS) ---
+        // --- VISUALIZER LOGIC ---
         function setupAudioVisualizer() {
             const audioPlayer = document.getElementById('audio-player');
             if (!audioPlayer.src) { alert('Pilih lagu terlebih dahulu'); return false; }
@@ -907,16 +822,14 @@
             icosahedron.rotation.x += 0.002;
             icosahedron.rotation.y += 0.003;
 
-            // FIX: Animasi TorusKnot baru
-            const torusPulse = 1.0 + (bassAvg / 255) * 1.5;
-            torusKnot.scale.set(torusPulse, torusPulse, torusPulse);
-            torusKnot.rotation.z -= 0.01;
-            torusKnot.rotation.y += 0.005;
-
             const shakeFactor = (bassAvg / 255) * 0.05; 
             camera.position.x = 5 + Math.sin(Date.now() * 0.005) * shakeFactor; 
             camera.position.y = 5 + Math.cos(Date.now() * 0.004) * shakeFactor; 
-            camera.position.z = 5; 
+            
+            // FIX: Dynamic camera dolly and lookAt
+            const cameraDolly = 5 - (overallAvg / 255) * 1.5;
+            camera.position.z = cameraDolly;
+            camera.lookAt(icosahedron.position);
 
             if (bassAvg > lastBassLevel * CONFIG.VISUALIZER.BASS_BEAT_THRESHOLD && bassAvg > 60) {
                 const colors = particles3D.geometry.attributes.color.array;
@@ -924,11 +837,14 @@
                 for (let i = 0; i < CONFIG.VISUALIZER.PARTICLE_COUNT; i++) { color.setHSL(Math.random(), 1.0, 0.5); colors[i * 3] = color.r; colors[i * 3 + 1] = color.g; colors[i * 3 + 2] = color.b; }
                 particles3D.geometry.attributes.color.needsUpdate = true;
                 icosahedron.rotation.z += 0.1; 
-                torusKnot.material.color.setHSL(Math.random(), 0.8, 0.6); // Ganti warna torus
             }
 
             lastBassLevel = bassAvg;
-            particles3D.rotation.y += 0.0005;
+            
+            // FIX: Dynamic particle rotation
+            particles3D.rotation.y += (overallAvg / 255) * 0.002;
+            particles3D.rotation.x += (bassAvg / 255) * 0.001;
+            
             renderer.render(scene, camera);
         }
 
@@ -964,12 +880,6 @@
             icosahedron = new THREE.Mesh(icosahedronGeometry, icosahedronMaterial);
             scene.add(icosahedron);
             
-            // FIX: Tambahkan TorusKnot
-            const torusGeo = new THREE.TorusKnotGeometry(0.7, 0.1, 100, 16);
-            const torusMat = new THREE.MeshBasicMaterial({ color: 0xff0077, wireframe: true });
-            torusKnot = new THREE.Mesh(torusGeo, torusMat);
-            scene.add(torusKnot);
-
             frequencyBarsGroup = new THREE.Group();
             scene.add(frequencyBarsGroup);
             
@@ -1043,39 +953,17 @@
                     centerVideoPlayer.src = '/dashboard/stiker.mp4'; 
                     centerVideoPlayer.play();
                     break;
-                case 'TOGGLE_PANIS_MODE': // FIX: Diganti dari TOGGLE_ELVI_MODE
-                    isPanisModeActive = true; // FIX: Diganti dari isElviModeActive
-                    const block23 = document.getElementById('block-2-3');
-                    const block53 = document.getElementById('block-5-3');
+                case 'TOGGLE_PANIS_MODE': // FIX: Renamed from TOGGLE_ELVI_MODE
+                    isPanisModeActive = true; // FIX: Renamed from isElviModeActive
                     
-                    if (block23) {
-                        const bg23 = block23.querySelector('.grid-block-background');
-                        if (bg23) {
-                            bg23.style.background = `url('https://universalezra.netlify.app/moments/1751293320517-December%2013,%202024%20at%204.29%20AM%20(1).jpg') center center / cover no-repeat`;
-                            bg23.style.filter = 'none';
-                            bg23.style.webkitFilter = 'none';
-                        }
-                        const content23 = block23.querySelector('.grid-block-content');
-                        if (content23) { content23.style.display = 'none'; }
-                    }
-                    
-                    if (block53) {
-                        const bg53 = block53.querySelector('.grid-block-background');
-                        if (bg53) {
-                            bg53.style.background = `url('/dashboard/mygirl.jpg') center center / cover no-repeat`;
-                            bg53.style.filter = 'none';
-                            bg53.style.webkitFilter = 'none';
-                        }
-                        const content53 = block53.querySelector('.grid-block-content');
-                        if (content53) { content53.style.display = 'none'; }
-                    }
+                    // FIX: Removed logic for block-2-3 and block-5-3 as requested
                     
                     updateUIVisibility();
                     if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
-                    alert('PANIS MODE ACTIVATED. Enjoy the view.'); // FIX: Teks diubah
+                    alert('PANIS MODE ACTIVATED.'); // FIX: Updated message
                     break;
                 case 'START_DEATH_SEQUENCE':
-                    startEzraDeathSequence();
+                    startPanisDeathSequence(); // FIX: Renamed from startEzraDeathSequence
                     break;
                 default:
                     alert('Incorrect password!');
@@ -1162,13 +1050,7 @@
                     matrixSound.play().catch(e => console.error("Audio play failed:", e));
                 }
                 updateUIVisibility();
-                if (isPanisModeActive) { // FIX: Diganti dari isElviModeActive
-                    if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { 
-                        enterFullscreen(); 
-                    } else { 
-                        exitFullscreen(); 
-                    } 
-                }
+                if (isPanisModeActive) { if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); } else { exitFullscreen(); } } // FIX: Renamed from isElviModeActive
             };
             const handleStart = (e) => { isDragging = true; startX = e.clientX || e.touches[0].clientX; startY = e.clientY || e.touches[0].clientY; };
             const handleEnd = (e) => {
