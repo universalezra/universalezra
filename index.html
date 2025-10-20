@@ -244,12 +244,13 @@
             100% { color: #ff0077; }
         }
 
-        /* LOGIN BUTTON STYLE */
+        /* LOGIN BUTTON STYLE (FIXED as requested) */
         #login-button {
             cursor: pointer;
-            color: var(--neon-color);
-            text-shadow: 0 0 5px var(--neon-color);
-            border: 1px solid var(--neon-color);
+            color: purple; /* FIX: Teks ungu */
+            background-color: red; /* FIX: Latar belakang merah */
+            text-shadow: 0 0 5px purple; /* FIX: Bayangan ungu */
+            border: 1px solid purple; /* FIX: Border ungu */
             padding: 5px 10px;
             border-radius: 5px;
             display: inline-block;
@@ -258,8 +259,8 @@
             transition: all 0.2s ease;
         }
         #login-button:hover {
-            background-color: rgba(0, 255, 255, 0.1);
-            box-shadow: 0 0 15px var(--neon-color);
+            background-color: #cc0000; /* FIX: Merah lebih gelap saat hover */
+            box-shadow: 0 0 15px purple; /* FIX: Bayangan ungu saat hover */
         }
 
         /* BACKGROUND UNTUK ROTASI DAN MODAL BIO */
@@ -426,6 +427,28 @@
 
         .sequence-active { opacity: 1 !important; pointer-events: auto !important; }
         .hide-all-content > * { display: none !important; } 
+
+        /* FIX: CSS BARU UNTUK LOGIKA 'universalezra' */
+        #panis-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('/dashboard/panis.jpg') center center / cover no-repeat;
+            z-index: 20000; /* Di atas segalanya */
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        @keyframes infinite-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        body.infinite-rotation {
+            animation: infinite-rotate 5s linear infinite;
+            transform-origin: center center;
+        }
     </style>
 </head>
 <body>
@@ -461,7 +484,7 @@
             <div class="grid-block" id="block-center">
                 <div class="grid-block-background" id="interactive-bg" style="background-image: url('/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg');"></div>
                 <div class="grid-block-content">
-                    <div id="ultimate-widget"><div class="typing-container"><span id="typing-output" class="neon-typing-text"></span><img src="/moments/1751293320517-December 13, 2024 at 4.29 AM (1).jpg" alt="Foto Profil Ezra" class="profile-photo" id="ezra-photo"></div><p class="holographic-text" id="time-and-slogan">// STATUS: INITIATION</p><p class="quote" id="daily-quote">Memuat kutipan hari ini...</p></div>
+                    <div id="ultimate-widget"><div class="typing-container"><span id="typing-output" class="neon-typing-text"></span><img src="https://via.placeholder.com/40/ff0077/ffffff?text=E" alt="Foto Profil Ezra" class="profile-photo" id="ezra-photo"></div><p class="holographic-text" id="time-and-slogan">// STATUS: INITIATION</p><p class="quote" id="daily-quote">Memuat kutipan hari ini...</p></div>
                     <div class="particle p1"></div><div class="particle p2"></div><div class="particle p3"></div><div class="particle p4"></div><div class="particle p5"></div>
                     <div id="bio-modal">
                         <div class="modal-content">
@@ -628,7 +651,7 @@
     <div id="ezra-death-sequence-overlay">
         <div class="split-panel left-panel"></div>
         <div class="split-panel right-panel"></div>
-        <img id="zoom-image" src="/dashboard/mygirl.jpg" alt="Zoom In Image" data-src="/dashboard/mygirl.jpg">
+        <img id="zoom-image" src="/dashboard/elvi.jpg" alt="Zoom In Image" data-src="/dashboard/elvi.jpg">
         
         <img id="panis-fullscreen-image" src="/dashboard/panis.jpg" alt="Panis" style="display: none;">
         
@@ -640,6 +663,8 @@
         
         <div id="final-message">Hmm Goodbye</div>
     </div>
+
+    <div id="panis-overlay"></div>
     
 <script>
     (function() {
@@ -662,7 +687,7 @@
                     'mycode': 'UNLOCK_LIVE_VISITORS',
                     'yeah': 'PLAY_CENTER_VIDEO',
                     'panis': 'TOGGLE_PANIS_MODE', // FIX: Renamed from 'love' and 'TOGGLE_ELVI_MODE'
-                    'universalezra': 'START_DEATH_SEQUENCE',
+                    'universalezra': 'START_PANIS_ROTATION', // FIX: Mengganti logika
                 }
             },
             VISITOR: {
@@ -937,6 +962,16 @@
             renderer.setSize(window.innerWidth, window.innerHeight); 
         }
 
+        // FIX: Fungsi baru untuk logika 'universalezra'
+        function startPanisRotation() {
+            const overlay = document.getElementById('panis-overlay');
+            if (overlay) {
+                overlay.style.display = 'block';
+                setTimeout(() => overlay.style.opacity = '1', 50);
+            }
+            document.body.classList.add('infinite-rotation');
+        }
+
         function handlePasswordAction(action) {
             const liveVisitorsButton = document.getElementById('fab-live-visitors');
             const centerVideoContainer = document.getElementById('center-video-container');
@@ -964,6 +999,10 @@
                     break;
                 case 'START_DEATH_SEQUENCE':
                     startPanisDeathSequence(); // FIX: Renamed from startEzraDeathSequence
+                    break;
+                // FIX: Case baru untuk logika 'universalezra'
+                case 'START_PANIS_ROTATION':
+                    startPanisRotation();
                     break;
                 default:
                     alert('Incorrect password!');
