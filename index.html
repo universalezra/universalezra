@@ -206,7 +206,7 @@
         :root{--neon-color:#00ffff;--secondary-neon:#ff0077;--quote-color:#aaffaa;--shadow-intensity:0.8;}.particle{position:fixed;width:3px;height:3px;background-color:rgba(0,255,255,.8);border-radius:50%;pointer-events:none;box-shadow:0 0 5px var(--neon-color);z-index:1010;opacity:0;animation:move-particle 10s infinite ease-in-out alternate;}.p1{top:10%;left:5%;animation-delay:0s;}.p2{top:80%;left:30%;animation-delay:2s;width:4px;height:4px;}.p3{top:40%;left:70%;animation-delay:4s;}.p4{top:65%;left:90%;animation-delay:6s;}.p5{top:25%;left:50%;animation-delay:8s;}@keyframes move-particle{0%{transform:translate(0,0);opacity:.5;}50%{transform:translate(50px,-50px);opacity:1;}100%{transform:translate(100px,0);opacity:.5;}}
         
         /* FIX: Ultimate Widget rounded border */
-        #ultimate-widget{position:relative;/* width:202px; */ width: auto; max-width: 280px; margin:50px auto 20px auto;/* padding:15px 0; */ padding: 20px; /* background-color:transparent; */ background-color: rgba(26, 26, 46, 0.7); /* border:none; */ border: 1px solid var(--border-color); border-radius: 20px; /* box-shadow:none; */ box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}
+        #ultimate-widget{position:relative;/* width:194px; */ width: auto; max-width: 275px; margin:50px auto 20px auto;/* padding:15px 0; */ padding: 20px; /* background-color:transparent; */ background-color: rgba(26, 26, 46, 0.7); /* border:none; */ border: 1px solid var(--border-color); border-radius: 20px; /* box-shadow:none; */ box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); z-index:1200;text-align:left;transform:scale(.85);transform-origin:center center;animation:float-subtle 10s infinite ease-in-out;font-family:'Share Tech Mono',monospace;}
         
         @keyframes float-subtle{0%{transform:translateY(0) scale(.85);}50%{transform:translateY(-3px) scale(.86);}100%{transform:translateY(0) scale(.85);}}
         
@@ -225,7 +225,7 @@
         #bio-modal{display:none;}
         #bio-modal.show{position:fixed;display:flex;z-index:11000;left:0;top:0;width:100%;height:100%;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);justify-content:center;align-items:center;opacity:0;transition:opacity .4s;}
         #bio-modal.show{opacity:1;}
-        .modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:200px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
+        .modal-content{background:url('/dashboard/biobg.jpg') center/cover;padding:25px;border-radius:10px;max-width:300px;text-align:center;color:#fff;border:none;box-shadow:0 0 8px var(--neon-color),0 0 25px rgba(0,255,255,.3);margin: 10% auto 5% auto;transform:translateY(-50px) scale(0.60);transition:transform .4s ease-out;}
         
         /* RAINBOW TEXT FOR BIO MODAL HEADER */
         .rainbow-text {
@@ -1026,7 +1026,7 @@
                     // --- KODE TAMBAHAN SELESAI ---
                     
                     updateUIVisibility();
-                    if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
+                    if ((currentY === 0 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); }
                     
                     break;
                 case 'START_DEATH_SEQUENCE':
@@ -1121,7 +1121,7 @@
                     matrixSound.play().catch(e => console.error("Audio play failed:", e));
                 }
                 updateUIVisibility();
-                if (isPanisModeActive) { if ((currentY === 1 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); } else { exitFullscreen(); } } // FIX: Renamed from isModeActive
+                if (isPanisModeActive) { if ((currentY === 0 && currentX === 2) || (currentY === 4 && currentX === 2)) { enterFullscreen(); } else { exitFullscreen(); } } // FIX: Renamed from isModeActive
             };
             const handleStart = (e) => { isDragging = true; startX = e.clientX || e.touches[0].clientX; startY = e.clientY || e.touches[0].clientY; };
             const handleEnd = (e) => {
